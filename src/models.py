@@ -159,9 +159,9 @@ class VersionResponse(BaseModel):
 class AsyncJobRequest(BaseModel):
     """Request payload for POST /solve/async endpoint."""
     
-    input_json: Dict[str, Any] = Field(
-        ...,
-        description="Full NGRS input JSON. Should match schema v0.70+."
+    input_json: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Full NGRS input JSON (wrapped format). Should match schema v0.70+."
     )
     
     priority: Optional[int] = Field(

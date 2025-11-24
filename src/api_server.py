@@ -505,28 +505,63 @@ async def configure_endpoint(
 @app.post("/solve/async", response_model=AsyncJobResponse)
 async def solve_async(
     request: Request,
-    payload: AsyncJobRequest
+    payload: Optional[AsyncJobRequest] = None
 ):
     """
     Submit solver job for asynchronous processing.
     
     Returns immediately with job UUID for tracking.
     
-    Request body:
-    - input_json: Full NGRS input JSON (required)
-    - priority: Job priority 0-10 (optional, default 0)
-    - ttl_seconds: Result TTL 60-86400 seconds (optional, default 3600)
+    Accepts input via:
+    - Wrapped format: {"input_json": {...NGRS input...}, "priority": 5}
+    - Raw format: {...NGRS input directly...} (without input_json wrapper)
+    
+    Query parameters (optional):
+    - priority: Job priority 0-10 (default 0)
+    - ttl_seconds: Result TTL 60-86400 seconds (default 3600)
     
     Returns:
     - 201: Job created and queued
-    - 400: Invalid input
+    - 400: Invalid input or missing required fields
     - 503: Queue full (too many pending jobs)
     """
     request_id = request.state.request_id
     
     try:
+        # Parse raw body to support both wrapped and unwrapped formats
+        raw_body_json = None
+        if request.headers.get("content-type", "").startswith("application/json"):
+            try:
+                raw_body = await request.body()
+                if raw_body:
+                    raw_body_json = json.loads(raw_body)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Invalid JSON in request body: {str(e)}"
+                )
+        
+        # Extract input_json using flexible parsing (wrapped or raw)
+        input_json, warnings = get_input_json(
+            request_obj=payload,
+            uploaded_file_json=None,
+            raw_body_json=raw_body_json
+        )
+        
+        # Extract priority and ttl from payload or use defaults
+        priority = 0
+        ttl_seconds = None
+        
+        if payload:
+            priority = payload.priority or 0
+            ttl_seconds = payload.ttl_seconds
+        elif raw_body_json:
+            # Check if raw body has these fields (for backward compatibility)
+            priority = raw_body_json.get("priority", 0)
+            ttl_seconds = raw_body_json.get("ttl_seconds")
+        
         # Create job
-        job_id = job_manager.create_job(payload.input_json)
+        job_id = job_manager.create_job(input_json)
         
         queue_length = job_manager.get_queue_length()
         logger.info(
