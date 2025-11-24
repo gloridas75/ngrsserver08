@@ -1,10 +1,11 @@
-# NGRS Solver v0.7
+# NGRS Solver v0.8
 
-**Next-Generation Roster Scheduling Solver** - An intelligent shift scheduling optimizer powered by Google OR-Tools CP-SAT solver with REST API support.
+**Next-Generation Roster Scheduling Solver** - An intelligent shift scheduling optimizer powered by Google OR-Tools CP-SAT solver with REST API and Redis-based async job processing.
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![OR-Tools](https://img.shields.io/badge/OR--Tools-9.11-green.svg)](https://developers.google.com/optimization)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-teal.svg)](https://fastapi.tiangolo.com/)
+[![Redis](https://img.shields.io/badge/Redis-7.0-red.svg)](https://redis.io/)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)]()
 
 ---
@@ -20,12 +21,22 @@
 
 ### REST API
 - **FastAPI Framework** - High-performance async REST API
-- **Two Endpoints**:
-  - `/solve` - Generate complete day-by-day roster assignments
+- **Synchronous & Asynchronous Modes** - Immediate response or background processing
+- **Three Main Endpoints**:
+  - `/solve` - Synchronous solver (immediate response)
+  - `/solve/async` - Asynchronous job submission (returns job UUID)
   - `/configure` - Get optimal work patterns and staffing recommendations (ICPMP tool)
 - **Multiple Input Methods** - JSON body or file upload
 - **Request Tracking** - UUID-based request tracing
 - **Comprehensive Logging** - Performance metrics and error tracking
+
+### Async Job Processing (NEW in v0.8)
+- **Redis-Backed Queue** - Distributed job queue for scalability
+- **Multi-Worker Architecture** - Process multiple jobs concurrently
+- **Job Status Tracking** - Real-time status updates (queued, in_progress, completed, failed)
+- **Result Caching** - Results stored with TTL for retrieval
+- **Horizontal Scaling** - Workers can run on separate machines
+- **Auto-Deployment** - GitHub Actions CI/CD to EC2
 
 ### Configuration Optimizer (ICPMP Tool)
 - **Pre-Planning Intelligence** - Determine staffing needs before hiring
@@ -41,8 +52,8 @@
 
 ```bash
 # Clone repository
-git clone https://github.com/gloridas75/ngrssolver0.7.git
-cd ngrssolver0.7
+git clone https://github.com/gloridas75/ngrsserver08.git
+cd ngrsserver08
 
 # Install dependencies
 pip install -r requirements.txt
