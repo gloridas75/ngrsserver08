@@ -258,7 +258,7 @@
               "nextDay": true
             }
           ],
-          "includePublicHolidays": false,
+          "includePublicHolidays": true,
           "includeEveOfPublicHolidays": true,
           "shiftSetId": "Set_PAT_Alpha",
           "coverageDays" : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],

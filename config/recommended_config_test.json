@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "0.8",
+  "configType": "optimizedRosterConfiguration",
+  "generatedAt": "2025-11-24T11:17:59.685673",
+  "summary": {
+    "totalRequirements": 2,
+    "totalEmployees": 7,
+    "planningHorizon": {
+      "startDate": "2024-12-01T00:00:00",
+      "endDate": "2024-12-30T00:00:00",
+      "days": 30
+    }
+  },
+  "recommendations": [
+    {
+      "requirementId": "REQ_DAY_GUARD",
+      "requirementName": "Day Guards",
+      "productType": "Guard",
+      "rank": "G1",
+      "scheme": "A",
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "O",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 4,
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 30,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.67,
+        "requiredPerDay": 2
+      },
+      "quality": {
+        "balanceScore": 99.78,
+        "variance": 0.22,
+        "totalExcessCoverage": 20
+      },
+      "notes": [
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "✓ Achieves 100% coverage with this configuration",
+        "✓ Excellent workload balance across employees",
+        "✓ All employees have unique rotation offsets for maximum diversity"
+      ]
+    },
+    {
+      "requirementId": "REQ_NIGHT_PATROL",
+      "requirementName": "Night Patrol",
+      "productType": "Guard",
+      "rank": "G2",
+      "scheme": "B",
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "O",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 30,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 30
+      },
+      "notes": [
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "✓ Achieves 100% coverage with this configuration",
+        "✓ Excellent workload balance across employees",
+        "✓ All employees have unique rotation offsets for maximum diversity"
+      ]
+    }
+  ]
+}

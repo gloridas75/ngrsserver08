@@ -1,0 +1,43 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Deploy to EC2 via SSH
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd ~/ngrssolver
+          
+          echo "=== Pulling latest code from GitHub ==="
+          git pull origin main
+          
+          echo "=== Installing dependencies ==="
+          pip install -r requirements.txt --quiet
+          
+          echo "=== Restarting services ==="
+          sudo systemctl restart ngrs-redis
+          sudo systemctl restart ngrs-api
+          
+          echo "=== Waiting for service to start ==="
+          sleep 5
+          
+          echo "=== Health check ==="
+          curl -f http://localhost:8080/health || exit 1
+          
+          echo "=== Deployment successful ==="
+          sudo systemctl status ngrs-api --no-pager

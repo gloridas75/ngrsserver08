@@ -34,9 +34,12 @@ from context.engine.solver_engine import solve
 from context.engine.config_optimizer import optimize_all_requirements, format_output_config
 from src.models import (
     SolveRequest, SolveResponse, HealthResponse, 
-    Score, SolverRunMetadata, Meta, Violation
+    Score, SolverRunMetadata, Meta, Violation,
+    AsyncJobRequest, AsyncJobResponse, JobStatusResponse, AsyncStatsResponse
 )
 from src.output_builder import build_output
+from src.redis_job_manager import RedisJobManager
+from src.redis_worker import start_worker_pool
 
 # ============================================================================
 # LOGGING SETUP
@@ -95,6 +98,49 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# ============================================================================
+# ASYNC MODE: REDIS JOB MANAGER & WORKERS
+# ============================================================================
+
+# Initialize Redis-based job manager
+NUM_WORKERS = int(os.getenv("SOLVER_WORKERS", "2"))
+job_manager = RedisJobManager(
+    result_ttl_seconds=int(os.getenv("RESULT_TTL_SECONDS", "3600")),
+    key_prefix=os.getenv("REDIS_KEY_PREFIX", "ngrs")
+)
+
+# Start worker pool on startup (can be disabled via env var)
+worker_processes = []
+worker_stop_event = None
+START_WORKERS = os.getenv("START_WORKERS", "true").lower() in ("true", "1", "yes")
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize worker pool on API startup"""
+    global worker_processes, worker_stop_event
+    
+    if START_WORKERS:
+        logger.info(f"Starting {NUM_WORKERS} solver workers with Redis...")
+        worker_processes, worker_stop_event = start_worker_pool(
+            num_workers=NUM_WORKERS,
+            ttl_seconds=int(os.getenv("RESULT_TTL_SECONDS", "3600"))
+        )
+        logger.info(f"Async mode enabled with {NUM_WORKERS} workers (Redis-backed)")
+    else:
+        logger.info("Worker startup disabled (START_WORKERS=false). Run workers separately.")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup workers on shutdown"""
+    global worker_processes, worker_stop_event
+    
+    if START_WORKERS and worker_processes:
+        logger.info("Shutting down solver workers...")
+        from src.redis_worker import cleanup_worker_pool
+        cleanup_worker_pool(worker_processes, worker_stop_event)
+    else:
+        logger.info("No workers to shutdown (workers run separately)")
 
 # ============================================================================
 # HELPER FUNCTIONS
@@ -450,6 +496,197 @@ async def configure_endpoint(
             exc_info=True
         )
         raise HTTPException(status_code=500, detail=error_msg)
+
+
+# ============================================================================
+# ASYNC ENDPOINTS
+# ============================================================================
+
+@app.post("/solve/async", response_model=AsyncJobResponse)
+async def solve_async(
+    request: Request,
+    payload: AsyncJobRequest
+):
+    """
+    Submit solver job for asynchronous processing.
+    
+    Returns immediately with job UUID for tracking.
+    
+    Request body:
+    - input_json: Full NGRS input JSON (required)
+    - priority: Job priority 0-10 (optional, default 0)
+    - ttl_seconds: Result TTL 60-86400 seconds (optional, default 3600)
+    
+    Returns:
+    - 201: Job created and queued
+    - 400: Invalid input
+    - 503: Queue full (too many pending jobs)
+    """
+    request_id = request.state.request_id
+    
+    try:
+        # Create job
+        job_id = job_manager.create_job(payload.input_json)
+        
+        queue_length = job_manager.get_queue_length()
+        logger.info(
+            "async_job_created requestId=%s jobId=%s queueLength=%s",
+            request_id, job_id, queue_length
+        )
+        
+        return AsyncJobResponse(
+            job_id=job_id,
+            status="queued",
+            created_at=datetime.now().isoformat(),
+            message="Job submitted successfully"
+        )
+        
+    except Exception as e:
+        logger.error(
+            "async_job_error requestId=%s error=%s",
+            request_id, str(e),
+            exc_info=True
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create job: {str(e)}"
+        )
+
+
+@app.get("/solve/async/stats", response_model=AsyncStatsResponse)
+async def get_async_stats():
+    """
+    Get statistics about async job queue and workers.
+    
+    Returns:
+    - 200: Current statistics
+    
+    Useful for monitoring queue capacity and worker utilization.
+    """
+    stats = job_manager.get_stats()
+    stats["workers"] = NUM_WORKERS
+    
+    return AsyncStatsResponse(**stats)
+
+
+@app.get("/solve/async/{job_id}", response_model=JobStatusResponse)
+async def get_job_status(job_id: str):
+    """
+    Get status of asynchronous solver job.
+    
+    Path parameters:
+    - job_id: UUID returned from POST /solve/async
+    
+    Returns:
+    - 200: Job status information
+    - 404: Job not found (invalid UUID or expired)
+    
+    Status values:
+    - queued: Waiting in queue
+    - validating: Validating input
+    - in_progress: Solver running
+    - completed: Solution ready (use GET /solve/async/{job_id}/result)
+    - failed: Error occurred (see error_message)
+    - expired: Result expired (TTL exceeded)
+    """
+    job_info = job_manager.get_job(job_id)
+    
+    if not job_info:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Job {job_id} not found"
+        )
+    
+    return JobStatusResponse(
+        job_id=job_info.job_id,
+        status=job_info.status.value,
+        created_at=datetime.fromtimestamp(job_info.created_at).isoformat(),
+        started_at=datetime.fromtimestamp(job_info.started_at).isoformat() if job_info.started_at else None,
+        completed_at=datetime.fromtimestamp(job_info.completed_at).isoformat() if job_info.completed_at else None,
+        error_message=job_info.error_message,
+        result_available=(job_info.status.value == "completed"),
+        result_size_bytes=job_info.result_size_bytes
+    )
+
+
+@app.get("/solve/async/{job_id}/result")
+async def get_job_result(job_id: str):
+    """
+    Download result of completed solver job.
+    
+    Path parameters:
+    - job_id: UUID returned from POST /solve/async
+    
+    Returns:
+    - 200: Full solver output JSON (same format as POST /solve)
+    - 404: Job not found
+    - 425: Job not completed yet (check status first)
+    - 410: Result expired or job failed
+    """
+    job_info = job_manager.get_job(job_id)
+    
+    if not job_info:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Job {job_id} not found"
+        )
+    
+    if job_info.status.value == "failed":
+        raise HTTPException(
+            status_code=410,
+            detail=f"Job failed: {job_info.error_message}"
+        )
+    
+    if job_info.status.value == "expired":
+        raise HTTPException(
+            status_code=410,
+            detail="Job result expired (TTL exceeded)"
+        )
+    
+    if job_info.status.value != "completed":
+        raise HTTPException(
+            status_code=425,
+            detail=f"Job not completed yet (current status: {job_info.status.value})"
+        )
+    
+    result = job_manager.get_result(job_id)
+    
+    if not result:
+        raise HTTPException(
+            status_code=410,
+            detail="Result no longer available"
+        )
+    
+    return ORJSONResponse(content=result)
+
+
+@app.delete("/solve/async/{job_id}")
+async def cancel_job(job_id: str):
+    """
+    Cancel pending job or delete result.
+    
+    Path parameters:
+    - job_id: UUID returned from POST /solve/async
+    
+    Returns:
+    - 200: Job cancelled/deleted
+    - 404: Job not found
+    
+    Note: Jobs already in_progress cannot be stopped mid-execution,
+    but will be removed from system once completed.
+    """
+    deleted = job_manager.delete_job(job_id)
+    
+    if not deleted:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Job {job_id} not found"
+        )
+    
+    return {
+        "message": f"Job {job_id} cancelled/deleted",
+        "job_id": job_id
+    }
 
 
 # ============================================================================
