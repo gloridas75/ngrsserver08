@@ -104,11 +104,21 @@ def add_constraints(model, ctx):
             # For each slot in this week, get normal hours and create weighted sum
             weighted_assignments = []
             for slot in week_slots:
-                # Find shift info for this slot
+                if (slot.slot_id, emp_id) not in x:
+                    continue
+                
+                # Try to find shift info from demand_items first
                 slot_key = f"{slot.demandId}-{slot.shiftCode}"
                 hours_data = shift_info.get(slot_key)
                 
-                if hours_data and (slot.slot_id, emp_id) in x:
+                # FALLBACK: If shift_info lookup fails, calculate directly from slot times
+                if not hours_data:
+                    try:
+                        hours_data = split_shift_hours(slot.start, slot.end)
+                    except Exception:
+                        continue
+                
+                if hours_data:
                     normal_hours = hours_data.get('normal', 0)
                     var = x[(slot.slot_id, emp_id)]
                     
@@ -131,11 +141,21 @@ def add_constraints(model, ctx):
             # For each slot in this month, get OT hours and create weighted sum
             weighted_assignments = []
             for slot in month_slots:
-                # Find shift info for this slot
+                if (slot.slot_id, emp_id) not in x:
+                    continue
+                
+                # Try to find shift info from demand_items first
                 slot_key = f"{slot.demandId}-{slot.shiftCode}"
                 hours_data = shift_info.get(slot_key)
                 
-                if hours_data and (slot.slot_id, emp_id) in x:
+                # FALLBACK: If shift_info lookup fails, calculate directly from slot times
+                if not hours_data:
+                    try:
+                        hours_data = split_shift_hours(slot.start, slot.end)
+                    except Exception:
+                        continue
+                
+                if hours_data:
                     ot_hours = hours_data.get('ot', 0)
                     var = x[(slot.slot_id, emp_id)]
                     

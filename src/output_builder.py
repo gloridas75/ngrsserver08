@@ -41,8 +41,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         Dict in output schema format with all fields populated
     """
     
-    # Compute input hash for reproducibility tracking
-    input_hash = compute_input_hash(ctx)
+    # Compute input hash for reproducibility tracking (use input_data, not ctx which has IntVars)
+    input_hash = compute_input_hash(input_data)
     
     # Extract scores from solver_result
     scores = solver_result.get('scores', {'hard': 0, 'soft': 0, 'overall': 0})

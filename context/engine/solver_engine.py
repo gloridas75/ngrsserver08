@@ -12,6 +12,39 @@ from .data_loader import load_input
 from .score_helpers import ScoreBook
 from .slot_builder import build_slots
 
+# Optimization mode constants
+OPTIMIZATION_MODE_BALANCE = "balanceWorkload"
+OPTIMIZATION_MODE_MINIMIZE = "minimizeEmployeeCount"
+
+
+def calculate_adaptive_time_limit(num_slots, num_employees, user_time_limit=None):
+    """Calculate adaptive time limit based on problem complexity.
+    
+    Args:
+        num_slots: Number of shift slots
+        num_employees: Number of employees
+        user_time_limit: User-specified time limit (takes precedence)
+    
+    Returns:
+        Recommended time limit in seconds
+    """
+    if user_time_limit:
+        return user_time_limit
+    
+    # Calculate complexity score
+    complexity = (num_slots * num_employees) / 10000
+    
+    if complexity < 0.5:
+        return 5  # Small problem: 5 seconds (< 5,000 variables)
+    elif complexity < 2:
+        return 10  # Medium problem: 10 seconds (5,000-20,000 variables)
+    elif complexity < 5:
+        return 20  # Medium-large: 20 seconds (20,000-50,000 variables)
+    elif complexity < 15:
+        return 40  # Large problem: 40 seconds (50,000-150,000 variables)
+    else:
+        return 60  # Very large problem: 60 seconds (>150,000 variables)
+
 def build_model(ctx):
     """Build CP-SAT model with decision variables for slot-employee assignments.
     
@@ -36,9 +69,20 @@ def build_model(ctx):
     
     employees = ctx.get('employees', [])
     
+    # Performance optimization: Create lookup caches
+    ctx['employee_lookup'] = {emp.get('employeeId') or emp.get('id'): emp for emp in employees}
+    ctx['slot_lookup'] = {slot.slot_id: slot for slot in slots}
+    
+    # Cache slots by date for efficient daily constraint checks
+    slots_by_date = defaultdict(list)
+    for slot in slots:
+        slots_by_date[slot.date].append(slot)
+    ctx['slots_by_date'] = dict(slots_by_date)
+    
     print(f"[build_model] Creating decision variables...")
     print(f"  Slots: {len(slots)}")
     print(f"  Employees: {len(employees)}")
+    print(f"  Cached: {len(ctx['employee_lookup'])} employees, {len(ctx['slots_by_date'])} dates")
     
     # v0.70: Rotation info is now stored per requirement in slot.rotationSequence
     # No need for separate demand_rotations dictionary
@@ -201,10 +245,20 @@ def build_model(ctx):
     model.Add(total_unassigned == sum(unassigned[slot.slot_id] for slot in slots))
     print(f"  ✓ Created total_unassigned variable (range: 0-{len(slots)})\n")
     
-    # ========== WORKLOAD BALANCING ==========
-    print(f"[build_model] Adding workload balancing constraints...")
+    # ========== OPTIMIZATION MODE CONFIGURATION ==========
+    # Get optimization mode from input (default: balanceWorkload)
+    solver_config = ctx.get('solverConfig', {})
+    optimization_mode = solver_config.get('optimizationMode', OPTIMIZATION_MODE_BALANCE)
+    max_employees_to_use = solver_config.get('maxEmployeesToUse', None)
+    
+    print(f"[build_model] Optimization Mode: {optimization_mode}")
+    if max_employees_to_use:
+        print(f"  Max employees to use: {max_employees_to_use}")
+    
     # Create assignment count variable for each employee
     emp_assignment_counts = {}
+    employee_used_vars = {}  # Binary: 1 if employee has any assignment
+    
     for emp in employees:
         emp_id = emp.get('employeeId')
         # Count assignments for this employee across all slots
@@ -214,18 +268,54 @@ def build_model(ctx):
             count_var = model.NewIntVar(0, len(slots), f"emp_{emp_id}_count")
             model.Add(count_var == sum(emp_assignments))
             emp_assignment_counts[emp_id] = count_var
+            
+            # Create binary variable: is employee used?
+            if optimization_mode == OPTIMIZATION_MODE_MINIMIZE:
+                used_var = model.NewBoolVar(f"emp_used_{emp_id}")
+                # Link: used_var = 1 iff employee has at least 1 assignment
+                model.Add(count_var > 0).OnlyEnforceIf(used_var)
+                model.Add(count_var == 0).OnlyEnforceIf(used_var.Not())
+                employee_used_vars[emp_id] = used_var
     
-    # Calculate workload imbalance penalty
-    if emp_assignment_counts:
-        max_count = model.NewIntVar(0, len(slots), "max_assignments")
-        min_count = model.NewIntVar(0, len(slots), "min_assignments")
-        model.AddMaxEquality(max_count, list(emp_assignment_counts.values()))
-        model.AddMinEquality(min_count, list(emp_assignment_counts.values()))
-        workload_imbalance = model.NewIntVar(0, len(slots), "workload_imbalance")
-        model.Add(workload_imbalance == max_count - min_count)
-        print(f"  ✓ Created workload balancing with {len(emp_assignment_counts)} employees\n")
-    else:
+    # Mode-specific objective components
+    if optimization_mode == OPTIMIZATION_MODE_MINIMIZE:
+        # Mode: Minimize number of employees used
+        if employee_used_vars:
+            total_employees_used = model.NewIntVar(0, len(employees), "total_employees_used")
+            model.Add(total_employees_used == sum(employee_used_vars.values()))
+            
+            # Optional: hard constraint on max employees
+            if max_employees_to_use:
+                model.Add(total_employees_used <= max_employees_to_use)
+                print(f"  ✓ Hard limit: Use at most {max_employees_to_use} employees")
+            
+            print(f"  ✓ Objective: Minimize employee count (use fewest employees)\n")
+        else:
+            total_employees_used = model.NewIntVar(0, 0, "total_employees_used_zero")
+        
+        # Set workload_imbalance to zero for compatibility
         workload_imbalance = model.NewIntVar(0, 0, "workload_imbalance_zero")
+        
+    else:
+        # Mode: Balance workload (default behavior)
+        if emp_assignment_counts:
+            max_count = model.NewIntVar(0, len(slots), "max_assignments")
+            min_count = model.NewIntVar(0, len(slots), "min_assignments")
+            model.AddMaxEquality(max_count, list(emp_assignment_counts.values()))
+            model.AddMinEquality(min_count, list(emp_assignment_counts.values()))
+            workload_imbalance = model.NewIntVar(0, len(slots), "workload_imbalance")
+            model.Add(workload_imbalance == max_count - min_count)
+            print(f"  ✓ Objective: Balance workload across {len(emp_assignment_counts)} employees\n")
+        else:
+            workload_imbalance = model.NewIntVar(0, 0, "workload_imbalance_zero")
+        
+        # Set total_employees_used to zero for compatibility
+        total_employees_used = model.NewIntVar(0, 0, "total_employees_used_zero")
+    
+    # Store in context for result reporting
+    ctx['optimization_mode'] = optimization_mode
+    ctx['employee_used_vars'] = employee_used_vars
+    ctx['total_employees_used'] = total_employees_used
     
     # ========== ROTATION OFFSET OPTIMIZATION (OPTIONAL) ==========
     # Check if rotation offsets should be optimized by CP-SAT
@@ -366,7 +456,7 @@ def build_model(ctx):
                     cycle_days = len(rotation_seq)
                     
                     # For each slot in this demand, check if it violates rotation
-                    demand_slots = [s for s in slots if s.demand_id == demand_id]
+                    demand_slots = [s for s in slots if s.demandId == demand_id]
                     
                     for slot in demand_slots:
                         days_from_anchor = (slot.date - anchor_date).days
@@ -374,7 +464,7 @@ def build_model(ctx):
                         expected_shift = rotation_seq[rotation_index]
                         
                         # If slot shift doesn't match expected, any assignment violates rotation
-                        if slot.shift_code != expected_shift and slot.shift_code != 'O':
+                        if slot.shiftCode != expected_shift and slot.shiftCode != 'O':
                             # Create violation variable for this slot
                             violation_var = model.NewBoolVar(f"rotation_violation_{slot.slot_id}")
                             # If any employee assigned to this slot, it's a violation
@@ -400,11 +490,13 @@ def build_model(ctx):
     # ========== OBJECTIVE FUNCTION (ENHANCED) ==========
     # Priority levels:
     # 1. PRIMARY: Minimize unassigned slots (priority: 1,000,000)
-    # 2. SECONDARY: Minimize soft penalties (priority: 1,000)
-    #    - Rotation pattern violations
-    #    - Workload imbalance
-    # 3. TERTIARY: Maximize total assignments (priority: 1)
+    # 2. SECONDARY (mode-dependent):
+    #    - minimizeEmployeeCount: Minimize employee count (priority: 100,000)
+    #    - balanceWorkload: Minimize soft penalties (priority: 1,000)
+    # 3. TERTIARY: Minimize soft penalties (priority: 1,000)
+    # 4. QUATERNARY: Maximize total assignments (priority: 1)
     BIG_MULTIPLIER = 1_000_000
+    MEDIUM_MULTIPLIER = 100_000
     SOFT_MULTIPLIER = 1_000
     
     # Calculate total assignments for tertiary optimization
@@ -412,20 +504,38 @@ def build_model(ctx):
     
     print(f"[build_model] Setting objective: Multi-level optimization")
     print(f"  PRIORITY 1: Minimize unassigned slots ({BIG_MULTIPLIER:,}×)")
-    print(f"  PRIORITY 2: Minimize soft penalties ({SOFT_MULTIPLIER:,}×)")
-    print(f"    - Rotation violations")
-    print(f"    - Anchor offset penalties")
-    print(f"    - Workload imbalance") 
-    print(f"  PRIORITY 3: Maximize assignments (1×)")
     
-    # Combined objective
-    objective_expr = (
-        BIG_MULTIPLIER * total_unassigned +
-        SOFT_MULTIPLIER * total_rotation_violations +
-        SOFT_MULTIPLIER * total_anchor_penalty +
-        SOFT_MULTIPLIER * workload_imbalance -
-        total_assignments
-    )
+    if optimization_mode == OPTIMIZATION_MODE_MINIMIZE:
+        print(f"  PRIORITY 2: Minimize employee count ({MEDIUM_MULTIPLIER:,}×)")
+        print(f"  PRIORITY 3: Minimize soft penalties ({SOFT_MULTIPLIER:,}×)")
+        print(f"    - Rotation violations")
+        print(f"    - Anchor offset penalties")
+        print(f"  PRIORITY 4: Maximize assignments (1×)")
+        
+        # Combined objective for minimizeEmployeeCount mode
+        objective_expr = (
+            BIG_MULTIPLIER * total_unassigned +
+            MEDIUM_MULTIPLIER * total_employees_used +
+            SOFT_MULTIPLIER * total_rotation_violations +
+            SOFT_MULTIPLIER * total_anchor_penalty -
+            total_assignments
+        )
+    else:
+        print(f"  PRIORITY 2: Minimize soft penalties ({SOFT_MULTIPLIER:,}×)")
+        print(f"    - Rotation violations")
+        print(f"    - Anchor offset penalties")
+        print(f"    - Workload imbalance") 
+        print(f"  PRIORITY 3: Maximize assignments (1×)")
+        
+        # Combined objective for balanceWorkload mode
+        objective_expr = (
+            BIG_MULTIPLIER * total_unassigned +
+            SOFT_MULTIPLIER * total_rotation_violations +
+            SOFT_MULTIPLIER * total_anchor_penalty +
+            SOFT_MULTIPLIER * workload_imbalance -
+            total_assignments
+        )
+    
     model.Minimize(objective_expr)
     print(f"  ✓ Objective configured with multi-term optimization\n")
     
@@ -1094,10 +1204,18 @@ def solve(ctx):
     model = build_model(ctx)
     apply_constraints(model, ctx)
     
-    # Solve
+    # Solve with adaptive time limit
+    num_slots = len(ctx.get('slots', []))
+    num_employees = len(ctx.get('employees', []))
+    user_time_limit = ctx.get("timeLimit")
+    time_limit = calculate_adaptive_time_limit(num_slots, num_employees, user_time_limit)
+    
     print(f"[solve] Running CP-SAT solver...")
+    print(f"  Problem size: {num_slots} slots × {num_employees} employees")
+    print(f"  Time limit: {time_limit}s{' (user-specified)' if user_time_limit else ' (adaptive)'}")
+    
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = ctx.get("timeLimit", 15)
+    solver.parameters.max_time_in_seconds = time_limit
     status = solver.Solve(model)
     
     print(f"[solve] Raw status code: {status} (OPTIMAL={cp_model.OPTIMAL}, FEASIBLE={cp_model.FEASIBLE}, INFEASIBLE={cp_model.INFEASIBLE}, MODEL_INVALID={cp_model.MODEL_INVALID})")
@@ -1123,8 +1241,20 @@ def solve(ctx):
             ctx['optimized_offsets'] = optimized_offsets
             print(f"  ✓ Extracted {len(optimized_offsets)} optimized offsets\n")
     
-    # Calculate scores
-    hard_score, soft_score, violations, score_breakdown = calculate_scores(ctx, assignments)
+    # Calculate scores with lazy evaluation
+    # Only calculate soft scores if we have a feasible solution
+    if status in [cp_model.OPTIMAL, cp_model.FEASIBLE] and assignments:
+        hard_score, soft_score, violations, score_breakdown = calculate_scores(ctx, assignments)
+    else:
+        # Skip expensive soft constraint calculations for infeasible solutions
+        hard_score = float('inf') if status == cp_model.INFEASIBLE else 0
+        soft_score = 0
+        violations = {}
+        score_breakdown = {
+            'hard': {'unassignedSlots': len(ctx.get('slots', []))},
+            'soft': {}
+        }
+        print(f"[solve] Skipping soft constraint evaluation (status: {status})")
     
     end_time = time.time()
     end_timestamp = datetime.now().isoformat()
