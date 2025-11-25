@@ -43,6 +43,11 @@ jobs:
             
             echo "Latest commit: $(git log -1 --oneline)"
             
+            # Kill any process using port 8080
+            echo "Checking for processes on port 8080..."
+            sudo lsof -ti:8080 | xargs -r sudo kill -9 2>/dev/null || true
+            sleep 2
+            
             # Stop and remove existing container
             echo "Stopping existing container..."
             docker stop ngrs-solver-api 2>/dev/null || true
