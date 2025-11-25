@@ -1,0 +1,112 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "=========================================="
+            echo "Starting deployment at $(date)"
+            echo "=========================================="
+            
+            # Navigate to project directory
+            cd /home/ubuntu/ngrssolver
+            
+            # Pull latest changes
+            echo "Pulling latest code from GitHub..."
+            git pull origin main
+            
+            # Check if pull was successful
+            if [ $? -ne 0 ]; then
+              echo "Error: Failed to pull latest code"
+              exit 1
+            fi
+            
+            echo "Latest commit: $(git log -1 --oneline)"
+            
+            # Stop and remove existing container
+            echo "Stopping existing container..."
+            docker stop ngrs-solver-api 2>/dev/null || true
+            docker rm ngrs-solver-api 2>/dev/null || true
+            
+            # Build new Docker image
+            echo "Building Docker image..."
+            docker build -t ngrs-solver:latest .
+            
+            if [ $? -ne 0 ]; then
+              echo "Error: Docker build failed"
+              exit 1
+            fi
+            
+            # Start new container
+            echo "Starting new container..."
+            docker run -d \
+              --name ngrs-solver-api \
+              -p 8080:8080 \
+              -e REDIS_HOST=172.17.0.2 \
+              -e REDIS_PORT=6379 \
+              -e CORS_ORIGINS='*' \
+              -e PORT=8080 \
+              -e ADMIN_API_KEY=change-me-in-production \
+              ngrs-solver:latest
+            
+            if [ $? -ne 0 ]; then
+              echo "Error: Failed to start container"
+              exit 1
+            fi
+            
+            # Wait for container to be healthy
+            echo "Waiting for container to be healthy..."
+            sleep 10
+            
+            # Check container status
+            if docker ps | grep -q ngrs-solver-api; then
+              echo "✓ Container is running"
+              
+              # Test health endpoint
+              echo "Testing health endpoint..."
+              sleep 5
+              HEALTH_CHECK=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/health)
+              
+              if [ "$HEALTH_CHECK" = "200" ]; then
+                echo "✓ Health check passed (HTTP $HEALTH_CHECK)"
+                echo "=========================================="
+                echo "Deployment completed successfully!"
+                echo "=========================================="
+              else
+                echo "⚠ Warning: Health check returned HTTP $HEALTH_CHECK"
+                echo "Container logs:"
+                docker logs ngrs-solver-api --tail 20
+              fi
+            else
+              echo "✗ Error: Container not running"
+              echo "Container logs:"
+              docker logs ngrs-solver-api --tail 50
+              exit 1
+            fi
+            
+            # Show running containers
+            echo ""
+            echo "Running containers:"
+            docker ps --filter "name=ngrs"
+            
+            # Clean up old images
+            echo ""
+            echo "Cleaning up old Docker images..."
+            docker image prune -f --filter "dangling=true"
