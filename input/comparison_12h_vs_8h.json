@@ -1,0 +1,66 @@
+{
+  "planningHorizon": {
+    "startDate": "2025-12-01",
+    "endDate": "2025-12-31"
+  },
+  "publicHolidays": [
+    "2025-12-25"
+  ],
+  "shiftDefinitions": {
+    "D": {
+      "grossHours": 12.0,
+      "lunchBreak": 1.0,
+      "description": "Day shift (12h gross, 11h net)"
+    },
+    "N": {
+      "grossHours": 12.0,
+      "lunchBreak": 1.0,
+      "description": "Night shift (12h gross, 11h net)"
+    },
+    "P": {
+      "grossHours": 8.0,
+      "lunchBreak": 1.0,
+      "description": "Scheme P shift (8h gross, 7h net)"
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ_12H_DAY",
+      "name": "Standard 12-Hour Day Shift",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "A",
+      "shiftTypes": ["D"],
+      "headcountPerShift": {
+        "D": 4
+      },
+      "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      "includePH": true
+    },
+    {
+      "id": "REQ_8H_SCHEME_P",
+      "name": "Scheme P 8-Hour Shift",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "P",
+      "shiftTypes": ["P"],
+      "headcountPerShift": {
+        "P": 4
+      },
+      "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      "includePH": false
+    }
+  ],
+  "constraints": {
+    "maxWeeklyNormalHours": 44,
+    "maxMonthlyOTHours": 72,
+    "maxConsecutiveWorkDays": 12,
+    "minOffDaysPerWeek": 1,
+    "minRestBetweenShifts": 480,
+    "dailyHoursCap": {
+      "A": 14.0,
+      "B": 13.0,
+      "P": 9.0
+    }
+  }
+}

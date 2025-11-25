@@ -10,11 +10,13 @@ This folder contains Postman collection and environment files for testing the NG
 
 ## Recent Updates (v0.7.1 - Nov 25, 2025)
 
-### ICPMP Configuration Optimizer - Schema Change
+### ICPMP Configuration Optimizer - Schema Changes
+
+#### 1. Shift-Specific Headcount (`headcountPerShift`)
 
 The `/configure` endpoint now uses **`headcountPerShift`** instead of `headcountPerDay` for more precise shift coverage specification.
 
-#### Old Schema (Deprecated)
+##### Old Schema (Deprecated)
 ```json
 {
   "requirements": [
@@ -26,7 +28,7 @@ The `/configure` endpoint now uses **`headcountPerShift`** instead of `headcount
 }
 ```
 
-#### New Schema (Required)
+##### New Schema (Required)
 ```json
 {
   "requirements": [
@@ -40,6 +42,68 @@ The `/configure` endpoint now uses **`headcountPerShift`** instead of `headcount
   ]
 }
 ```
+
+#### 2. Shift Hour Definitions (`shiftDefinitions`)
+
+**NEW**: You can now specify custom shift hours for accurate calculations. This is especially important for:
+- Scheme P shifts (8-hour shifts)
+- Non-standard shift durations
+- Mixed shift types with different hours
+
+##### Default Behavior (Without shiftDefinitions)
+If not provided, all shifts default to **11.0 net hours** (12 gross - 1 lunch):
+
+```json
+{
+  "requirements": [{"shiftTypes": ["D"], "headcountPerShift": {"D": 4}}],
+  "constraints": {"maxWeeklyNormalHours": 44}
+}
+// D shift assumes 11.0 hours
+```
+
+##### Custom Shift Hours (With shiftDefinitions)
+For accurate calculations with 8-hour Scheme P shifts:
+
+```json
+{
+  "shiftDefinitions": {
+    "W": {
+      "grossHours": 8.0,
+      "lunchBreak": 1.0,
+      "description": "Wing shift (8h gross, 7h net)"
+    },
+    "E": {
+      "grossHours": 8.0,
+      "lunchBreak": 1.0,
+      "description": "Evening shift (8h gross, 7h net)"
+    }
+  },
+  "requirements": [
+    {
+      "shiftTypes": ["W", "E"],
+      "headcountPerShift": {"W": 2, "E": 1}
+    }
+  ]
+}
+```
+
+##### Comparing 12-Hour vs 8-Hour Shifts
+```json
+{
+  "shiftDefinitions": {
+    "D": {"grossHours": 12.0, "lunchBreak": 1.0},  // 11h net
+    "P": {"grossHours": 8.0, "lunchBreak": 1.0}    // 7h net
+  },
+  "requirements": [
+    {"id": "REQ_12H", "shiftTypes": ["D"], "headcountPerShift": {"D": 4}},
+    {"id": "REQ_8H", "shiftTypes": ["P"], "headcountPerShift": {"P": 4}}
+  ]
+}
+```
+
+**Why this matters**: With `maxWeeklyNormalHours: 44`:
+- 12-hour shifts: ~4 days/week → fewer employees needed
+- 8-hour shifts: ~5.5 days/week → more employees needed for same coverage
 
 ### Response Changes
 

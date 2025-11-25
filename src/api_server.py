@@ -438,9 +438,16 @@ async def configure_endpoint(
             }
         ],
         "constraints": {...},
-        "planningHorizon": {...}
+        "planningHorizon": {...},
+        "shiftDefinitions": {  // Optional
+            "D": {"grossHours": 12.0, "lunchBreak": 1.0},
+            "N": {"grossHours": 12.0, "lunchBreak": 1.0},
+            "P": {"grossHours": 8.0, "lunchBreak": 1.0}
+        }
       }
     - Uploaded file: multipart/form-data with file field (same schema)
+    
+    Note: If shiftDefinitions is not provided, default hours are used (11.0 = 12 gross - 1 lunch).
 
     Returns:
     - 200: Optimized configuration with per-shift recommendations
@@ -508,12 +515,16 @@ async def configure_endpoint(
 
         # Use default constraints if not provided
         constraints = config_input.get("constraints", {})
+        
+        # Extract optional shift definitions
+        shift_definitions = config_input.get("shiftDefinitions", None)
 
         # ====== OPTIMIZE ======
         optimized_result = optimize_all_requirements(
             requirements=config_input["requirements"],
             constraints=constraints,
-            planning_horizon=config_input["planningHorizon"]
+            planning_horizon=config_input["planningHorizon"],
+            shift_definitions=shift_definitions
         )
 
         # ====== FORMAT OUTPUT ======

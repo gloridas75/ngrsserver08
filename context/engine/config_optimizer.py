@@ -8,7 +8,7 @@ This module optimizes roster configuration by finding the best:
 """
 
 from datetime import datetime
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 from itertools import product
 from .coverage_simulator import (
     simulate_coverage,
@@ -108,6 +108,7 @@ def optimize_requirement_config(
     constraints: Dict,
     days_in_horizon: int,
     anchor_date: datetime,
+    shift_definitions: Optional[Dict[str, Dict]] = None,
     top_n: int = 5
 ) -> List[Dict]:
     """
@@ -118,6 +119,8 @@ def optimize_requirement_config(
         constraints: Constraint parameters
         days_in_horizon: Planning horizon length
         anchor_date: Coverage anchor date
+        shift_definitions: Optional dict mapping shift codes to definitions
+                          e.g., {"D": {"grossHours": 12.0, "lunchBreak": 1.0}}
         top_n: Number of top patterns to return (default: 5)
     
     Returns:
@@ -138,8 +141,7 @@ def optimize_requirement_config(
 
     # Evaluate each candidate
     all_configs = []
-
-    shift_normal_hours = 11.0  # 12 gross - 1 lunch
+    
     max_weekly_hours = constraints.get('maxWeeklyNormalHours', 44)
 
     for pattern in candidates:
@@ -157,12 +159,22 @@ def optimize_requirement_config(
             if shift_days == 0:
                 continue
             headcount = headcount_per_shift.get(shift, 0)
+            
+            # Get shift-specific hours
+            if shift_definitions and shift in shift_definitions:
+                shift_def = shift_definitions[shift]
+                gross_hours = shift_def.get('grossHours', 12.0)
+                lunch_break = shift_def.get('lunchBreak', 1.0)
+                shift_hours = gross_hours - lunch_break
+            else:
+                shift_hours = 11.0  # Default: 12 gross - 1 lunch
+            
             min_employees = calculate_min_employees(
                 pattern,
                 headcount,
                 days_in_horizon,
                 max_weekly_hours,
-                shift_normal_hours
+                shift_hours
             )
             shift_employee_counts[shift] = min_employees
             min_employees_total += min_employees
@@ -216,7 +228,8 @@ def optimize_requirement_config(
 def optimize_all_requirements(
     requirements: List[Dict],
     constraints: Dict,
-    planning_horizon: Dict
+    planning_horizon: Dict,
+    shift_definitions: Optional[Dict[str, Dict]] = None
 ) -> Dict:
     """
     Optimize configuration for all requirements.
@@ -225,6 +238,8 @@ def optimize_all_requirements(
         requirements: List of requirement specifications
         constraints: Constraint parameters
         planning_horizon: Planning horizon with start/end dates
+        shift_definitions: Optional dict mapping shift codes to definitions
+                          e.g., {"D": {"grossHours": 12.0, "lunchBreak": 1.0}}
     
     Returns:
         Optimal configuration for all requirements
@@ -251,6 +266,7 @@ def optimize_all_requirements(
             constraints,
             days_in_horizon,
             start_date,
+            shift_definitions=shift_definitions,
             top_n=5  # Get top 5 patterns
         )
         
