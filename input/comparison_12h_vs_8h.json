@@ -30,9 +30,10 @@
       "productType": "APO",
       "rank": "APO",
       "scheme": "A",
-      "shiftTypes": ["D"],
+      "shiftTypes": ["D", "N"],
       "headcountPerShift": {
-        "D": 4
+        "D": 4,
+        "N": 4
       },
       "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       "includePH": true
