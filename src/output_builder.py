@@ -13,13 +13,33 @@ from context.engine.time_utils import split_shift_hours
 
 def compute_input_hash(input_data):
     """Compute SHA256 hash of input JSON (excluding non-serializable runtime data)."""
-    # Remove runtime-added keys that aren't part of original input
-    # This includes CP-SAT objects (IntVar), slots, and other solver internals
-    clean_data = {k: v for k, v in input_data.items() 
-                  if k not in ['slots', 'x', 'model', 'timeLimit', 'unassigned', 
-                               'offset_vars', 'optimized_offsets', 'total_unassigned']}
-    json_str = json.dumps(clean_data, sort_keys=True)
-    return "sha256:" + hashlib.sha256(json_str.encode()).hexdigest()
+    # Create a clean copy with only JSON-serializable data
+    # Exclude keys that contain solver-internal objects
+    exclude_keys = {
+        'slots', 'x', 'model', 'timeLimit', 'unassigned', 
+        'offset_vars', 'optimized_offsets', 'total_unassigned',
+        'solver', 'cp_model', 'variables'
+    }
+    
+    def clean_dict(obj):
+        """Recursively clean dict to remove non-serializable objects."""
+        if isinstance(obj, dict):
+            return {k: clean_dict(v) for k, v in obj.items() if k not in exclude_keys}
+        elif isinstance(obj, (list, tuple)):
+            return [clean_dict(item) for item in obj]
+        elif isinstance(obj, (str, int, float, bool, type(None))):
+            return obj
+        else:
+            # Skip non-serializable objects (IntVar, Slot, etc.)
+            return None
+    
+    try:
+        clean_data = clean_dict(input_data)
+        json_str = json.dumps(clean_data, sort_keys=True, default=str)
+        return "sha256:" + hashlib.sha256(json_str.encode()).hexdigest()
+    except Exception as e:
+        # Fallback: use a simple hash of string representation
+        return "sha256:" + hashlib.sha256(str(input_data).encode()).hexdigest()
 
 
 def build_output(input_data, ctx, status, solver_result, assignments, violations):
