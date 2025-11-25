@@ -224,5 +224,6 @@ class AsyncStatsResponse(BaseModel):
     ttl_seconds: int = Field(..., description="Result TTL in seconds")
     workers: int = Field(..., description="Number of active workers")
     redis_connected: bool = Field(..., description="Redis connection status")
+    jobs: Optional[List[Dict[str, Any]]] = Field(None, description="Detailed job list (when details=true)")
     
     model_config = ConfigDict(extra='allow')

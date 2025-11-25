@@ -24,7 +24,7 @@ from datetime import datetime
 # Setup path
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from fastapi import FastAPI, File, UploadFile, Query, HTTPException, Request
+from fastapi import FastAPI, File, UploadFile, Query, HTTPException, Request, Header
 from fastapi.responses import ORJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -69,6 +69,12 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
         # Add request ID to response headers
         response.headers["X-Request-ID"] = request_id
         return response
+
+# ============================================================================
+# ADMIN API KEY
+# ============================================================================
+
+ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "change-me-in-production")
 
 # ============================================================================
 # FASTAPI APP
@@ -141,6 +147,29 @@ async def shutdown_event():
         cleanup_worker_pool(worker_processes, worker_stop_event)
     else:
         logger.info("No workers to shutdown (workers run separately)")
+
+
+def restart_workers():
+    """Restart worker pool"""
+    global worker_processes, worker_stop_event
+    
+    # Stop existing workers
+    if worker_stop_event and worker_processes:
+        logger.info("Stopping existing workers...")
+        from src.redis_worker import cleanup_worker_pool
+        cleanup_worker_pool(worker_processes, worker_stop_event)
+        worker_processes.clear()
+    
+    # Start new workers
+    logger.info(f"Starting {NUM_WORKERS} new workers...")
+    new_processes, new_stop_event = start_worker_pool(
+        num_workers=NUM_WORKERS,
+        ttl_seconds=int(os.getenv("RESULT_TTL_SECONDS", "3600"))
+    )
+    worker_processes = new_processes
+    worker_stop_event = new_stop_event
+    logger.info(f"Worker pool restarted with {len(worker_processes)} workers")
+
 
 # ============================================================================
 # HELPER FUNCTIONS
@@ -589,9 +618,12 @@ async def solve_async(
 
 
 @app.get("/solve/async/stats", response_model=AsyncStatsResponse)
-async def get_async_stats():
+async def get_async_stats(details: bool = Query(False, description="Include detailed job list with UUIDs and timestamps")):
     """
     Get statistics about async job queue and workers.
+    
+    Query parameters:
+    - details: If true, includes list of all jobs with UUIDs and timestamps (default: false)
     
     Returns:
     - 200: Current statistics
@@ -601,7 +633,99 @@ async def get_async_stats():
     stats = job_manager.get_stats()
     stats["workers"] = NUM_WORKERS
     
+    # Add detailed job list if requested
+    if details:
+        stats["jobs"] = job_manager.get_all_jobs_details()
+    
     return AsyncStatsResponse(**stats)
+
+
+@app.post("/admin/reset")
+async def admin_reset(
+    x_api_key: str = Header(..., description="Admin API key for authentication")
+):
+    """
+    **ADMIN ONLY**: Complete system reset - flush Redis and restart workers.
+    
+    Requires admin API key in x-api-key header.
+    
+    This will:
+    - Flush all Redis data (jobs, results, queue)
+    - Restart all worker processes
+    - Reset job counters and stats
+    
+    **WARNING**: This will delete all active jobs and results!
+    
+    Security:
+    - Set ADMIN_API_KEY environment variable in production
+    - Keep the key secret and rotate regularly
+    - Only use when necessary (e.g., after critical errors)
+    
+    Returns:
+    - 200: System reset successful
+    - 401: Invalid or missing API key
+    - 500: Reset failed
+    
+    Example:
+    ```bash
+    curl -X POST https://api.example.com/admin/reset \\
+      -H "x-api-key: your-secret-key"
+    ```
+    """
+    # Validate API key
+    if x_api_key != ADMIN_API_KEY:
+        logger.warning(f"Admin reset attempted with invalid API key")
+        raise HTTPException(status_code=401, detail="Invalid API key")
+    
+    try:
+        logger.warning("Admin reset initiated - flushing Redis and restarting workers")
+        
+        # 1. Flush Redis
+        logger.info("Flushing Redis database...")
+        job_manager.redis.flushdb()
+        logger.info("Redis flushed")
+        
+        # 2. Restart workers (only if workers are managed by this process)
+        if START_WORKERS and worker_processes:
+            logger.info("Restarting worker pool...")
+            restart_workers()
+            logger.info("Workers restarted")
+            workers_restarted = True
+        else:
+            logger.info("Workers run separately - restart manually if needed")
+            workers_restarted = False
+        
+        # 3. Verify system state
+        stats = job_manager.get_stats()
+        stats["workers"] = NUM_WORKERS
+        
+        actions = [
+            "Redis database flushed (all jobs and results deleted)",
+            "System ready for new jobs"
+        ]
+        
+        if workers_restarted:
+            actions.insert(1, f"Worker pool restarted ({NUM_WORKERS} workers)")
+        else:
+            actions.insert(1, "Workers run separately (not restarted)")
+        
+        logger.warning("Admin reset completed successfully")
+        
+        return {
+            "status": "success",
+            "message": "System reset completed",
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "actions": actions,
+            "workers_restarted": workers_restarted,
+            "current_stats": stats
+        }
+        
+    except Exception as e:
+        logger.error(f"Admin reset failed: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Reset failed: {str(e)}"
+        )
 
 
 @app.get("/solve/async/{job_id}", response_model=JobStatusResponse)

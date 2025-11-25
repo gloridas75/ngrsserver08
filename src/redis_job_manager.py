@@ -394,3 +394,40 @@ class RedisJobManager:
     def get_queue_length(self) -> int:
         """Get current queue length"""
         return self.redis.llen(self.queue_key)
+    
+    def get_all_jobs_details(self) -> list:
+        """
+        Get detailed information about all jobs including UUIDs and timestamps
+        
+        Returns:
+            List of job details with id, status, created_at, updated_at
+        """
+        jobs = []
+        cursor = 0
+        pattern = f"{self.key_prefix}:job:*"
+        
+        while True:
+            cursor, keys = self.redis.scan(cursor, match=pattern, count=100)
+            
+            for key in keys:
+                if key == self.queue_key:
+                    continue
+                
+                job_id = key.split(':')[-1]
+                job_data = self.redis.hgetall(key)
+                
+                if job_data:
+                    jobs.append({
+                        'job_id': job_id,
+                        'status': job_data.get('status', 'unknown'),
+                        'created_at': job_data.get('created_at'),
+                        'updated_at': job_data.get('updated_at'),
+                        'has_result': self.redis.exists(self._result_key(job_id))
+                    })
+            
+            if cursor == 0:
+                break
+        
+        # Sort by created_at (newest first)
+        jobs.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+        return jobs
