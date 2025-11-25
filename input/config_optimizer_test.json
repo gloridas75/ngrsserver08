@@ -11,7 +11,7 @@
       "rank": "G1",
       "scheme": "A",
       "shiftTypes": ["D"],
-      "headcountPerDay": 2
+      "headcountPerShift": {"D": 2}
     },
     {
       "id": "REQ_NIGHT_PATROL",
@@ -20,7 +20,7 @@
       "rank": "G2",
       "scheme": "B",
       "shiftTypes": ["N"],
-      "headcountPerDay": 1
+      "headcountPerShift": {"N": 1}
     }
   ],
   "constraints": {

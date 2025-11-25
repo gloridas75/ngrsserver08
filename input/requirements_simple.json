@@ -6,24 +6,6 @@
   "publicHolidays": [
     "2025-12-25"
   ],
-  "shifts": [
-    {
-      "code": "D",
-      "name": "Day Shift",
-      "startTime": "07:00",
-      "endTime": "19:00",
-      "grossHours": 12.0,
-      "lunchBreak": 1.0
-    },
-    {
-      "code": "N",
-      "name": "Night Shift",
-      "startTime": "19:00",
-      "endTime": "07:00",
-      "grossHours": 12.0,
-      "lunchBreak": 1.0
-    }
-  ],
   "requirements": [
     {
       "id": "REQ_APO_DAY",
@@ -32,7 +14,10 @@
       "rank": "APO",
       "scheme": "A",
       "shiftTypes": ["D","N"],
-      "headcountPerDay": 50,
+      "headcountPerShift": {
+        "D": 25,
+        "N": 25
+      },
       "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       "includePH": false
     }
@@ -48,10 +33,5 @@
       "B": 13.0,
       "P": 9.0
     }
-  },
-  "optimizationGoals": {
-    "minimizeEmployeeCount": true,
-    "maximizeCoverage": true,
-    "balanceWorkload": true
   }
 }
