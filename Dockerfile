@@ -24,7 +24,7 @@ COPY requirements.txt ./
 # Install Python dependencies
 RUN pip install --upgrade pip setuptools wheel && \
     pip install -e . && \
-    pip install fastapi uvicorn starlette python-multipart orjson aiofiles boto3 requests
+    pip install fastapi uvicorn starlette python-multipart orjson aiofiles boto3 requests redis python-dotenv
 
 # Copy application code
 COPY context/ ./context/
