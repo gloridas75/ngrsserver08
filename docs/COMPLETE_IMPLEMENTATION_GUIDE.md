@@ -1349,9 +1349,9 @@ if result['score']['hard'] > 0:
         print(f"Violation: {v['constraint']} - {v['message']}")
 ```
 
-**4. Use debug_solver.py**
+**4. Use test_scripts/General/debug_solver.py**
 ```bash
-python debug_solver.py input.json
+python test_scripts/General/debug_solver.py input.json
 ```
 
 ### Common Issues & Solutions

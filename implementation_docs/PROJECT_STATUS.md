@@ -365,7 +365,7 @@ docker-compose up
 vim context/constraints/C1_TimeWindow.py
 
 # Test changes
-python debug_solver.py
+python test_scripts/General/debug_solver.py
 ```
 
 ### 2. Run Solver (CLI)

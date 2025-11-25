@@ -31,52 +31,8 @@
       "productType": "APO",
       "rank": "APO",
       "scheme": "A",
-      "shiftTypes": ["D"],
-      "headcountPerDay": 4,
-      "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      "includePH": false
-    },
-    {
-      "id": "REQ_APO_NIGHT",
-      "name": "APO Night Patrol",
-      "productType": "APO",
-      "rank": "APO",
-      "scheme": "B",
-      "shiftTypes": ["N"],
-      "headcountPerDay": 1,
-      "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      "includePH": false
-    },
-    {
-      "id": "REQ_CVSO_NIGHT_1",
-      "name": "CVSO Night Check 1",
-      "productType": "CVSO",
-      "rank": "CVSO2",
-      "scheme": "B",
-      "shiftTypes": ["N"],
-      "headcountPerDay": 1,
-      "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      "includePH": false
-    },
-    {
-      "id": "REQ_CVSO_NIGHT_2",
-      "name": "CVSO Night Check 2",
-      "productType": "CVSO",
-      "rank": "CVSO2",
-      "scheme": "B",
-      "shiftTypes": ["N"],
-      "headcountPerDay": 1,
-      "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      "includePH": false
-    },
-    {
-      "id": "REQ_CVSO_NIGHT_3",
-      "name": "CVSO Night Check 3",
-      "productType": "CVSO",
-      "rank": "CVSO2",
-      "scheme": "B",
-      "shiftTypes": ["N"],
-      "headcountPerDay": 1,
+      "shiftTypes": ["D","N"],
+      "headcountPerDay": 50,
       "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       "includePH": false
     }

@@ -14,7 +14,7 @@ def simulate_coverage(
     pattern: List[str],
     employee_count: int,
     offsets: List[int],
-    headcount_per_day: int,
+    headcount_per_shift: Dict[str, int],
     days_in_horizon: int,
     anchor_date: datetime
 ) -> Dict:
@@ -25,7 +25,7 @@ def simulate_coverage(
         pattern: Work pattern like ["D","D","D","D","O","O"]
         employee_count: Number of employees assigned
         offsets: Rotation offsets for each employee
-        headcount_per_day: Required headcount per day
+        headcount_per_shift: Required headcount per shift type (e.g., {"D": 4, "N": 2})
         days_in_horizon: Planning horizon length
         anchor_date: Coverage anchor date
     
@@ -34,11 +34,13 @@ def simulate_coverage(
     """
     cycle_length = len(pattern)
     coverage_map = {}  # date -> available employees
+    shift_coverage_map = {}  # date -> {shift: count}
     
     # Simulate each day
     for day_offset in range(days_in_horizon):
         current_date = anchor_date + timedelta(days=day_offset)
         available_employees = []
+        shift_counts = {}
         
         # Check each employee
         for emp_idx in range(employee_count):
@@ -54,26 +56,45 @@ def simulate_coverage(
             # If not 'O' (off), employee is available
             if expected_shift != 'O':
                 available_employees.append(emp_idx)
+                shift_counts[expected_shift] = shift_counts.get(expected_shift, 0) + 1
         
         coverage_map[day_offset] = len(available_employees)
+        shift_coverage_map[day_offset] = shift_counts
     
     # Calculate statistics
     total_days = len(coverage_map)
-    days_fully_covered = sum(1 for count in coverage_map.values() if count >= headcount_per_day)
-    days_undercovered = sum(1 for count in coverage_map.values() if count < headcount_per_day)
-    days_overcovered = sum(1 for count in coverage_map.values() if count > headcount_per_day)
+    
+    # For mixed patterns, check if ANY shift requirement is met
+    # For single-shift patterns, check the specific shift
+    days_fully_covered = 0
+    days_undercovered = 0
+    
+    # Calculate total required per day (sum of all shift requirements)
+    total_required_per_day = sum(headcount_per_shift.values())
+    
+    for day_offset, shift_counts in shift_coverage_map.items():
+        day_covered = True
+        for shift, required in headcount_per_shift.items():
+            if shift_counts.get(shift, 0) < required:
+                day_covered = False
+                break
+        if day_covered:
+            days_fully_covered += 1
+        else:
+            days_undercovered += 1
     
     avg_coverage = sum(coverage_map.values()) / total_days if total_days > 0 else 0
     
     return {
         'totalDays': total_days,
-        'requiredPerDay': headcount_per_day,
+        'requiredPerShift': headcount_per_shift,
+        'requiredPerDay': total_required_per_day,
         'daysFullyCovered': days_fully_covered,
         'daysUndercovered': days_undercovered,
-        'daysOvercovered': days_overcovered,
         'coverageRate': (days_fully_covered / total_days * 100) if total_days > 0 else 0,
         'averageAvailable': round(avg_coverage, 2),
-        'coverageMap': coverage_map
+        'coverageMap': coverage_map,
+        'shiftCoverageMap': shift_coverage_map
     }
 
 
@@ -186,18 +207,19 @@ def generate_staggered_offsets(employee_count: int, cycle_length: int) -> List[i
     return offsets
 
 
-def evaluate_coverage_quality(coverage_map: Dict[int, int], required: int) -> Dict:
+def evaluate_coverage_quality(coverage_map: Dict[int, int], headcount_per_shift: Dict[str, int]) -> Dict:
     """
     Evaluate quality of coverage distribution.
     
     Args:
         coverage_map: Map of day_offset -> available_employee_count
-        required: Required headcount per day
+        headcount_per_shift: Required headcount per shift type
     
     Returns:
         Quality metrics
     """
     values = list(coverage_map.values())
+    required = sum(headcount_per_shift.values())
     
     # Calculate variance
     mean = sum(values) / len(values) if values else 0

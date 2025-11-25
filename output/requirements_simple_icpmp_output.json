@@ -1,0 +1,1156 @@
+{
+  "schemaVersion": "0.8",
+  "configType": "optimizedRosterConfiguration",
+  "generatedAt": "2025-11-24T17:46:43.716992",
+  "summary": {
+    "totalRequirements": 5,
+    "totalEmployees": 19,
+    "planningHorizon": {
+      "startDate": "2025-12-01T00:00:00",
+      "endDate": "2025-12-31T00:00:00",
+      "days": 31
+    }
+  },
+  "recommendations": [
+    {
+      "requirementId": "REQ_APO_DAY",
+      "requirementName": "APO Day Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "A",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 7,
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "cycleLength": 6,
+        "score": 70.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 4.68,
+        "requiredPerDay": 4
+      },
+      "quality": {
+        "balanceScore": 99.78,
+        "variance": 0.22,
+        "totalExcessCoverage": 21
+      },
+      "notes": [
+        "\u2b50 RECOMMENDED: Best overall score",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (7 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_DAY",
+      "requirementName": "APO Day Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "A",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "O",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 7,
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0
+        ],
+        "cycleLength": 6,
+        "score": 70.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 4.68,
+        "requiredPerDay": 4
+      },
+      "quality": {
+        "balanceScore": 99.78,
+        "variance": 0.22,
+        "totalExcessCoverage": 21
+      },
+      "notes": [
+        "Alternative #2: Second best option",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (7 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_DAY",
+      "requirementName": "APO Day Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "A",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 8,
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 80.23
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 6.65,
+        "requiredPerDay": 4
+      },
+      "quality": {
+        "balanceScore": 99.77,
+        "variance": 0.23,
+        "totalExcessCoverage": 82
+      },
+      "notes": [
+        "Alternative #3: Third best option",
+        "Pattern has 5 work days and 1 off days per 6-day cycle",
+        "\u2713 Small team (8 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_DAY",
+      "requirementName": "APO Day Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "A",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "O",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 8,
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 1693.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 83.87,
+        "daysFullyCovered": 26,
+        "daysUndercovered": 5,
+        "averageAvailable": 4.0,
+        "requiredPerDay": 4
+      },
+      "quality": {
+        "balanceScore": 99.68,
+        "variance": 0.32,
+        "totalExcessCoverage": 5
+      },
+      "notes": [
+        "Alternative #4",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (8 employees) - easy to manage",
+        "Warning: Only 83.9% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_DAY",
+      "requirementName": "APO Day Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "A",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 8,
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 3306.46
+      },
+      "coverage": {
+        "expectedCoverageRate": 67.74,
+        "daysFullyCovered": 21,
+        "daysUndercovered": 10,
+        "averageAvailable": 4.0,
+        "requiredPerDay": 4
+      },
+      "quality": {
+        "balanceScore": 99.35,
+        "variance": 0.65,
+        "totalExcessCoverage": 10
+      },
+      "notes": [
+        "Alternative #5",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (8 employees) - easy to manage",
+        "Warning: Only 67.7% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_NIGHT",
+      "requirementName": "APO Night Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "B",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "O",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 31
+      },
+      "notes": [
+        "\u2b50 RECOMMENDED: Best overall score",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_NIGHT",
+      "requirementName": "APO Night Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "B",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.25
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.48,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.75,
+        "variance": 0.25,
+        "totalExcessCoverage": 46
+      },
+      "notes": [
+        "Alternative #2: Second best option",
+        "Pattern has 5 work days and 1 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_NIGHT",
+      "requirementName": "APO Night Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "B",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.68
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 1.97,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.32,
+        "variance": 0.68,
+        "totalExcessCoverage": 30
+      },
+      "notes": [
+        "Alternative #3: Third best option",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_NIGHT",
+      "requirementName": "APO Night Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "B",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "O",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 1633.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 83.87,
+        "daysFullyCovered": 26,
+        "daysUndercovered": 5,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.68,
+        "variance": 0.32,
+        "totalExcessCoverage": 5
+      },
+      "notes": [
+        "Alternative #4",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 83.9% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_APO_NIGHT",
+      "requirementName": "APO Night Patrol",
+      "productType": "APO",
+      "rank": "APO",
+      "scheme": "B",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 3246.46
+      },
+      "coverage": {
+        "expectedCoverageRate": 67.74,
+        "daysFullyCovered": 21,
+        "daysUndercovered": 10,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.35,
+        "variance": 0.65,
+        "totalExcessCoverage": 10
+      },
+      "notes": [
+        "Alternative #5",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 67.7% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_1",
+      "requirementName": "CVSO Night Check 1",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "O",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 31
+      },
+      "notes": [
+        "\u2b50 RECOMMENDED: Best overall score",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_1",
+      "requirementName": "CVSO Night Check 1",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.25
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.48,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.75,
+        "variance": 0.25,
+        "totalExcessCoverage": 46
+      },
+      "notes": [
+        "Alternative #2: Second best option",
+        "Pattern has 5 work days and 1 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_1",
+      "requirementName": "CVSO Night Check 1",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.68
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 1.97,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.32,
+        "variance": 0.68,
+        "totalExcessCoverage": 30
+      },
+      "notes": [
+        "Alternative #3: Third best option",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_1",
+      "requirementName": "CVSO Night Check 1",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "O",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 1633.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 83.87,
+        "daysFullyCovered": 26,
+        "daysUndercovered": 5,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.68,
+        "variance": 0.32,
+        "totalExcessCoverage": 5
+      },
+      "notes": [
+        "Alternative #4",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 83.9% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_1",
+      "requirementName": "CVSO Night Check 1",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 3246.46
+      },
+      "coverage": {
+        "expectedCoverageRate": 67.74,
+        "daysFullyCovered": 21,
+        "daysUndercovered": 10,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.35,
+        "variance": 0.65,
+        "totalExcessCoverage": 10
+      },
+      "notes": [
+        "Alternative #5",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 67.7% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_2",
+      "requirementName": "CVSO Night Check 2",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "O",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 31
+      },
+      "notes": [
+        "\u2b50 RECOMMENDED: Best overall score",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_2",
+      "requirementName": "CVSO Night Check 2",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.25
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.48,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.75,
+        "variance": 0.25,
+        "totalExcessCoverage": 46
+      },
+      "notes": [
+        "Alternative #2: Second best option",
+        "Pattern has 5 work days and 1 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_2",
+      "requirementName": "CVSO Night Check 2",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.68
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 1.97,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.32,
+        "variance": 0.68,
+        "totalExcessCoverage": 30
+      },
+      "notes": [
+        "Alternative #3: Third best option",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_2",
+      "requirementName": "CVSO Night Check 2",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "O",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 1633.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 83.87,
+        "daysFullyCovered": 26,
+        "daysUndercovered": 5,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.68,
+        "variance": 0.32,
+        "totalExcessCoverage": 5
+      },
+      "notes": [
+        "Alternative #4",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 83.9% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_2",
+      "requirementName": "CVSO Night Check 2",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 3246.46
+      },
+      "coverage": {
+        "expectedCoverageRate": 67.74,
+        "daysFullyCovered": 21,
+        "daysUndercovered": 10,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.35,
+        "variance": 0.65,
+        "totalExcessCoverage": 10
+      },
+      "notes": [
+        "Alternative #5",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 67.7% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_3",
+      "requirementName": "CVSO Night Check 3",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "O",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 31
+      },
+      "notes": [
+        "\u2b50 RECOMMENDED: Best overall score",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_3",
+      "requirementName": "CVSO Night Check 3",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "N",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.25
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 2.48,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.75,
+        "variance": 0.25,
+        "totalExcessCoverage": 46
+      },
+      "notes": [
+        "Alternative #2: Second best option",
+        "Pattern has 5 work days and 1 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_3",
+      "requirementName": "CVSO Night Check 3",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 3,
+        "rotationOffsets": [
+          0,
+          1,
+          2
+        ],
+        "cycleLength": 6,
+        "score": 30.68
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 1.97,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.32,
+        "variance": 0.68,
+        "totalExcessCoverage": 30
+      },
+      "notes": [
+        "Alternative #3: Third best option",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Small team (3 employees) - easy to manage",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_3",
+      "requirementName": "CVSO Night Check 3",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "O",
+          "N",
+          "N",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 1633.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 83.87,
+        "daysFullyCovered": 26,
+        "daysUndercovered": 5,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.68,
+        "variance": 0.32,
+        "totalExcessCoverage": 5
+      },
+      "notes": [
+        "Alternative #4",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 83.9% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_CVSO_NIGHT_3",
+      "requirementName": "CVSO Night Check 3",
+      "productType": "CVSO",
+      "rank": "CVSO2",
+      "scheme": "B",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "N",
+          "N",
+          "N",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 2,
+        "rotationOffsets": [
+          0,
+          1
+        ],
+        "cycleLength": 6,
+        "score": 3246.46
+      },
+      "coverage": {
+        "expectedCoverageRate": 67.74,
+        "daysFullyCovered": 21,
+        "daysUndercovered": 10,
+        "averageAvailable": 1.0,
+        "requiredPerDay": 1
+      },
+      "quality": {
+        "balanceScore": 99.35,
+        "variance": 0.65,
+        "totalExcessCoverage": 10
+      },
+      "notes": [
+        "Alternative #5",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Small team (2 employees) - easy to manage",
+        "Warning: Only 67.7% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    }
+  ]
+}

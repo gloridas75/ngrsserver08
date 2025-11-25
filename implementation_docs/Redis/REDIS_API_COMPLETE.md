@@ -149,7 +149,7 @@ Cancel/delete job
 
 ### Complete Integration Test ✅
 ```bash
-python test_redis_api_complete.py
+python test_scripts/Redis/test_redis_api_complete.py
 ```
 
 **Output**:

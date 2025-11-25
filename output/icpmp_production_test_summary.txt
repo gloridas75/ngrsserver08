@@ -1,0 +1,151 @@
+===============================================================================
+ICPMP PRODUCTION TEST SUMMARY
+===============================================================================
+Test Date: 2025-11-24
+Production Endpoint: https://ngrssolver08.comcentricapps.com/configure
+Input File: input/requirements_simple.json
+Output File: output/icpmp_production_test.json
+
+Generated: 2025-11-24T10:12:45.542404
+Processing Time: 8ms
+
+===============================================================================
+1. TOTAL REQUIREMENTS PROCESSED
+===============================================================================
+Input Requirements: 5
+  - REQ_APO_DAY (D shifts)
+  - REQ_APO_NIGHT (N shifts)
+  - REQ_CVSO_NIGHT_1 (N shifts)
+  - REQ_CVSO_NIGHT_2 (N shifts)
+  - REQ_CVSO_NIGHT_3 (N shifts)
+
+Output Requirements: 3
+  - REQ_APO_DAY
+  - REQ_APO_NIGHT
+  - REQ_CVSO_NIGHT_1
+
+⚠️ WARNING: Only 3 out of 5 requirements were processed!
+Missing: REQ_CVSO_NIGHT_2, REQ_CVSO_NIGHT_3
+
+===============================================================================
+2. TOTAL EMPLOYEES NEEDED (BEST PATTERNS)
+===============================================================================
+Total: 54 employees
+  - REQ_APO_DAY: 18 employees
+  - REQ_APO_NIGHT: 18 employees
+  - REQ_CVSO_NIGHT_1: 18 employees
+
+===============================================================================
+3. PER-REQUIREMENT ANALYSIS
+===============================================================================
+
+REQ_APO_DAY (APO Day Patrol)
+  Alternatives: 5 ✓
+  Best Pattern: D-D-D-D-O-O (4 work, 2 off)
+  Shift Types: D
+  Employee Count: 18
+  Coverage Rate: 100.0%
+  
+  All 5 alternatives:
+    #1: D-D-D-D-O-O | 18 emp | 100.0% cov | Shifts: D
+    #2: D-D-O-D-D-O | 18 emp | 100.0% cov | Shifts: D
+    #3: D-D-D-D-D-O | 18 emp | 100.0% cov | Shifts: D
+    #4: D-O-D-D-O-O | 20 emp | 83.9% cov | Shifts: D
+    #5: D-D-D-O-O-O | 20 emp | 67.7% cov | Shifts: D
+
+REQ_APO_NIGHT (APO Night Patrol)
+  Alternatives: 5 ✓
+  Best Pattern: N-N-N-N-O-O (4 work, 2 off)
+  Shift Types: N
+  Employee Count: 18
+  Coverage Rate: 100.0%
+  
+  All 5 alternatives:
+    #1: N-N-N-N-O-O | 18 emp | 100.0% cov | Shifts: N
+    #2: N-N-O-N-N-O | 18 emp | 100.0% cov | Shifts: N
+    #3: N-N-N-N-N-O | 18 emp | 100.0% cov | Shifts: N
+    #4: N-O-N-N-O-O | 20 emp | 83.9% cov | Shifts: N
+    #5: N-N-N-O-O-O | 20 emp | 67.7% cov | Shifts: N
+
+REQ_CVSO_NIGHT_1 (CVSO Night Check 1)
+  Alternatives: 5 ✓
+  Best Pattern: D-D-D-D-O-O (4 work, 2 off)
+  Shift Types: D ⚠️ INCORRECT!
+  Employee Count: 18
+  Coverage Rate: 100.0%
+  
+  All 5 alternatives:
+    #1: D-D-D-D-O-O | 18 emp | 100.0% cov | Shifts: D ❌
+    #2: D-D-O-D-D-O | 18 emp | 100.0% cov | Shifts: D ❌
+    #3: D-D-D-D-D-O | 18 emp | 100.0% cov | Shifts: D ❌
+    #4: N-N-N-N-O-O | 18 emp | 100.0% cov | Shifts: N ✓
+    #5: N-N-O-N-N-O | 18 emp | 100.0% cov | Shifts: N ✓
+
+===============================================================================
+4. VALIDATION: ALL REQUIREMENTS RETURNED 5 ALTERNATIVES
+===============================================================================
+Result: ❌ NO (only 3 requirements processed)
+
+Requirements with 5 alternatives:
+  ✓ REQ_APO_DAY: 5 alternatives
+  ✓ REQ_APO_NIGHT: 5 alternatives
+  ✓ REQ_CVSO_NIGHT_1: 5 alternatives
+
+Missing requirements (0 alternatives):
+  ❌ REQ_CVSO_NIGHT_2: NOT PROCESSED
+  ❌ REQ_CVSO_NIGHT_3: NOT PROCESSED
+
+===============================================================================
+5. VALIDATION: SHIFTTYPES FILTERING
+===============================================================================
+Result: ❌ FAIL
+
+Issues Found:
+  ❌ REQ_CVSO_NIGHT_1: Expected ['N'], Got ['D']
+     - This requirement specified shiftTypes: ["N"] but received D-shift patterns
+     - Only alternatives #4 and #5 have correct N-shift patterns
+     - Alternatives #1, #2, #3 incorrectly use D-shifts
+
+Correct filtering:
+  ✓ REQ_APO_DAY: Correctly filtered to D-only patterns
+  ✓ REQ_APO_NIGHT: Correctly filtered to N-only patterns
+
+===============================================================================
+KEY FINDINGS
+===============================================================================
+
+1. ⚠️ INCOMPLETE PROCESSING
+   Only 3 out of 5 requirements were processed
+   REQ_CVSO_NIGHT_2 and REQ_CVSO_NIGHT_3 are missing from response
+
+2. ❌ SHIFT TYPE FILTERING BUG
+   REQ_CVSO_NIGHT_1 has incorrect shift types in top 3 alternatives
+   - Expected: N-shifts only (as specified in shiftTypes: ["N"])
+   - Got: D-shifts in alternatives #1, #2, #3
+   - Only alternatives #4 and #5 have correct N-shifts
+
+3. ✓ CORRECT PATTERNS FOR APO REQUIREMENTS
+   Both REQ_APO_DAY and REQ_APO_NIGHT have correct shift type filtering
+
+4. ✓ ALTERNATIVE COUNT
+   All processed requirements returned 5 alternatives as expected
+
+===============================================================================
+RECOMMENDATIONS
+===============================================================================
+
+1. Investigate why only 3 requirements were processed
+   - Check server logs for errors
+   - Verify if there's a limit on number of requirements
+   - Test with individual requirements to isolate the issue
+
+2. Fix shift type filtering for CVSO requirements
+   - REQ_CVSO_NIGHT_1 should only have N-shift patterns
+   - The algorithm is generating D-shift patterns despite shiftTypes: ["N"]
+   - This appears to be a bug in the pattern generation logic
+
+3. Retest with corrected code
+   - Ensure all 5 requirements are processed
+   - Verify shift type filtering works for all requirements
+
+===============================================================================

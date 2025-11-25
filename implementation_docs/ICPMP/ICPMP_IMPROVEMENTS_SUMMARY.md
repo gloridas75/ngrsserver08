@@ -196,7 +196,7 @@ REQ_D_ONLY: 5 alternatives
 
 ## Testing
 
-### Test File: `test_icpmp_improvements.py`
+### Test File: `test_scripts/ICPMP/test_icpmp_improvements.py`
 
 Comprehensive test covering:
 1. ✅ Day-only pattern filtering
@@ -207,7 +207,7 @@ Comprehensive test covering:
 
 **Test Execution**:
 ```bash
-python3 test_icpmp_improvements.py
+python3 test_scripts/ICPMP/test_icpmp_improvements.py
 ```
 
 **Test Output**: `output/icpmp_test_output.json`
@@ -295,7 +295,7 @@ Users can choose based on operational needs!
 ## Files Changed
 
 - `context/engine/config_optimizer.py` - Main optimizer logic
-- `test_icpmp_improvements.py` - Comprehensive test suite
+- `test_scripts/ICPMP/test_icpmp_improvements.py` - Comprehensive test suite
 
 ---
 

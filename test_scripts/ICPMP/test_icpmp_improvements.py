@@ -19,7 +19,7 @@ test_input = {
             "rank": "APO",
             "scheme": "A",
             "shiftTypes": ["D"],  # Only D patterns expected
-            "headcountPerDay": 4,
+            "headcountPerShift": {"D": 4},
             "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
             "includePH": False
         },
@@ -30,7 +30,7 @@ test_input = {
             "rank": "APO",
             "scheme": "B",
             "shiftTypes": ["N"],  # Only N patterns expected
-            "headcountPerDay": 1,
+            "headcountPerShift": {"N": 1},
             "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
             "includePH": False
         },
@@ -41,7 +41,7 @@ test_input = {
             "rank": "CVSO2",
             "scheme": "B",
             "shiftTypes": ["D", "N"],  # D, N, and D+N mix patterns expected
-            "headcountPerDay": 120,  # Large team to test 100+ employee support
+            "headcountPerShift": {"D": 60, "N": 60},  # Large team to test 100+ employee support
             "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
             "includePH": False
         }

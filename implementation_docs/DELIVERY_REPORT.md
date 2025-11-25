@@ -239,7 +239,13 @@ output/ (15 test results):
 
 tests/ and debug/:
 ├── test_constraints.json            ✅ (Constraint test)
-├── debug_solver.py                  ✅ (Debug script)
+├── test_scripts/                    ✅ (Test scripts organized by topic)
+│   ├── ICPMP/
+│   ├── Redis/
+│   ├── Constraints/
+│   ├── General/
+│   │   └── debug_solver.py          ✅ (Debug script)
+│   └── Shell_Scripts/
 └── [supporting test files]          ✅
 ```
 

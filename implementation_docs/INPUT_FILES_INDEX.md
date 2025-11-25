@@ -44,7 +44,7 @@ This document provides a complete index of all input scenario files available fo
 ### Phase 1: Validation (10 min)
 ```bash
 # Test simple scenario
-python debug_solver.py input/input_1211_optimized.json
+python test_scripts/General/debug_solver.py input/input_1211_optimized.json
 
 # Expected: OPTIMAL, 110 assignments, 0 violations
 ```
@@ -52,7 +52,7 @@ python debug_solver.py input/input_1211_optimized.json
 ### Phase 2: Complex Testing (15 min)
 ```bash
 # Test complex scenario
-python debug_solver.py input/input_complex_scenario.json
+python test_scripts/General/debug_solver.py input/input_complex_scenario.json
 
 # Expected: OPTIMAL, 281 assignments, 66.9% coverage
 ```
@@ -105,13 +105,13 @@ Same structure as above with:
 cd /Users/glori/1\ Anthony_Workspace/My\ Developments/NGRS/ngrs-solver-v0.5/ngrssolver
 
 # Simple scenario
-python debug_solver.py input/input_1211_optimized.json
+python test_scripts/General/debug_solver.py input/input_1211_optimized.json
 
 # Complex scenario
-python debug_solver.py input/input_complex_scenario.json
+python test_scripts/General/debug_solver.py input/input_complex_scenario.json
 
 # With output file
-python debug_solver.py input/input_complex_scenario.json > /tmp/results.txt
+python test_scripts/General/debug_solver.py input/input_complex_scenario.json > /tmp/results.txt
 ```
 
 ### API Tests
@@ -215,7 +215,7 @@ To create variations:
 
 3. **Test**:
    ```bash
-   python debug_solver.py input/input_custom.json
+   python test_scripts/General/debug_solver.py input/input_custom.json
    ```
 
 ## Performance Benchmarks

@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "ngrs-solver-api-v1",
+		"name": "NGRS Solver API",
+		"description": "Complete API collection for NGRS Shift Scheduling Solver\n\n**Base URL:** https://ngrssolver08.comcentricapps.com\n\n**Features:**\n- Synchronous solving\n- Asynchronous solving with job queue\n- Configuration optimizer (ICPMP)\n- Job management and monitoring\n- Admin operations\n\n**Variables:**\n- `base_url`: API base URL\n- `admin_api_key`: Admin API key for reset endpoint\n- `job_id`: Last created async job ID (auto-populated)\n\n**Setup:**\n1. Import this collection\n2. Set environment variables\n3. Run requests in order",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://ngrssolver08.comcentricapps.com",
+			"type": "string"
+		},
+		{
+			"key": "admin_api_key",
+			"value": "change-me-in-production",
+			"type": "string"
+		},
+		{
+			"key": "job_id",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health & Info",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Check API health status"
+					},
+					"response": []
+				},
+				{
+					"name": "API Version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/version",
+							"host": ["{{base_url}}"],
+							"path": ["version"]
+						},
+						"description": "Get API version information"
+					},
+					"response": []
+				},
+				{
+					"name": "Input Schema",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/schema",
+							"host": ["{{base_url}}"],
+							"path": ["schema"]
+						},
+						"description": "Get JSON schema for input validation"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Configuration Optimizer (ICPMP)",
+			"item": [
+				{
+					"name": "Get Optimal Configurations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"planningHorizon\": {\n    \"startDate\": \"2025-12-01\",\n    \"endDate\": \"2025-12-31\"\n  },\n  \"publicHolidays\": [\"2025-12-25\"],\n  \"requirements\": [\n    {\n      \"id\": \"REQ_APO_DAY\",\n      \"name\": \"APO Day Patrol\",\n      \"productType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"A\",\n      \"shiftTypes\": [\"D\"],\n      \"headcountPerShift\": {\n        \"D\": 4\n      },\n      \"coverageDays\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\"],\n      \"includePH\": false\n    },\n    {\n      \"id\": \"REQ_APO_NIGHT\",\n      \"name\": \"APO Night Patrol\",\n      \"productType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"B\",\n      \"shiftTypes\": [\"N\"],\n      \"headcountPerShift\": {\n        \"N\": 1\n      },\n      \"coverageDays\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\"],\n      \"includePH\": false\n    }\n  ],\n  \"constraints\": {\n    \"maxWeeklyNormalHours\": 44,\n    \"maxMonthlyOTHours\": 72,\n    \"maxConsecutiveWorkDays\": 12,\n    \"minOffDaysPerWeek\": 1,\n    \"minRestBetweenShifts\": 480,\n    \"dailyHoursCap\": {\n      \"A\": 14.0,\n      \"B\": 13.0,\n      \"P\": 9.0\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/configure",
+							"host": ["{{base_url}}"],
+							"path": ["configure"]
+						},
+						"description": "Get top 5 optimal roster configurations for each requirement.\n\n**NEW SCHEMA:** Now uses `headcountPerShift` instead of `headcountPerDay`\n\nExample:\n```json\n\"headcountPerShift\": {\n  \"D\": 4,  // 4 employees for Day shift\n  \"N\": 2   // 2 employees for Night shift\n}\n```\n\nReturns ranked alternatives with:\n- Work patterns (e.g., D-D-D-D-O-O)\n- Employee counts (total and per shift)\n- Coverage rates (overall and per shift)\n- Quality scores\n\n**Response includes:**\n- `employeesRequiredPerShift`: Breakdown of employees by shift\n- `requiredPerShift`: Required headcount per shift\n- `requiredPerDay`: Total required per day"
+					},
+					"response": []
+				},
+				{
+					"name": "ICPMP - Mixed Shift Types",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"planningHorizon\": {\n    \"startDate\": \"2025-12-01\",\n    \"endDate\": \"2025-12-31\"\n  },\n  \"publicHolidays\": [\"2025-12-25\"],\n  \"requirements\": [\n    {\n      \"id\": \"REQ_MIXED\",\n      \"name\": \"Mixed Day/Night Coverage\",\n      \"productType\": \"CVSO\",\n      \"rank\": \"CVSO2\",\n      \"scheme\": \"B\",\n      \"shiftTypes\": [\"D\", \"N\"],\n      \"headcountPerShift\": {\n        \"D\": 25,\n        \"N\": 25\n      },\n      \"coverageDays\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\"],\n      \"includePH\": false\n    }\n  ],\n  \"constraints\": {\n    \"maxWeeklyNormalHours\": 44,\n    \"maxMonthlyOTHours\": 72,\n    \"maxConsecutiveWorkDays\": 12,\n    \"minOffDaysPerWeek\": 1,\n    \"minRestBetweenShifts\": 480,\n    \"dailyHoursCap\": {\n      \"A\": 14.0,\n      \"B\": 13.0,\n      \"P\": 9.0\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/configure",
+							"host": ["{{base_url}}"],
+							"path": ["configure"]
+						},
+						"description": "Test with mixed shift types [\"D\", \"N\"] - includes both day and night patterns.\n\n**NEW SCHEMA:** Uses `headcountPerShift` to specify separate requirements for Day and Night shifts.\n\nExample shows 25 employees needed for Day shift and 25 for Night shift."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Synchronous Solve",
+			"item": [
+				{
+					"name": "Solve Small Problem",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"schemaVersion\": \"0.43\",\n  \"planningHorizon\": {\n    \"startDate\": \"2025-12-01\",\n    \"endDate\": \"2025-12-07\"\n  },\n  \"publicHolidays\": [\"2025-12-25\"],\n  \"shifts\": [\n    {\n      \"code\": \"D\",\n      \"name\": \"Day Shift\",\n      \"startTime\": \"08:00\",\n      \"endTime\": \"20:00\",\n      \"grossHours\": 12.0,\n      \"lunchBreak\": 1.0\n    }\n  ],\n  \"employees\": [\n    {\n      \"id\": \"E001\",\n      \"name\": \"John Doe\",\n      \"employeeType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"A\",\n      \"availableShifts\": [\"D\"],\n      \"productTypes\": [\"APO\"],\n      \"constraints\": {\n        \"maxWeeklyNormalHours\": 44,\n        \"maxMonthlyOTHours\": 72\n      }\n    },\n    {\n      \"id\": \"E002\",\n      \"name\": \"Jane Smith\",\n      \"employeeType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"A\",\n      \"availableShifts\": [\"D\"],\n      \"productTypes\": [\"APO\"],\n      \"constraints\": {\n        \"maxWeeklyNormalHours\": 44,\n        \"maxMonthlyOTHours\": 72\n      }\n    }\n  ],\n  \"requirements\": [\n    {\n      \"id\": \"REQ001\",\n      \"demandType\": \"APO\",\n      \"date\": \"2025-12-01\",\n      \"shiftCode\": \"D\",\n      \"minHeadcount\": 1,\n      \"targetHeadcount\": 1\n    },\n    {\n      \"id\": \"REQ002\",\n      \"demandType\": \"APO\",\n      \"date\": \"2025-12-02\",\n      \"shiftCode\": \"D\",\n      \"minHeadcount\": 1,\n      \"targetHeadcount\": 1\n    }\n  ],\n  \"constraints\": {\n    \"maxConsecutiveWorkDays\": 6,\n    \"minOffDaysPerWeek\": 1,\n    \"minRestBetweenShifts\": 8\n  },\n  \"solverConfig\": {\n    \"timeLimitSeconds\": 30\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/solve",
+							"host": ["{{base_url}}"],
+							"path": ["solve"]
+						},
+						"description": "Synchronous solve for small problems (< 30 seconds).\n\nReturns complete solution immediately."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Asynchronous Solve",
+			"item": [
+				{
+					"name": "Submit Async Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-save job_id for subsequent requests",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.job_id) {",
+									"    pm.collectionVariables.set(\"job_id\", jsonData.job_id);",
+									"    console.log(\"Saved job_id: \" + jsonData.job_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"schemaVersion\": \"0.43\",\n  \"planningHorizon\": {\n    \"startDate\": \"2025-12-01\",\n    \"endDate\": \"2025-12-31\"\n  },\n  \"publicHolidays\": [\"2025-12-25\"],\n  \"shifts\": [\n    {\n      \"code\": \"D\",\n      \"name\": \"Day Shift\",\n      \"startTime\": \"08:00\",\n      \"endTime\": \"20:00\",\n      \"grossHours\": 12.0,\n      \"lunchBreak\": 1.0\n    },\n    {\n      \"code\": \"N\",\n      \"name\": \"Night Shift\",\n      \"startTime\": \"20:00\",\n      \"endTime\": \"08:00\",\n      \"grossHours\": 12.0,\n      \"lunchBreak\": 1.0\n    }\n  ],\n  \"employees\": [\n    {\n      \"id\": \"E001\",\n      \"name\": \"John Doe\",\n      \"employeeType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"A\",\n      \"availableShifts\": [\"D\", \"N\"],\n      \"productTypes\": [\"APO\"],\n      \"constraints\": {\n        \"maxWeeklyNormalHours\": 44,\n        \"maxMonthlyOTHours\": 72\n      }\n    },\n    {\n      \"id\": \"E002\",\n      \"name\": \"Jane Smith\",\n      \"employeeType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"A\",\n      \"availableShifts\": [\"D\", \"N\"],\n      \"productTypes\": [\"APO\"],\n      \"constraints\": {\n        \"maxWeeklyNormalHours\": 44,\n        \"maxMonthlyOTHours\": 72\n      }\n    },\n    {\n      \"id\": \"E003\",\n      \"name\": \"Bob Wilson\",\n      \"employeeType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"A\",\n      \"availableShifts\": [\"D\", \"N\"],\n      \"productTypes\": [\"APO\"],\n      \"constraints\": {\n        \"maxWeeklyNormalHours\": 44,\n        \"maxMonthlyOTHours\": 72\n      }\n    }\n  ],\n  \"requirements\": [\n    {\n      \"id\": \"REQ001\",\n      \"demandType\": \"APO\",\n      \"date\": \"2025-12-01\",\n      \"shiftCode\": \"D\",\n      \"minHeadcount\": 2,\n      \"targetHeadcount\": 2\n    },\n    {\n      \"id\": \"REQ002\",\n      \"demandType\": \"APO\",\n      \"date\": \"2025-12-01\",\n      \"shiftCode\": \"N\",\n      \"minHeadcount\": 1,\n      \"targetHeadcount\": 1\n    }\n  ],\n  \"constraints\": {\n    \"maxConsecutiveWorkDays\": 12,\n    \"minOffDaysPerWeek\": 1,\n    \"minRestBetweenShifts\": 8\n  },\n  \"solverConfig\": {\n    \"timeLimitSeconds\": 300\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/solve/async",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async"]
+						},
+						"description": "Submit async job for long-running problems.\n\nReturns job_id immediately. Auto-saves to collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/solve/async/{{job_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async", "{{job_id}}"]
+						},
+						"description": "Check status of async job.\n\nUses job_id from previous request (auto-saved)."
+					},
+					"response": []
+				},
+				{
+					"name": "Queue Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/solve/async/stats",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async", "stats"]
+						},
+						"description": "Get queue statistics:\n- Total jobs\n- Active jobs\n- Queue length\n- Worker count"
+					},
+					"response": []
+				},
+				{
+					"name": "Queue Stats (Detailed)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/solve/async/stats?details=true",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async", "stats"],
+							"query": [
+								{
+									"key": "details",
+									"value": "true",
+									"description": "Include job UUIDs and timestamps"
+								}
+							]
+						},
+						"description": "Get detailed queue statistics with job list:\n- All job UUIDs\n- Created/updated timestamps\n- Job status\n- Result availability"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Job",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/solve/async/{{job_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async", "{{job_id}}"]
+						},
+						"description": "Delete job and free memory.\n\nCancels queued jobs or deletes completed results."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Operations",
+			"item": [
+				{
+					"name": "System Reset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{admin_api_key}}",
+								"description": "Admin API key for authentication"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/reset",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "reset"]
+						},
+						"description": "⚠️ ADMIN ONLY: Complete system reset\n\nActions:\n- Flush Redis (all jobs/results deleted)\n- Restart worker processes\n- Reset counters\n\nRequires:\n- Valid x-api-key header\n- Confirmation in production\n\nSetup:\n1. Set admin_api_key variable\n2. Ensure it matches server ADMIN_API_KEY\n3. Use with caution!"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Alternative Input Formats",
+			"item": [
+				{
+					"name": "Async - Wrapped Format",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"input_json\": {\n    \"schemaVersion\": \"0.43\",\n    \"planningHorizon\": {\n      \"startDate\": \"2025-12-01\",\n      \"endDate\": \"2025-12-07\"\n    },\n    \"shifts\": [\n      {\n        \"code\": \"D\",\n        \"name\": \"Day Shift\",\n        \"startTime\": \"08:00\",\n        \"endTime\": \"20:00\",\n        \"grossHours\": 12.0,\n        \"lunchBreak\": 1.0\n      }\n    ],\n    \"employees\": [\n      {\n        \"id\": \"E001\",\n        \"name\": \"Test Employee\",\n        \"employeeType\": \"APO\",\n        \"rank\": \"APO\",\n        \"scheme\": \"A\",\n        \"availableShifts\": [\"D\"],\n        \"productTypes\": [\"APO\"]\n      }\n    ],\n    \"requirements\": [\n      {\n        \"id\": \"REQ001\",\n        \"demandType\": \"APO\",\n        \"date\": \"2025-12-01\",\n        \"shiftCode\": \"D\",\n        \"minHeadcount\": 1,\n        \"targetHeadcount\": 1\n      }\n    ],\n    \"constraints\": {\n      \"maxConsecutiveWorkDays\": 6,\n      \"minOffDaysPerWeek\": 1\n    },\n    \"solverConfig\": {\n      \"timeLimitSeconds\": 60\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/solve/async",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async"]
+						},
+						"description": "Alternative format: Wrapped in input_json object"
+					},
+					"response": []
+				},
+				{
+					"name": "Async - Direct Format",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"schemaVersion\": \"0.43\",\n  \"planningHorizon\": {\n    \"startDate\": \"2025-12-01\",\n    \"endDate\": \"2025-12-07\"\n  },\n  \"shifts\": [\n    {\n      \"code\": \"D\",\n      \"name\": \"Day Shift\",\n      \"startTime\": \"08:00\",\n      \"endTime\": \"20:00\",\n      \"grossHours\": 12.0,\n      \"lunchBreak\": 1.0\n    }\n  ],\n  \"employees\": [\n    {\n      \"id\": \"E001\",\n      \"name\": \"Test Employee\",\n      \"employeeType\": \"APO\",\n      \"rank\": \"APO\",\n      \"scheme\": \"A\",\n      \"availableShifts\": [\"D\"],\n      \"productTypes\": [\"APO\"]\n    }\n  ],\n  \"requirements\": [\n    {\n      \"id\": \"REQ001\",\n      \"demandType\": \"APO\",\n      \"date\": \"2025-12-01\",\n      \"shiftCode\": \"D\",\n      \"minHeadcount\": 1,\n      \"targetHeadcount\": 1\n    }\n  ],\n  \"constraints\": {\n    \"maxConsecutiveWorkDays\": 6,\n    \"minOffDaysPerWeek\": 1\n  },\n  \"solverConfig\": {\n    \"timeLimitSeconds\": 60\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/solve/async",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async"]
+						},
+						"description": "Alternative format: Direct NGRS input (unwrapped)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "noauth"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

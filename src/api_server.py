@@ -420,18 +420,30 @@ async def configure_endpoint(
 ):
     """
     Configuration Optimizer: Find optimal work patterns and staffing.
-    
+
     This endpoint analyzes requirements and suggests:
     1. Optimal work patterns for each requirement
-    2. Minimum employee count needed
+    2. Minimum employee count needed per shift type
     3. Recommended rotation offsets for maximum coverage
-    
-    Accepts simplified input via:
-    - JSON body: {"requirements": [...], "constraints": {...}, "planningHorizon": {...}}
-    - Uploaded file: multipart/form-data with file field
-    
+
+    Input Schema (required):
+    - JSON body: {
+        "requirements": [
+            {
+                "id": "REQ_MIXED",
+                "name": "Mixed Day/Night Coverage",
+                "shiftTypes": ["D", "N"],
+                "headcountPerShift": {"D": 50, "N": 50},
+                ...
+            }
+        ],
+        "constraints": {...},
+        "planningHorizon": {...}
+      }
+    - Uploaded file: multipart/form-data with file field (same schema)
+
     Returns:
-    - 200: Optimized configuration with recommendations
+    - 200: Optimized configuration with per-shift recommendations
     - 400: Invalid input
     - 422: Malformed JSON
     - 500: Internal server error
@@ -475,17 +487,35 @@ async def configure_endpoint(
                 status_code=400,
                 detail="Missing 'planningHorizon' field in input."
             )
-        
+
+        # Validate each requirement for headcountPerShift
+        for req in config_input["requirements"]:
+            if "shiftTypes" not in req:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Requirement {req.get('id','')} missing 'shiftTypes'."
+                )
+            if "headcountPerShift" not in req:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Requirement {req.get('id','')} missing 'headcountPerShift'."
+                )
+            if not isinstance(req["headcountPerShift"], dict) or not req["headcountPerShift"]:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Requirement {req.get('id','')} 'headcountPerShift' must be a non-empty dict."
+                )
+
         # Use default constraints if not provided
         constraints = config_input.get("constraints", {})
-        
+
         # ====== OPTIMIZE ======
         optimized_result = optimize_all_requirements(
             requirements=config_input["requirements"],
             constraints=constraints,
             planning_horizon=config_input["planningHorizon"]
         )
-        
+
         # ====== FORMAT OUTPUT ======
         output_config = format_output_config(
             optimized_result,

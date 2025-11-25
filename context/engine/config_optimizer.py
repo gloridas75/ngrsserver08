@@ -124,8 +124,8 @@ def optimize_requirement_config(
         List of top N configurations sorted by score (best first)
     """
     shift_types = requirement['shiftTypes']
-    headcount = requirement['headcountPerDay']
-    
+    headcount_per_shift = requirement['headcountPerShift']
+
     # Generate candidate patterns
     candidates = generate_pattern_candidates(
         shift_types=shift_types,
@@ -133,76 +133,83 @@ def optimize_requirement_config(
         min_work_days=3,
         max_work_days=5
     )
-    
+
     print(f"  Generated {len(candidates)} candidate patterns for {requirement['id']}")
-    
+
     # Evaluate each candidate
     all_configs = []
-    
+
     shift_normal_hours = 11.0  # 12 gross - 1 lunch
     max_weekly_hours = constraints.get('maxWeeklyNormalHours', 44)
-    
+
     for pattern in candidates:
         # Check feasibility
         is_feasible, issues = verify_pattern_feasibility(pattern, constraints)
         if not is_feasible:
             continue
-        
-        # Calculate minimum employees needed
-        min_employees = calculate_min_employees(
-            pattern,
-            headcount,
-            days_in_horizon,
-            max_weekly_hours,
-            shift_normal_hours
-        )
-        
+
+        # For mixed patterns, calculate min employees for each shift type
+        min_employees_total = 0
+        shift_employee_counts = {}
+        for shift in shift_types:
+            # Count how many days this shift appears in the pattern
+            shift_days = sum(1 for d in pattern if d == shift)
+            if shift_days == 0:
+                continue
+            headcount = headcount_per_shift.get(shift, 0)
+            min_employees = calculate_min_employees(
+                pattern,
+                headcount,
+                days_in_horizon,
+                max_weekly_hours,
+                shift_normal_hours
+            )
+            shift_employee_counts[shift] = min_employees
+            min_employees_total += min_employees
+
         # Optimize for large employee counts (100+)
-        # Use simplified offset calculation to avoid performance issues
-        if min_employees > 100:
-            # For large teams, use simplified offset generation
-            offsets = [i % len(pattern) for i in range(min_employees)]
+        if min_employees_total > 100:
+            offsets = [i % len(pattern) for i in range(min_employees_total)]
         else:
-            # For smaller teams, use full simulation
-            offsets = generate_staggered_offsets(min_employees, len(pattern))
-        
-        # Simulate coverage (optimized for large employee counts)
+            offsets = generate_staggered_offsets(min_employees_total, len(pattern))
+
+        # Simulate coverage for mixed patterns
         coverage = simulate_coverage(
             pattern,
-            min_employees,
+            min_employees_total,
             offsets,
-            headcount,
+            headcount_per_shift,
             days_in_horizon,
             anchor_date
         )
-        
+
         # Evaluate quality
         quality = evaluate_coverage_quality(
             coverage['coverageMap'],
-            headcount
+            headcount_per_shift
         )
-        
+
         # Score: prioritize fewer employees + high coverage + balance
-        # Lower score is better
-        coverage_penalty = (100 - coverage['coverageRate']) * 100  # Heavy penalty for low coverage
-        employee_penalty = min_employees * 10  # Prefer fewer employees
-        balance_penalty = quality['variance']  # Prefer balanced coverage
-        
+        coverage_penalty = (100 - coverage['coverageRate']) * 100
+        employee_penalty = min_employees_total * 10
+        balance_penalty = quality['variance']
+
         score = coverage_penalty + employee_penalty + balance_penalty
-        
+
         all_configs.append({
             'pattern': pattern,
-            'employeeCount': min_employees,
+            'employeeCount': min_employees_total,
+            'shiftEmployeeCounts': shift_employee_counts,
             'offsets': offsets,
             'coverage': coverage,
             'quality': quality,
             'score': round(score, 2)
         })
-    
+
     # Sort by score (best first) and return top N
     all_configs.sort(key=lambda x: x['score'])
     top_configs = all_configs[:top_n]
-    
+
     return top_configs
 
 
@@ -236,7 +243,8 @@ def optimize_all_requirements(
     
     for req in requirements:
         print(f"Optimizing: {req['id']} ({req['name']})")
-        print(f"  Shift types: {req['shiftTypes']}, Headcount: {req['headcountPerDay']}")
+        headcount_summary = ', '.join([f"{shift}: {count}" for shift, count in req['headcountPerShift'].items()])
+        print(f"  Shift types: {req['shiftTypes']}, Headcount: {headcount_summary}")
         
         top_configs = optimize_requirement_config(
             req,
@@ -325,6 +333,7 @@ def format_output_config(optimized_result: Dict, requirements: List[Dict]) -> Di
                 'configuration': {
                     'workPattern': config['pattern'],
                     'employeesRequired': config['employeeCount'],
+                    'employeesRequiredPerShift': config.get('shiftEmployeeCounts', {}),
                     'rotationOffsets': display_offsets,
                     'cycleLength': len(config['pattern']),
                     'score': config['score']
@@ -334,7 +343,8 @@ def format_output_config(optimized_result: Dict, requirements: List[Dict]) -> Di
                     'daysFullyCovered': config['coverage']['daysFullyCovered'],
                     'daysUndercovered': config['coverage']['daysUndercovered'],
                     'averageAvailable': config['coverage']['averageAvailable'],
-                    'requiredPerDay': config['coverage']['requiredPerDay']
+                    'requiredPerShift': config['coverage'].get('requiredPerShift', {}),
+                    'requiredPerDay': config['coverage'].get('requiredPerDay', {})
                 },
                 'quality': {
                     'balanceScore': config['quality']['balanceScore'],

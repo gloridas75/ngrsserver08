@@ -146,7 +146,7 @@ redis-cli ping
 
 ```bash
 cd /path/to/ngrssolver
-python test_redis_async.py
+python test_scripts/Redis/test_redis_async.py
 ```
 
 **Expected Output:**
@@ -465,7 +465,7 @@ signal.pause()  # Run forever
    - `src/redis_job_manager.py` - Redis-based queue
    - `src/redis_worker.py` - Multiprocessing workers
    - `src/api_server.py` - Updated imports
-5. Test with `test_redis_async.py`
+5. Test with `test_scripts/Redis/test_redis_async.py`
 6. Deploy!
 
 No changes needed to API endpoints - same REST API interface.

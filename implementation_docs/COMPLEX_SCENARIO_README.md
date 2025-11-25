@@ -191,7 +191,7 @@ To test this scenario with the solver:
 cd /Users/glori/1 Anthony_Workspace/My Developments/NGRS/ngrs-solver-v0.5/ngrssolver
 
 # Via CLI
-python debug_solver.py input/input_complex_scenario.json
+python test_scripts/General/debug_solver.py input/input_complex_scenario.json
 
 # Via API
 curl -X POST http://localhost:8080/solve \

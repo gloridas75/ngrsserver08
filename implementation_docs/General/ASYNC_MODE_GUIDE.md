@@ -212,7 +212,7 @@ for job_id in job_ids:
 Test async mode without API server:
 
 ```bash
-python test_async_mode.py
+python test_scripts/General/test_async_mode.py
 ```
 
 This will:

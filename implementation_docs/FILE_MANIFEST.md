@@ -224,7 +224,7 @@ src/
 ✅ data_loader.py                       (Input parsing)
 ✅ solver_engine.py                     (CP-SAT solver)
 ✅ run_solver.py                        (CLI interface)
-✅ debug_solver.py                      (Debug utilities)
+✅ test_scripts/General/debug_solver.py  (Debug utilities)
 ```
 
 ### Domain & Schema

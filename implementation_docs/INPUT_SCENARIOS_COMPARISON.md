@@ -50,10 +50,10 @@
 ### Option 1: CLI
 ```bash
 # Simple scenario
-python debug_solver.py input/input_1211_optimized.json
+python test_scripts/General/debug_solver.py input/input_1211_optimized.json
 
 # Complex scenario
-python debug_solver.py input/input_complex_scenario.json
+python test_scripts/General/debug_solver.py input/input_complex_scenario.json
 ```
 
 ### Option 2: API (when running)
