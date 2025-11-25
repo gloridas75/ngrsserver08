@@ -1,0 +1,34 @@
+name: Test SSH Connection
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Test SSH Connection
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            echo "=========================================="
+            echo "SSH Connection Test"
+            echo "=========================================="
+            echo "Hostname: $(hostname)"
+            echo "User: $(whoami)"
+            echo "Date: $(date)"
+            echo "Working directory: $(pwd)"
+            echo ""
+            echo "Checking Docker:"
+            docker --version
+            docker ps
+            echo ""
+            echo "Checking project directory:"
+            ls -la /home/ubuntu/ngrssolver
+            echo ""
+            echo "✓ SSH connection successful!"
