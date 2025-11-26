@@ -1,0 +1,285 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ngrssolver08.comcentricapps.com/schemas/output/v0.73",
+  "title": "NGRS Solver Output Schema",
+  "description": "JSON Schema for NGRS (Next-Generation Roster Scheduling) Solver output data v0.73",
+  "type": "object",
+  "required": ["schemaVersion", "planningReference", "solverRun", "score", "assignments"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Schema version identifier",
+      "examples": ["0.4", "0.73"]
+    },
+    "planningReference": {
+      "type": "string",
+      "description": "Reference from input request"
+    },
+    "publicHolidays": {
+      "type": "array",
+      "items": {"type": "string", "format": "date"}
+    },
+    "solverRun": {
+      "type": "object",
+      "required": ["runId", "solverVersion", "startedAt", "ended", "durationSeconds", "status"],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "description": "Unique solver run identifier"
+        },
+        "solverVersion": {
+          "type": "string",
+          "description": "Solver engine version",
+          "examples": ["optSolve-py-1.0.0"]
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when solver started"
+        },
+        "ended": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when solver completed"
+        },
+        "durationSeconds": {
+          "type": "number",
+          "description": "Total solver execution time in seconds",
+          "minimum": 0
+        },
+        "status": {
+          "type": "string",
+          "enum": ["OPTIMAL", "FEASIBLE", "INFEASIBLE", "UNKNOWN", "MODEL_INVALID"],
+          "description": "CP-SAT solver termination status"
+        },
+        "optimizedRotationOffsets": {
+          "type": "object",
+          "description": "Employee rotation offsets determined by solver (if fixedRotationOffset=false)",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "score": {
+      "type": "object",
+      "required": ["overall", "hard", "soft"],
+      "properties": {
+        "overall": {
+          "type": "number",
+          "description": "Total penalty score (hard + soft)"
+        },
+        "hard": {
+          "type": "number",
+          "description": "Hard constraint violations count"
+        },
+        "soft": {
+          "type": "number",
+          "description": "Soft constraint penalty points"
+        }
+      }
+    },
+    "scoreBreakdown": {
+      "type": "object",
+      "properties": {
+        "hard": {
+          "type": "object",
+          "properties": {
+            "violations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {"type": "string", "enum": ["hard"]},
+                  "constraintId": {"type": "string"},
+                  "message": {"type": "string"},
+                  "employeeId": {"type": "string"},
+                  "date": {"type": "string", "format": "date"},
+                  "shiftCode": {"type": "string"},
+                  "details": {"type": "object"}
+                }
+              }
+            }
+          }
+        },
+        "soft": {
+          "type": "object",
+          "properties": {
+            "totalPenalty": {"type": "number"},
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {"type": "string", "enum": ["soft"]},
+                  "constraintId": {"type": "string"},
+                  "penalty": {"type": "number"},
+                  "message": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "unassignedSlots": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Number of unassigned slots"
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of slots"
+            },
+            "percentage": {
+              "type": "number",
+              "description": "Percentage of unassigned slots"
+            },
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "slotId": {"type": "string"},
+                  "demandId": {"type": "string"},
+                  "date": {"type": "string", "format": "date"},
+                  "shiftCode": {"type": "string"},
+                  "reason": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "description": "List of employee-shift assignments",
+      "items": {
+        "type": "object",
+        "required": ["assignmentId", "demandId", "date", "shiftCode", "status"],
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "description": "Unique assignment identifier"
+          },
+          "demandId": {"type": "string"},
+          "requirementId": {"type": "string"},
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Assignment date"
+          },
+          "shiftId": {"type": "string"},
+          "slotId": {"type": "string"},
+          "shiftCode": {
+            "type": "string",
+            "description": "Shift code (D, N, O, etc.)"
+          },
+          "startDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Shift start date-time"
+          },
+          "endDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Shift end date-time"
+          },
+          "employeeId": {
+            "type": ["string", "null"],
+            "description": "Assigned employee ID (null if UNASSIGNED)"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ASSIGNED", "UNASSIGNED"],
+            "description": "Assignment status"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for unassignment (if status=UNASSIGNED)"
+          },
+          "constraintResults": {
+            "type": "object",
+            "properties": {
+              "hard": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "soft": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          },
+          "hours": {
+            "type": "object",
+            "properties": {
+              "gross": {
+                "type": "number",
+                "description": "Gross hours (including lunch)"
+              },
+              "lunch": {
+                "type": "number",
+                "description": "Lunch break deduction"
+              },
+              "normal": {
+                "type": "number",
+                "description": "Normal working hours"
+              },
+              "ot": {
+                "type": "number",
+                "description": "Overtime hours"
+              },
+              "paid": {
+                "type": "number",
+                "description": "Total paid hours (normal + OT)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "unmetDemand": {
+      "type": "array",
+      "description": "List of demands that could not be fully satisfied",
+      "items": {
+        "type": "object",
+        "properties": {
+          "demandId": {"type": "string"},
+          "unfilledSlots": {"type": "integer"},
+          "reason": {"type": "string"}
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "inputHash": {
+          "type": "string",
+          "description": "SHA256 hash of input data for traceability"
+        },
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Output generation timestamp"
+        },
+        "employeeHours": {
+          "type": "object",
+          "description": "Summary of hours worked by each employee",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "totalPaidHours": {"type": "number"},
+              "normalHours": {"type": "number"},
+              "otHours": {"type": "number"},
+              "shiftsAssigned": {"type": "integer"},
+              "daysWorked": {"type": "integer"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

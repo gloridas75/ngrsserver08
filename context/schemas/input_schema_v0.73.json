@@ -1,0 +1,368 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ngrssolver08.comcentricapps.com/schemas/input/v0.73",
+  "title": "NGRS Solver Input Schema",
+  "description": "JSON Schema for NGRS (Next-Generation Roster Scheduling) Solver input data v0.73",
+  "type": "object",
+  "required": ["schemaVersion", "planningReference", "planningHorizon", "demandItems", "employees"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "description": "Schema version identifier",
+      "pattern": "^0\\.(7[0-9]|[8-9][0-9])$",
+      "examples": ["0.70", "0.73"]
+    },
+    "planningReference": {
+      "type": "string",
+      "description": "Unique reference identifier for this planning request",
+      "pattern": "^RST-[0-9]{8}-[A-Z0-9]+$"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "IANA timezone identifier",
+      "default": "Asia/Singapore",
+      "examples": ["Asia/Singapore", "UTC"]
+    },
+    "fixedRotationOffset": {
+      "type": "boolean",
+      "description": "If true, use employee rotationOffset as-is. If false, solver optimizes offsets",
+      "default": true
+    },
+    "planningHorizon": {
+      "type": "object",
+      "required": ["startDate", "endDate"],
+      "properties": {
+        "startDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Planning period start date (YYYY-MM-DD)"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Planning period end date (YYYY-MM-DD)"
+        }
+      }
+    },
+    "publicHolidays": {
+      "type": "array",
+      "description": "List of public holiday dates",
+      "items": {
+        "type": "string",
+        "format": "date"
+      },
+      "default": []
+    },
+    "solverRunTime": {
+      "type": "object",
+      "properties": {
+        "maxSeconds": {
+          "type": "integer",
+          "description": "Maximum solver execution time in seconds",
+          "minimum": 5,
+          "maximum": 3600,
+          "default": 600
+        }
+      }
+    },
+    "solverConfig": {
+      "type": "object",
+      "properties": {
+        "optimizationMode": {
+          "type": "string",
+          "enum": ["balanceWorkload", "minimizeEmployeeCount"],
+          "description": "Optimization objective: balance work or use minimum staff"
+        },
+        "maxEmployeesToUse": {
+          "type": "integer",
+          "description": "Hard limit on maximum employees to assign",
+          "minimum": 1
+        }
+      }
+    },
+    "schemeMap": {
+      "type": "object",
+      "description": "Mapping of scheme codes to full names",
+      "properties": {
+        "A": {"type": "string"},
+        "B": {"type": "string"},
+        "P": {"type": "string"}
+      }
+    },
+    "constraintList": {
+      "type": "array",
+      "description": "List of hard and soft constraints to apply",
+      "items": {
+        "type": "object",
+        "required": ["id", "enforcement"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Constraint identifier"
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": ["hard", "soft", "medium"],
+            "description": "Constraint enforcement level"
+          },
+          "description": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "description": "Constraint-specific parameters"
+          }
+        }
+      }
+    },
+    "solverScoreConfig": {
+      "type": "object",
+      "description": "Weights for soft constraints",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "demandItems": {
+      "type": "array",
+      "description": "List of demand/requirement items to fulfill",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["demandId", "locationId", "ouId", "shiftStartDate", "shifts", "requirements"],
+        "properties": {
+          "demandId": {
+            "type": "string",
+            "description": "Unique demand identifier"
+          },
+          "locationId": {
+            "type": "string",
+            "description": "Location/site identifier"
+          },
+          "ouId": {
+            "type": "string",
+            "description": "Organizational unit identifier"
+          },
+          "shiftStartDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when shifts start"
+          },
+          "shifts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["shiftDetails", "shiftSetId", "coverageDays", "coverageAnchor"],
+              "properties": {
+                "shiftDetails": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["shiftCode", "start", "end"],
+                    "properties": {
+                      "shiftCode": {
+                        "type": "string",
+                        "description": "Shift code (D=Day, N=Night, etc.)"
+                      },
+                      "start": {
+                        "type": "string",
+                        "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$",
+                        "description": "Shift start time (HH:MM or HH:MM:SS)"
+                      },
+                      "end": {
+                        "type": "string",
+                        "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$",
+                        "description": "Shift end time (HH:MM or HH:MM:SS)"
+                      },
+                      "nextDay": {
+                        "type": "boolean",
+                        "description": "True if shift ends the next day"
+                      }
+                    }
+                  }
+                },
+                "includePublicHolidays": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "includeEveOfPublicHolidays": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "shiftSetId": {
+                  "type": "string"
+                },
+                "coverageDays": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+                  }
+                },
+                "coverageAnchor": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "whitelist": {
+                  "type": "object",
+                  "properties": {
+                    "teamIds": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    },
+                    "employeeIds": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    }
+                  }
+                },
+                "blacklist": {
+                  "type": "object",
+                  "properties": {
+                    "employeeIds": {
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {"type": "string"},
+                          {
+                            "type": "object",
+                            "required": ["employeeId"],
+                            "properties": {
+                              "employeeId": {"type": "string"},
+                              "blacklistStartDate": {"type": "string", "format": "date"},
+                              "blacklistEndDate": {"type": "string", "format": "date"}
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "requirements": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["requirementId", "productTypeId", "rankId", "headcount", "workPattern"],
+              "properties": {
+                "requirementId": {
+                  "type": "string"
+                },
+                "productTypeId": {
+                  "type": "string",
+                  "description": "Product/service type (APO, CVSO, AVSO, etc.)"
+                },
+                "rankId": {
+                  "type": "string",
+                  "description": "Rank/grade identifier"
+                },
+                "headcount": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Number of employees needed per position"
+                },
+                "workPattern": {
+                  "type": "array",
+                  "description": "Repeating work pattern (D=Day, N=Night, O=Off)",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[DNO]$"
+                  }
+                },
+                "requiredQualifications": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "gender": {
+                  "type": "string",
+                  "enum": ["Any", "M", "F", "Mix"],
+                  "description": "Gender requirement for assignment"
+                },
+                "Scheme": {
+                  "type": "string",
+                  "description": "Employment scheme requirement (A/B/P/Global)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "employees": {
+      "type": "array",
+      "description": "List of available employees",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["employeeId", "ouId", "productTypeId", "rankId", "scheme", "gender"],
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "description": "Unique employee identifier"
+          },
+          "ouId": {
+            "type": "string",
+            "description": "Employee's organizational unit"
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team identifier"
+          },
+          "productTypeId": {
+            "type": "string",
+            "description": "Employee's product/service type"
+          },
+          "rankId": {
+            "type": "string",
+            "description": "Employee's rank/grade"
+          },
+          "scheme": {
+            "type": "string",
+            "enum": ["A", "B", "P"],
+            "description": "Employment scheme (A=Full-time 14h, B=Full-time 13h, P=Part-time)"
+          },
+          "rotationOffset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Starting offset in work pattern cycle"
+          },
+          "gender": {
+            "type": "string",
+            "enum": ["M", "F", "MALE", "FEMALE"],
+            "description": "Employee gender"
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["code"],
+              "properties": {
+                "code": {"type": "string"},
+                "validFrom": {"type": "string", "format": "date"},
+                "expiryDate": {"type": "string", "format": "date"}
+              }
+            }
+          },
+          "preferences": {
+            "type": "object",
+            "description": "Employee preferences for shifts/locations"
+          },
+          "unavailability": {
+            "type": "array",
+            "description": "Dates when employee is unavailable",
+            "items": {
+              "type": "object",
+              "properties": {
+                "startDate": {"type": "string", "format": "date"},
+                "endDate": {"type": "string", "format": "date"},
+                "reason": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

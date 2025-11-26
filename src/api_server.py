@@ -401,17 +401,40 @@ async def get_schemas():
     """
     Get JSON schemas for input and output validation.
     
-    Returns schemas from context/schemas/ directory if available.
+    Returns JSON Schema documents (draft-07) for request/response validation.
     """
-    # TODO: Load actual schemas from context/schemas/
-    return {
-        "inputSchema": {
-            "description": "NGRS input schema (v0.43)"
-        },
-        "outputSchema": {
-            "description": "NGRS output schema (v0.43)"
+    import json
+    from pathlib import Path
+    
+    try:
+        schema_dir = Path(__file__).parent.parent / "context" / "schemas"
+        
+        # Load input schema
+        input_schema_path = schema_dir / "input_schema_v0.73.json"
+        with open(input_schema_path, 'r') as f:
+            input_schema = json.load(f)
+        
+        # Load output schema
+        output_schema_path = schema_dir / "output_schema_v0.73.json"
+        with open(output_schema_path, 'r') as f:
+            output_schema = json.load(f)
+        
+        return {
+            "inputSchema": input_schema,
+            "outputSchema": output_schema
         }
-    }
+    except FileNotFoundError as e:
+        return {
+            "error": "Schema files not found",
+            "message": str(e),
+            "inputSchema": {"description": "NGRS input schema (v0.73)"},
+            "outputSchema": {"description": "NGRS output schema (v0.73)"}
+        }
+    except Exception as e:
+        return {
+            "error": "Error loading schemas",
+            "message": str(e)
+        }
 
 
 @app.post("/configure", response_class=ORJSONResponse)
