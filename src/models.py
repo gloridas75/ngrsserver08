@@ -193,6 +193,10 @@ class AsyncJobResponse(BaseModel):
     status: str = Field(..., description="Initial status (typically 'queued')")
     created_at: str = Field(..., description="ISO 8601 timestamp")
     message: str = Field(default="Job submitted successfully")
+    feasibility_check: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Optional pre-flight feasibility analysis with warnings and recommendations"
+    )
     
     model_config = ConfigDict(extra='allow')
 

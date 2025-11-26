@@ -40,6 +40,7 @@ from src.models import (
 from src.output_builder import build_output
 from src.redis_job_manager import RedisJobManager
 from src.redis_worker import start_worker_pool
+from src.feasibility_checker import quick_feasibility_check
 
 # ============================================================================
 # LOGGING SETUP
@@ -591,6 +592,19 @@ async def solve_async(
     - ttl_seconds: Result TTL 60-86400 seconds (default 3600)
     - webhook_url: Optional URL to receive job completion notification
     
+    Feasibility Pre-Check (Automatic):
+    - Fast mathematical analysis (< 100ms) before queuing job
+    - Estimates minimum employee count needed using coverage formulas
+    - Checks role/rank/gender/scheme matching
+    - Returns warnings if obvious infeasibility detected
+    - Job is queued regardless - check helps set expectations
+    - Response includes "feasibility_check" field with:
+      * likely_feasible: bool
+      * confidence: "high" | "medium" | "low"
+      * warnings: List of issues detected
+      * recommendations: Suggested fixes
+      * analysis: Detailed breakdown by requirement
+    
     Webhook Notification:
     - When job completes (success or failure), a POST request is sent to webhook_url
     - Payload includes: job_id, status, timestamps, duration, error_message (if failed), result_url
@@ -640,6 +654,21 @@ async def solve_async(
             ttl_seconds = raw_body_json.get("ttl_seconds")
             webhook_url = raw_body_json.get("webhook_url")
         
+        # Perform quick feasibility check (< 100ms)
+        feasibility_result = None
+        try:
+            feasibility_result = quick_feasibility_check(input_json)
+            logger.info(
+                f"async_job_feasibility requestId={request_id} likely_feasible={feasibility_result['likely_feasible']} "
+                f"confidence={feasibility_result['confidence']} "
+                f"employees_provided={feasibility_result['analysis']['employees_provided']} "
+                f"employees_required={feasibility_result['analysis']['employees_required_min']}-{feasibility_result['analysis']['employees_required_max']}"
+            )
+        except Exception as check_error:
+            # Don't fail job submission if feasibility check fails
+            logger.warning(f"Feasibility check failed for requestId={request_id}: {check_error}")
+            feasibility_result = None
+        
         # Create job with webhook URL
         job_id = job_manager.create_job(input_json, webhook_url=webhook_url)
         
@@ -653,7 +682,8 @@ async def solve_async(
             job_id=job_id,
             status="queued",
             created_at=datetime.now().isoformat(),
-            message="Job submitted successfully"
+            message="Job submitted successfully",
+            feasibility_check=feasibility_result
         )
         
     except Exception as e:
