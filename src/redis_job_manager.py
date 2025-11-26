@@ -255,7 +255,10 @@ class RedisJobManager:
         result_size = len(result_json.encode('utf-8'))
         self.redis.hset(job_key, 'result_size_bytes', result_size)
         
-        logger.info(f"Result stored for {job_id}: {result_size} bytes")
+        # Set TTL on job metadata as well (same as result TTL)
+        self.redis.expire(job_key, self.result_ttl_seconds)
+        
+        logger.info(f"Result stored for {job_id}: {result_size} bytes (TTL: {self.result_ttl_seconds}s)")
         return True
     
     def get_result(self, job_id: str) -> Optional[Dict[str, Any]]:
@@ -302,7 +305,7 @@ class RedisJobManager:
     
     def cleanup_expired_jobs(self) -> int:
         """
-        Remove expired job metadata
+        Remove expired job metadata (jobs without results after TTL)
         Results auto-expire via Redis TTL
         
         Returns:
@@ -323,20 +326,26 @@ class RedisJobManager:
                     continue
                 
                 job_data = self.redis.hgetall(key)
+                job_id = key.split(':')[-1]
                 
-                # Check if completed and past TTL
+                # Check if completed and result has expired
                 if job_data.get('status') in ['completed', 'failed']:
                     completed_at = float(job_data.get('completed_at', 0))
+                    result_exists = self.redis.exists(self._result_key(job_id))
+                    
+                    # If completed more than TTL ago and no result, delete the job
                     if completed_at and (current_time - completed_at) > self.result_ttl_seconds:
-                        # Mark as expired
-                        self.redis.hset(key, 'status', JobStatus.EXPIRED.value)
-                        expired_count += 1
+                        if not result_exists:
+                            # Delete job metadata
+                            self.redis.delete(key)
+                            expired_count += 1
+                            logger.info(f"Cleaned up expired job: {job_id}")
             
             if cursor == 0:
                 break
         
         if expired_count > 0:
-            logger.info(f"Marked {expired_count} jobs as expired")
+            logger.info(f"Cleaned up {expired_count} expired jobs")
         
         return expired_count
     
@@ -400,7 +409,7 @@ class RedisJobManager:
         Get detailed information about all jobs including UUIDs and timestamps
         
         Returns:
-            List of job details with id, status, created_at, updated_at
+            List of job details with id, status, created_at (ISO format), updated_at
         """
         jobs = []
         cursor = 0
@@ -417,11 +426,28 @@ class RedisJobManager:
                 job_data = self.redis.hgetall(key)
                 
                 if job_data:
+                    # Convert timestamps to ISO format
+                    created_at = job_data.get('created_at')
+                    created_at_iso = None
+                    if created_at:
+                        try:
+                            created_at_iso = datetime.fromtimestamp(float(created_at)).isoformat()
+                        except (ValueError, TypeError):
+                            created_at_iso = created_at
+                    
+                    completed_at = job_data.get('completed_at')
+                    completed_at_iso = None
+                    if completed_at and completed_at != '':
+                        try:
+                            completed_at_iso = datetime.fromtimestamp(float(completed_at)).isoformat()
+                        except (ValueError, TypeError):
+                            completed_at_iso = None
+                    
                     jobs.append({
                         'job_id': job_id,
                         'status': job_data.get('status', 'unknown'),
-                        'created_at': job_data.get('created_at'),
-                        'updated_at': job_data.get('updated_at'),
+                        'created_at': created_at_iso,
+                        'completed_at': completed_at_iso,
                         'has_result': self.redis.exists(self._result_key(job_id))
                     })
             
