@@ -62,16 +62,33 @@ jobs:
               exit 1
             fi
             
+            # Ensure Redis is running
+            echo "Checking Redis container..."
+            if ! docker ps | grep -q ngrs-redis; then
+              echo "Starting Redis container..."
+              docker network create ngrs-network 2>/dev/null || true
+              docker run -d \
+                --name ngrs-redis \
+                --network ngrs-network \
+                --restart unless-stopped \
+                redis:7-alpine
+              sleep 2
+            fi
+            
             # Start new container
             echo "Starting new container..."
             docker run -d \
               --name ngrs-solver-api \
+              --network ngrs-network \
+              --restart unless-stopped \
               -p 8080:8080 \
-              -e REDIS_HOST=172.17.0.2 \
+              -v /home/ubuntu/ngrssolver/input:/app/input:ro \
+              -v /home/ubuntu/ngrssolver/output:/app/output \
+              -e REDIS_HOST=ngrs-redis \
               -e REDIS_PORT=6379 \
               -e CORS_ORIGINS='*' \
               -e PORT=8080 \
-              -e ADMIN_API_KEY=change-me-in-production \
+              -e ADMIN_API_KEY='w4XoYjTka+gVMjsgHlkjtYLOxNe9Dh6Vjbpp083CYiA=' \
               ngrs-solver:latest
             
             if [ $? -ne 0 ]; then
