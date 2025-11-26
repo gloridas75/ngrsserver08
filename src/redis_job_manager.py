@@ -37,6 +37,7 @@ class JobInfo:
     input_data: Dict[str, Any] = field(default_factory=dict)
     error_message: Optional[str] = None
     result_size_bytes: Optional[int] = None
+    webhook_url: Optional[str] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to JSON-serializable dict, filtering None values for Redis"""
@@ -113,12 +114,13 @@ class RedisJobManager:
         """Generate Redis key for job result"""
         return f"{self.key_prefix}:result:{job_id}"
     
-    def create_job(self, input_data: Dict[str, Any]) -> str:
+    def create_job(self, input_data: Dict[str, Any], webhook_url: Optional[str] = None) -> str:
         """
         Create new job and add to queue
         
         Args:
             input_data: Solver input JSON
+            webhook_url: Optional URL to POST completion status
             
         Returns:
             job_id: UUID for tracking
@@ -128,7 +130,8 @@ class RedisJobManager:
             job_id=job_id,
             status=JobStatus.QUEUED,
             created_at=time.time(),
-            input_data=input_data
+            input_data=input_data,
+            webhook_url=webhook_url
         )
         
         # Store job metadata
@@ -455,5 +458,69 @@ class RedisJobManager:
                 break
         
         # Sort by created_at (newest first)
+        jobs.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+        
+        return jobs
+    
+    def send_webhook_notification(self, job_id: str, base_url: Optional[str] = None) -> bool:
+        """
+        Send webhook notification for completed job
+        
+        Args:
+            job_id: Job UUID
+            base_url: Base URL for result_url construction (e.g., https://api.example.com)
+            
+        Returns:
+            True if webhook sent successfully, False otherwise
+        """
+        job_info = self.get_job(job_id)
+        
+        if not job_info or not job_info.webhook_url:
+            return False
+        
+        try:
+            import requests
+            
+            # Calculate duration
+            duration_seconds = None
+            if job_info.started_at and job_info.completed_at:
+                duration_seconds = job_info.completed_at - job_info.started_at
+            
+            # Build result URL
+            result_url = None
+            if job_info.status == JobStatus.COMPLETED and base_url:
+                result_url = f"{base_url}/solve/async/{job_id}/result"
+            
+            # Prepare webhook payload
+            payload = {
+                "job_id": job_id,
+                "status": job_info.status.value,
+                "created_at": datetime.fromtimestamp(job_info.created_at).isoformat(),
+                "started_at": datetime.fromtimestamp(job_info.started_at).isoformat() if job_info.started_at else None,
+                "completed_at": datetime.fromtimestamp(job_info.completed_at).isoformat() if job_info.completed_at else None,
+                "duration_seconds": duration_seconds,
+                "error_message": job_info.error_message,
+                "result_url": result_url,
+                "result_size_bytes": job_info.result_size_bytes
+            }
+            
+            # Send POST request to webhook URL
+            response = requests.post(
+                job_info.webhook_url,
+                json=payload,
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+            
+            if response.status_code in [200, 201, 202, 204]:
+                logger.info(f"Webhook sent successfully for job {job_id} to {job_info.webhook_url} (status: {response.status_code})")
+                return True
+            else:
+                logger.warning(f"Webhook failed for job {job_id}: HTTP {response.status_code} - {response.text[:200]}")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Failed to send webhook for job {job_id}: {str(e)}", exc_info=True)
+            return False
         jobs.sort(key=lambda x: x.get('created_at', ''), reverse=True)
         return jobs

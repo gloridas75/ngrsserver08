@@ -178,6 +178,11 @@ class AsyncJobRequest(BaseModel):
         description="Time-to-live for result in seconds (60-86400). Default: 3600 (1 hour)"
     )
     
+    webhook_url: Optional[str] = Field(
+        None,
+        description="Optional webhook URL to POST job completion status. Will receive JobStatusResponse payload."
+    )
+    
     model_config = ConfigDict(extra='allow')
 
 
@@ -225,5 +230,21 @@ class AsyncStatsResponse(BaseModel):
     workers: int = Field(..., description="Number of active workers")
     redis_connected: bool = Field(..., description="Redis connection status")
     jobs: Optional[List[Dict[str, Any]]] = Field(None, description="Detailed job list (when details=true)")
+    
+    model_config = ConfigDict(extra='allow')
+
+
+class WebhookPayload(BaseModel):
+    """Payload posted to webhook URL when job completes."""
+    
+    job_id: str = Field(..., description="Job UUID")
+    status: str = Field(..., description="Final status: completed or failed")
+    created_at: str = Field(..., description="ISO 8601 timestamp of job creation")
+    started_at: Optional[str] = Field(None, description="ISO 8601 timestamp when processing started")
+    completed_at: str = Field(..., description="ISO 8601 timestamp when processing finished")
+    duration_seconds: Optional[float] = Field(None, description="Total processing time in seconds")
+    error_message: Optional[str] = Field(None, description="Error message if status is 'failed'")
+    result_url: Optional[str] = Field(None, description="URL to retrieve full result (if completed successfully)")
+    result_size_bytes: Optional[int] = Field(None, description="Size of result JSON in bytes")
     
     model_config = ConfigDict(extra='allow')

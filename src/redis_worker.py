@@ -89,6 +89,17 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                 job_manager.store_result(job_id, result)
                 job_manager.update_status(job_id, JobStatus.COMPLETED)
                 
+                # Send webhook notification if webhook_url provided
+                try:
+                    # Get base URL from environment or use default
+                    base_url = __import__('os').getenv('API_BASE_URL')
+                    webhook_sent = job_manager.send_webhook_notification(job_id, base_url)
+                    if webhook_sent:
+                        print(f"[WORKER-{worker_id}] Webhook notification sent for job {job_id}")
+                except Exception as webhook_error:
+                    # Don't fail the job if webhook fails
+                    print(f"[WORKER-{worker_id}] Webhook notification failed for job {job_id}: {webhook_error}")
+                
             except Exception as solve_error:
                 # Handle solver-specific errors
                 error_msg = f"{type(solve_error).__name__}: {str(solve_error)}"
@@ -102,6 +113,15 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                     JobStatus.FAILED, 
                     error_message=error_msg
                 )
+                
+                # Send webhook notification for failed job
+                try:
+                    base_url = __import__('os').getenv('API_BASE_URL')
+                    webhook_sent = job_manager.send_webhook_notification(job_id, base_url)
+                    if webhook_sent:
+                        print(f"[WORKER-{worker_id}] Webhook notification sent for failed job {job_id}")
+                except Exception as webhook_error:
+                    print(f"[WORKER-{worker_id}] Webhook notification failed for job {job_id}: {webhook_error}")
         
         except Exception as e:
             # Handle worker-level errors (e.g., Redis connection issues)

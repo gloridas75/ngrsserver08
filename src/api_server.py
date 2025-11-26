@@ -583,12 +583,19 @@ async def solve_async(
     Returns immediately with job UUID for tracking.
     
     Accepts input via:
-    - Wrapped format: {"input_json": {...NGRS input...}, "priority": 5}
+    - Wrapped format: {"input_json": {...NGRS input...}, "priority": 5, "webhook_url": "https://your-api.com/webhook"}
     - Raw format: {...NGRS input directly...} (without input_json wrapper)
     
     Query parameters (optional):
     - priority: Job priority 0-10 (default 0)
     - ttl_seconds: Result TTL 60-86400 seconds (default 3600)
+    - webhook_url: Optional URL to receive job completion notification
+    
+    Webhook Notification:
+    - When job completes (success or failure), a POST request is sent to webhook_url
+    - Payload includes: job_id, status, timestamps, duration, error_message (if failed), result_url
+    - Webhook timeout: 10 seconds
+    - Job will complete successfully even if webhook fails
     
     Returns:
     - 201: Job created and queued
@@ -621,17 +628,20 @@ async def solve_async(
         # Extract priority and ttl from payload or use defaults
         priority = 0
         ttl_seconds = None
+        webhook_url = None
         
         if payload:
             priority = payload.priority or 0
             ttl_seconds = payload.ttl_seconds
+            webhook_url = payload.webhook_url
         elif raw_body_json:
             # Check if raw body has these fields (for backward compatibility)
             priority = raw_body_json.get("priority", 0)
             ttl_seconds = raw_body_json.get("ttl_seconds")
+            webhook_url = raw_body_json.get("webhook_url")
         
-        # Create job
-        job_id = job_manager.create_job(input_json)
+        # Create job with webhook URL
+        job_id = job_manager.create_job(input_json, webhook_url=webhook_url)
         
         queue_length = job_manager.get_queue_length()
         logger.info(
