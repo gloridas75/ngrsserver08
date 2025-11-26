@@ -21,6 +21,8 @@ class JobStatus(Enum):
     QUEUED = "queued"
     VALIDATING = "validating"
     IN_PROGRESS = "in_progress"
+    CANCELLING = "cancelling"
+    CANCELLED = "cancelled"
     COMPLETED = "completed"
     FAILED = "failed"
     EXPIRED = "expired"
@@ -522,5 +524,158 @@ class RedisJobManager:
         except Exception as e:
             logger.error(f"Failed to send webhook for job {job_id}: {str(e)}", exc_info=True)
             return False
+    
+    def set_cancellation_flag(self, job_id: str) -> bool:
+        """
+        Set cancellation flag for job
+        
+        Args:
+            job_id: Job UUID
+            
+        Returns:
+            True if flag set successfully
+        """
+        cancel_key = f"{self.key_prefix}:cancel:{job_id}"
+        self.redis.set(cancel_key, "1", ex=3600)  # TTL 1 hour
+        logger.info(f"Cancellation flag set for job {job_id}")
+        return True
+    
+    def check_cancellation_flag(self, job_id: str) -> bool:
+        """
+        Check if job has cancellation flag set
+        
+        Args:
+            job_id: Job UUID
+            
+        Returns:
+            True if cancellation requested
+        """
+        cancel_key = f"{self.key_prefix}:cancel:{job_id}"
+        return bool(self.redis.get(cancel_key))
+    
+    def clear_cancellation_flag(self, job_id: str) -> bool:
+        """
+        Clear cancellation flag for job
+        
+        Args:
+            job_id: Job UUID
+            
+        Returns:
+            True if flag cleared
+        """
+        cancel_key = f"{self.key_prefix}:cancel:{job_id}"
+        deleted = self.redis.delete(cancel_key)
+        return deleted > 0
+    
+    def cancel_job(self, job_id: str) -> Dict[str, Any]:
+        """
+        Cancel job using appropriate strategy based on current state
+        
+        Args:
+            job_id: Job UUID
+            
+        Returns:
+            Dict with cancellation status and details
+        """
+        job_info = self.get_job(job_id)
+        
+        if not job_info:
+            return {
+                "success": False,
+                "error": f"Job {job_id} not found"
+            }
+        
+        previous_status = job_info.status.value
+        
+        if job_info.status == JobStatus.QUEUED:
+            # Strategy 1: Remove from queue immediately
+            removed = self.redis.lrem(self.queue_key, 1, job_id)
+            
+            if removed > 0:
+                self.update_status(job_id, JobStatus.CANCELLED)
+                logger.info(f"Job {job_id} removed from queue")
+                
+                return {
+                    "success": True,
+                    "job_id": job_id,
+                    "previous_status": previous_status,
+                    "status": "cancelled",
+                    "method": "queue_removal",
+                    "immediate": True,
+                    "message": "Job removed from queue immediately"
+                }
+            else:
+                # Job not in queue (may have just been picked up by worker)
+                self.set_cancellation_flag(job_id)
+                self.update_status(job_id, JobStatus.CANCELLING)
+                
+                return {
+                    "success": True,
+                    "job_id": job_id,
+                    "previous_status": previous_status,
+                    "status": "cancelling",
+                    "method": "cancellation_flag",
+                    "immediate": False,
+                    "message": "Job not in queue. Cancellation flag set for worker.",
+                    "estimated_stop_time_seconds": 60
+                }
+        
+        elif job_info.status == JobStatus.IN_PROGRESS:
+            # Strategy 2: Set cancellation flag for worker to check
+            self.set_cancellation_flag(job_id)
+            self.update_status(job_id, JobStatus.CANCELLING)
+            
+            return {
+                "success": True,
+                "job_id": job_id,
+                "previous_status": previous_status,
+                "status": "cancelling",
+                "method": "cancellation_flag",
+                "immediate": False,
+                "message": "Cancellation requested. Solver will stop at next checkpoint.",
+                "estimated_stop_time_seconds": 60,
+                "note": "Worker checks flag before and after solver execution"
+            }
+        
+        elif job_info.status in [JobStatus.COMPLETED, JobStatus.FAILED]:
+            # Strategy 3: Delete result
+            result_key = self._result_key(job_id)
+            result_deleted = self.redis.delete(result_key) > 0
+            self.update_status(job_id, JobStatus.CANCELLED)
+            
+            return {
+                "success": True,
+                "job_id": job_id,
+                "previous_status": previous_status,
+                "status": "cancelled",
+                "method": "result_deletion",
+                "immediate": True,
+                "message": "Job result deleted" if result_deleted else "Job marked as cancelled",
+                "result_deleted": result_deleted
+            }
+        
+        elif job_info.status == JobStatus.CANCELLING:
+            return {
+                "success": True,
+                "job_id": job_id,
+                "previous_status": previous_status,
+                "status": "cancelling",
+                "message": "Job cancellation already in progress"
+            }
+        
+        elif job_info.status == JobStatus.CANCELLED:
+            return {
+                "success": True,
+                "job_id": job_id,
+                "previous_status": previous_status,
+                "status": "cancelled",
+                "message": "Job already cancelled"
+            }
+        
+        else:
+            return {
+                "success": False,
+                "error": f"Cannot cancel job in state: {job_info.status.value}"
+            }
         jobs.sort(key=lambda x: x.get('created_at', ''), reverse=True)
         return jobs

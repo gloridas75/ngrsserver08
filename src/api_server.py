@@ -905,28 +905,67 @@ async def cancel_job(job_id: str):
     """
     Cancel pending job or delete result.
     
+    Smart cancellation based on job state:
+    - QUEUED: Removed from queue immediately
+    - IN_PROGRESS: Cancellation flag set, worker stops at next checkpoint (~30-60s)
+    - COMPLETED/FAILED: Result deleted, job marked as cancelled
+    - CANCELLING: Already cancelling
+    - CANCELLED: Already cancelled
+    
     Path parameters:
     - job_id: UUID returned from POST /solve/async
     
     Returns:
-    - 200: Job cancelled/deleted
+    - 200: Job cancelled/being cancelled with details
     - 404: Job not found
     
-    Note: Jobs already in_progress cannot be stopped mid-execution,
-    but will be removed from system once completed.
-    """
-    deleted = job_manager.delete_job(job_id)
+    Response includes:
+    - method: Cancellation strategy used (queue_removal, cancellation_flag, result_deletion)
+    - immediate: Whether cancellation is immediate (true) or takes time (false)
+    - estimated_stop_time_seconds: For non-immediate cancellations
     
-    if not deleted:
+    Note: Jobs IN_PROGRESS cannot be stopped instantly due to CP-SAT solver limitations.
+    Worker checks cancellation flag before and after solving, typically stopping within 60 seconds.
+    """
+    result = job_manager.cancel_job(job_id)
+    
+    if not result.get("success"):
         raise HTTPException(
             status_code=404,
-            detail=f"Job {job_id} not found"
+            detail=result.get("error", f"Job {job_id} not found")
         )
     
-    return {
-        "message": f"Job {job_id} cancelled/deleted",
-        "job_id": job_id
-    }
+    return result
+
+
+@app.post("/solve/async/{job_id}/cancel")
+async def cancel_job_post(job_id: str):
+    """
+    Cancel job (alternative POST endpoint for systems that don't support DELETE).
+    
+    Same functionality as DELETE /solve/async/{job_id}.
+    
+    Smart cancellation based on job state:
+    - QUEUED: Removed from queue immediately  
+    - IN_PROGRESS: Cancellation flag set, worker stops at checkpoint (~30-60s)
+    - COMPLETED/FAILED: Result deleted, job marked as cancelled
+    
+    Path parameters:
+    - job_id: UUID returned from POST /solve/async
+    
+    Returns:
+    - 200: Job cancelled/being cancelled with details
+    - 404: Job not found
+    """
+    result = job_manager.cancel_job(job_id)
+    
+    if not result.get("success"):
+        raise HTTPException(
+            status_code=404,
+            detail=result.get("error", f"Job {job_id} not found")
+        )
+    
+    return result
 
 
 # ============================================================================

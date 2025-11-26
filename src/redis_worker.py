@@ -55,6 +55,13 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
             
             print(f"[WORKER-{worker_id}] Processing job {job_id}")
             
+            # Check if job was cancelled before we started
+            if job_manager.check_cancellation_flag(job_id):
+                print(f"[WORKER-{worker_id}] Job {job_id} was cancelled before processing")
+                job_manager.update_status(job_id, JobStatus.CANCELLED)
+                job_manager.clear_cancellation_flag(job_id)
+                continue
+            
             # Update status to IN_PROGRESS
             job_manager.update_status(job_id, JobStatus.IN_PROGRESS)
             
@@ -84,6 +91,23 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                 elapsed_time = time.time() - start_time
                 
                 print(f"[WORKER-{worker_id}] Job {job_id} completed in {elapsed_time:.2f}s")
+                
+                # Check if job was cancelled during solving
+                if job_manager.check_cancellation_flag(job_id):
+                    print(f"[WORKER-{worker_id}] Job {job_id} was cancelled during solving - discarding result")
+                    job_manager.update_status(job_id, JobStatus.CANCELLED)
+                    job_manager.clear_cancellation_flag(job_id)
+                    
+                    # Send webhook notification for cancelled job
+                    try:
+                        base_url = __import__('os').getenv('API_BASE_URL')
+                        webhook_sent = job_manager.send_webhook_notification(job_id, base_url)
+                        if webhook_sent:
+                            print(f"[WORKER-{worker_id}] Webhook notification sent for cancelled job {job_id}")
+                    except Exception as webhook_error:
+                        print(f"[WORKER-{worker_id}] Webhook notification failed for job {job_id}: {webhook_error}")
+                    
+                    continue
                 
                 # Store result in Redis
                 job_manager.store_result(job_id, result)
