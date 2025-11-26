@@ -1,0 +1,230 @@
+{
+    "schemaVersion": "0.70",
+    "planningReference": "RST-20251126-0700AD3D",
+    "timezone": "Asia/Singapore",
+    "fixedRotationOffset": false,
+    "planningHorizon": {
+        "startDate": "2025-12-01",
+        "endDate": "2025-12-31"
+    },
+    "solverConfig": {
+        "optimizationMode": "minimizeEmployeeCount",
+        "maxEmployeesToUse": 35
+    },
+    "publicHolidays": [],
+    "solverRunTime": {
+        "maxSeconds": 600
+    },
+    "schemeMap": {
+        "A": "Scheme A",
+        "B": "Scheme B",
+        "P": "Scheme P"
+    },
+    "constraintList": [
+        {
+            "id": "momMaxConsecutiveWorkDays",
+            "enforcement": "hard",
+            "description": "Ministry of Manpower regulation: Maximum consecutive working days allowed",
+            "params": {
+                "maxDays": 12
+            }
+        },
+        {
+            "id": "momDailyHoursCapSchemeA",
+            "enforcement": "hard",
+            "description": "MOM Work-Rest Hours for Scheme A - Maximum 14 hours per day including meal break",
+            "params": {
+                "maxMinutesPerDay": 840,
+                "includesMealBreak": true
+            }
+        },
+        {
+            "id": "momDailyHoursCapSchemeB",
+            "enforcement": "hard",
+            "description": "MOM Work-Rest Hours for Scheme B - Maximum 13 hours per day including meal break",
+            "params": {
+                "maxMinutesPerDay": 780,
+                "includesMealBreak": true
+            }
+        },
+        {
+            "id": "momDailyHoursCap9General",
+            "enforcement": "hard",
+            "description": "General daily working hours cap - 9 hours per day",
+            "params": {
+                "maxMinutesPerDay": 540
+            }
+        },
+        {
+            "id": "momWeeklyHoursCap44h",
+            "enforcement": "hard",
+            "description": "MOM Employment Act: Maximum 44 hours per week",
+            "params": {
+                "maxMinutesPerWeek": 2640
+            }
+        },
+        {
+            "id": "momOneoffperweek",
+            "enforcement": "hard",
+            "description": "MOM Employment Act: At least one rest day per week",
+            "params": {
+                "required": true
+            }
+        },
+        {
+            "id": "momMonthlyOTcap72h",
+            "enforcement": "hard",
+            "description": "MOM Employment Act: Maximum 72 hours overtime per month",
+            "params": {
+                "maxOTMinutesPerMonth": 4320,
+                "otStartsAfterScheduledMinutes": 540,
+                "lunchMinutes": 60,
+                "includeLunchInOTTrigger": true
+            }
+        },
+        {
+            "id": "momLunchBreak",
+            "enforcement": "hard",
+            "description": "MOM meal break requirements: 1 hour deduction for shifts >= 8 hours",
+            "params": {
+                "deductMinutes": 60,
+                "deductIfShiftAtLeastMinutes": 480
+            }
+        },
+        {
+            "id": "teamContinuity",
+            "enforcement": "medium",
+            "description": "Maintain team stability for better coordination",
+            "params": {
+                "minDaysTogether": 3,
+                "maxTeamChangesPerWeek": 2
+            }
+        }
+    ],
+    "solverScoreConfig": {},
+    "demandItems": [
+        {
+            "demandId": "DI-2511251338-43242314",
+            "locationId": "LOC-ADMI-7893",
+            "ouId": "PB T1 A1",
+            "shiftStartDate": "2025-12-01",
+            "shifts": [
+                {
+                    "shiftDetails": [
+                        {
+                            "shiftCode": "D",
+                            "start": "08:00:00",
+                            "end": "17:00:00",
+                            "nextDay": false
+                        },
+                        {
+                            "shiftCode": "N",
+                            "start": "20:00:00",
+                            "end": "08:00:00",
+                            "nextDay": true
+                        }
+                    ],
+                    "includePublicHolidays": false,
+                    "includeEveOfPublicHolidays": false,
+                    "shiftSetId": "Set_DI_2511251338_43242314",
+                    "coverageDays": [
+                        "Tue",
+                        "Wed",
+                        "Thu",
+                        "Fri",
+                        "Sat"
+                    ],
+                    "coverageAnchor": "2025-12-01",
+                    "whitelist": {
+                        "teamIds": [],
+                        "employeeIds": []
+                    },
+                    "blacklist": {
+                        "employeeIds": []
+                    }
+                }
+            ],
+            "requirements": [
+                {
+                    "requirementId": "8_1",
+                    "productTypeId": "AVSO",
+                    "rankId": "ASO",
+                    "headcount": 4,
+                    "workPattern": [
+                        "O",
+                        "N",
+                        "N",
+                        "D",
+                        "D",
+                        "D"
+                    ],
+                    "requiredQualifications": [],
+                    "gender": "Any",
+                    "Scheme": "Global"
+                }
+            ]
+        }
+    ],
+    "employees": [
+        {
+            "employeeId": "00097227",
+            "ouId": "PB T1 A1",
+            "productTypeId": "AVSO",
+            "rankId": "ASO",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00105501",
+            "ouId": "PB T1 A1",
+            "productTypeId": "AVSO",
+            "rankId": "ASO",
+            "scheme": "B",
+            "rotationOffset": 0,
+            "gender": "FEMALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00149072",
+            "ouId": "PB T1 A1",
+            "productTypeId": "AVSO",
+            "rankId": "ASO",
+            "scheme": "B",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00173519",
+            "ouId": "PB T1 A1",
+            "productTypeId": "AVSO",
+            "rankId": "ASO",
+            "scheme": "P",
+            "rotationOffset": 0,
+            "gender": "FEMALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00174104",
+            "ouId": "PB T1 A1",
+            "productTypeId": "AVSO",
+            "rankId": "ASO",
+            "scheme": "P",
+            "rotationOffset": 0,
+            "gender": "FEMALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        }
+    ]
+}

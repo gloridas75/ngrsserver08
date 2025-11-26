@@ -7,6 +7,7 @@ from ortools.sat.python import cp_model
 import importlib, pkgutil
 from datetime import datetime
 import time
+import os
 from collections import defaultdict
 from .data_loader import load_input
 from .score_helpers import ScoreBook
@@ -44,6 +45,48 @@ def calculate_adaptive_time_limit(num_slots, num_employees, user_time_limit=None
         return 40  # Large problem: 40 seconds (50,000-150,000 variables)
     else:
         return 60  # Very large problem: 60 seconds (>150,000 variables)
+
+
+def calculate_num_search_workers(num_slots, num_employees, user_num_workers=None):
+    """Calculate optimal number of parallel search workers for CP-SAT.
+    
+    CP-SAT can use multiple threads to explore the search space in parallel,
+    which can significantly speed up solving for larger problems.
+    
+    Args:
+        num_slots: Number of shift slots
+        num_employees: Number of employees
+        user_num_workers: User-specified number of workers (takes precedence)
+    
+    Returns:
+        Recommended number of search workers (1-16)
+    """
+    if user_num_workers:
+        return max(1, min(16, user_num_workers))
+    
+    # Calculate problem complexity
+    complexity = (num_slots * num_employees) / 10000
+    
+    # For very small problems, parallelization overhead isn't worth it
+    if complexity < 0.5:
+        return 1
+    
+    # For small-medium problems, use 2-4 workers
+    elif complexity < 2:
+        return 2
+    
+    # For medium problems, use 4 workers
+    elif complexity < 5:
+        return 4
+    
+    # For large problems, use 8 workers
+    elif complexity < 15:
+        return 8
+    
+    # For very large problems, use maximum parallelization
+    else:
+        return 16
+
 
 def build_model(ctx):
     """Build CP-SAT model with decision variables for slot-employee assignments.
@@ -1210,12 +1253,24 @@ def solve(ctx):
     user_time_limit = ctx.get("timeLimit")
     time_limit = calculate_adaptive_time_limit(num_slots, num_employees, user_time_limit)
     
+    # Configure CP-SAT parallelization
+    user_num_workers = None
+    if os.getenv("CPSAT_NUM_THREADS"):
+        try:
+            user_num_workers = int(os.getenv("CPSAT_NUM_THREADS"))
+        except ValueError:
+            pass
+    
+    num_search_workers = calculate_num_search_workers(num_slots, num_employees, user_num_workers)
+    
     print(f"[solve] Running CP-SAT solver...")
     print(f"  Problem size: {num_slots} slots × {num_employees} employees")
     print(f"  Time limit: {time_limit}s{' (user-specified)' if user_time_limit else ' (adaptive)'}")
+    print(f"  Parallel search workers: {num_search_workers}{' (env)' if user_num_workers else ' (adaptive)'}")
     
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit
+    solver.parameters.num_search_workers = num_search_workers
     status = solver.Solve(model)
     
     print(f"[solve] Raw status code: {status} (OPTIMAL={cp_model.OPTIMAL}, FEASIBLE={cp_model.FEASIBLE}, INFEASIBLE={cp_model.INFEASIBLE}, MODEL_INVALID={cp_model.MODEL_INVALID})")

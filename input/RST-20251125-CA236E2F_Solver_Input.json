@@ -1,0 +1,1278 @@
+{
+  "schemaVersion": "0.70",
+  "planningReference": "RST-20251125-CA236E2F",
+  "timezone": "Asia/Singapore",
+  "fixedRotationOffset": false,
+  "planningHorizon": {
+    "startDate": "2025-12-01",
+    "endDate": "2025-12-31"
+  },
+  "publicHolidays": [],
+  "solverRunTime": {
+    "maxSeconds": 600
+  },
+  "schemeMap": {
+    "A": "Scheme A",
+    "B": "Scheme B",
+    "P": "Scheme P"
+  },
+  "constraintList": [
+    {
+      "id": "momMaxConsecutiveWorkDays",
+      "enforcement": "hard",
+      "description": "Ministry of Manpower regulation: Maximum consecutive working days allowed",
+      "params": {
+        "maxDays": 12
+      }
+    },
+    {
+      "id": "momDailyHoursCapSchemeA",
+      "enforcement": "hard",
+      "description": "MOM Work-Rest Hours for Scheme A - Maximum 14 hours per day including meal break",
+      "params": {
+        "maxMinutesPerDay": 840,
+        "includesMealBreak": true
+      }
+    },
+    {
+      "id": "momDailyHoursCapSchemeB",
+      "enforcement": "hard",
+      "description": "MOM Work-Rest Hours for Scheme B - Maximum 13 hours per day including meal break",
+      "params": {
+        "maxMinutesPerDay": 780,
+        "includesMealBreak": true
+      }
+    },
+    {
+      "id": "momDailyHoursCap9General",
+      "enforcement": "hard",
+      "description": "General daily working hours cap - 9 hours per day",
+      "params": {
+        "maxMinutesPerDay": 540
+      }
+    },
+    {
+      "id": "momWeeklyHoursCap44h",
+      "enforcement": "hard",
+      "description": "MOM Employment Act: Maximum 44 hours per week",
+      "params": {
+        "maxMinutesPerWeek": 2640
+      }
+    },
+    {
+      "id": "momOneoffperweek",
+      "enforcement": "hard",
+      "description": "MOM Employment Act: At least one rest day per week",
+      "params": {
+        "required": true
+      }
+    },
+    {
+      "id": "momMonthlyOTcap72h",
+      "enforcement": "hard",
+      "description": "MOM Employment Act: Maximum 72 hours overtime per month",
+      "params": {
+        "maxOTMinutesPerMonth": 4320,
+        "otStartsAfterScheduledMinutes": 540,
+        "lunchMinutes": 60,
+        "includeLunchInOTTrigger": true
+      }
+    },
+    {
+      "id": "momLunchBreak",
+      "enforcement": "hard",
+      "description": "MOM meal break requirements: 1 hour deduction for shifts >= 8 hours",
+      "params": {
+        "deductMinutes": 60,
+        "deductIfShiftAtLeastMinutes": 480
+      }
+    },
+    {
+      "id": "teamContinuity",
+      "enforcement": "medium",
+      "description": "Maintain team stability for better coordination",
+      "params": {
+        "minDaysTogether": 3,
+        "maxTeamChangesPerWeek": 2
+      }
+    }
+  ],
+  "solverScoreConfig": {},
+  "demandItems": [
+    {
+      "demandId": "DI-2511250833-57957228",
+      "locationId": "LOC-EEFR-4653",
+      "ouId": "ATSU T1 LSU A1",
+      "shiftStartDate": "2025-11-25",
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "09:00:00",
+              "end": "18:00:00",
+              "nextDay": false
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": false,
+          "shiftSetId": "Set_DI_2511250833_57957228",
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "coverageAnchor": "2025-11-25",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": []
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "7_1",
+          "productTypeId": "APO",
+          "rankId": "SER",
+          "headcount": 10,
+          "workPattern": [
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "O"
+          ],
+          "requiredQualifications": [],
+          "gender": "Any",
+          "Scheme": "Global"
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "00010965",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012907",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SSER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00017450",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00017614",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00017813",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00018476",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00018864",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00019178",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00023713",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00024360",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SSER",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00024914",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00026767",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00027898",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00028276",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00030103",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00030111",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00030149",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00030893",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "LAN",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00032093",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00033280",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00034833",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00037511",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00042726",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SSER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00045844",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00047605",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00053077",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00058111",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00059690",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00060880",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00066299",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00075281",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SSER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00083949",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "P",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00086428",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE3",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00087101",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "P",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00089938",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOAES",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00090682",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "P",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00095865",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00108927",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOAES",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00112831",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00113263",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOAES",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00120417",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00121815",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00123392",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE1",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00124808",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOES",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00126186",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "P",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00136149",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE3",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00136187",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE3",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00136261",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOAES",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00136833",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00137674",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00138166",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE1",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00143002",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00144315",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00146705",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE3",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00147429",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE3",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00147896",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE2",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00148929",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00153955",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOE2",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00164235",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00164371",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "LAN",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00164623",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "LAN",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00167775",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00167875",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00167938",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00168273",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00168606",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00169253",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOAES",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00169894",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00170319",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00170844",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171073",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171119",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171122",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171125",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171127",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "LAN",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171135",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171138",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "CON",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171455",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171647",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171905",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00171908",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172003",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172004",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172166",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "CIV",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172267",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172624",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172704",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172760",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00172881",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00173259",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00173588",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "FEMALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00173762",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "REC",
+      "scheme": "B",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "02000013",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APOE",
+      "rankId": "APOAES",
+      "scheme": "P",
+      "rotationOffset": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    }
+  ]
+}

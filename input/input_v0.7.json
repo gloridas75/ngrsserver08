@@ -2,7 +2,7 @@
   "schemaVersion": "0.70",
   "planningReference": "NGRS_COMPLEX_ROSTER_MULTITEAM",
   "timezone": "Asia/Singapore",
-  "fixedRotationOffset": true,
+  "fixedRotationOffset": false,
   "planningHorizon": {
     "startDate": "2025-12-01",
     "endDate": "2025-12-31"
@@ -13,6 +13,10 @@
   "solverRunTime": {
     "maxSeconds": 600
   },
+  "solverConfig": {
+    "optimizationMode": "minimizeEmployeeCount",
+    "maxEmployeesToUse": 35
+    },
   "schemeMap": {
     "A": "SchemeA",
     "B": "SchemeB",

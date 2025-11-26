@@ -1,0 +1,5536 @@
+{
+  "schemaVersion": "0.4",
+  "planningReference": "RST-20251126-0700AD3D",
+  "publicHolidays": [],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optfold-py-0.4.2",
+    "startedAt": "2025-11-26T11:25:57.319737",
+    "ended": "2025-11-26T11:25:57.552661",
+    "durationSeconds": 0.233,
+    "status": "INFEASIBLE",
+    "optimizedRotationOffsets": {
+      "00097227": 2,
+      "00105501": 1,
+      "00149072": 1,
+      "00173519": 1,
+      "00174104": 3
+    }
+  },
+  "score": {
+    "overall": 91,
+    "hard": 91,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "violations": [
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-02-520722 on 2025-12-02 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-03-cd7d86 on 2025-12-03 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-04-ac6fc5 on 2025-12-04 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-05-31b72f on 2025-12-05 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-16-f44838 on 2025-12-16 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-18-5237cf on 2025-12-18 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-20-5d546e on 2025-12-20 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-23-2e01d5 on 2025-12-23 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-25-b59408 on 2025-12-25 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P0-2025-12-26-37f2be on 2025-12-26 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P1-2025-12-02-c0c56f on 2025-12-02 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P1-2025-12-16-a4c4df on 2025-12-16 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P1-2025-12-20-00b564 on 2025-12-20 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P1-2025-12-25-6b81b7 on 2025-12-25 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P1-2025-12-26-d933c5 on 2025-12-26 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P1-2025-12-27-cfeca4 on 2025-12-27 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P2-2025-12-20-f8685a on 2025-12-20 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-D-P2-2025-12-26-b490e0 on 2025-12-26 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P0-2025-12-02-7ec573 on 2025-12-02 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P0-2025-12-03-704cf9 on 2025-12-03 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P0-2025-12-09-0791d7 on 2025-12-09 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P0-2025-12-10-a75b1f on 2025-12-10 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P0-2025-12-11-77ee2c on 2025-12-11 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P0-2025-12-12-636c75 on 2025-12-12 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P0-2025-12-13-45db5d on 2025-12-13 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-02-2ca81e on 2025-12-02 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-03-342468 on 2025-12-03 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-04-8fe8e0 on 2025-12-04 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-05-a23cdf on 2025-12-05 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-06-b059e9 on 2025-12-06 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-09-d9bcbd on 2025-12-09 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-10-b1bfcd on 2025-12-10 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-11-5cd8d9 on 2025-12-11 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-12-94b0b3 on 2025-12-12 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-13-9ad79f on 2025-12-13 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-16-20f611 on 2025-12-16 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-17-fe4ad8 on 2025-12-17 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-18-1d09b2 on 2025-12-18 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-19-8b0804 on 2025-12-19 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-20-2b4d89 on 2025-12-20 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-23-562b4d on 2025-12-23 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-24-60e0a5 on 2025-12-24 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-25-2cb96a on 2025-12-25 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-26-25522d on 2025-12-26 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-27-f4da0e on 2025-12-27 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-30-ad96fd on 2025-12-30 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P1-2025-12-31-80976a on 2025-12-31 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-02-6d51ca on 2025-12-02 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-03-61d0c1 on 2025-12-03 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-04-c544b9 on 2025-12-04 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-05-2dd620 on 2025-12-05 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-06-4b3eba on 2025-12-06 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-09-933fc7 on 2025-12-09 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-10-a814a8 on 2025-12-10 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-11-cf25ea on 2025-12-11 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-12-550fe6 on 2025-12-12 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-13-e61e97 on 2025-12-13 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-16-d0196e on 2025-12-16 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-17-40d2ef on 2025-12-17 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-18-2cdd4f on 2025-12-18 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-19-fde73e on 2025-12-19 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-20-644c7c on 2025-12-20 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-23-c072c8 on 2025-12-23 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-24-739343 on 2025-12-24 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-25-e48115 on 2025-12-25 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-26-de071a on 2025-12-26 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-27-86bcc5 on 2025-12-27 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-30-814d1b on 2025-12-30 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P2-2025-12-31-b84876 on 2025-12-31 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-02-c9690c on 2025-12-02 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-03-b7b71e on 2025-12-03 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-04-899b01 on 2025-12-04 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-05-e6c668 on 2025-12-05 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-06-d313ee on 2025-12-06 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-09-2b32b5 on 2025-12-09 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-10-21b71e on 2025-12-10 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-11-f715a5 on 2025-12-11 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-12-0ac32f on 2025-12-12 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-13-973ed3 on 2025-12-13 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-16-d85e9d on 2025-12-16 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-17-f0210f on 2025-12-17 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-18-a2658a on 2025-12-18 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-19-0a5165 on 2025-12-19 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-20-0c2e5e on 2025-12-20 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-23-75c5dc on 2025-12-23 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-24-3cfeb8 on 2025-12-24 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-25-b56566 on 2025-12-25 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-26-6a4f1c on 2025-12-26 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-27-d66506 on 2025-12-27 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-30-a9dd7f on 2025-12-30 for DI-2511251338-43242314 is unassigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard-unknown",
+          "note": "Slot DI-2511251338-43242314-8_1-N-P3-2025-12-31-6287f0 on 2025-12-31 for DI-2511251338-43242314 is unassigned"
+        }
+      ]
+    },
+    "soft": {
+      "totalPenalty": 0,
+      "details": []
+    },
+    "unassignedSlots": {
+      "count": 91,
+      "total": 176,
+      "percentage": 51.7,
+      "slots": [
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-02-520722",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-02",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-03-cd7d86",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-03",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-04-ac6fc5",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-04",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-05-31b72f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-05",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-16-f44838",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-16",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-18-5237cf",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-18",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-20-5d546e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-20",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-23-2e01d5",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-23",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-25-b59408",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-25",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-26-37f2be",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-26",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-02-c0c56f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-02",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-16-a4c4df",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-16",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-20-00b564",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-20",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-25-6b81b7",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-25",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-26-d933c5",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-26",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-27-cfeca4",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-27",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-20-f8685a",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-20",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-26-b490e0",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-26",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-02-7ec573",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-02",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-03-704cf9",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-03",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-09-0791d7",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-09",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-10-a75b1f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-10",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-11-77ee2c",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-11",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-12-636c75",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-12",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-13-45db5d",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-13",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-02-2ca81e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-02",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-03-342468",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-03",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-04-8fe8e0",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-04",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-05-a23cdf",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-05",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-06-b059e9",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-06",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-09-d9bcbd",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-09",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-10-b1bfcd",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-10",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-11-5cd8d9",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-11",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-12-94b0b3",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-12",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-13-9ad79f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-13",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-16-20f611",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-16",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-17-fe4ad8",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-17",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-18-1d09b2",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-18",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-19-8b0804",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-19",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-20-2b4d89",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-20",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-23-562b4d",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-23",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-24-60e0a5",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-24",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-25-2cb96a",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-25",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-26-25522d",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-26",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-27-f4da0e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-27",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-30-ad96fd",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-30",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-31-80976a",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-31",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-02-6d51ca",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-02",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-03-61d0c1",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-03",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-04-c544b9",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-04",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-05-2dd620",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-05",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-06-4b3eba",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-06",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-09-933fc7",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-09",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-10-a814a8",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-10",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-11-cf25ea",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-11",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-12-550fe6",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-12",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-13-e61e97",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-13",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-16-d0196e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-16",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-17-40d2ef",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-17",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-18-2cdd4f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-18",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-19-fde73e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-19",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-20-644c7c",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-20",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-23-c072c8",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-23",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-24-739343",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-24",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-25-e48115",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-25",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-26-de071a",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-26",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-27-86bcc5",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-27",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-30-814d1b",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-30",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-31-b84876",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-31",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-02-c9690c",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-02",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-03-b7b71e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-03",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-04-899b01",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-04",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-05-e6c668",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-05",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-06-d313ee",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-06",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-09-2b32b5",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-09",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-10-21b71e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-10",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-11-f715a5",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-11",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-12-0ac32f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-12",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-13-973ed3",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-13",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-16-d85e9d",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-16",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-17-f0210f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-17",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-18-a2658a",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-18",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-19-0a5165",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-19",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-20-0c2e5e",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-20",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-23-75c5dc",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-23",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-24-3cfeb8",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-24",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-25-b56566",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-25",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-26-6a4f1c",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-26",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-27-d66506",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-27",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-30-a9dd7f",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-30",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-31-6287f0",
+          "demandId": "DI-2511251338-43242314",
+          "date": "2025-12-31",
+          "shiftCode": "N",
+          "reason": "No employee could be assigned without violating hard constraints"
+        }
+      ]
+    }
+  },
+  "assignments": [
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-02-520722",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-02T08:00:00",
+      "endDateTime": "2025-12-02T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-03-cd7d86",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-03T08:00:00",
+      "endDateTime": "2025-12-03T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-04-ac6fc5",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-04T08:00:00",
+      "endDateTime": "2025-12-04T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-05-31b72f",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-05T08:00:00",
+      "endDateTime": "2025-12-05T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-06-b9ea12",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-06T08:00:00",
+      "endDateTime": "2025-12-06T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-09-1f4312",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-09T08:00:00",
+      "endDateTime": "2025-12-09T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-10-5b770e",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-10T08:00:00",
+      "endDateTime": "2025-12-10T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-11-2af69a",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-11T08:00:00",
+      "endDateTime": "2025-12-11T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-12-0c2f2c",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-12T08:00:00",
+      "endDateTime": "2025-12-12T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-13-4898dc",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-13T08:00:00",
+      "endDateTime": "2025-12-13T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-16-f44838",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-16T08:00:00",
+      "endDateTime": "2025-12-16T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-17-a2f6a8",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-17T08:00:00",
+      "endDateTime": "2025-12-17T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-18-5237cf",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-18T08:00:00",
+      "endDateTime": "2025-12-18T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-19-51f1a9",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-19T08:00:00",
+      "endDateTime": "2025-12-19T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-20-5d546e",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-20T08:00:00",
+      "endDateTime": "2025-12-20T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-23-2e01d5",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-23T08:00:00",
+      "endDateTime": "2025-12-23T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-24-b0a94d",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-24T08:00:00",
+      "endDateTime": "2025-12-24T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-25-b59408",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-25T08:00:00",
+      "endDateTime": "2025-12-25T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-26-37f2be",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-26T08:00:00",
+      "endDateTime": "2025-12-26T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-27-4f982e",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-27T08:00:00",
+      "endDateTime": "2025-12-27T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-30-3d17ac",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-30T08:00:00",
+      "endDateTime": "2025-12-30T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P0-2025-12-31-f416f3",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-31T08:00:00",
+      "endDateTime": "2025-12-31T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-02-c0c56f",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-02T08:00:00",
+      "endDateTime": "2025-12-02T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-03-28df98",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-03T08:00:00",
+      "endDateTime": "2025-12-03T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-04-ce4918",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-04T08:00:00",
+      "endDateTime": "2025-12-04T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-05-9c3eba",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-05T08:00:00",
+      "endDateTime": "2025-12-05T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-06-db72b2",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-06T08:00:00",
+      "endDateTime": "2025-12-06T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-09-0ac278",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-09T08:00:00",
+      "endDateTime": "2025-12-09T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-10-0c6333",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-10T08:00:00",
+      "endDateTime": "2025-12-10T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-11-d1a9ad",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-11T08:00:00",
+      "endDateTime": "2025-12-11T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-12-1a5a59",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-12T08:00:00",
+      "endDateTime": "2025-12-12T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-13-fcdf18",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-13T08:00:00",
+      "endDateTime": "2025-12-13T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-16-a4c4df",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-16T08:00:00",
+      "endDateTime": "2025-12-16T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-17-d66ba1",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-17T08:00:00",
+      "endDateTime": "2025-12-17T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-18-8d9f63",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-18T08:00:00",
+      "endDateTime": "2025-12-18T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-19-0b2040",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-19T08:00:00",
+      "endDateTime": "2025-12-19T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-20-00b564",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-20T08:00:00",
+      "endDateTime": "2025-12-20T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-23-c6ef10",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-23T08:00:00",
+      "endDateTime": "2025-12-23T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-24-5ad09e",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-24T08:00:00",
+      "endDateTime": "2025-12-24T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-25-6b81b7",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-25T08:00:00",
+      "endDateTime": "2025-12-25T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-26-d933c5",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-26T08:00:00",
+      "endDateTime": "2025-12-26T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-27-cfeca4",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-27T08:00:00",
+      "endDateTime": "2025-12-27T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-30-855430",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-30T08:00:00",
+      "endDateTime": "2025-12-30T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P1-2025-12-31-f0981b",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-31T08:00:00",
+      "endDateTime": "2025-12-31T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-02-6e8ea0",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-02T08:00:00",
+      "endDateTime": "2025-12-02T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-03-1b0694",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-03T08:00:00",
+      "endDateTime": "2025-12-03T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-04-f3bd38",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-04T08:00:00",
+      "endDateTime": "2025-12-04T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-05-f2fb42",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-05T08:00:00",
+      "endDateTime": "2025-12-05T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-06-8ab511",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-06T08:00:00",
+      "endDateTime": "2025-12-06T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-09-05d9f6",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-09T08:00:00",
+      "endDateTime": "2025-12-09T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-10-dd4103",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-10T08:00:00",
+      "endDateTime": "2025-12-10T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-11-e3498b",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-11T08:00:00",
+      "endDateTime": "2025-12-11T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-12-8ef6fa",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-12T08:00:00",
+      "endDateTime": "2025-12-12T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-13-edafa5",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-13T08:00:00",
+      "endDateTime": "2025-12-13T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-16-e9f50f",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-16T08:00:00",
+      "endDateTime": "2025-12-16T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-17-f993bb",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-17T08:00:00",
+      "endDateTime": "2025-12-17T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-18-dbbccd",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-18T08:00:00",
+      "endDateTime": "2025-12-18T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-19-e26056",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-19T08:00:00",
+      "endDateTime": "2025-12-19T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-20-f8685a",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-20T08:00:00",
+      "endDateTime": "2025-12-20T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-23-1ab724",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-23T08:00:00",
+      "endDateTime": "2025-12-23T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-24-8bf2b0",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-24T08:00:00",
+      "endDateTime": "2025-12-24T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-D-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-25-857bf7",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-25T08:00:00",
+      "endDateTime": "2025-12-25T17:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-D-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-26-b490e0",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-26T08:00:00",
+      "endDateTime": "2025-12-26T17:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-27-ab8a9e",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-27T08:00:00",
+      "endDateTime": "2025-12-27T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-30-909125",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-30T08:00:00",
+      "endDateTime": "2025-12-30T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P2-2025-12-31-0a162d",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-31T08:00:00",
+      "endDateTime": "2025-12-31T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-02-929f7d",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-02T08:00:00",
+      "endDateTime": "2025-12-02T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-03-2b1c1c",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-03T08:00:00",
+      "endDateTime": "2025-12-03T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-04-a51854",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-04T08:00:00",
+      "endDateTime": "2025-12-04T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-05-d77e9d",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-05T08:00:00",
+      "endDateTime": "2025-12-05T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-06-4915b3",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-06T08:00:00",
+      "endDateTime": "2025-12-06T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-09-7f96a0",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-09T08:00:00",
+      "endDateTime": "2025-12-09T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-10-58119d",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-10T08:00:00",
+      "endDateTime": "2025-12-10T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-11-f00385",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-11T08:00:00",
+      "endDateTime": "2025-12-11T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-12-435e61",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-12T08:00:00",
+      "endDateTime": "2025-12-12T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-13-cf2f05",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-13T08:00:00",
+      "endDateTime": "2025-12-13T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-16-dbf76a",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-16T08:00:00",
+      "endDateTime": "2025-12-16T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-17-660685",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-17T08:00:00",
+      "endDateTime": "2025-12-17T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-18-368d97",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-18T08:00:00",
+      "endDateTime": "2025-12-18T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-19-c44714",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-19T08:00:00",
+      "endDateTime": "2025-12-19T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-20-b1e6e2",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-20T08:00:00",
+      "endDateTime": "2025-12-20T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-23-1f8a14",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-23T08:00:00",
+      "endDateTime": "2025-12-23T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-24-837b12",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-24T08:00:00",
+      "endDateTime": "2025-12-24T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-D-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-25-7dda25",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-25T08:00:00",
+      "endDateTime": "2025-12-25T17:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-26-9a0c3e",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-26T08:00:00",
+      "endDateTime": "2025-12-26T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-D-00173519",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-27-b1b1da",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-27T08:00:00",
+      "endDateTime": "2025-12-27T17:00:00",
+      "employeeId": "00173519",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-D-00174104",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-30-b5f844",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-30T08:00:00",
+      "endDateTime": "2025-12-30T17:00:00",
+      "employeeId": "00174104",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-D-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "D",
+      "slotId": "DI-2511251338-43242314-8_1-D-P3-2025-12-31-21620a",
+      "shiftCode": "D",
+      "startDateTime": "2025-12-31T08:00:00",
+      "endDateTime": "2025-12-31T17:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0,
+        "paid": 9.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-02-7ec573",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-02T20:00:00",
+      "endDateTime": "2025-12-03T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-03-704cf9",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-03T20:00:00",
+      "endDateTime": "2025-12-04T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-N-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-04-6bcdab",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-04T20:00:00",
+      "endDateTime": "2025-12-05T08:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-N-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-05-01eb84",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-05T20:00:00",
+      "endDateTime": "2025-12-06T08:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-N-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-06-200bb5",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-06T20:00:00",
+      "endDateTime": "2025-12-07T08:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-09-0791d7",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-09T20:00:00",
+      "endDateTime": "2025-12-10T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-10-a75b1f",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-10T20:00:00",
+      "endDateTime": "2025-12-11T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-11-77ee2c",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-11T20:00:00",
+      "endDateTime": "2025-12-12T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-12-636c75",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-12T20:00:00",
+      "endDateTime": "2025-12-13T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-13-45db5d",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-13T20:00:00",
+      "endDateTime": "2025-12-14T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-N-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-16-72ec7c",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-16T20:00:00",
+      "endDateTime": "2025-12-17T08:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-N-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-17-b1ec3e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-17T20:00:00",
+      "endDateTime": "2025-12-18T08:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-N-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-18-3edf78",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-18T20:00:00",
+      "endDateTime": "2025-12-19T08:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-N-00105501",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-19-339c03",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-19T20:00:00",
+      "endDateTime": "2025-12-20T08:00:00",
+      "employeeId": "00105501",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-N-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-20-ac13ce",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-20T20:00:00",
+      "endDateTime": "2025-12-21T08:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-N-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-23-30f258",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-23T20:00:00",
+      "endDateTime": "2025-12-24T08:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-N-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-24-86b0f4",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-24T20:00:00",
+      "endDateTime": "2025-12-25T08:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-N-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-25-6eaffa",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-25T20:00:00",
+      "endDateTime": "2025-12-26T08:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-N-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-26-c58645",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-26T20:00:00",
+      "endDateTime": "2025-12-27T08:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-N-00149072",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-27-6b9978",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-27T20:00:00",
+      "endDateTime": "2025-12-28T08:00:00",
+      "employeeId": "00149072",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-N-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-30-2ed205",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-30T20:00:00",
+      "endDateTime": "2025-12-31T08:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-N-00097227",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P0-2025-12-31-0404c4",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-31T20:00:00",
+      "endDateTime": "2026-01-01T08:00:00",
+      "employeeId": "00097227",
+      "status": "ASSIGNED",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-02-2ca81e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-02T20:00:00",
+      "endDateTime": "2025-12-03T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-03-342468",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-03T20:00:00",
+      "endDateTime": "2025-12-04T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-04-8fe8e0",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-04T20:00:00",
+      "endDateTime": "2025-12-05T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-05-a23cdf",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-05T20:00:00",
+      "endDateTime": "2025-12-06T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-06-b059e9",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-06T20:00:00",
+      "endDateTime": "2025-12-07T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-09-d9bcbd",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-09T20:00:00",
+      "endDateTime": "2025-12-10T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-10-b1bfcd",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-10T20:00:00",
+      "endDateTime": "2025-12-11T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-11-5cd8d9",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-11T20:00:00",
+      "endDateTime": "2025-12-12T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-12-94b0b3",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-12T20:00:00",
+      "endDateTime": "2025-12-13T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-13-9ad79f",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-13T20:00:00",
+      "endDateTime": "2025-12-14T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-16-20f611",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-16T20:00:00",
+      "endDateTime": "2025-12-17T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-17-fe4ad8",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-17T20:00:00",
+      "endDateTime": "2025-12-18T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-18-1d09b2",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-18T20:00:00",
+      "endDateTime": "2025-12-19T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-19-8b0804",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-19T20:00:00",
+      "endDateTime": "2025-12-20T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-20-2b4d89",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-20T20:00:00",
+      "endDateTime": "2025-12-21T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-23-562b4d",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-23T20:00:00",
+      "endDateTime": "2025-12-24T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-24-60e0a5",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-24T20:00:00",
+      "endDateTime": "2025-12-25T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-25-2cb96a",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-25T20:00:00",
+      "endDateTime": "2025-12-26T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-26-25522d",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-26T20:00:00",
+      "endDateTime": "2025-12-27T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-27-f4da0e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-27T20:00:00",
+      "endDateTime": "2025-12-28T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-30-ad96fd",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-30T20:00:00",
+      "endDateTime": "2025-12-31T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P1-2025-12-31-80976a",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-31T20:00:00",
+      "endDateTime": "2026-01-01T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-02-6d51ca",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-02T20:00:00",
+      "endDateTime": "2025-12-03T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-03-61d0c1",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-03T20:00:00",
+      "endDateTime": "2025-12-04T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-04-c544b9",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-04T20:00:00",
+      "endDateTime": "2025-12-05T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-05-2dd620",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-05T20:00:00",
+      "endDateTime": "2025-12-06T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-06-4b3eba",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-06T20:00:00",
+      "endDateTime": "2025-12-07T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-09-933fc7",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-09T20:00:00",
+      "endDateTime": "2025-12-10T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-10-a814a8",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-10T20:00:00",
+      "endDateTime": "2025-12-11T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-11-cf25ea",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-11T20:00:00",
+      "endDateTime": "2025-12-12T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-12-550fe6",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-12T20:00:00",
+      "endDateTime": "2025-12-13T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-13-e61e97",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-13T20:00:00",
+      "endDateTime": "2025-12-14T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-16-d0196e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-16T20:00:00",
+      "endDateTime": "2025-12-17T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-17-40d2ef",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-17T20:00:00",
+      "endDateTime": "2025-12-18T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-18-2cdd4f",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-18T20:00:00",
+      "endDateTime": "2025-12-19T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-19-fde73e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-19T20:00:00",
+      "endDateTime": "2025-12-20T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-20-644c7c",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-20T20:00:00",
+      "endDateTime": "2025-12-21T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-23-c072c8",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-23T20:00:00",
+      "endDateTime": "2025-12-24T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-24-739343",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-24T20:00:00",
+      "endDateTime": "2025-12-25T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-25-e48115",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-25T20:00:00",
+      "endDateTime": "2025-12-26T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-26-de071a",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-26T20:00:00",
+      "endDateTime": "2025-12-27T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-27-86bcc5",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-27T20:00:00",
+      "endDateTime": "2025-12-28T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-30-814d1b",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-30T20:00:00",
+      "endDateTime": "2025-12-31T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P2-2025-12-31-b84876",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-31T20:00:00",
+      "endDateTime": "2026-01-01T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-02-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-02",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-02-c9690c",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-02T20:00:00",
+      "endDateTime": "2025-12-03T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-03-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-03",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-03-b7b71e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-03T20:00:00",
+      "endDateTime": "2025-12-04T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-04-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-04",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-04-899b01",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-04T20:00:00",
+      "endDateTime": "2025-12-05T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-05-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-05",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-05-e6c668",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-05T20:00:00",
+      "endDateTime": "2025-12-06T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-06-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-06",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-06-d313ee",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-06T20:00:00",
+      "endDateTime": "2025-12-07T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-09-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-09",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-09-2b32b5",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-09T20:00:00",
+      "endDateTime": "2025-12-10T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-10-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-10",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-10-21b71e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-10T20:00:00",
+      "endDateTime": "2025-12-11T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-11-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-11",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-11-f715a5",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-11T20:00:00",
+      "endDateTime": "2025-12-12T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-12-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-12",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-12-0ac32f",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-12T20:00:00",
+      "endDateTime": "2025-12-13T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-13-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-13",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-13-973ed3",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-13T20:00:00",
+      "endDateTime": "2025-12-14T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-16-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-16",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-16-d85e9d",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-16T20:00:00",
+      "endDateTime": "2025-12-17T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-17-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-17",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-17-f0210f",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-17T20:00:00",
+      "endDateTime": "2025-12-18T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-18-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-18",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-18-a2658a",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-18T20:00:00",
+      "endDateTime": "2025-12-19T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-19-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-19",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-19-0a5165",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-19T20:00:00",
+      "endDateTime": "2025-12-20T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-20-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-20",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-20-0c2e5e",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-20T20:00:00",
+      "endDateTime": "2025-12-21T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-23-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-23",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-23-75c5dc",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-23T20:00:00",
+      "endDateTime": "2025-12-24T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-24-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-24",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-24-3cfeb8",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-24T20:00:00",
+      "endDateTime": "2025-12-25T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-25-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-25",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-25-b56566",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-25T20:00:00",
+      "endDateTime": "2025-12-26T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-26-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-26",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-26-6a4f1c",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-26T20:00:00",
+      "endDateTime": "2025-12-27T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-27-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-27",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-27-d66506",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-27T20:00:00",
+      "endDateTime": "2025-12-28T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-30-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-30",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-30-a9dd7f",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-30T20:00:00",
+      "endDateTime": "2025-12-31T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2511251338-43242314-2025-12-31-N-UNASSIGNED",
+      "demandId": "DI-2511251338-43242314",
+      "requirementId": "8_1",
+      "date": "2025-12-31",
+      "shiftId": "N",
+      "slotId": "DI-2511251338-43242314-8_1-N-P3-2025-12-31-6287f0",
+      "shiftCode": "N",
+      "startDateTime": "2025-12-31T20:00:00",
+      "endDateTime": "2026-01-01T08:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "constraintResults": {
+        "hard": [],
+        "soft": []
+      },
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "paid": 12.0
+      }
+    }
+  ],
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:ee254c8af17f2b57e9ea757550ef5adf24d1dc212021800afff7184ce6e6b949",
+    "generatedAt": "2025-11-26T11:25:57.557833",
+    "employeeHours": {
+      "None": {
+        "weekly_normal": {
+          "2025-W49": 176.0,
+          "2025-W51": 168.0,
+          "2025-W52": 176.0,
+          "2025-W50": 160.0,
+          "2026-W01": 48.0
+        },
+        "monthly_ot": {
+          "2025-12": 201.0,
+          "2026-12": 18.0
+        }
+      },
+      "00097227": {
+        "weekly_normal": {
+          "2025-W49": 32.0,
+          "2025-W50": 32.0,
+          "2025-W51": 40.0,
+          "2025-W52": 32.0,
+          "2026-W01": 16.0
+        },
+        "monthly_ot": {
+          "2025-12": 6.0,
+          "2026-12": 6.0
+        }
+      },
+      "00105501": {
+        "weekly_normal": {
+          "2025-W50": 40.0,
+          "2025-W52": 32.0,
+          "2025-W49": 32.0,
+          "2026-W01": 16.0,
+          "2025-W51": 32.0
+        },
+        "monthly_ot": {
+          "2025-12": 12.0,
+          "2026-12": 0.0
+        }
+      },
+      "00149072": {
+        "weekly_normal": {
+          "2026-W01": 16.0,
+          "2025-W50": 40.0,
+          "2025-W51": 32.0,
+          "2025-W49": 32.0,
+          "2025-W52": 32.0
+        },
+        "monthly_ot": {
+          "2026-12": 0.0,
+          "2025-12": 21.0
+        }
+      },
+      "00174104": {
+        "weekly_normal": {
+          "2026-W01": 16.0,
+          "2025-W52": 24.0,
+          "2025-W49": 24.0,
+          "2025-W50": 24.0,
+          "2025-W51": 24.0
+        },
+        "monthly_ot": {
+          "2026-12": 0.0,
+          "2025-12": 0.0
+        }
+      },
+      "00173519": {
+        "weekly_normal": {
+          "2026-W01": 16.0,
+          "2025-W49": 24.0,
+          "2025-W50": 24.0,
+          "2025-W51": 24.0,
+          "2025-W52": 24.0
+        },
+        "monthly_ot": {
+          "2026-12": 0.0,
+          "2025-12": 0.0
+        }
+      }
+    }
+  }
+}
