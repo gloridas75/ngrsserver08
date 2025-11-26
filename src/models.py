@@ -146,9 +146,9 @@ class SchemaResponse(BaseModel):
 
 class VersionResponse(BaseModel):
     """Response from GET /version endpoint."""
-    apiVersion: str = Field("0.1.0")
-    solverVersion: str = Field("optfold-py-0.4.2")
-    schemaVersion: str = Field("0.43")
+    apiVersion: str = Field("1.0.0")
+    solverVersion: str = Field("optSolve-py-1.0.0")
+    schemaVersion: str = Field("0.73")
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
 
 

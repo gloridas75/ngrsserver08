@@ -84,7 +84,7 @@ ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "change-me-in-production")
 app = FastAPI(
     title="NGRS Solver API",
     description="REST API for NGRS Shift Scheduling Solver",
-    version="0.1.0",
+    version="1.0.0",
     docs_url="/docs",
     openapi_url="/openapi.json"
 )
@@ -264,9 +264,9 @@ async def health():
 async def get_version():
     """Get API and solver version information."""
     return {
-        "apiVersion": "0.1.0",
-        "solverVersion": "optfold-py-0.4.2",
-        "schemaVersion": "0.43",
+        "apiVersion": "1.0.0",
+        "solverVersion": "optSolve-py-1.0.0",
+        "schemaVersion": "0.73",
         "timestamp": datetime.now().isoformat()
     }
 

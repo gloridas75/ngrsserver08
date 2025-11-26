@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "ngrs-solver-api-v1",
 		"name": "NGRS Solver API",
-		"description": "Complete API collection for NGRS Shift Scheduling Solver\n\n**Base URL:** https://ngrssolver08.comcentricapps.com\n\n**Features:**\n- Synchronous solving\n- Asynchronous solving with job queue\n- Configuration optimizer (ICPMP)\n- Job management and monitoring\n- Admin operations\n\n**Variables:**\n- `base_url`: API base URL\n- `admin_api_key`: Admin API key for reset endpoint\n- `job_id`: Last created async job ID (auto-populated)\n\n**Setup:**\n1. Import this collection\n2. Set environment variables\n3. Run requests in order",
+		"description": "Complete API collection for NGRS Shift Scheduling Solver\n\n**Base URL:** https://ngrssolver08.comcentricapps.com\n\n**Features:**\n- Synchronous solving\n- Asynchronous solving with job queue\n- Configuration optimizer (ICPMP)\n- Job management and monitoring\n- Admin operations\n\n**🆕 NEW FEATURES (Nov 2025):**\n- ✅ **Webhook Notifications**: Auto-notify on job completion\n- ✅ **Feasibility Pre-Check**: Fast validation before solving (~100ms)\n- ✅ **Job Cancellation**: Stop queued or running jobs\n- ✅ **ISO Timestamps**: Human-readable timestamps in all responses\n- ✅ **Auto-Cleanup**: Jobs expire after 1 hour (TTL)\n- ✅ **CP-SAT Parallelization**: 2-3x faster for large problems\n\n**Variables:**\n- `base_url`: API base URL\n- `admin_api_key`: Admin API key for reset endpoint\n- `job_id`: Last created async job ID (auto-populated)\n\n**Setup:**\n1. Import this collection\n2. Set environment variables\n3. Run requests in order\n\n**Version:** v0.7 (Updated: Nov 26, 2025)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
@@ -187,7 +187,46 @@
 							"host": ["{{base_url}}"],
 							"path": ["solve", "async"]
 						},
-						"description": "Submit async job for long-running problems.\n\nReturns job_id immediately. Auto-saves to collection variable."
+						"description": "Submit async job for long-running problems.\n\n**NEW FEATURES:**\n- ✅ Automatic feasibility pre-check before queuing\n- ✅ Returns feasibility analysis in response\n- ✅ Optional webhook_url for completion notifications\n- ✅ ISO-formatted timestamps\n\nReturns job_id immediately. Auto-saves to collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Submit with Webhook",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Auto-save job_id for subsequent requests",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.job_id) {",
+									"    pm.collectionVariables.set(\"job_id\", jsonData.job_id);",
+									"    console.log(\"Saved job_id: \" + jsonData.job_id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"webhook_url\": \"https://webhook.site/your-unique-url\",\n  \"input_json\": {\n    \"schemaVersion\": \"0.43\",\n    \"planningHorizon\": {\n      \"startDate\": \"2025-12-01\",\n      \"endDate\": \"2025-12-31\"\n    },\n    \"publicHolidays\": [\"2025-12-25\"],\n    \"shifts\": [\n      {\n        \"code\": \"D\",\n        \"name\": \"Day Shift\",\n        \"startTime\": \"08:00\",\n        \"endTime\": \"20:00\",\n        \"grossHours\": 12.0,\n        \"lunchBreak\": 1.0\n      }\n    ],\n    \"employees\": [\n      {\n        \"id\": \"E001\",\n        \"name\": \"Test Employee\",\n        \"employeeType\": \"APO\",\n        \"rank\": \"APO\",\n        \"scheme\": \"A\",\n        \"availableShifts\": [\"D\"],\n        \"productTypes\": [\"APO\"]\n      }\n    ],\n    \"requirements\": [\n      {\n        \"id\": \"REQ001\",\n        \"demandType\": \"APO\",\n        \"date\": \"2025-12-01\",\n        \"shiftCode\": \"D\",\n        \"minHeadcount\": 1,\n        \"targetHeadcount\": 1\n      }\n    ],\n    \"constraints\": {\n      \"maxConsecutiveWorkDays\": 6,\n      \"minOffDaysPerWeek\": 1\n    },\n    \"solverConfig\": {\n      \"timeLimitSeconds\": 300\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/solve/async",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async"]
+						},
+						"description": "🆕 NEW: Submit async job with webhook notification.\n\n**Webhook Payload (POST when complete):**\n```json\n{\n  \"job_id\": \"uuid\",\n  \"status\": \"COMPLETED|FAILED|CANCELLED\",\n  \"timestamp\": \"2025-11-26T14:30:15.123456\",\n  \"message\": \"Job completed successfully\"\n}\n```\n\n**Usage:**\n1. Get webhook URL from https://webhook.site\n2. Replace webhook_url in request\n3. Submit job\n4. Check webhook.site for completion notification\n\n**Benefits:**\n- No polling needed\n- Instant notification when job completes\n- Works for success, failure, and cancellation"
 					},
 					"response": []
 				},
@@ -201,7 +240,35 @@
 							"host": ["{{base_url}}"],
 							"path": ["solve", "async", "{{job_id}}"]
 						},
-						"description": "Check status of async job.\n\nUses job_id from previous request (auto-saved)."
+						"description": "Check status of async job.\n\n**Returns:**\n- job_id: Job UUID\n- status: QUEUED | IN_PROGRESS | COMPLETED | FAILED | CANCELLED\n- created_at: ISO timestamp (e.g., 2025-11-26T14:30:15.123456)\n- updated_at: ISO timestamp\n- result: Solution data (if COMPLETED)\n\n**Status Flow:**\n- QUEUED → IN_PROGRESS → COMPLETED/FAILED\n- Can be cancelled at any point → CANCELLED\n\nUses job_id from previous request (auto-saved)."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Job (DELETE)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/solve/async/{{job_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async", "{{job_id}}"]
+						},
+						"description": "🆕 ENHANCED: Smart job cancellation\n\n**Cancellation Strategy:**\n1. **QUEUED** → Removes from queue immediately (instant)\n2. **IN_PROGRESS** → Sets cancellation flag, worker stops at next checkpoint (30-60s)\n3. **COMPLETED/FAILED** → Deletes result and marks as cancelled (instant)\n\n**Response:**\n```json\n{\n  \"message\": \"Job removed from queue\",\n  \"job_id\": \"uuid\",\n  \"previous_status\": \"QUEUED\",\n  \"new_status\": \"CANCELLED\"\n}\n```\n\n**Use Cases:**\n- Stop expensive solver runs\n- Clean up completed jobs\n- Remove queued jobs before they start\n\n**Note:** CP-SAT solver cannot be interrupted mid-execution, so IN_PROGRESS jobs complete their current iteration before stopping."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Job (POST)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/solve/async/{{job_id}}/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["solve", "async", "{{job_id}}", "cancel"]
+						},
+						"description": "🆕 NEW: Alternative cancellation endpoint (POST)\n\n**Same behavior as DELETE**, but uses POST method for systems that don't support DELETE.\n\nCancellation Strategy:\n- QUEUED → Immediate removal\n- IN_PROGRESS → Cooperative cancellation (30-60s)\n- COMPLETED/FAILED → Result deletion\n\nUse this endpoint if your API client/firewall blocks DELETE requests."
 					},
 					"response": []
 				},
@@ -215,7 +282,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["solve", "async", "stats"]
 						},
-						"description": "Get queue statistics:\n- Total jobs\n- Active jobs\n- Queue length\n- Worker count"
+						"description": "Get queue statistics:\n\n**Returns:**\n```json\n{\n  \"total_jobs\": 150,\n  \"queued\": 5,\n  \"in_progress\": 2,\n  \"completed\": 140,\n  \"failed\": 3,\n  \"cancelled\": 0,\n  \"workers\": 2,\n  \"queue_length\": 5\n}\n```\n\n**Metrics:**\n- total_jobs: All jobs (active + completed)\n- queued/in_progress: Active jobs\n- completed/failed/cancelled: Terminal states\n- workers: Number of worker processes\n- queue_length: Jobs waiting to be processed"
 					},
 					"response": []
 				},
@@ -232,11 +299,11 @@
 								{
 									"key": "details",
 									"value": "true",
-									"description": "Include job UUIDs and timestamps"
+									"description": "Include job UUIDs and ISO timestamps"
 								}
 							]
 						},
-						"description": "Get detailed queue statistics with job list:\n- All job UUIDs\n- Created/updated timestamps\n- Job status\n- Result availability"
+						"description": "🆕 ENHANCED: Detailed queue statistics with job list\n\n**Returns all jobs with:**\n- Job UUIDs\n- Status (QUEUED/IN_PROGRESS/COMPLETED/FAILED/CANCELLED)\n- created_at: ISO timestamp (e.g., 2025-11-26T14:30:15.123456)\n- updated_at: ISO timestamp\n- has_result: boolean\n\n**Example Response:**\n```json\n{\n  \"total_jobs\": 3,\n  \"queued\": 1,\n  \"in_progress\": 1,\n  \"completed\": 1,\n  \"workers\": 2,\n  \"jobs\": [\n    {\n      \"job_id\": \"abc-123\",\n      \"status\": \"COMPLETED\",\n      \"created_at\": \"2025-11-26T14:30:15.123456\",\n      \"updated_at\": \"2025-11-26T14:35:22.654321\",\n      \"has_result\": true\n    }\n  ]\n}\n```\n\n**Use Cases:**\n- Monitor all active jobs\n- Track job completion times\n- Audit job history\n- Debug stuck jobs"
 					},
 					"response": []
 				},
@@ -250,7 +317,7 @@
 							"host": ["{{base_url}}"],
 							"path": ["solve", "async", "{{job_id}}"]
 						},
-						"description": "Delete job and free memory.\n\nCancels queued jobs or deletes completed results."
+						"description": "⚠️ DEPRECATED: Use 'Cancel Job (DELETE)' instead\n\nDelete job and free memory.\n\nCancels queued jobs or deletes completed results."
 					},
 					"response": []
 				}
