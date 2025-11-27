@@ -1073,16 +1073,15 @@ async def solve_incremental_endpoint(
         
         logger.info(f"[{request_id}] Incremental solve completed: {result.get('status')}")
         
-        return {
-            "status": "success",
-            "data": result,
-            "meta": {
-                "requestId": request_id,
-                "runId": run_id,
-                "timestamp": datetime.now().isoformat(),
-                "schemaVersion": request_data.get("schemaVersion", "0.80")
-            }
-        }
+        # Enrich result with meta information (unwrapped format like /solve endpoint)
+        result.setdefault("meta", {})
+        result["meta"]["requestId"] = request_id
+        result["meta"]["runId"] = run_id
+        result["meta"]["timestamp"] = datetime.now().isoformat()
+        if "schemaVersion" not in result["meta"]:
+            result["meta"]["schemaVersion"] = request_data.get("schemaVersion", "0.80")
+        
+        return result
         
     except IncrementalSolverError as e:
         logger.error(f"[{request_id}] Incremental solver error: {str(e)}")

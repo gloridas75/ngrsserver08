@@ -404,6 +404,47 @@
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
         }
 
+        .assignment-cell.locked {
+            background: linear-gradient(135deg, #90caf9 0%, #64b5f6 100%);
+            border: 2px solid #1976d2;
+        }
+
+        .assignment-cell.incremental {
+            background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+            border: 2px solid #f57c00;
+            color: #000;
+        }
+
+        .assignment-cell.new-employee {
+            background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%);
+            border: 2px solid #2e7d32;
+            box-shadow: 0 0 12px rgba(76, 175, 80, 0.5);
+        }
+
+        .assignment-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .badge-locked {
+            background: #1976d2;
+            color: white;
+        }
+
+        .badge-incremental {
+            background: #f57c00;
+            color: white;
+        }
+
+        .badge-new {
+            background: #2e7d32;
+            color: white;
+        }
+
         .assignment-cell-empty {
             color: #ccc;
             font-size: 0.9em;
@@ -553,6 +594,32 @@
 
         <!-- SUMMARY TAB -->
         <div id="summary" class="tab-content">
+            <div id="incrementalInfo" style="display: none; background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+                <h3 style="color: #e65100; margin-bottom: 15px;">🔄 Incremental Solve Mode</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div>
+                        <strong>Cutoff Date:</strong>
+                        <div id="cutoffDate" style="font-size: 1.2em; color: #f57c00; font-weight: bold;">-</div>
+                    </div>
+                    <div>
+                        <strong>Locked Assignments:</strong>
+                        <div id="lockedCount" style="font-size: 1.2em; color: #1976d2; font-weight: bold;">-</div>
+                    </div>
+                    <div>
+                        <strong>New Assignments:</strong>
+                        <div id="newCount" style="font-size: 1.2em; color: #f57c00; font-weight: bold;">-</div>
+                    </div>
+                    <div>
+                        <strong>Solvable Slots:</strong>
+                        <div id="solvableSlots" style="font-size: 1.2em; color: #388e3c; font-weight: bold;">-</div>
+                    </div>
+                    <div>
+                        <strong>Unassigned Slots:</strong>
+                        <div id="unassignedSlots" style="font-size: 1.2em; color: #d32f2f; font-weight: bold;">-</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="summary-grid">
                 <div class="summary-card">
                     <h3>Solver Status</h3>
@@ -1092,6 +1159,7 @@
         function renderSummary() {
             const score = outputData.score || {};
             const solverRun = outputData.solverRun || {};
+            const incrementalSolve = outputData.incrementalSolve || {};
 
             document.getElementById('status').textContent = solverRun.status || 'UNKNOWN';
             document.getElementById('hardScore').textContent = score.hard || 0;
@@ -1099,6 +1167,19 @@
             document.getElementById('overallScore').textContent = score.overall || 0;
             document.getElementById('totalAssignments').textContent = outputData.assignments?.length || 0;
             document.getElementById('duration').textContent = (solverRun.durationSeconds || 0).toFixed(2);
+
+            // Show incremental solve info if available
+            const incrementalInfo = document.getElementById('incrementalInfo');
+            if (incrementalSolve && incrementalSolve.cutoffDate) {
+                incrementalInfo.style.display = 'block';
+                document.getElementById('cutoffDate').textContent = incrementalSolve.cutoffDate || '-';
+                document.getElementById('lockedCount').textContent = incrementalSolve.lockedAssignmentsCount || 0;
+                document.getElementById('newCount').textContent = incrementalSolve.newAssignmentsCount || 0;
+                document.getElementById('solvableSlots').textContent = incrementalSolve.solvableSlots || 0;
+                document.getElementById('unassignedSlots').textContent = incrementalSolve.unassignedSlots || 0;
+            } else {
+                incrementalInfo.style.display = 'none';
+            }
 
             // Destroy existing chart instances
             if (hardChartInstance) {
@@ -1171,6 +1252,14 @@
             const assignments = outputData.assignments || [];
             filteredAssignments = assignments;
 
+            // Detect new employees from employeeChanges if available
+            const newEmployeeIds = new Set();
+            if (outputData.employeeChanges && outputData.employeeChanges.newJoiners) {
+                outputData.employeeChanges.newJoiners.forEach(nj => {
+                    newEmployeeIds.add(nj.employee.employeeId);
+                });
+            }
+
             const tbody = document.getElementById('assignmentsBody');
             tbody.innerHTML = '';
 
@@ -1181,10 +1270,25 @@
 
             assignments.forEach(a => {
                 const hours = a.hours || {};
+                const auditInfo = a.auditInfo || {};
+                const source = auditInfo.source || '';
+                const isNewEmployee = newEmployeeIds.has(a.employeeId);
+                
+                // Create badges
+                let badges = '';
+                if (source === 'locked') {
+                    badges += '<span class="assignment-badge badge-locked">🔒 LOCKED</span>';
+                } else if (source === 'incremental') {
+                    badges += '<span class="assignment-badge badge-incremental">🔄 INCREMENTAL</span>';
+                }
+                if (isNewEmployee) {
+                    badges += '<span class="assignment-badge badge-new">✨ NEW</span>';
+                }
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${a.date || '-'}</td>
-                    <td><strong>${a.employeeId || '-'}</strong></td>
+                    <td><strong>${a.employeeId || '-'}</strong>${badges ? '<br>' + badges : ''}</td>
                     <td>${a.shiftCode || '-'}</td>
                     <td>${a.startDateTime ? new Date(a.startDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
                     <td>${a.endDateTime ? new Date(a.endDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}</td>
@@ -1335,6 +1439,14 @@
                 return;
             }
 
+            // Detect new employees
+            const newEmployeeIds = new Set();
+            if (outputData.employeeChanges && outputData.employeeChanges.newJoiners) {
+                outputData.employeeChanges.newJoiners.forEach(nj => {
+                    newEmployeeIds.add(nj.employee.employeeId);
+                });
+            }
+
             // Group assignments by employee and date
             const assignmentsByEmployee = {};
             assignments.forEach(a => {
@@ -1361,8 +1473,11 @@
 
             // Fill in employees (rows) and their assignments by date (columns)
             employees.forEach(emp => {
+                const isNewEmployee = newEmployeeIds.has(emp);
+                const empBadge = isNewEmployee ? ' <span class="assignment-badge badge-new">✨ NEW</span>' : '';
+                
                 html += '<tr>';
-                html += `<td class="calendar-date-header"><strong>${emp}</strong></td>`;
+                html += `<td class="calendar-date-header"><strong>${emp}</strong>${empBadge}</td>`;
 
                 allDates.forEach(date => {
                     const assignment = assignmentsByEmployee[emp][date];
@@ -1375,21 +1490,35 @@
                         const normal = (assignment.hours?.normal || 0).toFixed(1);
                         const ot = (assignment.hours?.ot || 0).toFixed(1);
                         
-                        // Determine shift type for color coding
-                        let cellStyle = '';
-                        const shiftCode = (assignment.shiftCode || '').toUpperCase();
-                        if (shiftCode.includes('D')) {
-                            cellStyle = 'background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);'; // Day shift - orange to blue
-                        } else if (shiftCode.includes('N')) {
-                            cellStyle = 'background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);'; // Night shift - dark blue to light blue
-                        } else if (shiftCode === 'O') {
-                            cellStyle = 'background: #e0e0e0; color: #999;'; // Off day - gray
+                        // Determine source and apply styling
+                        const auditInfo = assignment.auditInfo || {};
+                        const source = auditInfo.source || '';
+                        let cellClasses = 'assignment-cell';
+                        if (source === 'locked') {
+                            cellClasses += ' locked';
+                        } else if (source === 'incremental') {
+                            cellClasses += ' incremental';
+                        }
+                        if (isNewEmployee) {
+                            cellClasses += ' new-employee';
                         }
                         
+                        // Determine shift type for additional styling
+                        const shiftCode = (assignment.shiftCode || '').toUpperCase();
+                        
                         const reqInfo = assignment.requirementId ? `<br><span style="font-size: 0.85em; opacity: 0.8;">Req: ${assignment.requirementId}</span>` : '';
+                        
+                        // Create badge
+                        let badge = '';
+                        if (source === 'locked') {
+                            badge = '<span class="assignment-badge badge-locked">🔒</span>';
+                        } else if (source === 'incremental') {
+                            badge = '<span class="assignment-badge badge-incremental">🔄</span>';
+                        }
 
                         html += `<td>
-                            <div class="assignment-cell" style="${cellStyle}">
+                            <div class="${cellClasses}">
+                                ${badge}
                                 <span class="assignment-shift">${assignment.shiftCode} - ${assignment.demandId || 'N/A'}${reqInfo}</span>
                                 <span class="assignment-hours">${startTime}–${endTime}</span>
                                 <span class="assignment-hours">${normal}h N / ${ot}h OT</span>
