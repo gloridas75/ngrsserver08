@@ -1,6 +1,6 @@
 {
     "schemaVersion": "0.70",
-    "planningReference": "RST-20251126-0700AD3D",
+    "planningReference": "RST-20251126-124762B6",
     "timezone": "Asia/Singapore",
     "fixedRotationOffset": false,
     "planningHorizon": {
@@ -24,7 +24,7 @@
         {
             "id": "momMaxConsecutiveWorkDays",
             "enforcement": "hard",
-            "description": "Ministry of Manpower regulation: Maximum consecutive working days allowed",
+            "description": "MOM Regulatory: Maximum consecutive working days allowed",
             "params": {
                 "maxDays": 12
             }
@@ -104,17 +104,17 @@
     "solverScoreConfig": {},
     "demandItems": [
         {
-            "demandId": "DI-2511251338-43242314",
-            "locationId": "LOC-ADMI-7893",
-            "ouId": "PB T1 A1",
+            "demandId": "DI-2511260935-70477432",
+            "locationId": "LOC-WOOD-3939",
+            "ouId": "ATSU T1 LSU A2",
             "shiftStartDate": "2025-12-01",
             "shifts": [
                 {
                     "shiftDetails": [
                         {
                             "shiftCode": "D",
-                            "start": "08:00:00",
-                            "end": "17:00:00",
+                            "start": "09:00:00",
+                            "end": "18:00:00",
                             "nextDay": false
                         },
                         {
@@ -124,19 +124,23 @@
                             "nextDay": true
                         }
                     ],
-                    "includePublicHolidays": false,
+                    "includePublicHolidays": true,
                     "includeEveOfPublicHolidays": false,
-                    "shiftSetId": "Set_DI_2511251338_43242314",
+                    "shiftSetId": "Set_DI_2511260935_70477432",
                     "coverageDays": [
+                        "Mon",
                         "Tue",
                         "Wed",
                         "Thu",
                         "Fri",
-                        "Sat"
+                        "Sat",
+                        "Sun"
                     ],
                     "coverageAnchor": "2025-12-01",
                     "whitelist": {
-                        "teamIds": [],
+                        "teamIds": [
+                            "T2611_001"
+                        ],
                         "employeeIds": []
                     },
                     "blacklist": {
@@ -146,17 +150,17 @@
             ],
             "requirements": [
                 {
-                    "requirementId": "8_1",
-                    "productTypeId": "AVSO",
-                    "rankId": "ASO",
-                    "headcount": 4,
+                    "requirementId": "13_1",
+                    "productTypeId": "APO",
+                    "rankId": "SER",
+                    "headcount": 5,
                     "workPattern": [
+                        "D",
+                        "D",
+                        "D",
+                        "D",
                         "O",
-                        "N",
-                        "N",
-                        "D",
-                        "D",
-                        "D"
+                        "O"
                     ],
                     "requiredQualifications": [],
                     "gender": "Any",
@@ -167,10 +171,11 @@
     ],
     "employees": [
         {
-            "employeeId": "00097227",
-            "ouId": "PB T1 A1",
-            "productTypeId": "AVSO",
-            "rankId": "ASO",
+            "employeeId": "00011736",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
             "scheme": "A",
             "rotationOffset": 0,
             "gender": "MALE",
@@ -179,11 +184,12 @@
             "unavailability": []
         },
         {
-            "employeeId": "00105501",
-            "ouId": "PB T1 A1",
-            "productTypeId": "AVSO",
-            "rankId": "ASO",
-            "scheme": "B",
+            "employeeId": "00012660",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
             "rotationOffset": 0,
             "gender": "FEMALE",
             "qualifications": [],
@@ -191,10 +197,63 @@
             "unavailability": []
         },
         {
-            "employeeId": "00149072",
-            "ouId": "PB T1 A1",
-            "productTypeId": "AVSO",
-            "rankId": "ASO",
+            "employeeId": "00016839",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00016930",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "FEMALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00017672",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00018011",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00018070",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
             "scheme": "B",
             "rotationOffset": 0,
             "gender": "MALE",
@@ -203,25 +262,195 @@
             "unavailability": []
         },
         {
-            "employeeId": "00173519",
-            "ouId": "PB T1 A1",
-            "productTypeId": "AVSO",
-            "rankId": "ASO",
-            "scheme": "P",
+            "employeeId": "00024540",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
             "rotationOffset": 0,
-            "gender": "FEMALE",
+            "gender": "MALE",
             "qualifications": [],
             "preferences": {},
             "unavailability": []
         },
         {
-            "employeeId": "00174104",
-            "ouId": "PB T1 A1",
-            "productTypeId": "AVSO",
-            "rankId": "ASO",
-            "scheme": "P",
+            "employeeId": "00025817",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
             "rotationOffset": 0,
-            "gender": "FEMALE",
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00026296",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00030891",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00033182",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00043212",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00052754",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00054564",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00095450",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00100317",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00120813",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00124970",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00143119",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00170174",
+            "ouId": "ATSU T1 LSU A2",
+            "teamId": "T2611_001",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
+            "qualifications": [],
+            "preferences": {},
+            "unavailability": []
+        },
+        {
+            "employeeId": "00171051",
+            "ouId": "ATSU T1 LSU A2",
+            "productTypeId": "APO",
+            "rankId": "SER",
+            "scheme": "A",
+            "rotationOffset": 0,
+            "gender": "MALE",
             "qualifications": [],
             "preferences": {},
             "unavailability": []

@@ -35,12 +35,14 @@ from context.engine.config_optimizer import optimize_all_requirements, format_ou
 from src.models import (
     SolveRequest, SolveResponse, HealthResponse, 
     Score, SolverRunMetadata, Meta, Violation,
-    AsyncJobRequest, AsyncJobResponse, JobStatusResponse, AsyncStatsResponse
+    AsyncJobRequest, AsyncJobResponse, JobStatusResponse, AsyncStatsResponse,
+    IncrementalSolveRequest
 )
 from src.output_builder import build_output
 from src.redis_job_manager import RedisJobManager
 from src.redis_worker import start_worker_pool
 from src.feasibility_checker import quick_feasibility_check
+from src.incremental_solver import solve_incremental, IncrementalSolverError
 
 # ============================================================================
 # LOGGING SETUP
@@ -989,6 +991,112 @@ async def cancel_job_post(job_id: str):
         )
     
     return result
+
+
+# ============================================================================
+# INCREMENTAL SOLVE ENDPOINT (v0.80)
+# ============================================================================
+
+@app.post("/solve/incremental", response_class=ORJSONResponse)
+async def solve_incremental_endpoint(
+    request: Request,
+    payload: IncrementalSolveRequest
+):
+    """
+    Incremental solver for mid-month scenarios.
+    
+    Use cases:
+    - New employees joining mid-month (fill unassigned slots from join date onwards)
+    - Employee departures/resignations (re-assign their future slots)
+    - Long leave periods (temporarily unassign and re-distribute)
+    
+    How it works:
+    1. Locks all assignments before cutoffDate (immutable/historical)
+    2. Identifies solvable slots:
+       - Slots >= solveFromDate that are UNASSIGNED
+       - Slots assigned to departed employees (freed)
+       - Slots during long leave periods (freed)
+    3. Builds employee pool: previous employees (minus departed) + new joiners
+    4. Solves only for solvable slots while respecting:
+       - Locked weekly hours from locked assignments
+       - Consecutive days leading up to solve window
+       - All standard constraints (C1-C17)
+    5. Returns combined output with audit trail (source: locked vs incremental)
+    
+    Temporal window validation:
+    - cutoffDate < solveFromDate (error if not)
+    - solveFromDate <= solveToDate (error if not)
+    
+    Employee changes:
+    - newJoiners: Delta only (full employee objects + availableFrom dates)
+    - notAvailableFrom: Employees who departed (their future assignments freed)
+    - longLeave: Temporary unavailability windows (can work before/after)
+    
+    Rotation re-baseline:
+    - All employees (including existing) get fresh rotation pattern from solveFromDate
+    - CP-SAT optimizes offsets independently for each employee
+    
+    Constraints:
+    - Weekly hours: Count locked hours Mon-cutoff + new hours cutoff-Sun
+    - Consecutive days: Track locked streak before solve window
+    - Validation: Only new assignments validated (trust locked assignments)
+    
+    Output:
+    - Locked assignments marked with "source": "locked"
+    - New assignments marked with "source": "incremental"
+    - Full audit info: solverRunId, timestamp, inputHash, previousJobId
+    
+    Returns:
+    - 200: Incremental solve completed (may have partial solution)
+    - 400: Invalid request (temporal window errors, missing data)
+    - 422: Validation error (schema mismatch)
+    - 500: Solver error
+    """
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    
+    logger.info(f"[{request_id}] Incremental solve request received")
+    
+    try:
+        # Convert Pydantic model to dict
+        request_data = payload.model_dump()
+        
+        # Generate unique run ID
+        run_id = f"incr-{int(time.time())}-{request_id[:8]}"
+        
+        # Call incremental solver
+        result = solve_incremental(
+            request_data=request_data,
+            solver_engine=solve,  # Pass solver function
+            run_id=run_id
+        )
+        
+        logger.info(f"[{request_id}] Incremental solve completed: {result.get('status')}")
+        
+        return {
+            "status": "success",
+            "data": result,
+            "meta": {
+                "requestId": request_id,
+                "runId": run_id,
+                "timestamp": datetime.now().isoformat(),
+                "schemaVersion": request_data.get("schemaVersion", "0.80")
+            }
+        }
+        
+    except IncrementalSolverError as e:
+        logger.error(f"[{request_id}] Incremental solver error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+        
+    except Exception as e:
+        logger.error(
+            f"[{request_id}] Unexpected error in incremental solve: {str(e)}",
+            exc_info=True
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error: {str(e)}"
+        )
 
 
 # ============================================================================

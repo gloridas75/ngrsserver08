@@ -252,3 +252,131 @@ class WebhookPayload(BaseModel):
     result_size_bytes: Optional[int] = Field(None, description="Size of result JSON in bytes")
     
     model_config = ConfigDict(extra='allow')
+
+
+# ============================================================================
+# Incremental Solve Models (v0.80)
+# ============================================================================
+
+class TemporalWindow(BaseModel):
+    """Temporal window for incremental solving."""
+    
+    cutoffDate: str = Field(
+        ..., 
+        description="Lock all assignments before this date (YYYY-MM-DD). Must be < solveFromDate."
+    )
+    solveFromDate: str = Field(
+        ..., 
+        description="Start solving from this date onwards (YYYY-MM-DD). Must be > cutoffDate."
+    )
+    solveToDate: str = Field(
+        ..., 
+        description="End of planning horizon (YYYY-MM-DD). Must be >= solveFromDate."
+    )
+
+
+class NewJoiner(BaseModel):
+    """New employee joining mid-month."""
+    
+    employee: Dict[str, Any] = Field(
+        ..., 
+        description="Full employee object matching input schema"
+    )
+    availableFrom: str = Field(
+        ..., 
+        description="Date employee can start working (YYYY-MM-DD)"
+    )
+
+
+class NotAvailableEmployee(BaseModel):
+    """Employee who departed or resigned."""
+    
+    employeeId: str = Field(..., description="Employee ID")
+    notAvailableFrom: str = Field(
+        ..., 
+        description="Date from which employee is no longer available (YYYY-MM-DD). "
+                    "All assignments from this date onwards will be unassigned."
+    )
+
+
+class LongLeave(BaseModel):
+    """Employee on long leave."""
+    
+    employeeId: str = Field(..., description="Employee ID")
+    leaveFrom: str = Field(..., description="Leave start date (YYYY-MM-DD)")
+    leaveTo: str = Field(..., description="Leave end date (YYYY-MM-DD), inclusive")
+
+
+class EmployeeChanges(BaseModel):
+    """Changes to employee availability for incremental solve."""
+    
+    newJoiners: Optional[List[NewJoiner]] = Field(
+        default_factory=list,
+        description="New employees joining (delta only)"
+    )
+    notAvailableFrom: Optional[List[NotAvailableEmployee]] = Field(
+        default_factory=list,
+        description="Employees who departed/resigned"
+    )
+    longLeave: Optional[List[LongLeave]] = Field(
+        default_factory=list,
+        description="Employees on temporary leave"
+    )
+
+
+class AssignmentAuditInfo(BaseModel):
+    """Audit information for assignment traceability."""
+    
+    solverRunId: str = Field(..., description="Solver run ID that created this assignment")
+    source: str = Field(
+        ..., 
+        description="Assignment source: 'locked' (from previous solve) or 'incremental' (from this solve)"
+    )
+    timestamp: str = Field(..., description="ISO 8601 timestamp when assignment was created/locked")
+    inputHash: Optional[str] = Field(None, description="Hash of input that generated this assignment")
+    previousJobId: Optional[str] = Field(None, description="Job ID of previous solve (if source=locked)")
+
+
+class IncrementalSolveRequest(BaseModel):
+    """Request payload for POST /solve/incremental endpoint."""
+    
+    schemaVersion: str = Field(
+        "0.80", 
+        description="Schema version for incremental solve"
+    )
+    planningReference: str = Field(
+        ..., 
+        description="Planning reference identifier"
+    )
+    
+    temporalWindow: TemporalWindow = Field(
+        ..., 
+        description="Defines which dates to lock vs solve"
+    )
+    
+    previousOutput: Dict[str, Any] = Field(
+        ..., 
+        description="Full previous solver output JSON (must include assignments, solverRun, score)"
+    )
+    
+    employeeChanges: EmployeeChanges = Field(
+        ..., 
+        description="Changes to employee pool: new joiners, departures, long leave"
+    )
+    
+    demandItems: List[Dict[str, Any]] = Field(
+        ..., 
+        description="Demand items (same as original solve)"
+    )
+    
+    planningHorizon: Dict[str, Any] = Field(
+        ..., 
+        description="Planning horizon (must match previous solve)"
+    )
+    
+    solverConfig: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Solver configuration overrides"
+    )
+    
+    model_config = ConfigDict(extra='allow')

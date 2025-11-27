@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ngrssolver08.comcentricapps.com/schemas/incremental-input/v0.80",
+  "title": "NGRS Incremental Solver Input Schema",
+  "description": "JSON Schema for NGRS Incremental Solver input data v0.80 - Mid-month solving scenarios",
+  "type": "object",
+  "required": ["schemaVersion", "planningReference", "temporalWindow", "previousOutput", "employeeChanges", "demandItems", "planningHorizon"],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.80",
+      "description": "Schema version for incremental solve"
+    },
+    "planningReference": {
+      "type": "string",
+      "description": "Planning reference identifier"
+    },
+    "temporalWindow": {
+      "type": "object",
+      "required": ["cutoffDate", "solveFromDate", "solveToDate"],
+      "properties": {
+        "cutoffDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Lock all assignments before this date (YYYY-MM-DD). Must be < solveFromDate."
+        },
+        "solveFromDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Start solving from this date onwards (YYYY-MM-DD). Must be > cutoffDate and <= solveToDate."
+        },
+        "solveToDate": {
+          "type": "string",
+          "format": "date",
+          "description": "End of planning horizon (YYYY-MM-DD). Must be >= solveFromDate."
+        }
+      }
+    },
+    "previousOutput": {
+      "type": "object",
+      "required": ["assignments", "solverRun", "score"],
+      "description": "Full previous solver output JSON",
+      "properties": {
+        "schemaVersion": {"type": "string"},
+        "planningReference": {"type": "string"},
+        "solverRun": {
+          "type": "object",
+          "properties": {
+            "runId": {"type": "string"},
+            "solverVersion": {"type": "string"},
+            "startedAt": {"type": "string", "format": "date-time"},
+            "ended": {"type": "string", "format": "date-time"},
+            "durationSeconds": {"type": "number"},
+            "status": {"type": "string"}
+          }
+        },
+        "score": {
+          "type": "object",
+          "properties": {
+            "overall": {"type": "number"},
+            "hard": {"type": "number"},
+            "soft": {"type": "number"}
+          }
+        },
+        "assignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["date", "status"],
+            "properties": {
+              "assignmentId": {"type": "string"},
+              "demandId": {"type": "string"},
+              "date": {"type": "string", "format": "date"},
+              "shiftCode": {"type": "string"},
+              "employeeId": {"type": ["string", "null"]},
+              "status": {"type": "string", "enum": ["ASSIGNED", "UNASSIGNED"]},
+              "startDateTime": {"type": "string", "format": "date-time"},
+              "endDateTime": {"type": "string", "format": "date-time"},
+              "hours": {
+                "type": "object",
+                "properties": {
+                  "gross": {"type": "number"},
+                  "lunch": {"type": "number"},
+                  "normal": {"type": "number"},
+                  "ot": {"type": "number"},
+                  "paid": {"type": "number"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "employeeChanges": {
+      "type": "object",
+      "description": "Changes to employee pool",
+      "properties": {
+        "newJoiners": {
+          "type": "array",
+          "description": "New employees joining (delta only)",
+          "items": {
+            "type": "object",
+            "required": ["employee", "availableFrom"],
+            "properties": {
+              "employee": {
+                "type": "object",
+                "description": "Full employee object matching NGRS input schema",
+                "required": ["employeeId", "rank", "gender", "scheme"],
+                "properties": {
+                  "employeeId": {"type": "string"},
+                  "rank": {"type": "string"},
+                  "gender": {"type": "string", "enum": ["M", "F"]},
+                  "scheme": {"type": "string", "enum": ["A", "B", "P"]},
+                  "appointmentDate": {"type": "string", "format": "date"},
+                  "qualifications": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "qualCode": {"type": "string"},
+                        "expiryDate": {"type": "string", "format": "date"}
+                      }
+                    }
+                  }
+                }
+              },
+              "availableFrom": {
+                "type": "string",
+                "format": "date",
+                "description": "Date employee can start working (YYYY-MM-DD)"
+              }
+            }
+          }
+        },
+        "notAvailableFrom": {
+          "type": "array",
+          "description": "Employees who departed or resigned",
+          "items": {
+            "type": "object",
+            "required": ["employeeId", "notAvailableFrom"],
+            "properties": {
+              "employeeId": {"type": "string"},
+              "notAvailableFrom": {
+                "type": "string",
+                "format": "date",
+                "description": "Date from which employee is no longer available. All future assignments will be freed."
+              }
+            }
+          }
+        },
+        "longLeave": {
+          "type": "array",
+          "description": "Employees on temporary long leave",
+          "items": {
+            "type": "object",
+            "required": ["employeeId", "leaveFrom", "leaveTo"],
+            "properties": {
+              "employeeId": {"type": "string"},
+              "leaveFrom": {
+                "type": "string",
+                "format": "date",
+                "description": "Leave start date (YYYY-MM-DD)"
+              },
+              "leaveTo": {
+                "type": "string",
+                "format": "date",
+                "description": "Leave end date (YYYY-MM-DD), inclusive"
+              }
+            }
+          }
+        }
+      }
+    },
+    "demandItems": {
+      "type": "array",
+      "description": "Demand items (same as original solve)",
+      "items": {
+        "type": "object",
+        "description": "Demand item from NGRS input schema v0.73"
+      }
+    },
+    "planningHorizon": {
+      "type": "object",
+      "required": ["startDate", "endDate"],
+      "description": "Planning horizon (must match previous solve)",
+      "properties": {
+        "startDate": {"type": "string", "format": "date"},
+        "endDate": {"type": "string", "format": "date"},
+        "publicHolidays": {
+          "type": "array",
+          "items": {"type": "string", "format": "date"}
+        }
+      }
+    },
+    "solverConfig": {
+      "type": "object",
+      "description": "Optional solver configuration overrides",
+      "properties": {
+        "timeLimitSec": {"type": "integer", "minimum": 1},
+        "optimizationMode": {"type": "string", "enum": ["minimizeEmployeeCount", "maximizeCoverage", "balanced"]},
+        "verboseLogging": {"type": "boolean"}
+      }
+    }
+  }
+}
