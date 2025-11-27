@@ -324,7 +324,7 @@ def build_incremental_output(
             "solveToDate": incremental_ctx['temporalWindow']['solveToDate'],
             "lockedAssignmentsCount": len(annotated_locked),
             "newAssignmentsCount": len(annotated_new),
-            "solvableSlots": len(incremental_ctx.get('solvableSlots', [])),
+            "solvableSlots": len(annotated_new),  # Total slots in solve window (not just freed slots)
             "unassignedSlots": len([a for a in annotated_new if a.get('status') == 'UNASSIGNED'])
         },
         "meta": {
