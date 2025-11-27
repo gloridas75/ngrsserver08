@@ -435,9 +435,20 @@ def build_model(ctx):
     fixed_rotation_offset = ctx.get('fixedRotationOffset', True)
     offset_vars = {}  # Will store offset decision variables if optimization enabled
     
-    if not fixed_rotation_offset:
+    # INCREMENTAL MODE ENHANCEMENT: Auto-optimize offsets for new joiners
+    new_joiner_ids = set()
+    if incremental_ctx:
+        new_joiners = incremental_ctx.get('employeeChanges', {}).get('newJoiners', [])
+        new_joiner_ids = {nj['employee']['employeeId'] for nj in new_joiners}
+        
+        if new_joiner_ids:
+            print(f"[build_model] INCREMENTAL MODE: Auto-optimizing offsets for {len(new_joiner_ids)} new joiners")
+            print(f"  Existing employees will keep their fixed offsets")
+    
+    if not fixed_rotation_offset or new_joiner_ids:
         print(f"[build_model] Creating rotation offset decision variables...")
-        print(f"  Mode: CP-SAT will optimize rotation offsets automatically")
+        if not fixed_rotation_offset:
+            print(f"  Mode: CP-SAT will optimize rotation offsets for ALL employees")
         
         # Create offset decision variables for each employee
         # Offset range: 0 to (pattern_length - 1)
@@ -445,6 +456,10 @@ def build_model(ctx):
         
         for emp in employees:
             emp_id = emp.get('employeeId')
+            
+            # INCREMENTAL MODE: Only optimize new joiners if fixedRotationOffset=true
+            if fixed_rotation_offset and emp_id not in new_joiner_ids:
+                continue  # Skip existing employees, they keep fixed offsets
             
             # Try to get actual pattern length from slots this employee can work
             for slot in slots:
@@ -486,22 +501,11 @@ def build_model(ctx):
             if (slot.slot_id, emp_id) not in x:
                 continue
             
-            if fixed_rotation_offset:
-                # MODE 1: Use fixed offset from employee data
-                emp_offset = emp.get('rotationOffset', 0)
-                emp_cycle_day = (days_from_base - emp_offset) % cycle_days
-                expected_shift = rotation_seq[emp_cycle_day]
-                
-                # HARD CONSTRAINT: If pattern says 'O' (off day), employee cannot work
-                if expected_shift == 'O':
-                    model.Add(x[(slot.slot_id, emp_id)] == 0)
-                    pattern_constraints += 1
-            else:
-                # MODE 2: Use CP-SAT offset decision variables
-                # For each possible cycle day, create indicator and constraint
-                if emp_id not in offset_vars:
-                    continue
-                
+            # Check if this employee has a variable offset or fixed offset
+            has_variable_offset = emp_id in offset_vars
+            
+            if has_variable_offset:
+                # MODE 2: Use CP-SAT offset decision variables (for new joiners or when fixedRotationOffset=false)
                 offset_var = offset_vars[emp_id]
                 
                 # For each possible offset value (0 to cycle_days-1)
@@ -522,11 +526,21 @@ def build_model(ctx):
                         # Equivalent to: is_this_offset + x <= 1
                         model.Add(x[(slot.slot_id, emp_id)] == 0).OnlyEnforceIf(is_this_offset)
                         pattern_constraints += 1
+            else:
+                # MODE 1: Use fixed offset from employee data (for existing employees in incremental mode)
+                emp_offset = emp.get('rotationOffset', 0)
+                emp_cycle_day = (days_from_base - emp_offset) % cycle_days
+                expected_shift = rotation_seq[emp_cycle_day]
+                
+                # HARD CONSTRAINT: If pattern says 'O' (off day), employee cannot work
+                if expected_shift == 'O':
+                    model.Add(x[(slot.slot_id, emp_id)] == 0)
+                    pattern_constraints += 1
     
-    if fixed_rotation_offset:
-        print(f"  ✓ Added {pattern_constraints} work pattern constraints (HARD, fixed offsets)\n")
+    if offset_vars:
+        print(f"  ✓ Added {pattern_constraints} work pattern constraints ({len(offset_vars)} variable offsets, {len(employees) - len(offset_vars)} fixed)\n")
     else:
-        print(f"  ✓ Added {pattern_constraints} work pattern constraints (HARD, variable offsets)\n")
+        print(f"  ✓ Added {pattern_constraints} work pattern constraints (HARD, all fixed offsets)\n")
     
     # ========== ROTATION CONTINUITY (DISABLED) ==========
     print(f"[build_model] TEMPORARILY DISABLED - testing without continuity constraints...")

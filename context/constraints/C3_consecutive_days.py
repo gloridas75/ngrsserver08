@@ -55,6 +55,24 @@ def add_constraints(model, ctx):
     # Convert dates to sorted list (slot.date is already a date object, not string)
     sorted_dates = sorted(list(all_dates))
     
+    # OPTIMIZATION: For incremental solving, check solve window size
+    # If solve window < 13 days, constraint is mathematically impossible to violate
+    if incremental_ctx:
+        temporal_window = incremental_ctx.get('temporalWindow', {})
+        if temporal_window:
+            from datetime import datetime as dt
+            solve_from = dt.fromisoformat(temporal_window.get('solveFromDate')).date()
+            solve_to = dt.fromisoformat(temporal_window.get('solveToDate')).date()
+            solve_window_days = (solve_to - solve_from).days + 1
+            
+            if solve_window_days < max_consecutive + 1:
+                print(f"[C3] Maximum Consecutive Working Days Constraint (HARD)")
+                print(f"     Employees: {len(employees)}, Planning horizon: {len(sorted_dates)} days")
+                print(f"     INCREMENTAL MODE: Solve window is {solve_window_days} days (< 13)")
+                print(f"     ✓ OPTIMIZATION: Skipping constraint (impossible to violate in <13 day window)\n")
+                return
+    
+    # Regular check for full solve mode
     if len(sorted_dates) < max_consecutive + 1:
         print(f"[C3] Maximum Consecutive Working Days Constraint (HARD)")
         print(f"     Employees: {len(employees)}, Planning horizon: {len(sorted_dates)} days")

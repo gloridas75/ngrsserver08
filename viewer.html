@@ -733,18 +733,38 @@
 
         <!-- INCREMENTAL INPUT TAB -->
         <div id="incrementalinput" class="tab-content">
-            <h2 style="margin-bottom: 20px; color: #333;">🔄 Incremental Solve Input</h2>
+            <h2 style="margin-bottom: 20px; color: #333;">🔄 Incremental Solve Input Comparison</h2>
             
             <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
-                <h3 style="color: #1565c0; margin-bottom: 10px;">📂 Load Incremental Input File</h3>
-                <p style="margin-bottom: 15px; color: #424242;">Select an incremental solve input file to view temporal window, employee changes, and constraints.</p>
-                <input type="file" id="incrementalInputFileInput" accept=".json" style="display: none;">
-                <button id="openIncrementalInputBtn" class="btn btn-primary" style="padding: 10px 20px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">📂 Open Incremental Input</button>
-                <span id="loadedIncrementalInputFileName" style="margin-left: 15px; color: #666; font-weight: 500;"></span>
+                <h3 style="color: #1565c0; margin-bottom: 10px;">📂 Load Incremental Input Files</h3>
+                <p style="margin-bottom: 15px; color: #424242;">Load multiple incremental input files to compare temporal windows, employee changes, and constraints side-by-side.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #1565c0;">Input File 1:</label>
+                        <input type="file" id="incrementalInput1FileInput" accept=".json" style="display: none;">
+                        <button id="openIncrementalInput1Btn" class="btn btn-primary" style="padding: 8px 16px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer;">📂 Open File 1</button>
+                        <span id="loadedIncrementalInput1FileName" style="margin-left: 10px; color: #666;"></span>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #1565c0;">Input File 2:</label>
+                        <input type="file" id="incrementalInput2FileInput" accept=".json" style="display: none;">
+                        <button id="openIncrementalInput2Btn" class="btn btn-primary" style="padding: 8px 16px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer;">📂 Open File 2</button>
+                        <span id="loadedIncrementalInput2FileName" style="margin-left: 10px; color: #666;"></span>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #1565c0;">Input File 3:</label>
+                        <input type="file" id="incrementalInput3FileInput" accept=".json" style="display: none;">
+                        <button id="openIncrementalInput3Btn" class="btn btn-primary" style="padding: 8px 16px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer;">📂 Open File 3</button>
+                        <span id="loadedIncrementalInput3FileName" style="margin-left: 10px; color: #666;"></span>
+                    </div>
+                </div>
             </div>
             
             <div id="incrementalInputContainer" style="color: #999; text-align: center; padding: 60px 20px; font-size: 1.1em;">
-                ⬆️ Load an incremental input file to view details
+                ⬆️ Load incremental input files to view comparison
             </div>
         </div>
 
@@ -856,21 +876,23 @@
                 });
             }
             
-            // Setup incremental input file button
-            const openIncrementalInputBtn = document.getElementById('openIncrementalInputBtn');
-            const incrementalInputFileInput = document.getElementById('incrementalInputFileInput');
-            if (openIncrementalInputBtn) {
-                openIncrementalInputBtn.addEventListener('click', () => {
-                    incrementalInputFileInput.click();
-                });
-            }
-            if (incrementalInputFileInput) {
-                incrementalInputFileInput.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        loadIncrementalInputFromFile(file);
-                    }
-                });
+            // Legacy single incremental input button - now replaced with 3-file comparison
+            // const openIncrementalInputBtn = document.getElementById('openIncrementalInputBtn');
+            // const incrementalInputFileInput = document.getElementById('incrementalInputFileInput');
+            
+            // Setup incremental input file buttons (3 files)
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`openIncrementalInput${i}Btn`);
+                const input = document.getElementById(`incrementalInput${i}FileInput`);
+                if (btn && input) {
+                    btn.addEventListener('click', () => input.click());
+                    input.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            loadIncrementalInputFromFile(file, i);
+                        }
+                    });
+                }
             }
             
             // Setup incremental output file buttons (3 files)
@@ -1263,6 +1285,7 @@
             const container = document.getElementById('incrementalInputContainer');
             
             // Temporal window
+            const temporalWindow = incrementalInputData.temporalWindow || {};
             let html = `
                 <div class="section-header">
                     <h3>⏰ Temporal Window</h3>
@@ -1271,17 +1294,17 @@
                 <div class="summary-grid">
                     <div class="summary-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                         <h3>Cutoff Date</h3>
-                        <div class="value" style="font-size: 1.8em;">${incrementalInputData.cutoffDate || 'N/A'}</div>
+                        <div class="value" style="font-size: 1.8em;">${temporalWindow.cutoffDate || 'N/A'}</div>
                         <p style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">Assignments locked before this date</p>
                     </div>
                     <div class="summary-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         <h3>Solve From</h3>
-                        <div class="value" style="font-size: 1.8em;">${incrementalInputData.solveFromDate || 'N/A'}</div>
+                        <div class="value" style="font-size: 1.8em;">${temporalWindow.solveFromDate || 'N/A'}</div>
                         <p style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">Start of solve window</p>
                     </div>
                     <div class="summary-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                         <h3>Solve To</h3>
-                        <div class="value" style="font-size: 1.8em;">${incrementalInputData.solveToDate || 'N/A'}</div>
+                        <div class="value" style="font-size: 1.8em;">${temporalWindow.solveToDate || 'N/A'}</div>
                         <p style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">End of solve window</p>
                     </div>
                 </div>
@@ -1308,17 +1331,19 @@
                     html += `
                         <div style="background: #e8f5e9; padding: 20px; border-radius: 12px; border: 2px solid #4caf50;">
                             <h4 style="color: #2e7d32; margin-bottom: 15px;">✨ New Joiners (${newJoiners.length})</h4>
-                            ${newJoiners.map(emp => `
+                            ${newJoiners.map(item => {
+                                const emp = item.employee || item;
+                                return `
                                 <div style="background: white; padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #4caf50;">
                                     <div style="font-weight: 600; color: #2e7d32; margin-bottom: 5px;">${emp.employeeId || 'N/A'}</div>
                                     <div style="font-size: 0.9em; color: #666;">
-                                        <div>Available from: <strong>${emp.availableFrom || 'N/A'}</strong></div>
+                                        <div>Available from: <strong>${item.availableFrom || 'N/A'}</strong></div>
                                         <div>Rank: ${emp.rankId || 'N/A'}</div>
                                         <div>Product Type: ${emp.productTypeId || 'N/A'}</div>
-                                        <div>Team: ${emp.teamId || 'N/A'}</div>
+                                        <div>Team: ${emp.ouId || 'N/A'}</div>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `}).join('')}
                         </div>
                     `;
                 }
@@ -1373,26 +1398,129 @@
             
             if (prevOutput) {
                 const prevAssignments = prevOutput.assignments || [];
-                const prevEmployees = prevOutput.employees || [];
+                // Extract unique employees from assignments (schema 0.4 doesn't have employees array)
+                const uniqueEmployees = new Set(prevAssignments.map(a => a.employeeId).filter(id => id));
                 html += `
                     <div class="summary-grid">
-                        <div class="summary-card">
-                            <h3>Schema Version</h3>
-                            <div class="value" style="font-size: 1.5em;">${prevOutput.schemaVersion || 'N/A'}</div>
-                        </div>
                         <div class="summary-card">
                             <h3>Previous Assignments</h3>
                             <div class="value">${prevAssignments.length}</div>
                         </div>
                         <div class="summary-card">
                             <h3>Previous Employees</h3>
-                            <div class="value">${prevEmployees.length}</div>
+                            <div class="value">${uniqueEmployees.size}</div>
                         </div>
                     </div>
                 `;
             } else {
                 html += '<div class="no-data">No previous output embedded</div>';
             }
+            
+            container.innerHTML = html;
+        }
+        
+        // ============================================================================
+        // INCREMENTAL INPUT COMPARISON LOADER & RENDERER
+        // ============================================================================
+        
+        let incrementalInputFiles = [null, null, null];
+        
+        function loadIncrementalInputFromFile(file, index) {
+            try {
+                console.log(`Loading incremental input file ${index}: ${file.name}`);
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        incrementalInputFiles[index - 1] = data;
+                        console.log(`Loaded incremental input ${index}:`, data);
+                        
+                        document.getElementById(`loadedIncrementalInput${index}FileName`).textContent = file.name;
+                        
+                        renderIncrementalInputComparison();
+                    } catch (err) {
+                        console.error(`Error parsing incremental input file ${index}:`, err);
+                        alert(`Error parsing JSON file ${index}: ${err.message}`);
+                    }
+                };
+                reader.readAsText(file);
+            } catch (err) {
+                console.error(`Error loading incremental input file ${index}:`, err);
+                alert(`Error loading file ${index}: ${err.message}`);
+            }
+        }
+        
+        function renderIncrementalInputComparison() {
+            const container = document.getElementById('incrementalInputContainer');
+            
+            const loadedCount = incrementalInputFiles.filter(f => f !== null).length;
+            
+            if (loadedCount === 0) {
+                container.innerHTML = '<div style=\"color: #999; text-align: center; padding: 60px 20px; font-size: 1.1em;\">⬆️ Load incremental input files to view comparison</div>';
+                return;
+            }
+            
+            let html = `
+                <div class=\"section-header\">
+                    <h3>📊 Input Comparison (${loadedCount} file${loadedCount > 1 ? 's' : ''} loaded)</h3>
+                    <p>Compare temporal windows, employee changes, and constraints across scenarios</p>
+                </div>
+            `;
+            
+            // Side-by-side comparison
+            html += '<div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;\">';
+            
+            incrementalInputFiles.forEach((data, idx) => {
+                if (!data) return;
+                
+                const fileNum = idx + 1;
+                const temporalWindow = data.temporalWindow || {};
+                const employeeChanges = data.employeeChanges || {};
+                const newJoiners = employeeChanges.newJoiners || [];
+                const notAvailable = employeeChanges.notAvailableFrom || [];
+                const longLeave = employeeChanges.longLeave || [];
+                const prevOutput = data.previousOutput || {};
+                const prevAssignments = prevOutput.assignments || [];
+                
+                html += `
+                    <div style=\"background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; color: white;\">
+                        <h4 style=\"margin-bottom: 15px; font-size: 1.3em;\">📄 Input ${fileNum}</h4>
+                        
+                        <div style=\"background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; margin-bottom: 15px;\">
+                            <h5 style=\"margin-bottom: 10px; font-size: 1.1em;\">⏱️ Temporal Window</h5>
+                            <div style=\"margin-bottom: 8px;\"><strong>Cutoff Date:</strong> ${temporalWindow.cutoffDate || 'N/A'}</div>
+                            <div style=\"margin-bottom: 8px;\"><strong>Solve Window:</strong> ${temporalWindow.solveFromDate || 'N/A'} → ${temporalWindow.solveToDate || 'N/A'}</div>
+                        </div>
+                        
+                        <div style=\"background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; margin-bottom: 15px;\">
+                            <h5 style=\"margin-bottom: 10px; font-size: 1.1em;\">👥 Employee Changes</h5>
+                            <div style=\"display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; text-align: center;\">
+                                <div style=\"background: rgba(76, 175, 80, 0.3); padding: 8px; border-radius: 6px;\">
+                                    <div style=\"font-size: 1.5em; font-weight: bold;\">${newJoiners.length}</div>
+                                    <div style=\"font-size: 0.8em;\">✨ New</div>
+                                </div>
+                                <div style=\"background: rgba(244, 67, 54, 0.3); padding: 8px; border-radius: 6px;\">
+                                    <div style=\"font-size: 1.5em; font-weight: bold;\">${notAvailable.length}</div>
+                                    <div style=\"font-size: 0.8em;\">🚪 Departed</div>
+                                </div>
+                                <div style=\"background: rgba(255, 152, 0, 0.3); padding: 8px; border-radius: 6px;\">
+                                    <div style=\"font-size: 1.5em; font-weight: bold;\">${longLeave.length}</div>
+                                    <div style=\"font-size: 0.8em;\">🏖️ Leave</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style=\"background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px;\">
+                            <h5 style=\"margin-bottom: 10px; font-size: 1.1em;\">📋 Previous Output</h5>
+                            <div style=\"margin-bottom: 8px;\"><strong>Assignments:</strong> ${prevAssignments.length}</div>
+                            <div style=\"margin-bottom: 8px;\"><strong>Employees:</strong> ${new Set(prevAssignments.map(a => a.employeeId).filter(id => id)).size}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
             
             container.innerHTML = html;
         }
@@ -1457,20 +1585,31 @@
                 const fileNum = idx + 1;
                 const incrementalSolve = data.incrementalSolve || {};
                 const assignments = data.assignments || [];
-                const lockedCount = incrementalSolve.lockedAssignmentsCount || 0;
-                const newCount = incrementalSolve.newAssignmentsCount || 0;
-                const solvableSlots = incrementalSolve.solvableSlots || 0;
-                const unassignedSlots = incrementalSolve.unassignedSlots || 0;
-                const coveragePercent = solvableSlots > 0 ? ((solvableSlots - unassignedSlots) / solvableSlots * 100).toFixed(1) : 0;
+                
+                // Handle "no_slots_to_solve" scenario
+                const isNoSlotsScenario = incrementalSolve.status === 'no_slots_to_solve';
+                const lockedCount = isNoSlotsScenario ? assignments.length : (incrementalSolve.lockedAssignmentsCount || 0);
+                const newCount = isNoSlotsScenario ? 0 : (incrementalSolve.newAssignmentsCount || 0);
+                const solvableSlots = isNoSlotsScenario ? 0 : (incrementalSolve.solvableSlots || 0);
+                const unassignedSlots = isNoSlotsScenario ? 0 : (incrementalSolve.unassignedSlots || 0);
+                const coveragePercent = solvableSlots > 0 ? ((solvableSlots - unassignedSlots) / solvableSlots * 100).toFixed(1) : (isNoSlotsScenario ? 0 : 0);
                 
                 html += `
                     <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; color: white;">
                         <h4 style="margin-bottom: 15px; font-size: 1.3em;">📄 Output ${fileNum}</h4>
                         
-                        <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                            <div style="margin-bottom: 8px;"><strong>Cutoff Date:</strong> ${incrementalSolve.cutoffDate || 'N/A'}</div>
-                            <div style="margin-bottom: 8px;"><strong>Solve Window:</strong> ${incrementalSolve.solveFromDate || 'N/A'} → ${incrementalSolve.solveToDate || 'N/A'}</div>
-                        </div>
+                        ${isNoSlotsScenario ? `
+                            <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                                <div style="font-size: 1.5em; margin-bottom: 10px;">✅</div>
+                                <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 10px;">No Changes Required</div>
+                                <div style="font-size: 0.95em; opacity: 0.9;">${incrementalSolve.message || 'All slots are locked. No incremental solving required.'}</div>
+                            </div>
+                        ` : `
+                            <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                <div style="margin-bottom: 8px;"><strong>Cutoff Date:</strong> ${incrementalSolve.cutoffDate || 'N/A'}</div>
+                                <div style="margin-bottom: 8px;"><strong>Solve Window:</strong> ${incrementalSolve.solveFromDate || 'N/A'} → ${incrementalSolve.solveToDate || 'N/A'}</div>
+                            </div>
+                        `}
                         
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                             <div style="background: rgba(255,255,255,0.15); padding: 10px; border-radius: 8px; text-align: center;">
@@ -1493,7 +1632,7 @@
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                            <strong>Solver Status:</strong> <span style="font-size: 1.2em; font-weight: bold;">${data.solverRun?.status || 'N/A'}</span>
+                            <strong>Solver Status:</strong> <span style="font-size: 1.2em; font-weight: bold;">${isNoSlotsScenario ? 'FEASIBLE' : (data.solverRun?.status || 'N/A')}</span>
                         </div>
                     </div>
                 `;
@@ -1515,7 +1654,183 @@
                 `;
             }
             
+            // Add demand coverage calendar
+            html += renderDemandCoverageCalendar(incrementalOutputFiles);
+            
             container.innerHTML = html;
+        }
+        
+        // ============================================================================
+        // DEMAND COVERAGE CALENDAR
+        // ============================================================================
+        
+        function renderDemandCoverageCalendar(outputFiles) {
+            const loadedFiles = outputFiles.filter(f => f !== null);
+            if (loadedFiles.length === 0) return '';
+            
+            // Get all unique demands and dates across all files
+            const demandsMap = new Map();
+            const allDates = new Set();
+            
+            loadedFiles.forEach((file, fileIdx) => {
+                const assignments = file.assignments || [];
+                const demands = file.inputData?.demands || [];
+                
+                assignments.forEach(assignment => {
+                    const demandId = assignment.demandId;
+                    const date = assignment.date;
+                    
+                    if (!demandsMap.has(demandId)) {
+                        const demand = demands.find(d => d.demandId === demandId) || { demandId };
+                        demandsMap.set(demandId, {
+                            demandId,
+                            description: demand.description || demandId,
+                            coverage: {}
+                        });
+                    }
+                    
+                    if (!demandsMap.get(demandId).coverage[date]) {
+                        demandsMap.get(demandId).coverage[date] = [];
+                    }
+                    
+                    demandsMap.get(demandId).coverage[date][fileIdx] = assignment.employeeId ? true : false;
+                    allDates.add(date);
+                });
+            });
+            
+            const sortedDates = Array.from(allDates).sort();
+            const demands = Array.from(demandsMap.values());
+            
+            if (demands.length === 0 || sortedDates.length === 0) return '';
+            
+            let html = `
+                <div style="margin-top: 30px;">
+                    <div class="section-header">
+                        <h3>📅 Demand Coverage Calendar</h3>
+                        <p>Visual comparison of demand coverage across loaded files. Empty cells indicate unassigned slots.</p>
+                    </div>
+                    
+                    <div style="overflow-x: auto; margin-top: 20px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                                    <th style="padding: 12px; text-align: left; border: 1px solid rgba(255,255,255,0.2); position: sticky; left: 0; background: inherit; z-index: 2;">Demand</th>
+                                    ${sortedDates.map(date => `<th style="padding: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.2); min-width: 100px;">${date}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            demands.forEach((demand, demandIdx) => {
+                html += `<tr style="background: ${demandIdx % 2 === 0 ? '#f8f9fa' : 'white'};">`;
+                html += `<td style="padding: 10px; border: 1px solid #dee2e6; font-weight: 600; position: sticky; left: 0; background: inherit; z-index: 1;">${demand.description.substring(0, 30)}${demand.description.length > 30 ? '...' : ''}</td>`;
+                
+                sortedDates.forEach(date => {
+                    const coverage = demand.coverage[date] || [];
+                    const fileCount = loadedFiles.length;
+                    
+                    let cellStyle = 'padding: 8px; border: 1px solid #dee2e6; text-align: center;';
+                    let cellContent = '';
+                    
+                    if (fileCount === 1) {
+                        // Single file: show filled or empty
+                        if (coverage[0]) {
+                            cellStyle += ' background: #c8e6c9;'; // Green - covered
+                            cellContent = '✓';
+                        } else {
+                            cellStyle += ' background: #ffcdd2;'; // Red - empty
+                            cellContent = '✗';
+                        }
+                    } else if (fileCount === 2) {
+                        // Two files: show comparison
+                        const file1Covered = coverage[0] || false;
+                        const file2Covered = coverage[1] || false;
+                        
+                        if (file1Covered && file2Covered) {
+                            cellStyle += ' background: #c8e6c9;'; // Both covered
+                            cellContent = '✓✓';
+                        } else if (!file1Covered && !file2Covered) {
+                            cellStyle += ' background: #ffcdd2;'; // Both empty
+                            cellContent = '✗✗';
+                        } else if (file1Covered && !file2Covered) {
+                            cellStyle += ' background: #fff9c4; font-weight: bold;'; // Changed: was covered, now empty
+                            cellContent = '✓→✗';
+                        } else {
+                            cellStyle += ' background: #b3e5fc; font-weight: bold;'; // Changed: was empty, now covered
+                            cellContent = '✗→✓';
+                        }
+                    } else if (fileCount === 3) {
+                        // Three files: show progression
+                        const file1Covered = coverage[0] || false;
+                        const file2Covered = coverage[1] || false;
+                        const file3Covered = coverage[2] || false;
+                        
+                        if (file1Covered && file2Covered && file3Covered) {
+                            cellStyle += ' background: #c8e6c9;'; // All covered
+                            cellContent = '✓';
+                        } else if (!file1Covered && !file2Covered && !file3Covered) {
+                            cellStyle += ' background: #ffcdd2;'; // All empty
+                            cellContent = '✗';
+                        } else {
+                            // Show progression
+                            const progression = [
+                                file1Covered ? '✓' : '✗',
+                                file2Covered ? '✓' : '✗',
+                                file3Covered ? '✓' : '✗'
+                            ].join('→');
+                            
+                            // Highlight if there are changes
+                            const hasChanges = !(file1Covered === file2Covered && file2Covered === file3Covered);
+                            if (hasChanges) {
+                                cellStyle += ' background: #fff9c4; font-weight: bold; font-size: 0.75em;';
+                            } else {
+                                cellStyle += ' background: #e0e0e0; font-size: 0.75em;';
+                            }
+                            
+                            // Add red border if final file (file3) is empty
+                            if (!file3Covered) {
+                                cellStyle += ' border: 3px solid #f44336 !important;';
+                            }
+                            
+                            cellContent = progression;
+                        }
+                    }
+                    
+                    html += `<td style="${cellStyle}">${cellContent}</td>`;
+                });
+                
+                html += '</tr>';
+            });
+            
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; background: #c8e6c9; border-radius: 4px; display: flex; align-items: center; justify-content: center;">✓</div>
+                            <span>Covered</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; background: #ffcdd2; border-radius: 4px; display: flex; align-items: center; justify-content: center;">✗</div>
+                            <span>Empty Slot</span>
+                        </div>
+                        ${loadedFiles.length > 1 ? `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; background: #fff9c4; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7em;">✓→✗</div>
+                            <span>Coverage Lost</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; background: #b3e5fc; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.7em;">✗→✓</div>
+                            <span>Coverage Gained</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            return html;
         }
 
         function renderDashboard() {
@@ -2354,8 +2669,17 @@
             });
 
             // Show selected tab
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Highlight the button that was clicked
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                if (btn.onclick && btn.onclick.toString().includes(`'${tabName}'`)) {
+                    btn.classList.add('active');
+                }
+            });
         }
 
         function clearFilters() {

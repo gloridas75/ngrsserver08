@@ -1,11 +1,11 @@
 {
   "schemaVersion": "0.80",
-  "planningReference": "RST-20251126-INCR-LONG-LEAVE",
+  "planningReference": "RST-20251127-FEASIBLE-2JOINERS",
   "timezone": "Asia/Singapore",
   "fixedRotationOffset": false,
   "temporalWindow": {
-    "cutoffDate": "2025-12-15",
-    "solveFromDate": "2025-12-16",
+    "cutoffDate": "2025-12-19",
+    "solveFromDate": "2025-12-20",
     "solveToDate": "2025-12-31"
   },
   "planningHorizon": {
@@ -48,18 +48,56 @@
     }
   ],
   "employeeChanges": {
-    "newJoiners": [],
+    "newJoiners": [
+      {
+        "employee": {
+          "employeeId": "EMP_NEW_001",
+          "ouId": "ATSU T1 LSU A1",
+          "teamId": "T2611_001",
+          "productTypeId": "APO",
+          "rankId": "SER",
+          "scheme": "A",
+          "rotationOffset": 0,
+          "gender": "MALE",
+          "qualifications": [],
+          "preferences": {},
+          "unavailability": []
+        },
+        "availableFrom": "2025-12-20"
+      },
+      {
+        "employee": {
+          "employeeId": "EMP_NEW_002",
+          "ouId": "ATSU T1 LSU A1",
+          "teamId": "T2611_001",
+          "productTypeId": "APO",
+          "rankId": "SER",
+          "scheme": "A",
+          "rotationOffset": 0,
+          "gender": "FEMALE",
+          "qualifications": [],
+          "preferences": {},
+          "unavailability": []
+        },
+        "availableFrom": "2025-12-20"
+      }
+    ],
     "notAvailableFrom": [],
     "longLeave": [
       {
-        "employeeId": "00054564",
+        "employeeId": "00095450",
         "leaveFrom": "2025-12-20",
-        "leaveTo": "2025-12-28"
+        "leaveTo": "2025-12-31"
       },
       {
-        "employeeId": "00100317",
-        "leaveFrom": "2025-12-16",
-        "leaveTo": "2025-12-22"
+        "employeeId": "00143119",
+        "leaveFrom": "2025-12-20",
+        "leaveTo": "2025-12-31"
+      },
+      {
+        "employeeId": "00054564",
+        "leaveFrom": "2025-12-20",
+        "leaveTo": "2025-12-31"
       }
     ]
   },

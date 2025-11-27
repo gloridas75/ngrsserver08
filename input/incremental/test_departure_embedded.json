@@ -104,13 +104,13 @@
           "requirementId": "13_1",
           "productTypeId": "APO",
           "rankId": "SER",
-          "headcount": 1,
+          "headcount": 5,
           "workPattern": [
             "D",
             "D",
             "D",
             "D",
-            "D",
+            "O",
             "O"
           ],
           "requiredQualifications": [],
