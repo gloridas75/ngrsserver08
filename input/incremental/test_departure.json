@@ -64,26 +64,43 @@
   "demandItems": [
     {
       "demandId": "DI-2511260935-70477432",
+      "locationId": "LOC-TEST-001",
       "ouId": "ATSU T1 LSU A1",
-      "productTypeId": "APO",
-      "startDate": "2025-12-01",
-      "endDate": "2025-12-31",
+      "shiftStartDate": "2025-12-01",
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "09:00:00",
+              "end": "18:00:00",
+              "nextDay": false
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": false,
+          "shiftSetId": "Set_DI_2511260935_70477432",
+          "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          "coverageAnchor": "2025-12-01",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": []
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
       "requirements": [
         {
           "requirementId": "13_1",
-          "minRank": "SER",
-          "qualificationsRequired": [],
-          "numberOfPeople": 1,
-          "shifts": [
-            {
-              "shiftId": "D",
-              "shiftCode": "D",
-              "startTime": "09:00",
-              "endTime": "18:00",
-              "lunchStartTime": "12:00",
-              "lunchEndTime": "13:00"
-            }
-          ]
+          "productTypeId": "APO",
+          "rankId": "SER",
+          "headcount": 1,
+          "workPattern": ["D", "D", "D", "D", "D", "O"],
+          "requiredQualifications": [],
+          "gender": "Any",
+          "Scheme": "Global"
         }
       ]
     }

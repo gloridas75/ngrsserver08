@@ -473,7 +473,7 @@ tail -f api_server.log
 ## 📦 Dependencies
 
 - **Python** 3.12+
-- **OR-Tools** 9.11.4210 (via optfold-py-0.4.2)
+- **OR-Tools** 9.11.4210 (via optSolve-py-0.9.0)
 - **FastAPI** 0.115.14
 - **Uvicorn** 0.34.3
 - **Pydantic** 2.10.3

@@ -267,7 +267,7 @@ async def get_version():
     """Get API and solver version information."""
     return {
         "apiVersion": "1.0.0",
-        "solverVersion": "optSolve-py-1.0.0",
+        "solverVersion": "optSolve-py-0.9.0",
         "schemaVersion": "0.73",
         "timestamp": datetime.now().isoformat()
     }

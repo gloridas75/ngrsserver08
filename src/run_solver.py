@@ -149,7 +149,7 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
         "publicHolidays": ctx.get("publicHolidays", []),
         "solverRun": {
             "runId": "SRN-local-0.4",
-            "solverVersion": "optfold-py-0.4.2",
+            "solverVersion": "optSolve-py-0.9.0",
             "startedAt": solver_result["start_timestamp"],
             "ended": solver_result["end_timestamp"],
             "durationSeconds": solver_result["duration_seconds"],

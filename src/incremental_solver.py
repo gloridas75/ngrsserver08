@@ -411,10 +411,18 @@ def solve_incremental(
     
     try:
         # Call the actual solver with incremental context
+        logger.info("🔧 [DEBUG] Calling solver_engine()...")
         status, solver_result, new_assignments, violations = solver_engine(incremental_input)
+        logger.info(f"🔧 [DEBUG] Solver returned: status={status}, new_assignments={len(new_assignments)}")
         
         # Step 7: Build combined output with audit trail
+        logger.info("🔧 [DEBUG] Importing build_incremental_output()...")
         from src.output_builder import build_incremental_output
+        
+        logger.info(f"🔧 [DEBUG] Calling build_incremental_output() with:")
+        logger.info(f"   - locked_assignments: {len(locked_assignments)}")
+        logger.info(f"   - new_assignments: {len(new_assignments)}")
+        logger.info(f"   - status: {solver_result.get('status', 'UNKNOWN')}")
         
         output = build_incremental_output(
             input_data=request_data,
@@ -426,6 +434,11 @@ def solve_incremental(
             locked_assignments=locked_assignments,
             incremental_ctx=incremental_input['_incremental']
         )
+        
+        logger.info(f"🔧 [DEBUG] build_incremental_output() returned, checking output...")
+        logger.info(f"   - schemaVersion: {output.get('schemaVersion')}")
+        logger.info(f"   - has incrementalSolve: {'incrementalSolve' in output}")
+        logger.info(f"   - total assignments: {len(output.get('assignments', []))}")
         
         logger.info(f"✓ Incremental solve completed")
         logger.info(f"  Status: {solver_result.get('status')}")

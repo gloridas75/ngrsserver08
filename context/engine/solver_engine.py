@@ -127,11 +127,25 @@ def build_model(ctx):
         # Build all slots first
         slots = build_slots(ctx)
         
-        # Filter to only solvable slots
-        solvable_slot_ids = {s.get('slotId', s.get('assignmentId')) for s in incremental_ctx['solvableSlots']}
-        slots = [s for s in slots if s.slot_id in solvable_slot_ids]
+        # Filter to only solvable slots by matching (date, demandId, shiftCode)
+        # Cannot match by slotId since previous output slotIds differ from newly generated ones
+        # Note: solvable slots have date as string, built slots have date as date object
+        solvable_keys = {
+            (s.get('date'), s.get('demandId'), s.get('shiftCode'))
+            for s in incremental_ctx['solvableSlots']
+        }
+        print(f"[DEBUG] Solvable keys sample (first 3): {list(solvable_keys)[:3]}")
+        original_count = len(slots)
+        if slots:
+            print(f"[DEBUG] Built slots sample (first 3): {[(s.date, s.demandId, s.shiftCode) for s in slots[:3]]}")
         
-        print(f"  ✓ Filtered to {len(slots)} solvable slots")
+        # Convert slot dates to strings for matching
+        slots = [
+            s for s in slots 
+            if (s.date.isoformat(), s.demandId, s.shiftCode) in solvable_keys
+        ]
+        
+        print(f"  ✓ Filtered from {original_count} to {len(slots)} solvable slots")
     else:
         # REGULAR MODE: Build slots from demand items
         slots = build_slots(ctx)
@@ -346,7 +360,7 @@ def build_model(ctx):
     
     # ========== OPTIMIZATION MODE CONFIGURATION ==========
     # Get optimization mode from input (default: balanceWorkload)
-    solver_config = ctx.get('solverConfig', {})
+    solver_config = ctx.get('solverConfig') or {}
     optimization_mode = solver_config.get('optimizationMode', OPTIMIZATION_MODE_BALANCE)
     max_employees_to_use = solver_config.get('maxEmployeesToUse', None)
     

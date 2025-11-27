@@ -31,7 +31,7 @@ class Score(BaseModel):
 class SolverRunMetadata(BaseModel):
     """Metadata about the solve run."""
     runId: str = Field(..., description="Unique run ID")
-    solverVersion: str = Field(default="optfold-py-0.4.2")
+    solverVersion: str = Field(default="optSolve-py-0.9.0")
     startedAt: str = Field(..., description="ISO 8601 timestamp")
     ended: str = Field(..., description="ISO 8601 timestamp")
     durationSeconds: float = Field(..., description="Total solve time in seconds")
@@ -147,7 +147,7 @@ class SchemaResponse(BaseModel):
 class VersionResponse(BaseModel):
     """Response from GET /version endpoint."""
     apiVersion: str = Field("1.0.0")
-    solverVersion: str = Field("optSolve-py-1.0.0")
+    solverVersion: str = Field("optSolve-py-0.9.0")
     schemaVersion: str = Field("0.73")
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
 

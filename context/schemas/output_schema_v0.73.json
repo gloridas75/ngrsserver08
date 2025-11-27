@@ -30,7 +30,7 @@
         "solverVersion": {
           "type": "string",
           "description": "Solver engine version",
-          "examples": ["optSolve-py-1.0.0"]
+          "examples": ["optSolve-py-0.9.0"]
         },
         "startedAt": {
           "type": "string",
