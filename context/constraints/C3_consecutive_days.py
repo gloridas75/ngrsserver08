@@ -32,6 +32,14 @@ def add_constraints(model, ctx):
     
     max_consecutive = 12  # Hard cap: at most 12 consecutive working days
     
+    # Check for incremental mode
+    incremental_ctx = ctx.get('_incremental')
+    locked_consecutive_days = {}
+    if incremental_ctx:
+        locked_consecutive_days = incremental_ctx.get('lockedConsecutiveDays', {})
+        if locked_consecutive_days:
+            print(f"[C3] INCREMENTAL MODE: Using locked consecutive days for {len(locked_consecutive_days)} employees")
+    
     # Group slots by employee and date
     emp_slots_by_date = defaultdict(lambda: defaultdict(list))  # emp_id -> date_str -> [slot_ids]
     all_dates = set()
@@ -90,6 +98,43 @@ def add_constraints(model, ctx):
                 day_worked[date_str] = 0
         
         # Now add constraints: for every 13 consecutive calendar days, sum <= 12
+        # INCREMENTAL MODE: Account for locked streak before solve window
+        locked_streak = locked_consecutive_days.get(emp_id, 0)
+        
+        if locked_streak > 0:
+            # Employee already worked 'locked_streak' consecutive days before solve window
+            # From the first date in solve window, they can only work (12 - locked_streak) more consecutive days
+            remaining_allowed = max_consecutive - locked_streak
+            
+            if remaining_allowed <= 0:
+                # Employee already hit max consecutive - cannot work on first days of solve window
+                # Must take a break first
+                print(f"[C3] Employee {emp_id} already worked {locked_streak} consecutive days (>= {max_consecutive})")
+                # Force day off on first date (if this is start of solve window)
+                if sorted_dates and sorted_dates[0] in day_worked:
+                    var = day_worked[sorted_dates[0]]
+                    if not isinstance(var, int):
+                        model.Add(var == 0)
+                        constraints_added += 1
+            else:
+                # Employee can work 'remaining_allowed' more consecutive days from start
+                consecutive_days_from_start = []
+                for date_str in sorted_dates:
+                    if date_str in day_worked:
+                        var = day_worked[date_str]
+                        if not isinstance(var, int):
+                            consecutive_days_from_start.append(var)
+                    else:
+                        # Gap - employee doesn't work this day, so streak resets
+                        break
+                    
+                    # Check if we've collected enough consecutive days
+                    if len(consecutive_days_from_start) > remaining_allowed:
+                        # Can't work more than remaining_allowed consecutive days from start
+                        model.Add(sum(consecutive_days_from_start[:remaining_allowed + 1]) <= remaining_allowed)
+                        constraints_added += 1
+                        break
+        
         for i in range(len(sorted_dates) - max_consecutive):
             window_dates = sorted_dates[i:i + max_consecutive + 1]  # 13 consecutive dates
             

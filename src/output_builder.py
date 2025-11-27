@@ -170,3 +170,168 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     }
     
     return output
+
+
+def build_incremental_output(
+    input_data,
+    ctx,
+    status,
+    solver_result,
+    new_assignments,
+    violations,
+    locked_assignments,
+    incremental_ctx
+):
+    """
+    Build output for incremental solve (v0.80).
+    
+    Merges locked assignments (from previous solve) with new assignments (from this solve).
+    Adds audit trail to each assignment.
+    
+    Args:
+        input_data: Original incremental request data
+        ctx: Context dict
+        status: Solver status
+        solver_result: Solver metadata
+        new_assignments: List of newly assigned slots
+        violations: Violations list
+        locked_assignments: List of locked assignments from previous output
+        incremental_ctx: Incremental context with temporal window, employee changes
+    
+    Returns:
+        Dict in output schema format with incremental metadata
+    """
+    
+    # Generate run ID
+    run_id = f"incr-{int(datetime.now().timestamp())}"
+    current_timestamp = datetime.now().isoformat()
+    
+    # Compute input hash
+    input_hash = compute_input_hash(input_data)
+    
+    # Annotate locked assignments with audit trail
+    annotated_locked = []
+    for assignment in locked_assignments:
+        audit_info = {
+            "solverRunId": assignment.get('solverRun', {}).get('runId', 'unknown'),
+            "source": "locked",
+            "timestamp": assignment.get('lockedAt', current_timestamp),
+            "inputHash": assignment.get('inputHash', ''),
+            "previousJobId": None  # Can be enhanced to track job IDs
+        }
+        annotated_locked.append({
+            **assignment,
+            "auditInfo": audit_info
+        })
+    
+    # Annotate new assignments with hour breakdown and audit trail
+    annotated_new = []
+    employee_weekly_normal = defaultdict(float)
+    employee_monthly_ot = defaultdict(float)
+    
+    for assignment in new_assignments:
+        try:
+            start_dt = datetime.fromisoformat(assignment.get('startDateTime'))
+            end_dt = datetime.fromisoformat(assignment.get('endDateTime'))
+            
+            # Calculate hour breakdown
+            hours_dict = split_shift_hours(start_dt, end_dt)
+            
+            # Add audit trail
+            audit_info = {
+                "solverRunId": run_id,
+                "source": "incremental",
+                "timestamp": current_timestamp,
+                "inputHash": input_hash,
+                "previousJobId": None
+            }
+            
+            # Add hour breakdown + audit to assignment
+            enriched_assignment = {
+                **assignment,
+                'hours': {
+                    'gross': hours_dict['gross'],
+                    'lunch': hours_dict['lunch'],
+                    'normal': hours_dict['normal'],
+                    'ot': hours_dict['ot'],
+                    'paid': hours_dict['paid']
+                },
+                "auditInfo": audit_info
+            }
+            
+            annotated_new.append(enriched_assignment)
+            
+            # Accumulate hours
+            emp_id = assignment.get('employeeId')
+            assignment_date = assignment.get('date')
+            
+            if emp_id and assignment_date:
+                dt_obj = datetime.fromisoformat(assignment_date)
+                iso_year, iso_week, _ = dt_obj.isocalendar()
+                week_key = f"{iso_year}-W{iso_week:02d}"
+                month_key = f"{dt_obj.year}-{dt_obj.month:02d}"
+                
+                employee_weekly_normal[(emp_id, week_key)] += hours_dict['normal']
+                employee_monthly_ot[(emp_id, month_key)] += hours_dict['ot']
+        
+        except Exception as e:
+            # If hour calc fails, include assignment without hours
+            annotated_new.append(assignment)
+    
+    # Merge locked + new assignments (sort by date)
+    all_assignments = annotated_locked + annotated_new
+    all_assignments_sorted = sorted(all_assignments, key=lambda a: a.get('date', ''))
+    
+    # Build employee hours summary
+    employee_hours_summary = {}
+    for (emp_id, week_key), hours in employee_weekly_normal.items():
+        if emp_id not in employee_hours_summary:
+            employee_hours_summary[emp_id] = {'weekly_normal': {}, 'monthly_ot': {}}
+        employee_hours_summary[emp_id]['weekly_normal'][week_key] = round(hours, 2)
+    
+    for (emp_id, month_key), hours in employee_monthly_ot.items():
+        if emp_id not in employee_hours_summary:
+            employee_hours_summary[emp_id] = {'weekly_normal': {}, 'monthly_ot': {}}
+        employee_hours_summary[emp_id]['monthly_ot'][month_key] = round(hours, 2)
+    
+    # Extract scores
+    scores = solver_result.get('scores', {'hard': 0, 'soft': 0, 'overall': 0})
+    score_breakdown = solver_result.get('scoreBreakdown', {'hard': {'violations': []}, 'soft': {}})
+    
+    # Build output
+    output = {
+        "schemaVersion": "0.80",
+        "planningReference": input_data.get("planningReference", "UNKNOWN"),
+        "solverRun": {
+            "runId": run_id,
+            "solverVersion": "optSolve-py-1.0.0",
+            "startedAt": solver_result.get("start_timestamp", current_timestamp),
+            "ended": solver_result.get("end_timestamp", current_timestamp),
+            "durationSeconds": solver_result.get("duration_seconds", 0),
+            "status": solver_result.get("status", status)
+        },
+        "score": {
+            "overall": scores.get('overall', 0),
+            "hard": scores.get('hard', 0),
+            "soft": scores.get('soft', 0)
+        },
+        "scoreBreakdown": score_breakdown,
+        "assignments": all_assignments_sorted,
+        "unmetDemand": [],
+        "incrementalSolve": {
+            "cutoffDate": incremental_ctx['temporalWindow']['cutoffDate'],
+            "solveFromDate": incremental_ctx['temporalWindow']['solveFromDate'],
+            "solveToDate": incremental_ctx['temporalWindow']['solveToDate'],
+            "lockedAssignmentsCount": len(annotated_locked),
+            "newAssignmentsCount": len(annotated_new),
+            "solvableSlots": len(incremental_ctx.get('solvableSlots', [])),
+            "unassignedSlots": len([a for a in annotated_new if a.get('status') == 'UNASSIGNED'])
+        },
+        "meta": {
+            "inputHash": input_hash,
+            "generatedAt": current_timestamp,
+            "employeeHours": employee_hours_summary
+        }
+    }
+    
+    return output

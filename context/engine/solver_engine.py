@@ -98,6 +98,11 @@ def build_model(ctx):
     - Headcount: Each slot gets exactly as many assignments as headcount requires
     - One assignment per day per employee: No employee assigned to multiple slots on same day
     
+    INCREMENTAL MODE SUPPORT (v0.80):
+    - If ctx['_incremental'] exists, builds model only for solvable slots
+    - Filters employee-slot pairs based on availability windows
+    - Passes incremental context to constraints via ctx
+    
     Args:
         ctx: Context dict containing demandItems, employees, etc.
     
@@ -106,8 +111,31 @@ def build_model(ctx):
     """
     model = cp_model.CpModel()
     
-    # Build slots from demand items
-    slots = build_slots(ctx)
+    # Check for incremental mode
+    incremental_ctx = ctx.get('_incremental')
+    
+    if incremental_ctx:
+        # INCREMENTAL MODE: Use prebuilt solvable slots
+        print(f"[build_model] INCREMENTAL MODE DETECTED")
+        print(f"  Using {len(incremental_ctx.get('solvableSlots', []))} pre-classified solvable slots")
+        print(f"  Locked context available: weekly hours, consecutive days")
+        
+        # For incremental mode, we need to reconstruct slot objects from the data
+        # But to avoid Slot() constructor issues, let's use the regular flow
+        # and filter slots based on solvable slot IDs
+        
+        # Build all slots first
+        slots = build_slots(ctx)
+        
+        # Filter to only solvable slots
+        solvable_slot_ids = {s.get('slotId', s.get('assignmentId')) for s in incremental_ctx['solvableSlots']}
+        slots = [s for s in slots if s.slot_id in solvable_slot_ids]
+        
+        print(f"  ✓ Filtered to {len(slots)} solvable slots")
+    else:
+        # REGULAR MODE: Build slots from demand items
+        slots = build_slots(ctx)
+    
     ctx['slots'] = slots  # Store in context for constraint use
     
     employees = ctx.get('employees', [])
@@ -195,6 +223,34 @@ def build_model(ctx):
             
             if not blacklist_allowed:
                 continue
+            
+            # INCREMENTAL MODE: Check employee availability windows
+            if incremental_ctx:
+                availability_allowed = True
+                
+                # Check if employee is new joiner with availableFrom constraint
+                new_joiners = incremental_ctx.get('employeeChanges', {}).get('newJoiners', [])
+                for joiner in new_joiners:
+                    if joiner.get('employee', {}).get('employeeId') == emp_id:
+                        from datetime import datetime as dt
+                        available_from = dt.fromisoformat(joiner['availableFrom']).date()
+                        if slot.date < available_from:
+                            availability_allowed = False
+                            break
+                
+                # Check if employee is on long leave during this slot
+                long_leave_list = incremental_ctx.get('employeeChanges', {}).get('longLeave', [])
+                for leave in long_leave_list:
+                    if leave.get('employeeId') == emp_id:
+                        from datetime import datetime as dt
+                        leave_from = dt.fromisoformat(leave['leaveFrom']).date()
+                        leave_to = dt.fromisoformat(leave['leaveTo']).date()
+                        if leave_from <= slot.date <= leave_to:
+                            availability_allowed = False
+                            break
+                
+                if not availability_allowed:
+                    continue
             
             # Check whitelist constraints
             whitelist = slot.whitelist
@@ -1255,9 +1311,10 @@ def solve(ctx):
     
     # Configure CP-SAT parallelization
     user_num_workers = None
-    if os.getenv("CPSAT_NUM_THREADS"):
+    cpsat_env = os.getenv("CPSAT_NUM_THREADS")
+    if cpsat_env:
         try:
-            user_num_workers = int(os.getenv("CPSAT_NUM_THREADS"))
+            user_num_workers = int(cpsat_env)
         except ValueError:
             pass
     

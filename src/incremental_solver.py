@@ -409,20 +409,36 @@ def solve_incremental(
     # Step 6: Invoke solver
     logger.info(f"Invoking solver for {len(solvable_slots)} solvable slots with {len(all_employees)} employees...")
     
-    # NOTE: This requires modifying solver_engine.solve() to handle incremental mode
-    # For now, return structured response
-    
-    result = {
-        "status": "incremental_solve_ready",
-        "message": "Incremental solve preprocessing complete. Ready to invoke CP-SAT solver.",
-        "lockedAssignments": len(locked_assignments),
-        "solvableSlots": len(solvable_slots),
-        "employeePool": len(all_employees),
-        "incrementalInput": incremental_input
-    }
-    
-    logger.info("=" * 80)
-    logger.info("[INCREMENTAL SOLVER PREPROCESSING COMPLETE]")
-    logger.info("=" * 80)
-    
-    return result
+    try:
+        # Call the actual solver with incremental context
+        status, solver_result, new_assignments, violations = solver_engine(incremental_input)
+        
+        # Step 7: Build combined output with audit trail
+        from src.output_builder import build_incremental_output
+        
+        output = build_incremental_output(
+            input_data=request_data,
+            ctx=incremental_input,
+            status=solver_result.get('status', 'UNKNOWN'),
+            solver_result=solver_result,
+            new_assignments=new_assignments,
+            violations=violations,
+            locked_assignments=locked_assignments,
+            incremental_ctx=incremental_input['_incremental']
+        )
+        
+        logger.info(f"✓ Incremental solve completed")
+        logger.info(f"  Status: {solver_result.get('status')}")
+        logger.info(f"  Locked assignments: {len(locked_assignments)}")
+        logger.info(f"  New assignments: {len(new_assignments)}")
+        logger.info(f"  Total assignments: {len(output.get('assignments', []))}")
+        
+        logger.info("=" * 80)
+        logger.info("[INCREMENTAL SOLVER COMPLETE]")
+        logger.info("=" * 80)
+        
+        return output
+        
+    except Exception as e:
+        logger.error(f"Error during incremental solve: {str(e)}", exc_info=True)
+        raise IncrementalSolverError(f"Solver execution failed: {str(e)}")

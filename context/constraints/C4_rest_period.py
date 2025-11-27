@@ -37,6 +37,34 @@ def add_constraints(model, ctx):
     
     min_rest_delta = timedelta(minutes=min_rest_minutes)
     
+    # Check for incremental mode
+    incremental_ctx = ctx.get('_incremental')
+    last_locked_shift_end = {}
+    
+    if incremental_ctx:
+        # Calculate last shift end time before solve window for each employee
+        locked_assignments = incremental_ctx.get('lockedAssignments', [])
+        from datetime import datetime as dt
+        
+        for assignment in locked_assignments:
+            emp_id = assignment.get('employeeId')
+            if not emp_id:
+                continue
+            
+            end_dt_str = assignment.get('endDateTime')
+            if end_dt_str:
+                try:
+                    end_dt = dt.fromisoformat(end_dt_str.replace('Z', '+00:00'))
+                    
+                    # Track the latest end time for this employee
+                    if emp_id not in last_locked_shift_end or end_dt > last_locked_shift_end[emp_id]:
+                        last_locked_shift_end[emp_id] = end_dt
+                except Exception:
+                    pass
+        
+        if last_locked_shift_end:
+            print(f"[C4] INCREMENTAL MODE: Tracking last locked shift end for {len(last_locked_shift_end)} employees")
+    
     constraints_added = 0
     
     # For each employee, check all shift pairs
@@ -45,6 +73,27 @@ def add_constraints(model, ctx):
         
         # Get all slots this employee could be assigned to
         emp_slots = [s for s in slots if (s.slot_id, emp_id) in x]
+        
+        if len(emp_slots) < 1:
+            continue
+        
+        # INCREMENTAL MODE: Check if first new shift has sufficient rest from last locked shift
+        if incremental_ctx and emp_id in last_locked_shift_end:
+            last_end = last_locked_shift_end[emp_id]
+            
+            # Sort slots by start time
+            sorted_by_start = sorted(emp_slots, key=lambda s: (s.date, s.start))
+            
+            # Check first slot in solve window
+            if sorted_by_start:
+                first_slot = sorted_by_start[0]
+                rest_from_locked = first_slot.start - last_end
+                
+                if rest_from_locked < min_rest_delta:
+                    # Insufficient rest from last locked shift - cannot assign to first slot
+                    var = x[(first_slot.slot_id, emp_id)]
+                    model.Add(var == 0)
+                    constraints_added += 1
         
         if len(emp_slots) < 2:
             continue

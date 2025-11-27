@@ -99,6 +99,15 @@ def add_constraints(model, ctx):
     
     # ===== ADD CONSTRAINTS FOR WEEKLY NORMAL HOURS <= 44H =====
     weekly_constraints = 0
+    
+    # Check for incremental mode locked hours
+    incremental_ctx = ctx.get('_incremental')
+    locked_weekly_hours = {}
+    if incremental_ctx:
+        locked_weekly_hours = incremental_ctx.get('lockedWeeklyHours', {})
+        if locked_weekly_hours:
+            print(f"[C2] INCREMENTAL MODE: Using locked weekly hours for {len(locked_weekly_hours)} employees")
+    
     for emp_id, weeks in emp_week_slots.items():
         for week_key, week_slots in weeks.items():
             # For each slot in this week, get normal hours and create weighted sum
@@ -129,9 +138,24 @@ def add_constraints(model, ctx):
                         weighted_assignments.append((var, int_hours))
             
             if weighted_assignments:
-                # Create constraint: sum(var_i * normal_hours_i) <= 44 * 10 = 440 (in tenths)
+                # Get locked hours for this employee-week in incremental mode
+                locked_hours = 0.0
+                if incremental_ctx and emp_id in locked_weekly_hours:
+                    # week_key format is "YYYY-Www", need to parse ISO week
+                    iso_year_str, week_str = week_key.split('-W')
+                    iso_year = int(iso_year_str)
+                    iso_week = int(week_str)
+                    week_tuple = (iso_year, iso_week)
+                    
+                    locked_hours = locked_weekly_hours[emp_id].get(week_tuple, 0.0)
+                
+                # Calculate remaining capacity
+                remaining_capacity = 44.0 - locked_hours
+                remaining_capacity_int = int(round(remaining_capacity * 10))  # Convert to tenths
+                
+                # Create constraint: sum(var_i * normal_hours_i) <= remaining_capacity
                 constraint_expr = sum(var * hours for var, hours in weighted_assignments)
-                model.Add(constraint_expr <= 440)  # 44 hours = 440 tenths
+                model.Add(constraint_expr <= remaining_capacity_int)
                 weekly_constraints += 1
     
     # ===== ADD CONSTRAINTS FOR MONTHLY OT HOURS <= 72H =====
