@@ -73,6 +73,25 @@
             border-bottom-color: #667eea;
         }
 
+        .tab-divider {
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #667eea, transparent);
+            margin: 5px 0;
+        }
+
+        .section-label {
+            padding: 5px 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #667eea;
+            background: #f0f0f0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .tab-content {
             display: none;
             padding: 30px;
@@ -571,15 +590,23 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="switchTab('input')">📋 Input Data</button>
-            <button class="tab-button" onclick="switchTab('summary')">📈 Summary</button>
-            <button class="tab-button" onclick="switchTab('assignments')">👥 Assignments</button>
-            <button class="tab-button" onclick="switchTab('employees')">👤 Employee Details</button>
-            <button class="tab-button" onclick="switchTab('violations')">⚠️ Violations</button>
-            <button class="tab-button" onclick="switchTab('timeline')">📅 Timeline</button>
-            <button class="tab-button" onclick="switchTab('emptyslots')">📊 Demand Coverage</button>
-            <button class="tab-button" onclick="switchTab('employeeroster')">📅 Employee Roster</button>
-            <button class="tab-button" onclick="switchTab('metadata')">ℹ️ Metadata</button>
+            <!-- FULL SOLVE SECTION -->
+            <div class="section-label">📦 Full Solve</div>
+            <button class="tab-button active" onclick="switchTab('input')">1️⃣ Input Data</button>
+            <button class="tab-button" onclick="switchTab('summary')">2️⃣ Summary</button>
+            <button class="tab-button" onclick="switchTab('assignments')">3️⃣ Assignments</button>
+            <button class="tab-button" onclick="switchTab('employees')">4️⃣ Employee Details</button>
+            <button class="tab-button" onclick="switchTab('violations')">5️⃣ Violations</button>
+            <button class="tab-button" onclick="switchTab('emptyslots')">6️⃣ Demand Coverage</button>
+            <button class="tab-button" onclick="switchTab('employeeroster')">7️⃣ Employee Roster</button>
+            
+            <!-- DIVIDER -->
+            <div class="tab-divider"></div>
+            
+            <!-- INCREMENTAL SOLVE SECTION -->
+            <div class="section-label">🔄 Incremental Solve</div>
+            <button class="tab-button" onclick="switchTab('incrementalinput')">8️⃣ Incremental Input</button>
+            <button class="tab-button" onclick="switchTab('incrementaloutput')">9️⃣ Output Comparison</button>
         </div>
 
         <!-- INPUT DATA TAB -->
@@ -704,17 +731,21 @@
             <div id="violationsContainer"></div>
         </div>
 
-        <!-- TIMELINE TAB -->
-        <div id="timeline" class="tab-content">
-            <h2 style="margin-bottom: 20px; color: #333;">Assignment Timeline</h2>
+        <!-- INCREMENTAL INPUT TAB -->
+        <div id="incrementalinput" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">🔄 Incremental Solve Input</h2>
             
-            <div class="view-toggle">
-                <button class="active" onclick="switchTimelineView('list')">📋 List View</button>
-                <button onclick="switchTimelineView('calendar')">📅 Calendar Grid</button>
+            <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+                <h3 style="color: #1565c0; margin-bottom: 10px;">📂 Load Incremental Input File</h3>
+                <p style="margin-bottom: 15px; color: #424242;">Select an incremental solve input file to view temporal window, employee changes, and constraints.</p>
+                <input type="file" id="incrementalInputFileInput" accept=".json" style="display: none;">
+                <button id="openIncrementalInputBtn" class="btn btn-primary" style="padding: 10px 20px; background: #2196f3; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">📂 Open Incremental Input</button>
+                <span id="loadedIncrementalInputFileName" style="margin-left: 15px; color: #666; font-weight: 500;"></span>
             </div>
             
-            <div id="timelineContainer"></div>
-            <div id="calendarContainer" style="display: none;"></div>
+            <div id="incrementalInputContainer" style="color: #999; text-align: center; padding: 60px 20px; font-size: 1.1em;">
+                ⬆️ Load an incremental input file to view details
+            </div>
         </div>
 
         <!-- EMPTY SLOTS TAB -->
@@ -729,10 +760,41 @@
             <div id="employeeRosterContainer"></div>
         </div>
 
-        <!-- METADATA TAB -->
-        <div id="metadata" class="tab-content">
-            <h2 style="margin-bottom: 20px; color: #333;">Solver Metadata</h2>
-            <div class="meta-info" id="metadataContainer"></div>
+        <!-- INCREMENTAL OUTPUT COMPARISON TAB -->
+        <div id="incrementaloutput" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #333;">📊 Incremental Output Comparison</h2>
+            
+            <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
+                <h3 style="color: #e65100; margin-bottom: 10px;">📂 Load Incremental Output Files</h3>
+                <p style="margin-bottom: 15px; color: #424242;">Load multiple incremental output files to compare side-by-side. View locked vs incremental assignments, coverage gaps, and changes.</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #e65100;">Output File 1:</label>
+                        <input type="file" id="incrementalOutput1FileInput" accept=".json" style="display: none;">
+                        <button id="openIncrementalOutput1Btn" class="btn btn-primary" style="padding: 8px 16px; background: #ff9800; color: white; border: none; border-radius: 6px; cursor: pointer;">📂 Open File 1</button>
+                        <span id="loadedIncrementalOutput1FileName" style="margin-left: 10px; color: #666;"></span>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #e65100;">Output File 2:</label>
+                        <input type="file" id="incrementalOutput2FileInput" accept=".json" style="display: none;">
+                        <button id="openIncrementalOutput2Btn" class="btn btn-primary" style="padding: 8px 16px; background: #ff9800; color: white; border: none; border-radius: 6px; cursor: pointer;">📂 Open File 2</button>
+                        <span id="loadedIncrementalOutput2FileName" style="margin-left: 10px; color: #666;"></span>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #e65100;">Output File 3:</label>
+                        <input type="file" id="incrementalOutput3FileInput" accept=".json" style="display: none;">
+                        <button id="openIncrementalOutput3Btn" class="btn btn-primary" style="padding: 8px 16px; background: #ff9800; color: white; border: none; border-radius: 6px; cursor: pointer;">📂 Open File 3</button>
+                        <span id="loadedIncrementalOutput3FileName" style="margin-left: 10px; color: #666;"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="incrementalOutputContainer" style="color: #999; text-align: center; padding: 60px 20px; font-size: 1.1em;">
+                ⬆️ Load incremental output files to view coverage comparison
+            </div>
         </div>
     </div>
 
@@ -792,6 +854,38 @@
                         loadInputDataFromFile(file);
                     }
                 });
+            }
+            
+            // Setup incremental input file button
+            const openIncrementalInputBtn = document.getElementById('openIncrementalInputBtn');
+            const incrementalInputFileInput = document.getElementById('incrementalInputFileInput');
+            if (openIncrementalInputBtn) {
+                openIncrementalInputBtn.addEventListener('click', () => {
+                    incrementalInputFileInput.click();
+                });
+            }
+            if (incrementalInputFileInput) {
+                incrementalInputFileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        loadIncrementalInputFromFile(file);
+                    }
+                });
+            }
+            
+            // Setup incremental output file buttons (3 files)
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`openIncrementalOutput${i}Btn`);
+                const input = document.getElementById(`incrementalOutput${i}FileInput`);
+                if (btn && input) {
+                    btn.addEventListener('click', () => input.click());
+                    input.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            loadIncrementalOutputFromFile(file, i);
+                        }
+                    });
+                }
             }
         });
 
@@ -1126,6 +1220,304 @@
             container.innerHTML = html;
         }
 
+        // ============================================================================
+        // INCREMENTAL INPUT LOADER & RENDERER
+        // ============================================================================
+        
+        let incrementalInputData = null;
+        
+        function loadIncrementalInputFromFile(file) {
+            try {
+                console.log(`Loading incremental input file: ${file.name}`);
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        incrementalInputData = JSON.parse(e.target.result);
+                        console.log('Loaded incremental input data:', incrementalInputData);
+                        
+                        document.getElementById('loadedIncrementalInputFileName').textContent = `Loaded: ${file.name}`;
+                        renderIncrementalInput();
+                    } catch (parseError) {
+                        console.error('Error parsing incremental input JSON:', parseError);
+                        alert(`Error parsing JSON file: ${parseError.message}`);
+                    }
+                };
+                reader.onerror = (error) => {
+                    console.error('Error reading incremental input file:', error);
+                    alert(`Error reading file: ${error}`);
+                };
+                reader.readAsText(file);
+            } catch (error) {
+                console.error(`Error loading incremental input file:`, error);
+                alert(`Error loading file: ${error.message}`);
+            }
+        }
+        
+        function renderIncrementalInput() {
+            if (!incrementalInputData) {
+                console.error('No incremental input data available');
+                return;
+            }
+
+            const container = document.getElementById('incrementalInputContainer');
+            
+            // Temporal window
+            let html = `
+                <div class="section-header">
+                    <h3>⏰ Temporal Window</h3>
+                    <p>Define the solve period and cutoff date</p>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h3>Cutoff Date</h3>
+                        <div class="value" style="font-size: 1.8em;">${incrementalInputData.cutoffDate || 'N/A'}</div>
+                        <p style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">Assignments locked before this date</p>
+                    </div>
+                    <div class="summary-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <h3>Solve From</h3>
+                        <div class="value" style="font-size: 1.8em;">${incrementalInputData.solveFromDate || 'N/A'}</div>
+                        <p style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">Start of solve window</p>
+                    </div>
+                    <div class="summary-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <h3>Solve To</h3>
+                        <div class="value" style="font-size: 1.8em;">${incrementalInputData.solveToDate || 'N/A'}</div>
+                        <p style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">End of solve window</p>
+                    </div>
+                </div>
+            `;
+            
+            // Employee changes
+            const empChanges = incrementalInputData.employeeChanges || {};
+            const newJoiners = empChanges.newJoiners || [];
+            const notAvailable = empChanges.notAvailableFrom || [];
+            const longLeave = empChanges.longLeave || [];
+            
+            html += `
+                <div class="section-header" style="margin-top: 30px;">
+                    <h3>👥 Employee Changes</h3>
+                    <p>New joiners, departures, and leave periods</p>
+                </div>
+            `;
+            
+            if (newJoiners.length > 0 || notAvailable.length > 0 || longLeave.length > 0) {
+                html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">';
+                
+                // New Joiners
+                if (newJoiners.length > 0) {
+                    html += `
+                        <div style="background: #e8f5e9; padding: 20px; border-radius: 12px; border: 2px solid #4caf50;">
+                            <h4 style="color: #2e7d32; margin-bottom: 15px;">✨ New Joiners (${newJoiners.length})</h4>
+                            ${newJoiners.map(emp => `
+                                <div style="background: white; padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #4caf50;">
+                                    <div style="font-weight: 600; color: #2e7d32; margin-bottom: 5px;">${emp.employeeId || 'N/A'}</div>
+                                    <div style="font-size: 0.9em; color: #666;">
+                                        <div>Available from: <strong>${emp.availableFrom || 'N/A'}</strong></div>
+                                        <div>Rank: ${emp.rankId || 'N/A'}</div>
+                                        <div>Product Type: ${emp.productTypeId || 'N/A'}</div>
+                                        <div>Team: ${emp.teamId || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Departed employees
+                if (notAvailable.length > 0) {
+                    html += `
+                        <div style="background: #ffebee; padding: 20px; border-radius: 12px; border: 2px solid #f44336;">
+                            <h4 style="color: #c62828; margin-bottom: 15px;">🚪 Departures (${notAvailable.length})</h4>
+                            ${notAvailable.map(emp => `
+                                <div style="background: white; padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #f44336;">
+                                    <div style="font-weight: 600; color: #c62828; margin-bottom: 5px;">${emp.employeeId || 'N/A'}</div>
+                                    <div style="font-size: 0.9em; color: #666;">
+                                        Not available from: <strong>${emp.notAvailableFrom || 'N/A'}</strong>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Long leave
+                if (longLeave.length > 0) {
+                    html += `
+                        <div style="background: #fff3e0; padding: 20px; border-radius: 12px; border: 2px solid #ff9800;">
+                            <h4 style="color: #e65100; margin-bottom: 15px;">🏖️ Long Leave (${longLeave.length})</h4>
+                            ${longLeave.map(emp => `
+                                <div style="background: white; padding: 12px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #ff9800;">
+                                    <div style="font-weight: 600; color: #e65100; margin-bottom: 5px;">${emp.employeeId || 'N/A'}</div>
+                                    <div style="font-size: 0.9em; color: #666;">
+                                        <div>Leave: <strong>${emp.leaveStartDate || 'N/A'}</strong> → <strong>${emp.leaveEndDate || 'N/A'}</strong></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+            } else {
+                html += '<div class="no-data">No employee changes specified</div>';
+            }
+            
+            // Previous output summary
+            const prevOutput = incrementalInputData.previousOutput;
+            html += `
+                <div class="section-header" style="margin-top: 30px;">
+                    <h3>📄 Previous Output Reference</h3>
+                    <p>Baseline assignments to build upon</p>
+                </div>
+            `;
+            
+            if (prevOutput) {
+                const prevAssignments = prevOutput.assignments || [];
+                const prevEmployees = prevOutput.employees || [];
+                html += `
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <h3>Schema Version</h3>
+                            <div class="value" style="font-size: 1.5em;">${prevOutput.schemaVersion || 'N/A'}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Previous Assignments</h3>
+                            <div class="value">${prevAssignments.length}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Previous Employees</h3>
+                            <div class="value">${prevEmployees.length}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += '<div class="no-data">No previous output embedded</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // ============================================================================
+        // INCREMENTAL OUTPUT COMPARISON LOADER & RENDERER
+        // ============================================================================
+        
+        let incrementalOutputFiles = [null, null, null];
+        
+        function loadIncrementalOutputFromFile(file, index) {
+            try {
+                console.log(`Loading incremental output file ${index}: ${file.name}`);
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        incrementalOutputFiles[index - 1] = data;
+                        console.log(`Loaded incremental output ${index}:`, data);
+                        
+                        document.getElementById(`loadedIncrementalOutput${index}FileName`).textContent = file.name;
+                        renderIncrementalOutputComparison();
+                    } catch (parseError) {
+                        console.error(`Error parsing incremental output JSON ${index}:`, parseError);
+                        alert(`Error parsing JSON file: ${parseError.message}`);
+                    }
+                };
+                reader.onerror = (error) => {
+                    console.error(`Error reading incremental output file ${index}:`, error);
+                    alert(`Error reading file: ${error}`);
+                };
+                reader.readAsText(file);
+            } catch (error) {
+                console.error(`Error loading incremental output file ${index}:`, error);
+                alert(`Error loading file: ${error.message}`);
+            }
+        }
+        
+        function renderIncrementalOutputComparison() {
+            const loadedCount = incrementalOutputFiles.filter(f => f !== null).length;
+            if (loadedCount === 0) {
+                document.getElementById('incrementalOutputContainer').innerHTML = 
+                    '<div style="color: #999; text-align: center; padding: 60px 20px; font-size: 1.1em;">⬆️ Load incremental output files to view coverage comparison</div>';
+                return;
+            }
+            
+            const container = document.getElementById('incrementalOutputContainer');
+            let html = `
+                <div class="section-header">
+                    <h3>📊 Coverage Comparison (${loadedCount} file${loadedCount > 1 ? 's' : ''} loaded)</h3>
+                    <p>Compare locked vs incremental assignments, coverage gaps, and changes</p>
+                </div>
+            `;
+            
+            // Side-by-side comparison
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">';
+            
+            incrementalOutputFiles.forEach((data, idx) => {
+                if (!data) return;
+                
+                const fileNum = idx + 1;
+                const incrementalSolve = data.incrementalSolve || {};
+                const assignments = data.assignments || [];
+                const lockedCount = incrementalSolve.lockedAssignmentsCount || 0;
+                const newCount = incrementalSolve.newAssignmentsCount || 0;
+                const solvableSlots = incrementalSolve.solvableSlots || 0;
+                const unassignedSlots = incrementalSolve.unassignedSlots || 0;
+                const coveragePercent = solvableSlots > 0 ? ((solvableSlots - unassignedSlots) / solvableSlots * 100).toFixed(1) : 0;
+                
+                html += `
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; color: white;">
+                        <h4 style="margin-bottom: 15px; font-size: 1.3em;">📄 Output ${fileNum}</h4>
+                        
+                        <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="margin-bottom: 8px;"><strong>Cutoff Date:</strong> ${incrementalSolve.cutoffDate || 'N/A'}</div>
+                            <div style="margin-bottom: 8px;"><strong>Solve Window:</strong> ${incrementalSolve.solveFromDate || 'N/A'} → ${incrementalSolve.solveToDate || 'N/A'}</div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                            <div style="background: rgba(255,255,255,0.15); padding: 10px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2em; font-weight: bold;">${lockedCount}</div>
+                                <div style="font-size: 0.85em; opacity: 0.9;">🔒 Locked</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.15); padding: 10px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 2em; font-weight: bold;">${newCount}</div>
+                                <div style="font-size: 0.85em; opacity: 0.9;">🔄 New</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px;">
+                            <div style="margin-bottom: 10px;"><strong>Solvable Slots:</strong> ${solvableSlots}</div>
+                            <div style="margin-bottom: 10px;"><strong>Unassigned:</strong> <span style="color: ${unassignedSlots > 0 ? '#ff5252' : '#69f0ae'};">${unassignedSlots}</span></div>
+                            <div style="margin-bottom: 10px;"><strong>Coverage:</strong> <span style="font-size: 1.5em; font-weight: bold;">${coveragePercent}%</span></div>
+                            <div style="background: rgba(0,0,0,0.2); border-radius: 10px; height: 20px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #69f0ae 0%, #00e676 100%); height: 100%; width: ${coveragePercent}%; transition: width 0.3s ease;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            <strong>Solver Status:</strong> <span style="font-size: 1.2em; font-weight: bold;">${data.solverRun?.status || 'N/A'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            // Coverage gaps analysis (if any file has gaps)
+            const hasGaps = incrementalOutputFiles.some(data => 
+                data && (data.incrementalSolve?.unassignedSlots || 0) > 0
+            );
+            
+            if (hasGaps) {
+                html += `
+                    <div style="background: #ffebee; border-left: 4px solid #f44336; padding: 20px; margin-top: 20px; border-radius: 8px;">
+                        <h4 style="color: #c62828; margin-bottom: 10px;">⚠️ Coverage Gaps Detected</h4>
+                        <p style="color: #666;">Some files have unassigned slots in the solve window. Review demand requirements and employee availability.</p>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
         function renderDashboard() {
             if (!outputData) {
                 console.error('No output data available');
@@ -1142,14 +1534,10 @@
                 console.log('Employees rendered');
                 renderViolations();
                 console.log('Violations rendered');
-                renderTimeline();
-                console.log('Timeline rendered');
                 renderEmptySlots();
                 console.log('Empty Slots rendered');
                 renderEmployeeRoster();
                 console.log('Employee Roster rendered');
-                renderMetadata();
-                console.log('Metadata rendered');
             } catch (error) {
                 console.error('Error rendering dashboard:', error);
                 alert(`Error rendering dashboard: ${error.message}`);
@@ -1394,42 +1782,7 @@
             }
         }
 
-        function renderTimeline() {
-            const assignments = outputData.assignments || [];
-            const sorted = [...assignments].sort((a, b) => 
-                new Date(a.startDateTime) - new Date(b.startDateTime)
-            );
-
-            const container = document.getElementById('timelineContainer');
-            container.innerHTML = '';
-
-            if (sorted.length === 0) {
-                container.innerHTML = '<div class="no-data">No assignments</div>';
-                return;
-            }
-
-            sorted.forEach(a => {
-                const item = document.createElement('div');
-                item.className = 'timeline-item';
-                const start = new Date(a.startDateTime);
-                const end = new Date(a.endDateTime);
-                const reqInfo = a.requirementId ? ` • Req: ${a.requirementId}` : '';
-
-                item.innerHTML = `
-                    <div class="timeline-date">${a.date} - ${a.shiftCode} (${a.demandId || 'N/A'}${reqInfo})</div>
-                    <div class="timeline-details">
-                        <strong>${a.employeeId}</strong> | 
-                        ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} → 
-                        ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} 
-                        (${(a.hours?.normal || 0).toFixed(1)}h normal, ${(a.hours?.ot || 0).toFixed(1)}h OT)
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-
-            // Also render calendar view
-            renderCalendarView();
-        }
+        // Timeline tab removed - functionality moved to calendar view in other tabs
 
         function renderCalendarView() {
             const assignments = outputData.assignments || [];
@@ -1536,23 +1889,7 @@
             document.getElementById('calendarContainer').innerHTML = html;
         }
 
-        function switchTimelineView(view) {
-            const timelineContainer = document.getElementById('timelineContainer');
-            const calendarContainer = document.getElementById('calendarContainer');
-            const buttons = document.querySelectorAll('.view-toggle button');
-
-            if (view === 'list') {
-                timelineContainer.style.display = 'block';
-                calendarContainer.style.display = 'none';
-                buttons[0].classList.add('active');
-                buttons[1].classList.remove('active');
-            } else {
-                timelineContainer.style.display = 'none';
-                calendarContainer.style.display = 'block';
-                buttons[0].classList.remove('active');
-                buttons[1].classList.add('active');
-            }
-        }
+        // switchTimelineView removed - timeline tab no longer exists
 
         function renderEmptySlots() {
             const container = document.getElementById('emptySlotsContainer');
