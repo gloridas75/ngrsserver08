@@ -382,13 +382,12 @@ def build_model(ctx):
             model.Add(count_var == sum(emp_assignments))
             emp_assignment_counts[emp_id] = count_var
             
-            # Create binary variable: is employee used?
-            if optimization_mode == OPTIMIZATION_MODE_MINIMIZE:
-                used_var = model.NewBoolVar(f"emp_used_{emp_id}")
-                # Link: used_var = 1 iff employee has at least 1 assignment
-                model.Add(count_var > 0).OnlyEnforceIf(used_var)
-                model.Add(count_var == 0).OnlyEnforceIf(used_var.Not())
-                employee_used_vars[emp_id] = used_var
+            # Create binary variable: is employee used? (needed for continuous adherence)
+            used_var = model.NewBoolVar(f"emp_used_{emp_id}")
+            # Link: used_var = 1 iff employee has at least 1 assignment
+            model.Add(count_var > 0).OnlyEnforceIf(used_var)
+            model.Add(count_var == 0).OnlyEnforceIf(used_var.Not())
+            employee_used_vars[emp_id] = used_var
     
     # Mode-specific objective components
     if optimization_mode == OPTIMIZATION_MODE_MINIMIZE:
@@ -510,12 +509,13 @@ def build_model(ctx):
                 
                 # For each possible offset value (0 to cycle_days-1)
                 for possible_offset in range(cycle_days):
-                    # Calculate cycle day for this offset
-                    emp_cycle_day = (days_from_base - possible_offset) % cycle_days
+                    # Calculate cycle day for this offset (offset = starting position in cycle)
+                    emp_cycle_day = (days_from_base + possible_offset) % cycle_days
                     expected_shift = rotation_seq[emp_cycle_day]
                     
-                    # If this offset would put employee on 'O' day, block assignment
-                    if expected_shift == 'O':
+                    # Block assignment if shift doesn't match expected pattern
+                    # This includes both 'O' (off days) and mismatched shift codes
+                    if expected_shift == 'O' or slot.shiftCode != expected_shift:
                         # Create indicator: is_this_offset = 1 if offset_var == possible_offset
                         is_this_offset = model.NewBoolVar(f"offset_match_{slot.slot_id}_{emp_id}_{possible_offset}")
                         model.Add(offset_var == possible_offset).OnlyEnforceIf(is_this_offset)
@@ -523,24 +523,114 @@ def build_model(ctx):
                         
                         # If offset matches AND employee assigned, that's a violation
                         # Prevent: is_this_offset=1 AND x=1
-                        # Equivalent to: is_this_offset + x <= 1
                         model.Add(x[(slot.slot_id, emp_id)] == 0).OnlyEnforceIf(is_this_offset)
                         pattern_constraints += 1
             else:
                 # MODE 1: Use fixed offset from employee data (for existing employees in incremental mode)
                 emp_offset = emp.get('rotationOffset', 0)
-                emp_cycle_day = (days_from_base - emp_offset) % cycle_days
+                emp_cycle_day = (days_from_base + emp_offset) % cycle_days
                 expected_shift = rotation_seq[emp_cycle_day]
                 
-                # HARD CONSTRAINT: If pattern says 'O' (off day), employee cannot work
-                if expected_shift == 'O':
+                # HARD CONSTRAINT: Employee can only work shifts matching their pattern position
+                # Block if off-day ('O') OR if shift code doesn't match
+                if expected_shift == 'O' or slot.shiftCode != expected_shift:
                     model.Add(x[(slot.slot_id, emp_id)] == 0)
                     pattern_constraints += 1
     
     if offset_vars:
         print(f"  ✓ Added {pattern_constraints} work pattern constraints ({len(offset_vars)} variable offsets, {len(employees) - len(offset_vars)} fixed)\n")
+        
+        # ========== OFFSET DIVERSITY CONSTRAINT ==========
+        # Force offset diversity to prevent all employees clustering on one offset
+        # This is critical for continuous adherence to work with pattern-based coverage
+        print(f"[build_model] Adding offset diversity constraint...")
+        
+        # Get cycle length from first slot with rotation sequence
+        cycle_length = 6  # Default for D-D-N-N-O-O pattern
+        for slot in slots:
+            if slot.rotationSequence:
+                cycle_length = len(slot.rotationSequence)
+                break
+        
+        diversity_constraints = 0
+        for target_offset in range(cycle_length):
+            # Count how many employees assigned this offset
+            offset_indicators = []
+            for emp_id, offset_var in offset_vars.items():
+                indicator = model.NewBoolVar(f'emp_{emp_id}_offset_{target_offset}')
+                model.Add(offset_var == target_offset).OnlyEnforceIf(indicator)
+                model.Add(offset_var != target_offset).OnlyEnforceIf(indicator.Not())
+                offset_indicators.append(indicator)
+            
+            # Require at least 1 employee per offset (to ensure coverage diversity)
+            if offset_indicators:
+                model.Add(sum(offset_indicators) >= 1)
+                diversity_constraints += 1
+        
+        print(f"  ✓ Added {diversity_constraints} offset diversity constraints (min 1 employee per offset)\n")
     else:
         print(f"  ✓ Added {pattern_constraints} work pattern constraints (HARD, all fixed offsets)\n")
+    
+    # ========== CONTINUOUS PATTERN ADHERENCE ==========
+    # CONDITIONAL: IF an employee is used at all, THEN they must work all pattern days
+    # This allows the solver to choose which employees to use (up to maxEmployeesToUse limit)
+    print(f"[build_model] Adding CONDITIONAL continuous pattern adherence...")
+    adherence_constraints = 0
+    
+    # Get rotation sequence from first slot
+    rotation_seq = None
+    base_date = None
+    for slot in slots:
+        if slot.rotationSequence and slot.coverageAnchor:
+            rotation_seq = slot.rotationSequence
+            base_date = slot.coverageAnchor
+            break
+    
+    if not rotation_seq or not base_date:
+        print(f"  ⚠️  No rotation sequence found, skipping continuous adherence\n")
+    else:
+        cycle_days = len(rotation_seq)
+        print(f"  Pattern: {rotation_seq}, Cycle: {cycle_days} days, Base: {base_date}")
+        
+        # Group slots by (date, shiftCode)
+        slots_by_date_shift = {}
+        for slot in slots:
+            key = (slot.date, slot.shiftCode)
+            if key not in slots_by_date_shift:
+                slots_by_date_shift[key] = []
+            slots_by_date_shift[key].append(slot)
+        
+        for emp in employees:
+            emp_id = emp.get('employeeId')
+            emp_offset = emp.get('rotationOffset', 0)
+            
+            # Get employee_used indicator (created earlier in optimization mode setup)
+            emp_used_var = employee_used_vars.get(emp_id)
+            if emp_used_var is None:
+                continue  # Skip employees without usage tracking
+            
+            # For each unique (date, shiftCode) combination
+            for (date, shift_code), slot_list in slots_by_date_shift.items():
+                days_from_base = (date - base_date).days
+                emp_cycle_day = (days_from_base + emp_offset) % cycle_days
+                expected_shift = rotation_seq[emp_cycle_day]
+                
+                # Get all slots of this (date, shift) that this employee can work
+                employee_slots = [s for s in slot_list if (s.slot_id, emp_id) in x]
+                if not employee_slots:
+                    continue
+                
+                # If not an off-day AND shift code matches:
+                # IF employee is used (emp_used_var=1), THEN must work this (date, shift)
+                if expected_shift != 'O' and shift_code == expected_shift:
+                    slot_vars = [x[(s.slot_id, emp_id)] for s in employee_slots]
+                    # Conditional: emp_used_var=1 => sum(slot_vars) >= 1
+                    model.Add(sum(slot_vars) >= 1).OnlyEnforceIf(emp_used_var)
+                    adherence_constraints += 1
+        
+        print(f"  ✓ Added {adherence_constraints} CONDITIONAL adherence constraints\n")
+        print(f"  ℹ️  IF employee is used, THEN they work all pattern days\n")
+    
     
     # ========== ROTATION CONTINUITY (DISABLED) ==========
     print(f"[build_model] TEMPORARILY DISABLED - testing without continuity constraints...")
@@ -651,7 +741,7 @@ def build_model(ctx):
         print(f"  PRIORITY 2: Minimize soft penalties ({SOFT_MULTIPLIER:,}×)")
         print(f"    - Rotation violations")
         print(f"    - Anchor offset penalties")
-        print(f"    - Workload imbalance") 
+        # print(f"    - Workload imbalance")  # DISABLED: Testing continuous adherence without workload balance
         print(f"  PRIORITY 3: Maximize assignments (1×)")
         
         # Combined objective for balanceWorkload mode
@@ -659,7 +749,8 @@ def build_model(ctx):
             BIG_MULTIPLIER * total_unassigned +
             SOFT_MULTIPLIER * total_rotation_violations +
             SOFT_MULTIPLIER * total_anchor_penalty +
-            SOFT_MULTIPLIER * workload_imbalance -
+            # SOFT_MULTIPLIER * workload_imbalance -  # DISABLED: Testing continuous adherence
+            0 -  # Placeholder
             total_assignments
         )
     
@@ -731,6 +822,34 @@ def apply_constraints(model, ctx):
     print(f"  ✓ Loaded constraint modules\n")
 
 
+def calculate_employee_work_pattern(base_pattern: list, offset: int) -> list:
+    """Calculate employee's actual work pattern as it appears on the calendar.
+    
+    Args:
+        base_pattern: Base rotation sequence (e.g., ['D', 'D', 'N', 'N', 'O', 'O'])
+        offset: Employee's rotation offset (0 to pattern_length-1)
+    
+    Returns:
+        Work pattern as it appears on the calendar (rotated LEFT by offset)
+        
+    Example:
+        base_pattern = ['D', 'D', 'N', 'N', 'O', 'O']
+        offset = 1
+        Employee's work cycle starts at position 1 of base pattern.
+        Their repeating 6-day cycle: ['D', 'N', 'N', 'O', 'O', 'D']
+        This represents their personal rotation pattern (not calendar alignment).
+    """
+    if not base_pattern or offset == 0:
+        return base_pattern
+    
+    pattern_length = len(base_pattern)
+    offset = offset % pattern_length  # Ensure offset is within range
+    
+    # Rotate LEFT by offset positions to show employee's personal cycle pattern
+    # This represents the employee's repeating work cycle (as shown in Excel)
+    return base_pattern[offset:] + base_pattern[:offset]
+
+
 def extract_assignments(ctx, solver) -> list:
     """Extract assignments from solver solution.
     
@@ -746,6 +865,7 @@ def extract_assignments(ctx, solver) -> list:
     unassigned = ctx.get('unassigned', {})
     slots = ctx.get('slots', [])
     employees_map = {emp.get('employeeId'): emp for emp in ctx.get('employees', [])}
+    optimized_offsets = ctx.get('optimized_offsets', {})
     
     print(f"[extract_assignments] Extracting assignments from solution...")
     
@@ -761,6 +881,12 @@ def extract_assignments(ctx, solver) -> list:
             if var_key in x:
                 # Check if this variable is assigned in the solution
                 if solver.Value(x[var_key]) == 1:
+                    # Get employee's rotation offset
+                    emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
+                    
+                    # Calculate employee-specific work pattern based on their offset
+                    employee_work_pattern = calculate_employee_work_pattern(slot.rotationSequence, emp_offset)
+                    
                     assignment = {
                         "assignmentId": f"{slot.demandId}-{slot.date.isoformat()}-{slot.shiftCode}-{emp_id}",
                         "demandId": slot.demandId,
@@ -772,6 +898,8 @@ def extract_assignments(ctx, solver) -> list:
                         "startDateTime": slot.start.isoformat(),
                         "endDateTime": slot.end.isoformat(),
                         "employeeId": emp_id,
+                        "newRotationOffset": emp_offset,
+                        "workPattern": employee_work_pattern,  # Employee-specific rotated pattern
                         "status": "ASSIGNED",
                         "constraintResults": {
                             "hard": [],
@@ -1360,13 +1488,9 @@ def solve(ctx):
     
     print(f"[solve] Raw status code: {status} (OPTIMAL={cp_model.OPTIMAL}, FEASIBLE={cp_model.FEASIBLE}, INFEASIBLE={cp_model.INFEASIBLE}, MODEL_INVALID={cp_model.MODEL_INVALID})")
     
-    # Extract assignments
-    assignments = []
+    # Extract optimized rotation offsets FIRST (before extracting assignments)
+    # so they're available when building assignment records
     if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-        assignments = extract_assignments(ctx, solver)
-        print(f"[solve] Solution found with {len(assignments)} assignments")
-        
-        # Extract optimized rotation offsets if they were decision variables
         if not ctx.get('fixedRotationOffset', True) and 'offset_vars' in ctx:
             print(f"[solve] Extracting optimized rotation offsets...")
             offset_vars = ctx['offset_vars']
@@ -1377,9 +1501,15 @@ def solve(ctx):
                 optimized_offsets[emp_id] = optimized_offset
                 print(f"  {emp_id}: offset = {optimized_offset}")
             
-            # Store in result for output
+            # Store in ctx for extract_assignments to use
             ctx['optimized_offsets'] = optimized_offsets
             print(f"  ✓ Extracted {len(optimized_offsets)} optimized offsets\n")
+    
+    # Extract assignments
+    assignments = []
+    if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
+        assignments = extract_assignments(ctx, solver)
+        print(f"[solve] Solution found with {len(assignments)} assignments")
     
     # Calculate scores with lazy evaluation
     # Only calculate soft scores if we have a feasible solution

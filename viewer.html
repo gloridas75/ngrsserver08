@@ -2014,16 +2014,43 @@
                 return;
             }
 
+            // Get newRotationOffset and workPattern for each employee
+            const assignments = outputData.assignments || [];
+            const employeeInfo = {};
+            
+            // Extract newRotationOffset and workPattern from assignments
+            assignments.forEach(a => {
+                if (a.employeeId && !employeeInfo[a.employeeId]) {
+                    employeeInfo[a.employeeId] = {
+                        newRotationOffset: a.newRotationOffset !== undefined ? a.newRotationOffset : 'N/A',
+                        workPattern: a.workPattern || []
+                    };
+                }
+            });
+
             Object.entries(employeeHours).forEach(([empId, data]) => {
                 const card = document.createElement('div');
                 card.className = 'employee-card';
 
                 const weeklyHours = Object.values(data.weekly_normal || {}).reduce((a, b) => a + b, 0);
                 const monthlyOt = Object.values(data.monthly_ot || {}).reduce((a, b) => a + b, 0);
+                
+                const empData = employeeInfo[empId] || {};
+                const rotationOffset = empData.newRotationOffset !== undefined ? empData.newRotationOffset : 'N/A';
+                const workPattern = empData.workPattern || [];
+                const workPatternStr = workPattern.length > 0 ? workPattern.join(', ') : 'N/A';
 
                 card.innerHTML = `
                     <h3>${empId}</h3>
                     <div class="employee-stats">
+                        <div class="stat-item">
+                            <div class="label">Rotation Offset</div>
+                            <div class="value" style="color: #667eea; font-weight: bold;">${rotationOffset}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Work Pattern</div>
+                            <div class="value" style="font-size: 0.9em; color: #555;">${workPatternStr}</div>
+                        </div>
                         <div class="stat-item">
                             <div class="label">Total Normal Hours</div>
                             <div class="value">${weeklyHours.toFixed(1)}h</div>
@@ -2406,15 +2433,20 @@
                     
                     cellHtml += '</td>';
                 } else {
-                    // No assignment for this demand/requirement on this date - show off day
+                    // No assignment for this demand/requirement on this date
+                    // Note: If includePublicHolidays=true, slots SHOULD exist and be filled
+                    // This display just indicates no assignment data, not necessarily "Holiday off"
                     const cellBg = isPublicHoliday ? '#fff3e0' : '#f5f5f5';
                     const cellBorder = isPublicHoliday ? '1px solid #ff9800' : '1px solid #ddd';
                     cellHtml += `<td style="padding: 8px; border: ${cellBorder}; background: ${cellBg}; text-align: center; vertical-align: middle;">`;
-                    cellHtml += `<div style="color: #999; font-size: 0.9em; font-weight: 500;">${isPublicHoliday ? '🎉 Holiday' : 'O'}</div>`;
+                    
+                    // Display appropriately - public holiday marking is for visual reference only
+                    // The actual slot creation depends on includePublicHolidays in input
+                    cellHtml += `<div style="color: #999; font-size: 0.9em; font-weight: 500;">${isPublicHoliday ? '🎉' : 'O'}</div>`;
                     if (isPublicHoliday) {
-                        cellHtml += '<div style="color: #f57c00; font-size: 0.75em; margin-top: 2px;">Public Holiday</div>';
+                        cellHtml += '<div style="color: #f57c00; font-size: 0.75em; margin-top: 2px;">PH</div>';
                     } else {
-                        cellHtml += '<div style="color: #bbb; font-size: 0.75em; margin-top: 2px;">Off Day</div>';
+                        cellHtml += '<div style="color: #bbb; font-size: 0.75em; margin-top: 2px;">Off</div>';
                     }
                     cellHtml += '</td>';
                 }
@@ -2424,9 +2456,12 @@
 
             html += '</tbody></table></div>';
             html += `<p style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
-                <strong>ℹ️ Note:</strong> This view shows filled assignments grouped by demand. 
-                Cells with "—" indicate no assignments for that demand on that date. 
-                To see truly empty slots (unfilled demand requirements), the input JSON file would be needed.
+                <strong>ℹ️ Understanding the Display:</strong><br>
+                • Cells with filled assignments show employee details<br>
+                • Empty cells with 🎉 mark public holidays from the input (visual reference only)<br>
+                • <strong>Important:</strong> If <code>includePublicHolidays=true</code> in input, slots ARE created for public holidays and should be filled. 
+                  Check for red UNFILLED warnings on those dates.<br>
+                • If <code>includePublicHolidays=false</code>, no slots are created on public holidays (no coverage needed).
             </p>`;
             container.innerHTML = html;
         }
@@ -2439,9 +2474,267 @@
                 return;
             }
 
-            const assignments = outputData.assignments;
+            // Check if new employeeRoster section is available (schema v0.43+)
+            const hasEmployeeRoster = outputData.employeeRoster && Array.isArray(outputData.employeeRoster);
             
-            // Get public holidays from output data
+            if (hasEmployeeRoster) {
+                // Use new employeeRoster section for accurate status information
+                renderEmployeeRosterNew(container);
+            } else {
+                // Fallback to old calculation method
+                renderEmployeeRosterLegacy(container);
+            }
+        }
+
+        function renderEmployeeRosterNew(container) {
+            // NEW: Use employeeRoster section from output JSON
+            const employeeRoster = outputData.employeeRoster;
+            const publicHolidays = new Set(outputData.publicHolidays || []);
+            
+            if (employeeRoster.length === 0) {
+                container.innerHTML = '<p style="color: #999;">No employee roster data available</p>';
+                return;
+            }
+            
+            // Get all dates from first employee's dailyStatus
+            const allDates = employeeRoster[0].dailyStatus.map(d => d.date);
+            
+            // Build assignment map for quick lookup (for displaying assignment details)
+            const assignmentsByEmployeeDate = {};
+            outputData.assignments.forEach(a => {
+                const empId = a.employeeId;
+                if (!assignmentsByEmployeeDate[empId]) {
+                    assignmentsByEmployeeDate[empId] = {};
+                }
+                if (!assignmentsByEmployeeDate[empId][a.date]) {
+                    assignmentsByEmployeeDate[empId][a.date] = [];
+                }
+                assignmentsByEmployeeDate[empId][a.date].push(a);
+            });
+            
+            // Calculate totals for each employee
+            const employeeTotals = {};
+            employeeRoster.forEach(emp => {
+                const empId = emp.employeeId;
+                const empAssignments = assignmentsByEmployeeDate[empId] || {};
+                let normalTotal = 0, otTotal = 0;
+                Object.values(empAssignments).flat().forEach(a => {
+                    normalTotal += a.hours?.normal || 0;
+                    otTotal += a.hours?.ot || 0;
+                });
+                employeeTotals[empId] = { normal: normalTotal, ot: otTotal };
+            });
+            
+            // Render table header
+            let html = '<div style="overflow-x: auto; max-width: 100%;"><table style="border-collapse: collapse; width: 100%; min-width: 1000px;">';
+            html += '<thead><tr>';
+            html += '<th style="position: sticky; left: 0; background: #e3f2fd; padding: 12px; border: 1px solid #ddd; min-width: 150px; z-index: 11; font-weight: bold;">Employee</th>';
+            
+            allDates.forEach(date => {
+                const d = new Date(date);
+                const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+                const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const isPublicHoliday = publicHolidays.has(date);
+                html += `<th style="padding: 12px; border: 1px solid #ddd; min-width: 120px; text-align: center; ${isPublicHoliday ? 'background: #ffebee; color: #d32f2f;' : 'background: #f5f5f5;'}">
+                    ${isPublicHoliday ? '🎉 ' : ''}${dayName}<br>${dateStr}
+                </th>`;
+            });
+            html += '<th style="position: sticky; right: 0; background: #e3f2fd; padding: 12px; border: 1px solid #ddd; min-width: 120px; z-index: 10; font-weight: bold;">Total Hours</th>';
+            html += '</tr></thead><tbody>';
+            
+            // Separate used and unused employees
+            const usedEmployees = employeeRoster.filter(e => e.assignedDays > 0);
+            const unusedEmployees = employeeRoster.filter(e => e.assignedDays === 0);
+            
+            // Sort used employees by offset, then by ID
+            const sortedUsedEmployees = [...usedEmployees].sort((a, b) => {
+                if (a.rotationOffset !== b.rotationOffset) {
+                    return a.rotationOffset - b.rotationOffset;
+                }
+                return a.employeeId.localeCompare(b.employeeId);
+            });
+            
+            // Sort unused employees by ID
+            const sortedUnusedEmployees = [...unusedEmployees].sort((a, b) => 
+                a.employeeId.localeCompare(b.employeeId)
+            );
+            
+            // Render used employees first
+            sortedUsedEmployees.forEach(emp => {
+                const empId = emp.employeeId;
+                const empOffset = emp.rotationOffset;
+                const empPattern = emp.workPattern;
+                const totals = employeeTotals[empId] || { normal: 0, ot: 0 };
+                
+                let patternDisplay = '-';
+                if (empPattern && Array.isArray(empPattern)) {
+                    patternDisplay = empPattern.join('-');
+                }
+                
+                html += '<tr>';
+                html += `<td style="position: sticky; left: 0; background: white; padding: 12px; border: 1px solid #ddd; font-weight: bold; z-index: 5;">
+                    <div style="font-size: 1em;">${empId}</div>
+                    <div style="font-size: 0.85em; color: #666; font-weight: normal; margin-top: 4px;">Offset: ${empOffset}</div>
+                    <div style="font-size: 0.8em; color: #2196f3; font-weight: normal; margin-top: 2px;">${patternDisplay}</div>
+                </td>`;
+                
+                // Render each day's status
+                emp.dailyStatus.forEach(dayStatus => {
+                    const date = dayStatus.date;
+                    const status = dayStatus.status;
+                    const isPublicHoliday = publicHolidays.has(date);
+                    const assignments = (assignmentsByEmployeeDate[empId] || {})[date] || [];
+                    
+                    if (status === 'ASSIGNED' && assignments.length > 0) {
+                        // Show assignment details
+                        const cellBg = isPublicHoliday ? '#ffebee' : '#e8f5e9';
+                        const cellBorder = isPublicHoliday ? '1px solid #f44336' : '1px solid #ddd';
+                        
+                        html += `<td style="padding: 4px; border: ${cellBorder}; background: ${cellBg}; vertical-align: top;">`;
+                        
+                        assignments.forEach(assignment => {
+                            const start = new Date(assignment.startDateTime);
+                            const end = new Date(assignment.endDateTime);
+                            const startTime = start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const endTime = end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const normal = (assignment.hours?.normal || 0).toFixed(1);
+                            const ot = (assignment.hours?.ot || 0).toFixed(1);
+                            
+                            let cellStyle = 'background: #c8e6c9; border-left: 4px solid #4caf50;';
+                            const shiftCode = (assignment.shiftCode || '').toUpperCase();
+                            if (shiftCode.includes('D')) {
+                                cellStyle = 'background: #e3f2fd; border-left: 4px solid #2196f3;';
+                            } else if (shiftCode.includes('N')) {
+                                cellStyle = 'background: #e8eaf6; border-left: 4px solid #3f51b5;';
+                            }
+                            
+                            const reqId = assignment.requirementId || 'N/A';
+                            const rotOffset = assignment.newRotationOffset !== undefined ? assignment.newRotationOffset : '-';
+                            html += `<div style="${cellStyle} padding: 6px; margin-bottom: 4px; border-radius: 4px; font-size: 0.85em;">
+                                <div style="font-weight: bold; color: #2e7d32;">Req:${reqId}, ${assignment.shiftCode} <span style="color: #888; font-size: 0.9em;">(R${rotOffset})</span></div>
+                                <div style="color: #555; margin-top: 2px;">${startTime}–${endTime}</div>
+                                <div style="color: #666; font-size: 0.9em;">${normal}h N${ot > 0 ? ` / ${ot}h OT` : ''}</div>
+                            </div>`;
+                        });
+                        html += '</td>';
+                    } else {
+                        // No assignment - use status from employeeRoster
+                        let cellBg, cellBorder, displayText, subText, textColor;
+                        
+                        if (status === 'OFF_DAY') {
+                            cellBg = isPublicHoliday ? '#fff3e0' : '#f5f5f5';
+                            cellBorder = isPublicHoliday ? '1px solid #ff9800' : '1px solid #ddd';
+                            displayText = isPublicHoliday ? '🎉' : 'O';
+                            subText = isPublicHoliday ? 'Holiday' : 'Off Day';
+                            textColor = '#999';
+                        } else if (status === 'UNASSIGNED') {
+                            cellBg = '#fff9c4';
+                            cellBorder = '2px solid #fbc02d';
+                            displayText = '⚠';
+                            subText = `Unassigned${dayStatus.expectedShift ? ` (${dayStatus.expectedShift})` : ''}`;
+                            textColor = '#f57f17';
+                        } else if (status === 'NOT_USED') {
+                            cellBg = '#ffebee';
+                            cellBorder = '1px solid #ef5350';
+                            displayText = '—';
+                            subText = 'Not Used';
+                            textColor = '#c62828';
+                        } else {
+                            // Unknown status
+                            cellBg = '#fafafa';
+                            cellBorder = '1px solid #ddd';
+                            displayText = '?';
+                            subText = status || 'Unknown';
+                            textColor = '#666';
+                        }
+                        
+                        html += `<td style="padding: 8px; border: ${cellBorder}; background: ${cellBg}; text-align: center; vertical-align: middle;">`;
+                        html += `<div style="color: ${textColor}; font-size: 0.9em; font-weight: 500;">${displayText}</div>`;
+                        html += `<div style="color: ${textColor}; font-size: 0.75em; margin-top: 2px;">${subText}</div>`;
+                        html += '</td>';
+                    }
+                });
+                
+                // Add totals column
+                html += `<td style="position: sticky; right: 0; background: #e3f2fd; padding: 12px; border: 1px solid #ddd; z-index: 5; text-align: center;">`;
+                html += `<div style="font-weight: bold; color: #1565c0; font-size: 0.95em;">${totals.normal.toFixed(1)}h N</div>`;
+                if (totals.ot > 0) {
+                    html += `<div style="font-weight: bold; color: #d32f2f; font-size: 0.95em; margin-top: 4px;">${totals.ot.toFixed(1)}h OT</div>`;
+                }
+                html += '</td>';
+                html += '</tr>';
+            });
+            
+            // Add separator row if there are unused employees
+            if (sortedUnusedEmployees.length > 0) {
+                html += `<tr style="background: #fafafa; border-top: 3px solid #e0e0e0; border-bottom: 3px solid #e0e0e0;">
+                    <td colspan="${allDates.length + 2}" style="padding: 12px; text-align: center; font-weight: bold; color: #666; font-size: 0.95em;">
+                        ⚠️ UNUSED EMPLOYEES (${sortedUnusedEmployees.length}) - Not assigned any shifts
+                    </td>
+                </tr>`;
+                
+                // Render unused employees
+                sortedUnusedEmployees.forEach(emp => {
+                    const empId = emp.employeeId;
+                    const empOffset = emp.rotationOffset;
+                    const empPattern = emp.workPattern;
+                    const totals = employeeTotals[empId] || { normal: 0, ot: 0 };
+                    
+                    let patternDisplay = '-';
+                    if (empPattern && Array.isArray(empPattern)) {
+                        patternDisplay = empPattern.join('-');
+                    }
+                    
+                    html += '<tr style="background: #fff8f8;">';
+                    html += `<td style="position: sticky; left: 0; background: #fff8f8; padding: 12px; border: 1px solid #ddd; font-weight: bold; z-index: 5;">
+                        <div style="font-size: 1em; color: #c62828;">${empId}</div>
+                        <div style="font-size: 0.85em; color: #999; font-weight: normal; margin-top: 4px;">Offset: ${empOffset}</div>
+                        <div style="font-size: 0.8em; color: #999; font-weight: normal; margin-top: 2px;">${patternDisplay}</div>
+                    </td>`;
+                    
+                    // Render each day as "Not Used"
+                    emp.dailyStatus.forEach(dayStatus => {
+                        const date = dayStatus.date;
+                        const isPublicHoliday = publicHolidays.has(date);
+                        
+                        const cellBg = '#ffebee';
+                        const cellBorder = '1px solid #ef5350';
+                        const displayText = '—';
+                        const subText = 'Not Used';
+                        const textColor = '#c62828';
+                        
+                        html += `<td style="padding: 8px; border: ${cellBorder}; background: ${cellBg}; text-align: center; vertical-align: middle;">`;
+                        html += `<div style="color: ${textColor}; font-size: 0.9em; font-weight: 500;">${displayText}</div>`;
+                        html += `<div style="color: ${textColor}; font-size: 0.75em; margin-top: 2px;">${subText}</div>`;
+                        html += '</td>';
+                    });
+                    
+                    // Add totals column (all zeros for unused employees)
+                    html += `<td style="position: sticky; right: 0; background: #ffebee; padding: 12px; border: 1px solid #ddd; z-index: 5; text-align: center;">`;
+                    html += `<div style="font-weight: bold; color: #999; font-size: 0.95em;">0h</div>`;
+                    html += '</td>';
+                    html += '</tr>';
+                });
+            }
+            
+            html += '</tbody></table></div>';
+            html += `<p style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+                <strong>ℹ️ Summary:</strong> 
+                ${usedEmployees.length} employees actively used, ${unusedEmployees.length} employees not assigned<br>
+                <strong>Legend:</strong> 
+                <span style="background: #e3f2fd; padding: 4px 8px; border-left: 4px solid #2196f3; margin: 0 8px;">D = Day Shift</span>
+                <span style="background: #e8eaf6; padding: 4px 8px; border-left: 4px solid #3f51b5; margin: 0 8px;">N = Night Shift</span>
+                <span style="color: #999; margin: 0 8px;">O = Off Day</span>
+                <span style="color: #f57f17; margin: 0 8px;">⚠ = Unassigned (should work)</span>
+                <span style="color: #c62828; margin: 0 8px;">— = Not Used</span>
+                <span style="color: #f57c00; margin: 0 8px;">🎉 = Public Holiday</span>
+            </p>`;
+            container.innerHTML = html;
+        }
+
+        function renderEmployeeRosterLegacy(container) {
+            // LEGACY: Calculate status from assignments (for older output format)
+            const assignments = outputData.assignments;
             const publicHolidays = new Set(outputData.publicHolidays || []);
             
             // Group assignments by employee
@@ -2475,9 +2768,17 @@
             allDates = completeDateRange;
 
             // Build assignment map by employee and date
+            // Also extract newRotationOffset and workPattern for each employee (take from first assignment)
             const assignmentsByEmployeeDate = {};
+            const employeeInfo = {}; // Store employeeId -> {newRotationOffset, workPattern, employeeId}
             Object.keys(assignmentsByEmployee).forEach(empId => {
                 assignmentsByEmployeeDate[empId] = {};
+                const firstAssignment = assignmentsByEmployee[empId][0];
+                employeeInfo[empId] = {
+                    employeeId: empId,
+                    newRotationOffset: firstAssignment?.newRotationOffset !== undefined ? firstAssignment.newRotationOffset : 0,
+                    workPattern: firstAssignment?.workPattern || null
+                };
                 assignmentsByEmployee[empId].forEach(a => {
                     if (!assignmentsByEmployeeDate[empId][a.date]) {
                         assignmentsByEmployeeDate[empId][a.date] = [];
@@ -2503,11 +2804,39 @@
             html += `<p style="margin-bottom: 20px; color: #666; font-size: 1.1em;">
                 <strong>Employee Roster View</strong> - Shows each employee's assignments, off days, and total hours
             </p>`;
+            
+            // Add legend
+            html += `<div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+                <strong style="color: #495057; font-size: 0.95em;">Legend:</strong>
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 30px; height: 30px; background: #e8f5e9; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 0.8em; border-radius: 3px;">D/N</div>
+                        <span style="color: #666; font-size: 0.85em;">Assigned Shift</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 30px; height: 30px; background: #f5f5f5; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 0.8em; border-radius: 3px;">O</div>
+                        <span style="color: #666; font-size: 0.85em;">Off Day (Pattern)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 30px; height: 30px; background: #fff9c4; border: 2px solid #fbc02d; display: flex; align-items: center; justify-content: center; font-size: 0.8em; border-radius: 3px;">⚠</div>
+                        <span style="color: #666; font-size: 0.85em;">Unassigned (Expected Work)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 30px; height: 30px; background: #ffebee; border: 1px solid #ef5350; display: flex; align-items: center; justify-content: center; font-size: 0.8em; border-radius: 3px;">—</div>
+                        <span style="color: #666; font-size: 0.85em;">Employee Not Used</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 30px; height: 30px; background: #fff3e0; border: 1px solid #ff9800; display: flex; align-items: center; justify-content: center; font-size: 0.8em; border-radius: 3px;">🎉</div>
+                        <span style="color: #666; font-size: 0.85em;">Public Holiday</span>
+                    </div>
+                </div>
+            </div>`;
+            
             html += '<table style="border-collapse: collapse; width: 100%; min-width: 800px;">';
             
             // Header row with dates
             html += '<thead><tr>';
-            html += '<th style="position: sticky; left: 0; background: #f8f9fa; padding: 12px; border: 1px solid #ddd; min-width: 150px; z-index: 10;">Employee ID</th>';
+            html += '<th style="position: sticky; left: 0; background: #f8f9fa; padding: 12px; border: 1px solid #ddd; min-width: 150px; z-index: 10;">Employee ID<br><span style="font-size: 0.8em; font-weight: normal; color: #666;">(Rotation Offset)</span></th>';
             allDates.forEach(date => {
                 const d = new Date(date);
                 const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
@@ -2522,20 +2851,50 @@
             html += '<th style="position: sticky; right: 0; background: #e3f2fd; padding: 12px; border: 1px solid #ddd; min-width: 120px; z-index: 10; font-weight: bold;">Total Hours</th>';
             html += '</tr></thead><tbody>';
 
-            // Rows for each employee
-            const sortedEmployees = Object.keys(assignmentsByEmployeeDate).sort();
+            // Rows for each employee - sort by newRotationOffset (primary), then employeeId (secondary)
+            const sortedEmployees = Object.keys(assignmentsByEmployeeDate).sort((a, b) => {
+                const offsetA = employeeInfo[a].newRotationOffset;
+                const offsetB = employeeInfo[b].newRotationOffset;
+                if (offsetA !== offsetB) {
+                    return offsetA - offsetB; // Sort by offset ascending
+                }
+                return a.localeCompare(b); // Then by employee ID
+            });
+            
             sortedEmployees.forEach(empId => {
                 const dateMap = assignmentsByEmployeeDate[empId];
                 const totals = employeeTotals[empId];
+                const empOffset = employeeInfo[empId].newRotationOffset;
+                const empPattern = employeeInfo[empId].workPattern;
+                
+                // The workPattern already represents how the pattern appears for this employee
+                // Display it as-is
+                let patternDisplay = '-';
+                if (empPattern && Array.isArray(empPattern)) {
+                    patternDisplay = empPattern.join('-');
+                }
                 
                 html += '<tr>';
                 html += `<td style="position: sticky; left: 0; background: white; padding: 12px; border: 1px solid #ddd; font-weight: bold; z-index: 5;">
-                    ${empId}
+                    <div style="font-size: 1em;">${empId}</div>
+                    <div style="font-size: 0.85em; color: #666; font-weight: normal; margin-top: 4px;">Offset: ${empOffset}</div>
+                    <div style="font-size: 0.8em; color: #2196f3; font-weight: normal; margin-top: 2px;">${patternDisplay}</div>
                 </td>`;
 
-                allDates.forEach(date => {
+                allDates.forEach((date, dateIndex) => {
                     const assignments = dateMap[date] || [];
                     const isPublicHoliday = publicHolidays.has(date);
+                    
+                    // Calculate expected shift for this employee on this date based on their pattern
+                    let expectedShift = null;
+                    let isPatternOffDay = false;
+                    if (empPattern && Array.isArray(empPattern) && empPattern.length > 0) {
+                        // Calculate which position in the pattern this date corresponds to
+                        const patternLength = empPattern.length;
+                        const cyclePosition = dateIndex % patternLength;
+                        expectedShift = empPattern[cyclePosition];
+                        isPatternOffDay = (expectedShift === 'O');
+                    }
                     
                     if (assignments.length > 0) {
                         // Show filled assignments
@@ -2573,8 +2932,9 @@
                             }
                             
                             const reqId = assignment.requirementId || 'N/A';
+                            const rotOffset = assignment.newRotationOffset !== undefined ? assignment.newRotationOffset : '-';
                             html += `<div style="${cellStyle} padding: 6px; margin-bottom: 4px; border-radius: 4px; font-size: 0.85em;">
-                                <div style="font-weight: bold; color: #2e7d32;">Req:${reqId}, ${assignment.shiftCode}</div>
+                                <div style="font-weight: bold; color: #2e7d32;">Req:${reqId}, ${assignment.shiftCode} <span style="color: #888; font-size: 0.9em;">(R${rotOffset})</span></div>
                                 <div style="color: #555; margin-top: 2px;">${startTime}–${endTime}</div>
                                 <div style="color: #666; font-size: 0.9em;">${normal}h N${ot > 0 ? ` / ${ot}h OT` : ''}</div>
                             </div>`;
@@ -2582,16 +2942,36 @@
                         
                         html += '</td>';
                     } else {
-                        // No assignment for this employee on this date - show off day
-                        const cellBg = isPublicHoliday ? '#fff3e0' : '#f5f5f5';
-                        const cellBorder = isPublicHoliday ? '1px solid #ff9800' : '1px solid #ddd';
-                        html += `<td style="padding: 8px; border: ${cellBorder}; background: ${cellBg}; text-align: center; vertical-align: middle;">`;
-                        html += `<div style="color: #999; font-size: 0.9em; font-weight: 500;">${isPublicHoliday ? '🎉 Holiday' : 'O'}</div>`;
-                        if (isPublicHoliday) {
-                            html += '<div style="color: #f57c00; font-size: 0.75em; margin-top: 2px;">Public Holiday</div>';
+                        // No assignment for this employee on this date
+                        // Distinguish between: Off Day (pattern 'O'), Unassigned (could have worked), or Unused Employee
+                        let cellBg, cellBorder, displayText, subText, textColor;
+                        
+                        if (isPatternOffDay) {
+                            // Legitimate off-day according to work pattern
+                            cellBg = isPublicHoliday ? '#fff3e0' : '#f5f5f5';
+                            cellBorder = isPublicHoliday ? '1px solid #ff9800' : '1px solid #ddd';
+                            displayText = isPublicHoliday ? '🎉' : 'O';
+                            subText = isPublicHoliday ? 'Holiday' : 'Off Day';
+                            textColor = '#999';
+                        } else if (empPattern && empPattern.length > 0) {
+                            // Employee has a pattern but wasn't assigned (should have worked this day)
+                            cellBg = '#fff9c4';
+                            cellBorder = '2px solid #fbc02d';
+                            displayText = '⚠';
+                            subText = `Unassigned (Expected: ${expectedShift || '?'})`;
+                            textColor = '#f57f17';
                         } else {
-                            html += '<div style="color: #bbb; font-size: 0.75em; margin-top: 2px;">Off Day</div>';
+                            // Employee has no pattern (completely unused)
+                            cellBg = '#ffebee';
+                            cellBorder = '1px solid #ef5350';
+                            displayText = '—';
+                            subText = 'Not Used';
+                            textColor = '#c62828';
                         }
+                        
+                        html += `<td style="padding: 8px; border: ${cellBorder}; background: ${cellBg}; text-align: center; vertical-align: middle;">`;
+                        html += `<div style="color: ${textColor}; font-size: 0.9em; font-weight: 500;">${displayText}</div>`;
+                        html += `<div style="color: ${textColor}; font-size: 0.75em; margin-top: 2px;">${subText}</div>`;
                         html += '</td>';
                     }
                 });

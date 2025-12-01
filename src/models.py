@@ -10,12 +10,41 @@ from datetime import datetime
 
 
 class SolveRequest(BaseModel):
-    """Request payload for POST /solve endpoint."""
+    """
+    Request payload for POST /solve endpoint.
+    
+    Key Parameters for Pattern-Based Scheduling:
+    
+    - **fixedRotationOffset** (bool): When using work patterns (e.g., D-D-N-N-O-O), set to `true` 
+      to prevent the solver from clustering employees on the same rotation offset. 
+      Pre-distribute employee offsets (0-5) in input JSON for optimal coverage.
+      
+    - **optimizationMode** (str): Choose solver objective:
+      - "balanceWorkload" (recommended for patterns): Distributes assignments evenly across employees.
+        Naturally achieves minimal employee usage while ensuring full utilization (~20 shifts/employee/month).
+        Works seamlessly with continuous adherence and pattern-based rotation.
+        
+      - "minimizeEmployeeCount": Aggressively minimizes employee count using 100,000× weight penalty.
+        WARNING: May conflict with pattern-based scheduling and continuous adherence.
+        Can cause offset clustering and INFEASIBLE results. Use only for simple shift coverage.
+        
+    - **Continuous Adherence Behavior**: When an employee is selected for a work pattern, 
+      they will be assigned to work ALL days in their pattern cycle (~20 shifts per month for D-D-N-N-O-O).
+      This prevents under-utilization (employees working only 1-2 shifts).
+      
+    Best Practices:
+    - Use balanceWorkload mode for pattern-based rotation schedules
+    - Pre-distribute employee rotation offsets (0-5) to ensure coverage diversity
+    - Set fixedRotationOffset=true to prevent solver re-clustering
+    - Expect 20-21 shifts per employee per month for 6-day patterns
+    - For simple shift coverage without patterns, either mode works
+    """
     
     input_json: Optional[Dict[str, Any]] = Field(
         None,
         description="Full NGRS input JSON (required if file not provided). "
-                    "Should match schema v0.43+."
+                    "Should match schema v0.43+. "
+                    "See class docstring for optimization mode guidance."
     )
     
     model_config = ConfigDict(extra='allow')  # Forgiving: accept extra fields

@@ -7,8 +7,266 @@ This folder contains Postman collection and environment files for testing the NG
 - **NGRS_Solver_API.postman_collection.json** - Complete API collection with all endpoints
 - **NGRS_Solver_Local.postman_environment.json** - Environment for local testing
 - **NGRS_Solver_Production.postman_environment.json** - Environment for production server
+- **PATTERN_BASED_EXAMPLES.md** - 📘 Ready-to-use JSON examples for pattern-based scheduling
 
-## 🆕 Latest Updates (v0.7.2 - Nov 26, 2025)
+## Quick Links
+
+- [Pattern-Based Examples](./PATTERN_BASED_EXAMPLES.md) - Complete request examples with balanceWorkload and minimizeEmployeeCount modes
+- [API Documentation](#optimization-modes-balanceworkload-vs-minimizeemployeecount) - Optimization mode guidance
+- [Troubleshooting Guide](#troubleshooting-infeasible-results) - Common issues and solutions
+
+## 🆕 Latest Updates (v0.7.3 - Jan 12, 2025)
+
+### Pattern-Based Scheduling & Optimization Modes 🎯
+
+#### 1. **Optimization Modes: balanceWorkload vs minimizeEmployeeCount**
+
+Choose the right optimization strategy for your scheduling needs:
+
+##### **balanceWorkload** (Recommended for Patterns) ✅
+
+**When to Use:**
+- Rotation-based schedules with work patterns (D-D-N-N-O-O, D-D-D-D-O-O, etc.)
+- Need consistent employee utilization
+- Want fair workload distribution
+- Pattern-based continuous coverage
+
+**How It Works:**
+- Distributes assignments evenly across employees
+- Minimizes the gap between most-worked and least-worked employees
+- Naturally achieves minimal employee count through pattern constraints
+- Works seamlessly with continuous adherence behavior
+
+**Expected Results:**
+- 100% employee utilization
+- 20-21 shifts per employee per month (for 6-day patterns)
+- No under-utilized employees (no 1-2 shift assignments)
+- OPTIMAL status with proper offset distribution
+
+**Input Example:**
+```json
+{
+  "optimizationMode": "balanceWorkload",
+  "fixedRotationOffset": true,
+  "employees": [
+    {"employeeId": "E001", "rotationOffset": 0, ...},
+    {"employeeId": "E002", "rotationOffset": 1, ...},
+    {"employeeId": "E003", "rotationOffset": 2, ...}
+  ]
+}
+```
+
+---
+
+##### **minimizeEmployeeCount** ⚠️
+
+**When to Use:**
+- Simple shift coverage without rotation patterns
+- Need absolute minimum employee count
+- One-off or irregular scheduling
+- No pattern-based constraints
+
+**⚠️ WARNING - Pattern Compatibility:**
+- **100,000× weight penalty** on employee count overwhelms other constraints
+- Can cause offset clustering (all employees on same offset)
+- May produce INFEASIBLE results with pattern-based rotation
+- Conflicts with continuous adherence for patterns
+- Under-utilization possible (employees with 1-2 shifts only)
+
+**How It Works:**
+- Aggressively minimizes total number of employees used
+- Priority: Employee count > Pattern adherence > Coverage quality
+- Can sacrifice workload balance for lower headcount
+
+**Use Cases:**
+- Emergency staffing with limited workforce
+- Budget-constrained simple shift assignments
+- Non-rotating shift coverage
+
+**Limitations:**
+❌ Not recommended for D-D-N-N-O-O or multi-day patterns  
+❌ May create coverage gaps with rotation offsets  
+❌ Can violate continuous adherence expectations  
+❌ Results may be non-deterministic
+
+---
+
+#### 2. **Fixed Rotation Offsets** 🔄
+
+**Parameter:** `fixedRotationOffset` (boolean)
+
+**Purpose:** Prevents solver from re-clustering employees on the same rotation offset, which can create coverage gaps in pattern-based schedules.
+
+**When to Use:**
+- ✅ Always use with pattern-based rotation (D-D-N-N-O-O, etc.)
+- ✅ Required for continuous adherence behavior
+- ✅ When employees have pre-assigned offsets
+
+**How to Configure:**
+
+1. **Set fixedRotationOffset to true:**
+```json
+{
+  "fixedRotationOffset": true
+}
+```
+
+2. **Pre-distribute employee offsets (0-5 for 6-day pattern):**
+```json
+{
+  "employees": [
+    {"employeeId": "E001", "rotationOffset": 0},
+    {"employeeId": "E002", "rotationOffset": 1},
+    {"employeeId": "E003", "rotationOffset": 2},
+    {"employeeId": "E004", "rotationOffset": 3},
+    {"employeeId": "E005", "rotationOffset": 4},
+    {"employeeId": "E006", "rotationOffset": 5},
+    {"employeeId": "E007", "rotationOffset": 0},  // Round-robin
+    {"employeeId": "E008", "rotationOffset": 1}
+  ]
+}
+```
+
+**Offset Distribution Strategy:**
+- For 6-day pattern (D-D-N-N-O-O): Use offsets 0-5
+- Distribute employees round-robin across all offsets
+- Ensures at least 1 employee per offset for coverage diversity
+- Prevents all employees working same days
+
+**Without Fixed Offsets (❌ Not Recommended):**
+- Solver may cluster employees on offset 2 or 3
+- Creates gaps in coverage on other days
+- Can cause INFEASIBLE results
+- Unpredictable behavior
+
+---
+
+#### 3. **Continuous Adherence Behavior** 📊
+
+**What It Does:**
+When an employee is selected for a work pattern, they are assigned to work **ALL** days in their pattern cycle.
+
+**Impact:**
+- Employee works full pattern (~20 shifts/month for D-D-N-N-O-O)
+- No partial utilization (no 1-2 shift assignments)
+- Predictable workload for employees
+- Better schedule consistency
+
+**Example Pattern: D-D-N-N-O-O**
+- Pattern repeats every 6 days
+- Employee works 4 days, off 2 days per cycle
+- Over 30-day month: ~20 shifts per employee
+- Each shift assignment = full pattern commitment
+
+**Utilization Metrics:**
+- **100% Utilization:** All selected employees work full patterns
+- **Efficiency:** 100.0-100.2% (20-21 shifts per employee)
+- **Coverage:** All slots filled with proper offset distribution
+
+---
+
+#### 4. **Troubleshooting INFEASIBLE Results** 🔧
+
+Common issues and solutions:
+
+##### **Problem: Solver returns INFEASIBLE**
+
+**Possible Causes:**
+
+1. **Insufficient employees for pattern coverage**
+   - **Solution:** Increase employee count or reduce demand
+   - **Check:** Need ~3-5 employees per offset (0-5) for D-D-N-N-O-O pattern
+
+2. **Offset clustering (all employees same offset)**
+   - **Solution:** Set `fixedRotationOffset: true` and pre-distribute offsets
+   - **Check:** Each offset (0-5) should have at least 1-2 employees
+
+3. **minimizeEmployeeCount mode with patterns**
+   - **Solution:** Switch to `optimizationMode: "balanceWorkload"`
+   - **Reason:** 100,000× weight causes offset clustering
+
+4. **Conflicting constraints (gender, role, scheme)**
+   - **Solution:** Review whitelist/blacklist, gender requirements, qualifications
+   - **Check:** Feasibility check warnings
+
+5. **Pattern-constraint conflicts**
+   - **Solution:** Verify pattern length matches demand cycle
+   - **Check:** D-D-N-N-O-O (6 days) requires 6-day rotation cycle
+
+##### **Problem: Low employee utilization (many employees with 1-2 shifts)**
+
+**Cause:** minimizeEmployeeCount mode without continuous adherence
+
+**Solution:**
+1. Switch to `optimizationMode: "balanceWorkload"`
+2. Enable `fixedRotationOffset: true`
+3. Pre-distribute employee offsets
+
+**Expected After Fix:**
+- 20-21 shifts per employee (for D-D-N-N-O-O)
+- 100% utilization rate
+- No employees with <15 shifts
+
+##### **Problem: Non-deterministic results (different output each run)**
+
+**Cause:** Solver exploring different offset assignments
+
+**Solution:**
+1. Set `fixedRotationOffset: true`
+2. Pre-assign employee rotation offsets in input JSON
+3. Use `balanceWorkload` mode for consistency
+
+---
+
+#### 5. **Best Practices Summary** 📋
+
+**For Pattern-Based Rotation Schedules:**
+
+```json
+{
+  "optimizationMode": "balanceWorkload",  // ✅ Recommended
+  "fixedRotationOffset": true,             // ✅ Required
+  "employees": [
+    {"employeeId": "E001", "rotationOffset": 0},  // Pre-distribute
+    {"employeeId": "E002", "rotationOffset": 1},
+    {"employeeId": "E003", "rotationOffset": 2},
+    {"employeeId": "E004", "rotationOffset": 3},
+    {"employeeId": "E005", "rotationOffset": 4},
+    {"employeeId": "E006", "rotationOffset": 5}
+  ],
+  "demandItems": [{
+    "shifts": [{
+      "rotationSequence": ["D", "D", "N", "N", "O", "O"],
+      "coverageAnchor": "2025-01-01"
+    }]
+  }]
+}
+```
+
+**Expected Results:**
+- Status: OPTIMAL
+- Utilization: 100%
+- Shifts per employee: 20-21 per month
+- Solve time: 10-30 seconds (for 50-100 employees)
+
+**For Simple Shift Coverage (No Patterns):**
+
+```json
+{
+  "optimizationMode": "minimizeEmployeeCount",  // OK for simple coverage
+  "fixedRotationOffset": false,                  // Not needed
+  "employees": [...],  // No rotationOffset required
+  "demandItems": [{
+    "shifts": [{
+      // No rotationSequence
+    }]
+  }]
+}
+```
+
+---
+
+## Previous Updates (v0.7.2 - Nov 26, 2025)
 
 ### New Features Added
 
