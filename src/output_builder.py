@@ -6,9 +6,156 @@ Refactored from run_solver.py to ensure CLI and API produce identical output.
 
 import json
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 from context.engine.time_utils import split_shift_hours
+
+
+def build_employee_roster(input_data, ctx, assignments):
+    """
+    Build a comprehensive employee roster showing daily status for ALL employees.
+    
+    Returns list with:
+    - employeeRoster: List of all employees with their daily schedules
+    - Each employee has: employeeId, offset, workPattern, dailyStatus[]
+    - dailyStatus shows: date, status (ASSIGNED/OFF_DAY/UNASSIGNED/NOT_USED), shiftCode, assignmentId
+    
+    This allows consumers to clearly distinguish between:
+    - ASSIGNED: Employee has an assignment on this date
+    - OFF_DAY: Employee's pattern has 'O' for this date (legitimate rest day)
+    - UNASSIGNED: Employee's pattern says work (D/N) but no assignment given
+    - NOT_USED: Employee has no pattern/assignments (completely unused)
+    """
+    employees = ctx.get('employees', [])
+    optimized_offsets = ctx.get('optimized_offsets', {})
+    
+    # Get date range from assignments (or input data)
+    if not assignments:
+        return []
+    
+    # Get date range from assignments
+    dates = sorted(set(a.get('date') for a in assignments if a.get('date')))
+    if not dates:
+        return []
+    
+    from datetime import date as date_cls
+    start_date = date_cls.fromisoformat(dates[0])
+    end_date = date_cls.fromisoformat(dates[-1])
+    
+    # Build assignment lookup: emp_id -> date -> assignment
+    assignment_by_emp_date = defaultdict(dict)
+    for assignment in assignments:
+        emp_id = assignment.get('employeeId')
+        assign_date = assignment.get('date')
+        if emp_id and assign_date:
+            assignment_by_emp_date[emp_id][assign_date] = assignment
+    
+    # Get base rotation pattern from first demand (assuming single pattern for now)
+    base_pattern = None
+    demands = input_data.get('demandItems', [])
+    if demands and len(demands) > 0:
+        reqs = demands[0].get('requirements', [])
+        if reqs and len(reqs) > 0:
+            base_pattern = reqs[0].get('workPattern', [])
+    
+    roster = []
+    
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
+        
+        # Get employee's work pattern (rotated by their offset)
+        emp_pattern = None
+        if base_pattern:
+            from context.engine.solver_engine import calculate_employee_work_pattern
+            emp_pattern = calculate_employee_work_pattern(base_pattern, emp_offset)
+        
+        # Check if employee has any assignments
+        has_assignments = emp_id in assignment_by_emp_date
+        
+        # Build daily status for each date
+        daily_status = []
+        current_date = start_date
+        day_index = 0
+        
+        while current_date <= end_date:
+            date_str = current_date.isoformat()
+            
+            # Check if employee has assignment on this date
+            assignment = assignment_by_emp_date.get(emp_id, {}).get(date_str)
+            
+            if assignment:
+                # Employee is ASSIGNED
+                daily_status.append({
+                    "date": date_str,
+                    "status": "ASSIGNED",
+                    "shiftCode": assignment.get('shiftCode'),
+                    "assignmentId": assignment.get('assignmentId'),
+                    "startDateTime": assignment.get('startDateTime'),
+                    "endDateTime": assignment.get('endDateTime')
+                })
+            else:
+                # No assignment - determine why
+                if not has_assignments:
+                    # Employee has NO assignments at all (completely unused)
+                    daily_status.append({
+                        "date": date_str,
+                        "status": "NOT_USED",
+                        "shiftCode": None,
+                        "reason": "Employee not used in this roster"
+                    })
+                elif emp_pattern:
+                    # Check what employee's pattern says for this date
+                    pattern_length = len(emp_pattern)
+                    cycle_position = day_index % pattern_length
+                    expected_shift = emp_pattern[cycle_position]
+                    
+                    if expected_shift == 'O':
+                        # Pattern says off-day (legitimate rest)
+                        daily_status.append({
+                            "date": date_str,
+                            "status": "OFF_DAY",
+                            "shiftCode": "O",
+                            "reason": "Scheduled off-day per work pattern"
+                        })
+                    else:
+                        # Pattern says work (D or N) but not assigned
+                        daily_status.append({
+                            "date": date_str,
+                            "status": "UNASSIGNED",
+                            "shiftCode": None,
+                            "expectedShift": expected_shift,
+                            "reason": f"Pattern indicates {expected_shift} shift but not assigned"
+                        })
+                else:
+                    # Has some assignments but no pattern (edge case)
+                    daily_status.append({
+                        "date": date_str,
+                        "status": "UNASSIGNED",
+                        "shiftCode": None,
+                        "reason": "No work pattern defined"
+                    })
+            
+            current_date += timedelta(days=1)
+            day_index += 1
+        
+        # Calculate totals for this employee
+        total_assignments = len([d for d in daily_status if d['status'] == 'ASSIGNED'])
+        total_off_days = len([d for d in daily_status if d['status'] == 'OFF_DAY'])
+        total_unassigned = len([d for d in daily_status if d['status'] == 'UNASSIGNED'])
+        
+        roster.append({
+            "employeeId": emp_id,
+            "rotationOffset": emp_offset,
+            "workPattern": emp_pattern,
+            "totalDays": len(daily_status),
+            "assignedDays": total_assignments,
+            "offDays": total_off_days,
+            "unassignedDays": total_unassigned,
+            "dailyStatus": daily_status
+        })
+    
+    return roster
 
 
 def compute_input_hash(input_data):
@@ -40,6 +187,214 @@ def compute_input_hash(input_data):
     except Exception as e:
         # Fallback: use a simple hash of string representation
         return "sha256:" + hashlib.sha256(str(input_data).encode()).hexdigest()
+
+
+def calculate_solution_quality(ctx, assignments, employee_roster, solver_status, input_data):
+    """
+    Calculate comprehensive solution quality metrics.
+    
+    Explains WHY the solution is FEASIBLE vs OPTIMAL and provides
+    metrics for evaluating solution quality.
+    
+    Args:
+        ctx: Context dict with slots, employees, constraints
+        assignments: List of assignment dicts
+        employee_roster: Employee roster with utilization data
+        solver_status: Status from CP-SAT (OPTIMAL, FEASIBLE, INFEASIBLE)
+        input_data: Original input JSON
+    
+    Returns:
+        Dict with solution quality metrics and explanations
+    """
+    from collections import Counter
+    
+    slots = ctx.get('slots', [])
+    employees = ctx.get('employees', [])
+    
+    # Count employees used
+    employee_counts = Counter(a['employeeId'] for a in assignments)
+    employees_used = len(employee_counts)
+    employees_available = len(employees)
+    
+    # Calculate shift distribution
+    if employee_counts:
+        shifts_per_emp = list(employee_counts.values())
+        min_shifts = min(shifts_per_emp)
+        max_shifts = max(shifts_per_emp)
+        avg_shifts = sum(shifts_per_emp) / len(shifts_per_emp)
+        shift_variance = max_shifts - min_shifts
+    else:
+        min_shifts = max_shifts = avg_shifts = shift_variance = 0
+    
+    # Coverage rate
+    total_slots = len(slots)
+    assigned_slots = len(assignments)
+    coverage_rate = (assigned_slots / total_slots * 100) if total_slots > 0 else 0
+    
+    # Employee utilization rate
+    utilization_rate = (employees_used / employees_available * 100) if employees_available > 0 else 0
+    
+    # Workload balance quality (lower variance = better balance)
+    if employees_used > 0:
+        balance_quality = 100 - min(shift_variance / avg_shifts * 100 if avg_shifts > 0 else 100, 100)
+    else:
+        balance_quality = 0
+    
+    # Determine quality grade based on metrics
+    if solver_status == "OPTIMAL":
+        quality_grade = "OPTIMAL"
+        quality_explanation = "CP-SAT solver proved this is the best possible solution within the constraint model."
+    elif solver_status == "FEASIBLE":
+        # Assess solution quality
+        if coverage_rate == 100 and shift_variance <= 1 and utilization_rate <= 60:
+            quality_grade = "EXCELLENT"
+            quality_explanation = "Solution is FEASIBLE (not proven optimal by CP-SAT), but achieves 100% coverage with perfect workload balance (max 1 shift difference). This is effectively optimal for practical purposes."
+        elif coverage_rate == 100 and shift_variance <= 2:
+            quality_grade = "VERY_GOOD"
+            quality_explanation = "Solution achieves 100% coverage with good workload balance. CP-SAT could not prove optimality within time limit, but solution quality is high."
+        elif coverage_rate >= 95:
+            quality_grade = "GOOD"
+            quality_explanation = "Solution meets most demand with reasonable employee distribution. Time limit may have prevented finding a better solution."
+        else:
+            quality_grade = "ACCEPTABLE"
+            quality_explanation = "Solution is feasible but may have room for improvement. Consider increasing solver time limit."
+    elif solver_status == "INFEASIBLE":
+        quality_grade = "INFEASIBLE"
+        quality_explanation = "No valid solution exists that satisfies all hard constraints. Review constraints, employee availability, or demand requirements."
+    else:
+        quality_grade = "UNKNOWN"
+        quality_explanation = f"Solver status: {solver_status}"
+    
+    # Optimization mode context
+    opt_mode = input_data.get('solverConfig', {}).get('optimizationMode', 'balanceWorkload')
+    fixed_offset = input_data.get('fixedRotationOffset', True)
+    
+    # Build quality metrics
+    quality_metrics = {
+        "qualityGrade": quality_grade,
+        "solverStatus": solver_status,
+        "solverStatusExplanation": get_solver_status_explanation(solver_status),
+        "qualityExplanation": quality_explanation,
+        
+        "coverageMetrics": {
+            "totalSlots": total_slots,
+            "assignedSlots": assigned_slots,
+            "unassignedSlots": total_slots - assigned_slots,
+            "coverageRate": round(coverage_rate, 1),
+            "coverageQuality": "COMPLETE" if coverage_rate == 100 else "PARTIAL"
+        },
+        
+        "employeeUtilization": {
+            "totalEmployeesAvailable": employees_available,
+            "employeesUsed": employees_used,
+            "employeesUnused": employees_available - employees_used,
+            "utilizationRate": round(utilization_rate, 1),
+            "underUtilizationIssues": check_under_utilization(employee_counts)
+        },
+        
+        "workloadBalance": {
+            "minShiftsPerEmployee": min_shifts,
+            "maxShiftsPerEmployee": max_shifts,
+            "avgShiftsPerEmployee": round(avg_shifts, 1),
+            "shiftVariance": shift_variance,
+            "balanceQuality": round(balance_quality, 1),
+            "balanceGrade": get_balance_grade(shift_variance, avg_shifts)
+        },
+        
+        "optimizationContext": {
+            "optimizationMode": opt_mode,
+            "fixedRotationOffset": fixed_offset,
+            "patternBased": check_if_pattern_based(input_data),
+            "continuousAdherence": check_continuous_adherence(employee_counts, avg_shifts)
+        }
+    }
+    
+    return quality_metrics
+
+
+def get_solver_status_explanation(status):
+    """Explain what each solver status means."""
+    explanations = {
+        "OPTIMAL": "CP-SAT proved this is the best possible solution. The solver exhaustively searched the solution space and mathematically verified no better solution exists.",
+        "FEASIBLE": "CP-SAT found a valid solution but could not prove it's the absolute best within the time limit. The solution satisfies all hard constraints, and further solving might find marginal improvements.",
+        "INFEASIBLE": "No solution exists that satisfies all hard constraints. This means the problem is over-constrained (too many restrictions) or under-resourced (not enough employees/capacity).",
+        "MODEL_INVALID": "The constraint model has logical errors or conflicts. Check constraint definitions and input data validity.",
+        "UNKNOWN": "Solver status could not be determined. This is unexpected and may indicate a solver error."
+    }
+    return explanations.get(status, f"Unknown status: {status}")
+
+
+def check_under_utilization(employee_counts):
+    """Check if any employees are significantly under-utilized."""
+    if not employee_counts:
+        return []
+    
+    counts = list(employee_counts.values())
+    avg = sum(counts) / len(counts)
+    issues = []
+    
+    # Check for employees with very few shifts
+    low_shift_employees = [emp_id for emp_id, count in employee_counts.items() if count < avg * 0.5 and count < 10]
+    if low_shift_employees:
+        issues.append({
+            "issue": "LOW_UTILIZATION",
+            "description": f"{len(low_shift_employees)} employees have significantly fewer shifts than average",
+            "affectedEmployees": low_shift_employees[:5],  # Show first 5
+            "recommendation": "Consider using 'balanceWorkload' optimization mode or review employee constraints"
+        })
+    
+    return issues
+
+
+def get_balance_grade(variance, avg):
+    """Grade workload balance quality."""
+    if avg == 0:
+        return "N/A"
+    
+    relative_variance = variance / avg if avg > 0 else 0
+    
+    if variance == 0:
+        return "PERFECT"
+    elif variance == 1:
+        return "EXCELLENT"
+    elif variance <= 2:
+        return "VERY_GOOD"
+    elif relative_variance < 0.15:
+        return "GOOD"
+    elif relative_variance < 0.25:
+        return "ACCEPTABLE"
+    else:
+        return "POOR"
+
+
+def check_if_pattern_based(input_data):
+    """Check if the problem uses work patterns (rotation-based scheduling)."""
+    demands = input_data.get('demandItems', [])
+    for demand in demands:
+        for req in demand.get('requirements', []):
+            if req.get('workPattern'):
+                return True
+        for shift in demand.get('shifts', []):
+            if shift.get('rotationSequence'):
+                return True
+    return False
+
+
+def check_continuous_adherence(employee_counts, avg_shifts):
+    """
+    Check if continuous adherence is being followed.
+    
+    Continuous adherence means: IF an employee is selected, THEN they work
+    all days in their pattern cycle (typically 20-21 shifts/month for 6-day patterns).
+    
+    Returns True if employees are working full patterns (~20+ shifts).
+    """
+    if not employee_counts or avg_shifts == 0:
+        return False
+    
+    # For a 6-day pattern (D-D-N-N-O-O) over 30 days, expect ~20 shifts
+    # If avg is around 20, continuous adherence is likely being followed
+    return avg_shifts >= 18  # Allow some tolerance
 
 
 def build_output(input_data, ctx, status, solver_result, assignments, violations):
@@ -143,6 +498,18 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         employee_hours_summary[emp_id]['monthly_ot'][month_key] = round(total, 2)
     
     # ========== BUILD OUTPUT ==========
+    # Build employee roster with daily status for ALL employees
+    employee_roster = build_employee_roster(input_data, ctx, annotated_assignments)
+    
+    # ========== CALCULATE SOLUTION QUALITY METRICS ==========
+    solution_quality = calculate_solution_quality(
+        ctx, 
+        annotated_assignments, 
+        employee_roster, 
+        solver_result.get("status", status),
+        input_data
+    )
+    
     output = {
         "schemaVersion": "0.43",
         "planningReference": ctx.get("planningReference", "UNKNOWN"),
@@ -161,6 +528,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         },
         "scoreBreakdown": score_breakdown,
         "assignments": annotated_assignments,
+        "employeeRoster": employee_roster,  # NEW: Complete employee roster with daily status
+        "solutionQuality": solution_quality,  # NEW: Solution quality metrics and explanations
         "unmetDemand": [],
         "meta": {
             "inputHash": input_hash,
