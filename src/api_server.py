@@ -43,6 +43,7 @@ from src.redis_job_manager import RedisJobManager
 from src.redis_worker import start_worker_pool
 from src.feasibility_checker import quick_feasibility_check
 from src.incremental_solver import solve_incremental, IncrementalSolverError
+from src.offset_manager import ensure_staggered_offsets
 
 # ============================================================================
 # LOGGING SETUP
@@ -334,6 +335,10 @@ async def solve_endpoint(
         # Pass raw_body_json to support both wrapped {"input_json": {...}} and raw NGRS input
         input_json, input_warnings = get_input_json(None, uploaded_json, raw_body_json)
         warnings.extend(input_warnings)
+        
+        # ====== AUTO-STAGGER ROTATION OFFSETS ======
+        # Automatically ensure employees have staggered offsets for O-pattern coverage
+        input_json = ensure_staggered_offsets(input_json)
         
         # ====== LOAD DATA ======
         ctx = load_input(input_json)
@@ -678,6 +683,10 @@ async def solve_async(
             priority = raw_body_json.get("priority", 0)
             ttl_seconds = raw_body_json.get("ttl_seconds")
             webhook_url = raw_body_json.get("webhook_url")
+        
+        # ====== AUTO-STAGGER ROTATION OFFSETS ======
+        # Automatically ensure employees have staggered offsets for O-pattern coverage
+        input_json = ensure_staggered_offsets(input_json)
         
         # Perform quick feasibility check (< 100ms)
         feasibility_result = None
