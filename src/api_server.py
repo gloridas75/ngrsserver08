@@ -87,7 +87,7 @@ ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "change-me-in-production")
 app = FastAPI(
     title="NGRS Solver API",
     description="REST API for NGRS Shift Scheduling Solver",
-    version="1.0.0",
+    version="0.95.0",
     docs_url="/docs",
     openapi_url="/openapi.json"
 )
@@ -267,9 +267,9 @@ async def health():
 async def get_version():
     """Get API and solver version information."""
     return {
-        "apiVersion": "1.0.0",
-        "solverVersion": "optSolve-py-0.9.0",
-        "schemaVersion": "0.73",
+        "apiVersion": "0.95.0",
+        "solverVersion": "optSolve-py-0.95.0",
+        "schemaVersion": "0.95",
         "timestamp": datetime.now().isoformat()
     }
 
@@ -434,8 +434,8 @@ async def get_schemas():
         return {
             "error": "Schema files not found",
             "message": str(e),
-            "inputSchema": {"description": "NGRS input schema (v0.73)"},
-            "outputSchema": {"description": "NGRS output schema (v0.73)"}
+            "inputSchema": {"description": "NGRS input schema (v0.95)"},
+            "outputSchema": {"description": "NGRS output schema (v0.95)"}
         }
     except Exception as e:
         return {
@@ -1088,7 +1088,7 @@ async def solve_incremental_endpoint(
         result["meta"]["runId"] = run_id
         result["meta"]["timestamp"] = datetime.now().isoformat()
         if "schemaVersion" not in result["meta"]:
-            result["meta"]["schemaVersion"] = request_data.get("schemaVersion", "0.80")
+            result["meta"]["schemaVersion"] = request_data.get("schemaVersion", "0.95")
         
         return result
         

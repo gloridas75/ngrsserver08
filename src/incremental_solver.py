@@ -387,7 +387,7 @@ def solve_incremental(
     # Step 5: Build modified input for solver
     # Only solve for solvable slots
     incremental_input = {
-        "schemaVersion": request_data.get("schemaVersion", "0.80"),
+        "schemaVersion": request_data.get("schemaVersion", "0.95"),
         "planningReference": request_data["planningReference"],
         "planningHorizon": planning_horizon,
         "demandItems": demand_items,

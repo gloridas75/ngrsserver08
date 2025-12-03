@@ -126,10 +126,8 @@ def add_constraints(model, ctx):
                     # Implemented as: var1 + var2 <= 1
                     model.Add(var1 + var2 <= 1)
                     constraints_added += 1
-                else:
-                    # Once we find a slot with sufficient rest, all later slots will too
-                    # (since sorted by end time, and checking chronologically)
-                    break
+                # NOTE: Removed early break - must check ALL pairs because different shift types
+                # on the same day can have different rest periods (e.g., D->D vs D->N)
     
     print(f"[C4] Minimum Rest Between Shifts Constraint (HARD)")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")

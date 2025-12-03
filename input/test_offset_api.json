@@ -1,0 +1,352 @@
+{
+  "schemaVersion": "0.70",
+  "planningReference": "TEST-OFFSET-MANAGER",
+  "timezone": "Asia/Singapore",
+  "fixedRotationOffset": true,
+  "planningHorizon": {
+    "startDate": "2026-03-01",
+    "endDate": "2026-03-12"
+  },
+  "solverConfig": {
+    "optimizationMode": "balanceWorkload",
+    "maxEmployeesToUse": 20
+  },
+  "publicHolidays": [],
+  "solverRunTime": {
+    "maxSeconds": 30
+  },
+  "schemeMap": {
+    "A": "Scheme A"
+  },
+  "demandItems": [
+    {
+      "demandId": "TEST-DEMAND",
+      "locationId": "LOC-TEST",
+      "ouId": "TEST",
+      "shiftStartDate": "2026-03-01",
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "08:00:00",
+              "end": "20:00:00",
+              "nextDay": false
+            },
+            {
+              "shiftCode": "N",
+              "start": "20:00:00",
+              "end": "08:00:00",
+              "nextDay": true
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": false,
+          "shiftSetId": "TEST-SET",
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "coverageAnchor": "2026-03-01",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": []
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "REQ-1",
+          "productTypeId": "TEST",
+          "rankId": "SER",
+          "headcount": 2,
+          "workPattern": [
+            "D",
+            "D",
+            "N",
+            "N",
+            "O",
+            "O"
+          ],
+          "requiredQualifications": [],
+          "gender": "Any",
+          "Scheme": "Global"
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "EMP000",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP001",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP002",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP003",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP004",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP005",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP006",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP007",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP008",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP009",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP010",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP011",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP012",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP013",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP014",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP015",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP016",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP017",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP018",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "EMP019",
+      "ouId": "TEST",
+      "productTypeId": "TEST",
+      "rankId": "SER",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    }
+  ],
+  "constraintList": [
+    {
+      "id": "oneShiftPerDay",
+      "enforcement": "hard",
+      "params": {
+        "oneShiftPerDay": "1"
+      }
+    },
+    {
+      "id": "momMaxConsecutiveWorkDays",
+      "enforcement": "hard",
+      "params": {
+        "maxDays": 12
+      }
+    },
+    {
+      "id": "momOneoffperweek",
+      "enforcement": "hard",
+      "params": {
+        "required": true
+      }
+    }
+  ],
+  "solverScoreConfig": {}
+}

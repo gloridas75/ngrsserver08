@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "0.7",
+  "planningReference": {
+    "orgUnit": "Test Department",
+    "planId": "CACHE-TEST-001",
+    "planningPeriod": "December 2025"
+  },
+  "dateRange": {
+    "startDate": "2025-12-01",
+    "endDate": "2025-12-07"
+  },
+  "solverConfig": {
+    "autoOptimizeStrictRatio": true,
+    "minStrictRatio": 0.6,
+    "maxStrictRatio": 0.8,
+    "strictRatioStep": 0.1,
+    "maxUnassignedSlots": 10,
+    "timeLimit": 60
+  },
+  "demandItems": [
+    {
+      "demandId": "DEM-001",
+      "startDate": "2025-12-01",
+      "endDate": "2025-12-07",
+      "shiftRequirements": [
+        {
+          "shiftType": "D",
+          "startTime": "08:00",
+          "endTime": "16:00",
+          "minEmployees": 3
+        },
+        {
+          "shiftType": "N",
+          "startTime": "20:00",
+          "endTime": "04:00",
+          "minEmployees": 3
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "REQ-001",
+          "workPattern": ["D", "D", "N", "N", "O", "O"],
+          "rotationSettings": {
+            "optimizeOffsets": true,
+            "allowedOffsets": [0, 1, 2, 3, 4, 5]
+          }
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {"employeeId": "E001", "name": "Alice"},
+    {"employeeId": "E002", "name": "Bob"},
+    {"employeeId": "E003", "name": "Charlie"},
+    {"employeeId": "E004", "name": "Diana"},
+    {"employeeId": "E005", "name": "Eve"},
+    {"employeeId": "E006", "name": "Frank"},
+    {"employeeId": "E007", "name": "Grace"},
+    {"employeeId": "E008", "name": "Henry"},
+    {"employeeId": "E009", "name": "Iris"},
+    {"employeeId": "E010", "name": "Jack"}
+  ]
+}

@@ -60,7 +60,7 @@ class Score(BaseModel):
 class SolverRunMetadata(BaseModel):
     """Metadata about the solve run."""
     runId: str = Field(..., description="Unique run ID")
-    solverVersion: str = Field(default="optSolve-py-0.9.0")
+    solverVersion: str = Field(default="optSolve-py-0.95.0")
     startedAt: str = Field(..., description="ISO 8601 timestamp")
     ended: str = Field(..., description="ISO 8601 timestamp")
     durationSeconds: float = Field(..., description="Total solve time in seconds")
@@ -175,9 +175,9 @@ class SchemaResponse(BaseModel):
 
 class VersionResponse(BaseModel):
     """Response from GET /version endpoint."""
-    apiVersion: str = Field("1.0.0")
-    solverVersion: str = Field("optSolve-py-0.9.0")
-    schemaVersion: str = Field("0.73")
+    apiVersion: str = Field("0.95.0")
+    solverVersion: str = Field("optSolve-py-0.95.0")
+    schemaVersion: str = Field("0.95")
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
 
 
@@ -190,7 +190,7 @@ class AsyncJobRequest(BaseModel):
     
     input_json: Optional[Dict[str, Any]] = Field(
         None,
-        description="Full NGRS input JSON (wrapped format). Should match schema v0.70+."
+        description="Full NGRS input JSON (wrapped format). Should match schema v0.95."
     )
     
     priority: Optional[int] = Field(

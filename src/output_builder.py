@@ -511,11 +511,11 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     )
     
     output = {
-        "schemaVersion": "0.43",
+        "schemaVersion": "0.95",
         "planningReference": ctx.get("planningReference", "UNKNOWN"),
         "solverRun": {
             "runId": "SRN-local-0.4",
-            "solverVersion": "optSolve-py-0.9.0",
+            "solverVersion": "optSolve-py-0.95.0",
             "startedAt": solver_result.get("start_timestamp", ""),
             "ended": solver_result.get("end_timestamp", ""),
             "durationSeconds": solver_result.get("duration_seconds", 0),
@@ -669,11 +669,11 @@ def build_incremental_output(
     
     # Build output
     output = {
-        "schemaVersion": "0.80",
+        "schemaVersion": "0.95",
         "planningReference": input_data.get("planningReference", "UNKNOWN"),
         "solverRun": {
             "runId": run_id,
-            "solverVersion": "optSolve-py-0.9.0",
+            "solverVersion": "optSolve-py-0.95.0",
             "startedAt": solver_result.get("start_timestamp", current_timestamp),
             "ended": solver_result.get("end_timestamp", current_timestamp),
             "durationSeconds": solver_result.get("duration_seconds", 0),

@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "entries": {
+    "86435d6ea606e15c": {
+      "patternHash": "86435d6ea606e15c",
+      "pattern": "DDDDOODDDDDO",
+      "patternLength": 12,
+      "optimalRatio": 0.8,
+      "employeesUsed": 9,
+      "lastUpdated": "2025-12-03T20:15:05.321892",
+      "lastUsed": "2025-12-03T20:15:05.321894",
+      "usageCount": 0,
+      "shiftRequirements": [],
+      "metadata": {
+        "testedRatios": 3,
+        "timeLimit": 30,
+        "solverVersion": "0.7",
+        "requirementId": "48_1"
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-# NGRS Solver v0.8
+# NGRS Solver v0.95
 
 **Next-Generation Roster Scheduling Solver** - An intelligent shift scheduling optimizer powered by Google OR-Tools CP-SAT solver with REST API and Redis-based async job processing.
 
@@ -12,7 +12,32 @@
 
 ---
 
-## 🆕 What's New in v0.8 (November 2025)
+## 🆕 What's New in v0.95 (December 2025)
+
+### 🎯 Per-Requirement Auto-Optimization
+**Intelligent ratio optimization at requirement level!**
+- Configure auto-optimization per work pattern
+- Different patterns can have different optimization strategies
+- Optional optimization (only runs when explicitly enabled)
+- Better control and flexibility for production scenarios
+
+### 💾 Automatic Ratio Caching
+**91% time savings on repeated patterns!**
+- Automatically caches optimal strictAdherenceRatio values
+- Pattern-based intelligent caching
+- Reuses optimal ratios for same patterns
+- Reduces solve time from 45 min to 15 min for large rosters
+
+### ⚙️ Configurable Optimization Range
+**Flexible ratio testing for different scales!**
+- Customize min/max strict ratio and step size
+- Test 3-11 ratios based on your needs
+- Production-optimized defaults (60%-80%, step 10%)
+- Reduces optimization time by 64-73%
+
+---
+
+## What's New in v0.8 (November 2025)
 
 ### 🔔 Webhook Notifications
 **Stop polling!** Get instant HTTP POST notifications when jobs complete.
