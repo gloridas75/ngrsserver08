@@ -108,7 +108,7 @@ curl https://ngrssolver08.comcentricapps.com/version
 python src/run_solver.py --in input/input_v0.8_0312_1700.json --time 30
 
 # Check cache
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # Run again (should use cache)
 python src/run_solver.py --in input/input_v0.8_0312_1700.json --time 30
@@ -150,10 +150,10 @@ Savings: 91% ✅
 
 **Cache Management:**
 ```bash
-python src/manage_ratio_cache.py stats    # View statistics
-python src/manage_ratio_cache.py list     # List all patterns
-python src/manage_ratio_cache.py clear    # Clear cache
-python src/manage_ratio_cache.py export   # Backup cache
+python3 src/manage_ratio_cache.py stats    # View statistics
+python3 src/manage_ratio_cache.py list     # List all patterns
+python3 src/manage_ratio_cache.py clear    # Clear cache
+python3 src/manage_ratio_cache.py export   # Backup cache
 ```
 
 ### 3. Configurable Optimization
@@ -197,7 +197,7 @@ python src/run_solver.py --in input/updated_input.json --time 300
 
 **Step 3: Verify Cache**
 ```bash
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 ```
 
 ---

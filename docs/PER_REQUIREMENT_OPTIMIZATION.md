@@ -296,7 +296,7 @@ python src/run_solver.py --in input/pattern_A.json --time 300
 # 💾 Cached for future runs
 
 # 3. Check cache
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 # Total entries: 1
 ```
 

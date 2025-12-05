@@ -23,11 +23,11 @@ The ratio caching system has been successfully implemented with **91% time savin
 
 **Commands:**
 ```bash
-python src/manage_ratio_cache.py stats      # View cache statistics
-python src/manage_ratio_cache.py list       # List all cached patterns
-python src/manage_ratio_cache.py clear      # Clear entire cache
-python src/manage_ratio_cache.py export     # Export to JSON
-python src/manage_ratio_cache.py import     # Import from JSON
+python3 src/manage_ratio_cache.py stats      # View cache statistics
+python3 src/manage_ratio_cache.py list       # List all cached patterns
+python3 src/manage_ratio_cache.py clear      # Clear entire cache
+python3 src/manage_ratio_cache.py export     # Export to JSON
+python3 src/manage_ratio_cache.py import     # Import from JSON
 ```
 
 ### 3. `docs/RATIO_CACHING_GUIDE.md`
@@ -204,13 +204,13 @@ python src/run_solver.py --in input/your_input.json --time 300
 ### Phase 3: Monitor Cache
 ```bash
 # View statistics
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # List all cached patterns
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Export backup
-python src/manage_ratio_cache.py export > backups/cache_backup.json
+python3 src/manage_ratio_cache.py export > backups/cache_backup.json
 ```
 
 ---
@@ -284,7 +284,7 @@ python src/run_solver.py --in input/pattern_A.json --time 300
 ### Example 2: Check Cache Before Running
 ```bash
 # View what's cached
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Run solver
 python src/run_solver.py --in input/pattern_A.json --time 300
@@ -293,11 +293,11 @@ python src/run_solver.py --in input/pattern_A.json --time 300
 ### Example 3: Clear Cache for Fresh Optimization
 ```bash
 # Clear specific pattern
-python src/manage_ratio_cache.py list
-python src/manage_ratio_cache.py invalidate a1b2c3d4
+python3 src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py invalidate a1b2c3d4
 
 # Or clear all
-python src/manage_ratio_cache.py clear
+python3 src/manage_ratio_cache.py clear
 
 # Re-run will optimize fresh
 python src/run_solver.py --in input/pattern_A.json --time 300
@@ -324,15 +324,15 @@ The caching system is **fully functional** and **production-ready**:
 For detailed information, see:
 - **Complete Guide:** `docs/RATIO_CACHING_GUIDE.md` (15 pages)
 - **Module Docstrings:** `src/ratio_cache.py`
-- **CLI Help:** `python src/manage_ratio_cache.py --help`
+- **CLI Help:** `python3 src/manage_ratio_cache.py --help`
 
 ---
 
 ## 🚀 Next Steps
 
 1. **Test with your current inputs** (caching is automatic)
-2. **Monitor cache statistics** (`python src/manage_ratio_cache.py stats`)
+2. **Monitor cache statistics** (`python3 src/manage_ratio_cache.py stats`)
 3. **Watch time savings** on second+ runs
-4. **Export backups weekly** (`python src/manage_ratio_cache.py export`)
+4. **Export backups weekly** (`python3 src/manage_ratio_cache.py export`)
 
 **Your 500-employee production concern is now solved with 91% time savings!** 🎉

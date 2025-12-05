@@ -49,20 +49,20 @@ else:
 
 ```bash
 # View cache statistics
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # List all cached patterns
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Clear entire cache
-python src/manage_ratio_cache.py clear
+python3 src/manage_ratio_cache.py clear
 
 # Remove specific pattern
-python src/manage_ratio_cache.py invalidate <hash>
+python3 src/manage_ratio_cache.py invalidate <hash>
 
 # Export/import for backups
-python src/manage_ratio_cache.py export > backup.json
-python src/manage_ratio_cache.py import backup.json
+python3 src/manage_ratio_cache.py export > backup.json
+python3 src/manage_ratio_cache.py import backup.json
 ```
 
 **Example Output:**
@@ -211,7 +211,7 @@ python src/run_solver.py --in input/pattern_C.json --time 300
 # Time: 45 minutes (auto-optimize + cache)
 
 # Cache now contains 3 patterns
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 # Total entries: 3
 ```
 
@@ -231,7 +231,7 @@ python src/run_solver.py --in input/pattern_C.json --time 300
 # Time: 15 minutes ✅ (cache hit, 91% faster!)
 
 # Check cache usage
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 # Pattern A: used 15 times
 # Pattern B: used 22 times  
 # Pattern C: used 8 times
@@ -354,13 +354,13 @@ grep -n "from src.ratio_cache" src/run_solver.py  # ✅ Integrated
 
 ```bash
 # View stats (should be empty initially)
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # Run solver with auto-optimization
 python src/run_solver.py --in input/your_input.json --time 300
 
 # Check cache again (should have 1 entry)
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # Run solver again (should use cache)
 python src/run_solver.py --in input/your_input.json --time 300
@@ -422,28 +422,28 @@ async def cache_stats():
 
 ```bash
 # View cache statistics
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # Export backup
-python src/manage_ratio_cache.py export > backups/cache_$(date +%Y%m%d).json
+python3 src/manage_ratio_cache.py export > backups/cache_$(date +%Y%m%d).json
 ```
 
 ### Monthly Tasks
 
 ```bash
 # Review cached patterns
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Optional: Clear old/unused patterns
-python src/manage_ratio_cache.py clear --force
+python3 src/manage_ratio_cache.py clear --force
 ```
 
 ### When Pattern Changes
 
 ```bash
 # Invalidate specific pattern
-python src/manage_ratio_cache.py list
-python src/manage_ratio_cache.py invalidate <hash>
+python3 src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py invalidate <hash>
 
 # Re-run solver to re-optimize
 python src/run_solver.py --in input/pattern.json --time 300

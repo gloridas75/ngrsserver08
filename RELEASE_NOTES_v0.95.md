@@ -45,17 +45,17 @@
 **Cache Management:**
 ```bash
 # View cache statistics
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # List all cached patterns
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Clear cache
-python src/manage_ratio_cache.py clear
+python3 src/manage_ratio_cache.py clear
 
 # Export/import for backups
-python src/manage_ratio_cache.py export > backup.json
-python src/manage_ratio_cache.py import backup.json
+python3 src/manage_ratio_cache.py export > backup.json
+python3 src/manage_ratio_cache.py import backup.json
 ```
 
 ### 3. Configurable Optimization Range
@@ -272,7 +272,7 @@ Now returns v0.95 schemas with new auto-optimization fields.
 
 ```bash
 # After first run
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # Output:
 # ======================================================================
@@ -338,7 +338,7 @@ No changes needed! API automatically handles new schema version.
 python src/run_solver.py --in input/updated_input.json --time 300
 
 # Verify cache created
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 ```
 
 ---
@@ -390,8 +390,8 @@ python src/manage_ratio_cache.py stats
 
 For issues or questions:
 - Check documentation: `docs/` folder
-- View cache: `python src/manage_ratio_cache.py stats`
-- Clear cache: `python src/manage_ratio_cache.py clear`
+- View cache: `python3 src/manage_ratio_cache.py stats`
+- Clear cache: `python3 src/manage_ratio_cache.py clear`
 
 ---
 
@@ -402,7 +402,7 @@ For issues or questions:
 - [ ] Test first run (should auto-optimize and cache)
 - [ ] Test second run (should use cache)
 - [ ] Verify cache file created: `config/ratio_cache.json`
-- [ ] Check cache stats: `python src/manage_ratio_cache.py stats`
+- [ ] Check cache stats: `python3 src/manage_ratio_cache.py stats`
 
 ---
 

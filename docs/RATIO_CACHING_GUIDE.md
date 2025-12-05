@@ -92,7 +92,7 @@ USING CACHED OPTIMAL RATIO (91% TIME SAVINGS!)
 ### View Cache Statistics
 
 ```bash
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 ```
 
 **Output:**
@@ -115,33 +115,33 @@ Cached patterns:
 ### List All Cached Patterns
 
 ```bash
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 ```
 
 ### Clear Cache
 
 ```bash
 # With confirmation
-python src/manage_ratio_cache.py clear
+python3 src/manage_ratio_cache.py clear
 
 # Force clear (no confirmation)
-python src/manage_ratio_cache.py clear --force
+python3 src/manage_ratio_cache.py clear --force
 ```
 
 ### Remove Specific Pattern
 
 ```bash
-python src/manage_ratio_cache.py invalidate a1b2c3d4
+python3 src/manage_ratio_cache.py invalidate a1b2c3d4
 ```
 
 ### Export/Import Cache
 
 ```bash
 # Export (backup)
-python src/manage_ratio_cache.py export > cache_backup.json
+python3 src/manage_ratio_cache.py export > cache_backup.json
 
 # Import (restore)
-python src/manage_ratio_cache.py import cache_backup.json
+python3 src/manage_ratio_cache.py import cache_backup.json
 ```
 
 ---
@@ -263,19 +263,19 @@ This means:
 **Weekly tasks:**
 ```bash
 # View statistics
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # Export backup
-python src/manage_ratio_cache.py export > backups/cache_$(date +%Y%m%d).json
+python3 src/manage_ratio_cache.py export > backups/cache_$(date +%Y%m%d).json
 ```
 
 **Monthly tasks:**
 ```bash
 # Review old patterns (optional)
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Clear unused patterns if needed
-python src/manage_ratio_cache.py invalidate <hash>
+python3 src/manage_ratio_cache.py invalidate <hash>
 ```
 
 ---
@@ -363,7 +363,7 @@ For near-similar patterns, suggest cached ratios:
 
 1. **Check pattern hash:**
    ```bash
-   python src/manage_ratio_cache.py list
+   python3 src/manage_ratio_cache.py list
    # Verify your pattern is in the cache
    ```
 
@@ -388,10 +388,10 @@ For near-similar patterns, suggest cached ratios:
 **Solution:**
 ```bash
 # View stats
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # Remove old entries
-python src/manage_ratio_cache.py clear --force
+python3 src/manage_ratio_cache.py clear --force
 
 # Re-run most common patterns to rebuild cache
 ```
@@ -403,7 +403,7 @@ python src/manage_ratio_cache.py clear --force
 **Solution:**
 ```bash
 # Invalidate specific pattern
-python src/manage_ratio_cache.py invalidate <hash>
+python3 src/manage_ratio_cache.py invalidate <hash>
 
 # Re-run solver to re-optimize
 python src/run_solver.py --in input/my_input.json --time 300
@@ -436,7 +436,7 @@ python src/run_solver.py --in input/my_input.json --time 300
 
 1. **Cache Hit Rate**
    ```bash
-   python src/manage_ratio_cache.py stats
+   python3 src/manage_ratio_cache.py stats
    # Total usage / (total usage + new patterns)
    ```
 
@@ -485,7 +485,7 @@ python src/run_solver.py --in input/my_input.json --time 300
 
 **Step 3:** Verify cache created
 ```bash
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 # Should show 1 entry after first run
 ```
 
@@ -501,5 +501,5 @@ python src/run_solver.py --in input/my_input.json --time 300
 
 For issues or questions:
 - Check troubleshooting section above
-- Review cache statistics: `python src/manage_ratio_cache.py stats`
-- Export cache for analysis: `python src/manage_ratio_cache.py export`
+- Review cache statistics: `python3 src/manage_ratio_cache.py stats`
+- Export cache for analysis: `python3 src/manage_ratio_cache.py export`

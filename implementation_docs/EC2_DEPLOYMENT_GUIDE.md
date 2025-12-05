@@ -508,13 +508,13 @@ curl -X POST http://$EC2_IP:8080/solve/async \
 cd ~/ngrsserver08
 
 # Check cache stats
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # List cached patterns
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Clear cache (if needed)
-python src/manage_ratio_cache.py clear
+python3 src/manage_ratio_cache.py clear
 ```
 
 ### Load Testing

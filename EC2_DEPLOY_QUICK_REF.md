@@ -117,8 +117,8 @@ curl -X POST http://localhost:8080/solve/async \
 
 ```bash
 cd ~/ngrsserver08
-python src/manage_ratio_cache.py stats
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py list
 ```
 
 ---

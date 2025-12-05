@@ -35,19 +35,19 @@ python src/run_solver.py --in input/pattern_A.json --time 300
 
 ```bash
 # View statistics
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # List all cached patterns
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 
 # Clear cache
-python src/manage_ratio_cache.py clear
+python3 src/manage_ratio_cache.py clear
 
 # Export backup
-python src/manage_ratio_cache.py export > backup.json
+python3 src/manage_ratio_cache.py export > backup.json
 
 # Import backup
-python src/manage_ratio_cache.py import backup.json
+python3 src/manage_ratio_cache.py import backup.json
 ```
 
 ---
@@ -109,19 +109,19 @@ USING CACHED OPTIMAL RATIO
 ```bash
 # 1. Check autoOptimizeStrictRatio is true
 # 2. Verify cache exists
-python src/manage_ratio_cache.py stats
+python3 src/manage_ratio_cache.py stats
 
 # 3. Check pattern is cached
-python src/manage_ratio_cache.py list
+python3 src/manage_ratio_cache.py list
 ```
 
 ### Force re-optimization?
 ```bash
 # Clear cache for pattern
-python src/manage_ratio_cache.py invalidate <hash>
+python3 src/manage_ratio_cache.py invalidate <hash>
 
 # Or clear all
-python src/manage_ratio_cache.py clear --force
+python3 src/manage_ratio_cache.py clear --force
 ```
 
 ---
