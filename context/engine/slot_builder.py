@@ -35,6 +35,7 @@ class Slot:
         schemeRequirement: Scheme requirement ('A', 'B', 'P', 'Global')
         requiredQualifications: List of required qualification codes
         rotationSequence: Rotation pattern for this requirement
+        patternStartDate: Anchor date for rotation pattern calculation (shiftStartDate from demand)
         preferredTeams: List of preferred team IDs
         whitelist: Whitelist constraints {teamIds, employeeIds}
         blacklist: Blacklist with date ranges {employeeIds: [{employeeId, blacklistStartDate, blacklistEndDate}]}
@@ -54,6 +55,7 @@ class Slot:
     schemeRequirement: str
     requiredQualifications: List[str]
     rotationSequence: List[str]
+    patternStartDate: date
     coverageAnchor: date
     preferredTeams: List[str]
     whitelist: Dict[str, List[str]]
@@ -321,6 +323,7 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                                 schemeRequirement=scheme_req,
                                 requiredQualifications=required_quals,
                                 rotationSequence=work_pattern,
+                                patternStartDate=base,
                                 coverageAnchor=coverage_anchor_date,
                                 preferredTeams=preferred_teams,
                                 whitelist=whitelist,

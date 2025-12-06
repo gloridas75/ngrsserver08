@@ -5,7 +5,7 @@
 """
 from ortools.sat.python import cp_model
 import importlib, pkgutil
-from datetime import datetime
+from datetime import datetime, date
 import time
 import os
 from collections import defaultdict
@@ -882,6 +882,38 @@ def calculate_employee_work_pattern(base_pattern: list, offset: int) -> list:
     return base_pattern[offset:] + base_pattern[:offset]
 
 
+def calculate_pattern_day(assignment_date: date, pattern_start_date: date, employee_offset: int, pattern_length: int) -> int:
+    """Calculate which day of the work pattern this assignment falls on.
+    
+    Args:
+        assignment_date: The date of this assignment
+        pattern_start_date: The anchor date for the rotation pattern (shiftStartDate)
+        employee_offset: Employee's rotation offset (0 to pattern_length-1)
+        pattern_length: Length of the work pattern cycle
+    
+    Returns:
+        Integer from 0 to (pattern_length-1) indicating position in the pattern cycle
+        
+    Formula:
+        patternDay = (days_since_start + employee_offset) % pattern_length
+        
+    Example:
+        Pattern: [D, D, N, N, O, O] (length=6)
+        Start date: 2025-12-01
+        Employee offset: 0, Assignment date: 2025-12-01 (0 days after start)
+        Result: (0 + 0) % 6 = 0 (Pattern[0] = 'D')
+        
+        Employee offset: 3, Assignment date: 2025-12-01 (0 days after start)
+        Result: (0 + 3) % 6 = 3 (Pattern[3] = 'N')
+        
+        Employee offset: 1, Assignment date: 2025-12-02 (1 day after start)
+        Result: (1 + 1) % 6 = 2 (Pattern[2] = 'N')
+    """
+    days_since_start = (assignment_date - pattern_start_date).days
+    pattern_day = (days_since_start + employee_offset) % pattern_length
+    return pattern_day
+
+
 def extract_assignments(ctx, solver) -> list:
     """Extract assignments from solver solution.
     
@@ -916,27 +948,28 @@ def extract_assignments(ctx, solver) -> list:
                     # Get employee's rotation offset
                     emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
                     
-                    # Calculate employee-specific work pattern based on their offset
-                    employee_work_pattern = calculate_employee_work_pattern(slot.rotationSequence, emp_offset)
+                    # Calculate patternDay: which day in the rotation cycle this assignment falls on
+                    pattern_length = len(slot.rotationSequence) if slot.rotationSequence else 1
+                    pattern_day = calculate_pattern_day(
+                        assignment_date=slot.date,
+                        pattern_start_date=slot.patternStartDate,  # From slot (shiftStartDate)
+                        employee_offset=emp_offset,
+                        pattern_length=pattern_length
+                    )
                     
                     assignment = {
                         "assignmentId": f"{slot.demandId}-{slot.date.isoformat()}-{slot.shiftCode}-{emp_id}",
                         "demandId": slot.demandId,
-                        "requirementId": slot.requirementId,  # v0.70: Include requirement ID
+                        "requirementId": slot.requirementId,
                         "date": slot.date.isoformat(),
-                        "shiftId": slot.shiftCode,
                         "slotId": slot.slot_id,
                         "shiftCode": slot.shiftCode,
+                        "patternDay": pattern_day,
                         "startDateTime": slot.start.isoformat(),
                         "endDateTime": slot.end.isoformat(),
                         "employeeId": emp_id,
                         "newRotationOffset": emp_offset,
-                        "workPattern": employee_work_pattern,  # Employee-specific rotated pattern
-                        "status": "ASSIGNED",
-                        "constraintResults": {
-                            "hard": [],
-                            "soft": []
-                        }
+                        "status": "ASSIGNED"
                     }
                     assignments.append(assignment)
                     slot_assigned = True
@@ -949,20 +982,16 @@ def extract_assignments(ctx, solver) -> list:
                 assignment = {
                     "assignmentId": f"{slot.demandId}-{slot.date.isoformat()}-{slot.shiftCode}-UNASSIGNED",
                     "demandId": slot.demandId,
-                    "requirementId": slot.requirementId,  # v0.70: Include requirement ID
+                    "requirementId": slot.requirementId,
                     "date": slot.date.isoformat(),
-                    "shiftId": slot.shiftCode,
                     "slotId": slot.slot_id,
                     "shiftCode": slot.shiftCode,
+                    "patternDay": None,
                     "startDateTime": slot.start.isoformat(),
                     "endDateTime": slot.end.isoformat(),
                     "employeeId": None,
                     "status": "UNASSIGNED",
-                    "reason": "No employee could be assigned without violating hard constraints",
-                    "constraintResults": {
-                        "hard": [],
-                        "soft": []
-                    }
+                    "reason": "No employee could be assigned without violating hard constraints"
                 }
                 assignments.append(assignment)
                 unassigned_count += 1

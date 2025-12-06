@@ -152,6 +152,24 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
     
     employee_roster = build_employee_roster(input_data, ctx, annotated_assignments)
     
+    # ========== CALCULATE ROSTER SUMMARY ==========
+    roster_summary = {
+        "totalDailyStatuses": 0,
+        "byStatus": {
+            "ASSIGNED": 0,
+            "OFF_DAY": 0,
+            "UNASSIGNED": 0,
+            "NOT_USED": 0
+        }
+    }
+    
+    for emp_roster in employee_roster:
+        for day in emp_roster.get('dailyStatus', []):
+            roster_summary["totalDailyStatuses"] += 1
+            status_type = day.get('status', 'UNKNOWN')
+            if status_type in roster_summary["byStatus"]:
+                roster_summary["byStatus"][status_type] += 1
+    
     # Build output structure
     output = {
         "schemaVersion": "0.43",
@@ -173,6 +191,7 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
         "scoreBreakdown": score_breakdown,
         "assignments": annotated_assignments,  # Now includes hour breakdowns
         "employeeRoster": employee_roster,  # NEW: comprehensive daily status for ALL employees
+        "rosterSummary": roster_summary,  # NEW: Summary of roster statuses
         "unmetDemand": [],
         "meta": {
             "inputHash": input_hash,

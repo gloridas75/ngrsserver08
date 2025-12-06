@@ -52,11 +52,20 @@ def build_employee_roster(input_data, ctx, assignments):
     
     # Get base rotation pattern from first demand (assuming single pattern for now)
     base_pattern = None
+    pattern_start_date = None
     demands = input_data.get('demandItems', [])
     if demands and len(demands) > 0:
         reqs = demands[0].get('requirements', [])
         if reqs and len(reqs) > 0:
             base_pattern = reqs[0].get('workPattern', [])
+        # Get pattern start date from shiftStartDate
+        pattern_start_date = demands[0].get('shiftStartDate')
+    
+    # Convert pattern_start_date to date object if it exists
+    pattern_start_date_obj = None
+    if pattern_start_date:
+        from datetime import date as date_cls
+        pattern_start_date_obj = date_cls.fromisoformat(pattern_start_date)
     
     roster = []
     
@@ -81,6 +90,17 @@ def build_employee_roster(input_data, ctx, assignments):
         while current_date <= end_date:
             date_str = current_date.isoformat()
             
+            # Calculate patternDay if we have pattern info
+            pattern_day = None
+            if base_pattern and pattern_start_date_obj:
+                from context.engine.solver_engine import calculate_pattern_day
+                pattern_day = calculate_pattern_day(
+                    assignment_date=current_date,
+                    pattern_start_date=pattern_start_date_obj,
+                    employee_offset=emp_offset,
+                    pattern_length=len(base_pattern)
+                )
+            
             # Check if employee has assignment on this date
             assignment = assignment_by_emp_date.get(emp_id, {}).get(date_str)
             
@@ -90,6 +110,7 @@ def build_employee_roster(input_data, ctx, assignments):
                     "date": date_str,
                     "status": "ASSIGNED",
                     "shiftCode": assignment.get('shiftCode'),
+                    "patternDay": pattern_day,
                     "assignmentId": assignment.get('assignmentId'),
                     "startDateTime": assignment.get('startDateTime'),
                     "endDateTime": assignment.get('endDateTime')
@@ -116,6 +137,7 @@ def build_employee_roster(input_data, ctx, assignments):
                             "date": date_str,
                             "status": "OFF_DAY",
                             "shiftCode": "O",
+                            "patternDay": pattern_day,
                             "reason": "Scheduled off-day per work pattern"
                         })
                     else:
@@ -501,6 +523,24 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     # Build employee roster with daily status for ALL employees
     employee_roster = build_employee_roster(input_data, ctx, annotated_assignments)
     
+    # ========== CALCULATE ROSTER SUMMARY ==========
+    roster_summary = {
+        "totalDailyStatuses": 0,
+        "byStatus": {
+            "ASSIGNED": 0,
+            "OFF_DAY": 0,
+            "UNASSIGNED": 0,
+            "NOT_USED": 0
+        }
+    }
+    
+    for emp_roster in employee_roster:
+        for day in emp_roster.get('dailyStatus', []):
+            roster_summary["totalDailyStatuses"] += 1
+            status_type = day.get('status', 'UNKNOWN')
+            if status_type in roster_summary["byStatus"]:
+                roster_summary["byStatus"][status_type] += 1
+    
     # ========== CALCULATE SOLUTION QUALITY METRICS ==========
     solution_quality = calculate_solution_quality(
         ctx, 
@@ -529,6 +569,7 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         "scoreBreakdown": score_breakdown,
         "assignments": annotated_assignments,
         "employeeRoster": employee_roster,  # NEW: Complete employee roster with daily status
+        "rosterSummary": roster_summary,  # NEW: Summary of roster statuses
         "solutionQuality": solution_quality,  # NEW: Solution quality metrics and explanations
         "unmetDemand": [],
         "meta": {

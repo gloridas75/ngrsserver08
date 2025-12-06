@@ -92,6 +92,10 @@ class Assignment(BaseModel):
     date: str
     demandId: str
     shiftCode: str
+    patternDay: Optional[int] = Field(
+        None,
+        description="Position in the work pattern cycle (0 to pattern_length-1). Calculated as (days_since_start + employee_offset) % pattern_length"
+    )
     startDateTime: str
     endDateTime: str
     hours: Optional[Dict[str, float]] = Field(
@@ -115,8 +119,8 @@ class SolveResponse(BaseModel):
     """Response payload from POST /solve endpoint."""
     
     schemaVersion: Optional[str] = Field(
-        "0.43",
-        description="Schema version of the response"
+        "0.95",
+        description="Schema version of the response (Updated: patternDay field, employeeRoster, rosterSummary)"
     )
     
     planningReference: Optional[str] = Field(
@@ -138,7 +142,22 @@ class SolveResponse(BaseModel):
     
     assignments: List[Dict[str, Any]] = Field(
         default_factory=list,
-        description="List of assignments (employee-shift pairs)"
+        description="List of assignments (employee-shift pairs). Each assignment includes patternDay field showing position in work pattern cycle (0 to pattern_length-1)"
+    )
+    
+    employeeRoster: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="Complete daily status for all employees showing ASSIGNED/OFF_DAY/UNASSIGNED/NOT_USED per date. Includes patternDay for ASSIGNED and OFF_DAY statuses"
+    )
+    
+    rosterSummary: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Summary statistics of roster statuses across all employees and dates. Contains totalDailyStatuses and byStatus breakdown (ASSIGNED, OFF_DAY, UNASSIGNED, NOT_USED counts)"
+    )
+    
+    solutionQuality: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Solution quality metrics explaining why solution is OPTIMAL/FEASIBLE and utilization statistics"
     )
     
     violations: Optional[List[Dict[str, Any]]] = Field(
