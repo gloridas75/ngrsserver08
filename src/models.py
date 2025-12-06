@@ -428,3 +428,115 @@ class IncrementalSolveRequest(BaseModel):
     )
     
     model_config = ConfigDict(extra='allow')
+
+
+# ============================================================================
+# Empty Slots Solver Models (v0.96)
+# ============================================================================
+
+class EmptySlot(BaseModel):
+    """Definition of an empty/unassigned slot to fill."""
+    
+    date: str = Field(..., description="Slot date (YYYY-MM-DD)")
+    shiftCode: str = Field(..., description="Shift code (D/N/E/O)")
+    requirementId: str = Field(..., description="Requirement ID this slot belongs to")
+    slotId: Optional[str] = Field(None, description="Unique slot identifier")
+    reason: Optional[str] = Field(None, description="Why slot is empty: UNASSIGNED, DEPARTED, LEAVE")
+    demandId: Optional[str] = Field(None, description="Demand item ID")
+    startTime: str = Field(..., description="Shift start time (HH:MM:SS)")
+    endTime: str = Field(..., description="Shift end time (HH:MM:SS)")
+    hours: Dict[str, float] = Field(..., description="Hour breakdown: gross, lunch, normal, ot")
+
+
+class EmployeeAvailability(BaseModel):
+    """Date-specific availability for an employee."""
+    
+    date: str = Field(..., description="Date (YYYY-MM-DD)")
+    available: bool = Field(..., description="Is employee available on this date?")
+
+
+class ExistingEmployeeWithAvailability(BaseModel):
+    """Existing employee with availability tracking for empty slots solving."""
+    
+    employeeId: str = Field(..., description="Employee ID")
+    
+    availableHours: Dict[str, float] = Field(
+        ...,
+        description="Remaining hours capacity: {weekly: float, monthly: float}"
+    )
+    
+    availableDays: Dict[str, int] = Field(
+        ...,
+        description="Remaining days capacity: {consecutive: int, total: int}"
+    )
+    
+    currentState: Dict[str, Any] = Field(
+        ...,
+        description="Current rotation state: {consecutiveDaysWorked, lastWorkDate, rotationOffset, patternDay}"
+    )
+    
+    availability: Optional[List[EmployeeAvailability]] = Field(
+        None,
+        description="Optional date-specific availability list"
+    )
+
+
+class FillSlotsTemporalWindow(BaseModel):
+    """Temporal window for fill slots solving."""
+    
+    cutoffDate: str = Field(
+        ...,
+        description="Last date with locked assignments (YYYY-MM-DD)"
+    )
+    solveFromDate: str = Field(
+        ...,
+        description="First date to solve (YYYY-MM-DD)"
+    )
+    solveToDate: str = Field(
+        ...,
+        description="Last date to solve (YYYY-MM-DD)"
+    )
+    lengthDays: Optional[int] = Field(
+        None,
+        description="Number of days in solve period (calculated if omitted)"
+    )
+
+
+class FillSlotsWithAvailabilityRequest(BaseModel):
+    """Request payload for POST /solve/fill-slots-mixed endpoint (Option 3)."""
+    
+    schemaVersion: str = Field("0.96", description="Schema version")
+    mode: str = Field("fillEmptySlotsWithAvailability", description="Solve mode")
+    planningReference: str = Field(..., description="Planning reference identifier")
+    
+    temporalWindow: FillSlotsTemporalWindow = Field(
+        ...,
+        description="Temporal window defining solve period"
+    )
+    
+    emptySlots: List[EmptySlot] = Field(
+        ...,
+        description="List of empty/unassigned slots to fill"
+    )
+    
+    existingEmployees: List[ExistingEmployeeWithAvailability] = Field(
+        ...,
+        description="Existing employees with availability tracking"
+    )
+    
+    newJoiners: Optional[List[Dict[str, Any]]] = Field(
+        default_factory=list,
+        description="Optional new employees to add (full employee objects)"
+    )
+    
+    requirements: Optional[List[Dict[str, Any]]] = Field(
+        default_factory=list,
+        description="Optional requirement definitions for pattern validation"
+    )
+    
+    solverConfig: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Solver configuration overrides"
+    )
+    
+    model_config = ConfigDict(extra='allow')

@@ -1,0 +1,369 @@
+{
+  "schemaVersion": "0.96",
+  "mode": "fillEmptySlotsWithAvailability",
+  "planningReference": "DEC2025_EMPTY_SLOTS_FILL_v1",
+  
+  "temporalWindow": {
+    "cutoffDate": "2025-12-15",
+    "solveFromDate": "2025-12-16",
+    "solveToDate": "2025-12-31",
+    "lengthDays": 16
+  },
+  
+  "emptySlots": [
+    {
+      "date": "2025-12-16",
+      "shiftCode": "D",
+      "requirementId": "52_1",
+      "slotId": "SLOT-001",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512160001",
+      "startTime": "09:00:00",
+      "endTime": "18:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-17",
+      "shiftCode": "D",
+      "requirementId": "52_1",
+      "slotId": "SLOT-002",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512170001",
+      "startTime": "09:00:00",
+      "endTime": "18:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-18",
+      "shiftCode": "N",
+      "requirementId": "53_1",
+      "slotId": "SLOT-003",
+      "reason": "DEPARTED",
+      "demandId": "DI-2512180001",
+      "startTime": "22:00:00",
+      "endTime": "07:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-19",
+      "shiftCode": "D",
+      "requirementId": "52_1",
+      "slotId": "SLOT-004",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512190001",
+      "startTime": "09:00:00",
+      "endTime": "18:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-20",
+      "shiftCode": "D",
+      "requirementId": "52_1",
+      "slotId": "SLOT-005",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512200001",
+      "startTime": "09:00:00",
+      "endTime": "18:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-23",
+      "shiftCode": "E",
+      "requirementId": "54_1",
+      "slotId": "SLOT-006",
+      "reason": "LEAVE",
+      "demandId": "DI-2512230001",
+      "startTime": "14:00:00",
+      "endTime": "23:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-24",
+      "shiftCode": "D",
+      "requirementId": "52_1",
+      "slotId": "SLOT-007",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512240001",
+      "startTime": "09:00:00",
+      "endTime": "18:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-27",
+      "shiftCode": "N",
+      "requirementId": "53_1",
+      "slotId": "SLOT-008",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512270001",
+      "startTime": "22:00:00",
+      "endTime": "07:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-30",
+      "shiftCode": "D",
+      "requirementId": "52_1",
+      "slotId": "SLOT-009",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512300001",
+      "startTime": "09:00:00",
+      "endTime": "18:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    },
+    {
+      "date": "2025-12-31",
+      "shiftCode": "D",
+      "requirementId": "52_1",
+      "slotId": "SLOT-010",
+      "reason": "UNASSIGNED",
+      "demandId": "DI-2512310001",
+      "startTime": "09:00:00",
+      "endTime": "18:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      }
+    }
+  ],
+  
+  "existingEmployees": [
+    {
+      "employeeId": "00073354",
+      "availableHours": {
+        "weekly": 12.0,
+        "monthly": 120.0
+      },
+      "availableDays": {
+        "consecutive": 9,
+        "total": 16
+      },
+      "currentState": {
+        "consecutiveDaysWorked": 3,
+        "lastWorkDate": "2025-12-14",
+        "rotationOffset": 3,
+        "patternDay": 2
+      },
+      "availability": [
+        {"date": "2025-12-16", "available": true},
+        {"date": "2025-12-17", "available": true},
+        {"date": "2025-12-18", "available": true},
+        {"date": "2025-12-19", "available": true},
+        {"date": "2025-12-20", "available": true},
+        {"date": "2025-12-23", "available": true},
+        {"date": "2025-12-24", "available": true},
+        {"date": "2025-12-25", "available": false},
+        {"date": "2025-12-26", "available": false},
+        {"date": "2025-12-27", "available": true},
+        {"date": "2025-12-30", "available": true},
+        {"date": "2025-12-31", "available": true}
+      ]
+    },
+    {
+      "employeeId": "00158151",
+      "availableHours": {
+        "weekly": 36.0,
+        "monthly": 136.0
+      },
+      "availableDays": {
+        "consecutive": 7,
+        "total": 16
+      },
+      "currentState": {
+        "consecutiveDaysWorked": 5,
+        "lastWorkDate": "2025-12-13",
+        "rotationOffset": 0,
+        "patternDay": 6
+      },
+      "availability": [
+        {"date": "2025-12-16", "available": true},
+        {"date": "2025-12-17", "available": true},
+        {"date": "2025-12-18", "available": true},
+        {"date": "2025-12-19", "available": true},
+        {"date": "2025-12-20", "available": true},
+        {"date": "2025-12-23", "available": true},
+        {"date": "2025-12-24", "available": true},
+        {"date": "2025-12-27", "available": true},
+        {"date": "2025-12-30", "available": true},
+        {"date": "2025-12-31", "available": true}
+      ]
+    },
+    {
+      "employeeId": "00027821",
+      "availableHours": {
+        "weekly": 20.0,
+        "monthly": 88.0
+      },
+      "availableDays": {
+        "consecutive": 10,
+        "total": 16
+      },
+      "currentState": {
+        "consecutiveDaysWorked": 2,
+        "lastWorkDate": "2025-12-15",
+        "rotationOffset": 1,
+        "patternDay": 4
+      },
+      "availability": [
+        {"date": "2025-12-16", "available": true},
+        {"date": "2025-12-17", "available": true},
+        {"date": "2025-12-18", "available": false},
+        {"date": "2025-12-19", "available": false},
+        {"date": "2025-12-20", "available": true},
+        {"date": "2025-12-23", "available": true},
+        {"date": "2025-12-24", "available": true},
+        {"date": "2025-12-27", "available": true},
+        {"date": "2025-12-30", "available": true},
+        {"date": "2025-12-31", "available": true}
+      ]
+    },
+    {
+      "employeeId": "00045678",
+      "availableHours": {
+        "weekly": 8.0,
+        "monthly": 64.0
+      },
+      "availableDays": {
+        "consecutive": 12,
+        "total": 16
+      },
+      "currentState": {
+        "consecutiveDaysWorked": 0,
+        "lastWorkDate": "2025-12-10",
+        "rotationOffset": 2,
+        "patternDay": 0
+      },
+      "availability": [
+        {"date": "2025-12-16", "available": true},
+        {"date": "2025-12-17", "available": true},
+        {"date": "2025-12-18", "available": true},
+        {"date": "2025-12-19", "available": true},
+        {"date": "2025-12-20", "available": true},
+        {"date": "2025-12-23", "available": true},
+        {"date": "2025-12-24", "available": true},
+        {"date": "2025-12-27", "available": true},
+        {"date": "2025-12-30", "available": true},
+        {"date": "2025-12-31", "available": true}
+      ]
+    }
+  ],
+  
+  "newJoiners": [
+    {
+      "employeeId": "NEW001",
+      "firstName": "Sarah",
+      "lastName": "Smith",
+      "rankId": "SER",
+      "productTypes": ["APO"],
+      "workPattern": ["D", "D", "D", "D", "O", "D", "D"],
+      "contractedHours": 176.0,
+      "availableFrom": "2025-12-16",
+      "preferredShifts": ["D", "E"]
+    },
+    {
+      "employeeId": "NEW002",
+      "firstName": "John",
+      "lastName": "Doe",
+      "rankId": "SER",
+      "productTypes": ["APO"],
+      "workPattern": ["D", "D", "D", "D", "O", "D", "D"],
+      "contractedHours": 176.0,
+      "availableFrom": "2025-12-16",
+      "preferredShifts": ["N", "E"]
+    },
+    {
+      "employeeId": "NEW003",
+      "firstName": "Emily",
+      "lastName": "Johnson",
+      "rankId": "SER",
+      "productTypes": ["APO"],
+      "workPattern": ["D", "D", "D", "O", "O", "D", "D"],
+      "contractedHours": 176.0,
+      "availableFrom": "2025-12-20",
+      "preferredShifts": ["D"]
+    }
+  ],
+  
+  "requirements": [
+    {
+      "requirementId": "52_1",
+      "productType": "APO",
+      "rankId": "SER",
+      "headcount": 10,
+      "workPattern": ["D", "D", "D", "O", "O", "D", "D"],
+      "description": "Day shift requirement"
+    },
+    {
+      "requirementId": "53_1",
+      "productType": "APO",
+      "rankId": "SER",
+      "headcount": 15,
+      "workPattern": ["D", "D", "D", "D", "O", "D", "D"],
+      "description": "Night shift requirement"
+    },
+    {
+      "requirementId": "54_1",
+      "productType": "APO",
+      "rankId": "SER",
+      "headcount": 8,
+      "workPattern": ["D", "D", "O", "D", "D", "D", "D"],
+      "description": "Evening shift requirement"
+    }
+  ],
+  
+  "solverConfig": {
+    "timeLimitSeconds": 120,
+    "optimizationLevel": "balanced",
+    "preferences": {
+      "minimizeOvertime": true,
+      "balanceWorkload": true,
+      "respectShiftPreferences": true
+    }
+  }
+}

@@ -36,14 +36,20 @@ from src.models import (
     SolveRequest, SolveResponse, HealthResponse, 
     Score, SolverRunMetadata, Meta, Violation,
     AsyncJobRequest, AsyncJobResponse, JobStatusResponse, AsyncStatsResponse,
-    IncrementalSolveRequest
+    IncrementalSolveRequest, FillSlotsWithAvailabilityRequest
 )
 from src.output_builder import build_output
 from src.redis_job_manager import RedisJobManager
 from src.redis_worker import start_worker_pool
 from src.feasibility_checker import quick_feasibility_check
 from src.incremental_solver import solve_incremental, IncrementalSolverError
+from src.fill_slots_solver import solve_fill_slots, FillSlotsSolverError
 from src.offset_manager import ensure_staggered_offsets
+from src.resource_monitor import (
+    pre_solve_safety_check,
+    apply_resource_limits_to_solver,
+    estimate_problem_complexity
+)
 
 # ============================================================================
 # LOGGING SETUP
@@ -274,6 +280,98 @@ async def get_version():
     }
 
 
+@app.get("/metrics")
+async def get_metrics():
+    """
+    Get server resource metrics and capacity.
+    
+    Returns:
+        System metrics including memory, CPU, and problem size limits
+    """
+    import psutil
+    
+    memory = psutil.virtual_memory()
+    cpu_count = psutil.cpu_count(logical=True)
+    total_memory_gb = memory.total / (1024 ** 3)
+    
+    # Determine capacity tier
+    if total_memory_gb <= 4.5:
+        tier = "small"
+        max_variables = 50_000
+    elif total_memory_gb <= 8.5:
+        tier = "medium"
+        max_variables = 200_000
+    else:
+        tier = "large"
+        max_variables = 1_000_000
+    
+    return {
+        "timestamp": datetime.now().isoformat(),
+        "system": {
+            "cpu_count": cpu_count,
+            "memory_total_gb": round(total_memory_gb, 2),
+            "memory_available_gb": round(memory.available / (1024 ** 3), 2),
+            "memory_percent_used": memory.percent,
+            "cpu_percent": psutil.cpu_percent(interval=0.5)
+        },
+        "capacity": {
+            "tier": tier,
+            "max_variables": max_variables,
+            "max_employees_estimate": int(max_variables / 500),  # Rough estimate
+            "max_time_limit_seconds": 120
+        },
+        "limits": {
+            "max_memory_percent": float(os.getenv("MAX_SOLVER_MEMORY_PERCENT", "70")),
+            "max_memory_gb": float(os.getenv("MAX_SOLVER_MEMORY_GB", "2.5")),
+            "max_cpsat_workers": int(os.getenv("MAX_CPSAT_WORKERS", "2"))
+        }
+    }
+
+
+@app.post("/estimate-complexity")
+async def estimate_complexity_endpoint(request: Request):
+    """
+    Estimate problem complexity without solving.
+    
+    Useful for pre-checking if a problem will fit on current server.
+    
+    Returns:
+        Complexity metrics and safety assessment
+    """
+    try:
+        raw_body = await request.body()
+        input_json = json.loads(raw_body)
+        
+        # Load context (lightweight, doesn't build full model)
+        from context.engine.data_loader import load_input
+        ctx = load_input(input_json)
+        
+        # Estimate complexity
+        complexity = estimate_problem_complexity(ctx)
+        
+        # Check if it's safe
+        can_solve, error_message, _ = pre_solve_safety_check(ctx)
+        
+        return {
+            "complexity": complexity,
+            "safety": {
+                "can_solve": can_solve,
+                "error": error_message,
+                "recommendation": (
+                    "Safe to solve" if can_solve
+                    else "Problem too large for this server - reduce size or upgrade server"
+                )
+            },
+            "timestamp": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error estimating complexity: {str(e)}"
+        )
+
+
 @app.post("/solve", response_model=SolveResponse, response_class=ORJSONResponse)
 async def solve_endpoint(
     request: Request,
@@ -343,6 +441,39 @@ async def solve_endpoint(
         # ====== LOAD DATA ======
         ctx = load_input(input_json)
         ctx["timeLimit"] = time_limit
+        
+        # ====== RESOURCE SAFETY CHECK ======
+        can_solve, safety_error, complexity = pre_solve_safety_check(ctx)
+        if not can_solve:
+            logger.error(f"[{request_id}] Problem rejected: {safety_error}")
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": "Problem size exceeds server capacity",
+                    "message": safety_error,
+                    "complexity": complexity,
+                    "suggestions": [
+                        "Reduce headcount per requirement (e.g., 50 → 30)",
+                        "Use incremental solver for partial month re-runs",
+                        "Split large requirements into smaller ones",
+                        "Upgrade to larger server (8GB+ RAM recommended)"
+                    ]
+                }
+            )
+        
+        # Log complexity metrics
+        logger.info(
+            f"[{request_id}] Problem complexity: {complexity['estimated_variables']:,} variables, "
+            f"{complexity['estimated_memory_mb']:.1f}MB estimated, "
+            f"{complexity['num_slots']} slots × {complexity['num_employees']} employees"
+        )
+        
+        # Add complexity warning if problem is large
+        if complexity.get('complexity_score', 0) > 7:
+            warnings.append(
+                f"⚠️ Large problem detected ({complexity['estimated_variables']:,} variables). "
+                f"Solving may take 30-120 seconds. Consider reducing problem size if possible."
+            )
         
         # ====== OPTIONAL: SCHEMA VALIDATION ======
         if validate:
@@ -1099,6 +1230,98 @@ async def solve_incremental_endpoint(
     except Exception as e:
         logger.error(
             f"[{request_id}] Unexpected error in incremental solve: {str(e)}",
+            exc_info=True
+        )
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error: {str(e)}"
+        )
+
+
+@app.post("/solve/fill-slots-mixed", response_class=ORJSONResponse)
+async def solve_fill_slots_endpoint(
+    request: Request,
+    payload: FillSlotsWithAvailabilityRequest
+):
+    """
+    Fill empty/unassigned slots with existing + new employees (v0.96).
+    
+    Lightweight slot filling without requiring full previousOutput (~500KB-1MB).
+    Optimized for scenarios where you have:
+    - Unassigned/empty slots to fill
+    - Existing employees with remaining capacity
+    - Optional new joiners
+    
+    How it works:
+    1. Takes list of empty slots (with date, shift, hours)
+    2. Existing employees with availability tracking:
+       - Available hours (weekly/monthly remaining)
+       - Available days (consecutive days left, total days)
+       - Current state (consecutive streak, last work date, rotation)
+    3. Optional new joiners (full employee objects)
+    4. Greedy assignment algorithm respects:
+       - Weekly hours limit (44h max)
+       - Consecutive days limit (12 max)
+       - Date-specific availability
+       - Employee capacity constraints
+    
+    Temporal window:
+    - cutoffDate: Last date with locked assignments
+    - solveFromDate: Start filling slots from this date
+    - solveToDate: End of planning horizon
+    - lengthDays: Duration (auto-calculated if omitted)
+    
+    Input format:
+    - emptySlots: List of {date, shiftCode, hours, startTime, endTime, ...}
+    - existingEmployees: List with availableHours, availableDays, currentState
+    - newJoiners: Optional list of full employee objects
+    - requirements: Optional requirement definitions
+    
+    Advantages over full incremental solver:
+    - 99% smaller payload (3-8KB vs 500KB-1MB)
+    - No previousOutput required
+    - Simple availability tracking
+    - Fast execution (<1 second for 10-20 slots)
+    
+    Use cases:
+    - Fill unassigned slots mid-month
+    - Quick slot filling after departures
+    - Partial month re-runs (e.g., Dec 16-31 only)
+    - Adding new joiners to existing roster
+    
+    Returns:
+    - 200: Fill slots completed (may have unmet slots)
+    - 400: Invalid request (validation errors)
+    - 422: Schema validation error
+    - 500: Solver error
+    """
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    
+    logger.info(f"[{request_id}] Fill slots request received")
+    
+    try:
+        # Convert Pydantic model to dict
+        request_data = payload.model_dump()
+        
+        # Call fill slots solver
+        result = solve_fill_slots(request_data)
+        
+        logger.info(f"[{request_id}] Fill slots completed: {result['solverRun']['status']}, "
+                   f"{result['solverRun']['numAssignments']} assignments")
+        
+        # Add request ID to meta
+        result["meta"]["requestId"] = request_id
+        
+        return result
+        
+    except FillSlotsSolverError as e:
+        logger.error(f"[{request_id}] Fill slots solver error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+        
+    except Exception as e:
+        logger.error(
+            f"[{request_id}] Unexpected error in fill slots: {str(e)}",
             exc_info=True
         )
         raise HTTPException(

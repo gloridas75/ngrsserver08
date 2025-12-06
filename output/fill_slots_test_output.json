@@ -1,0 +1,209 @@
+{
+  "schemaVersion": "0.96",
+  "planningReference": "DEC2025_EMPTY_SLOTS_FILL_v1",
+  "solverRun": {
+    "runId": "FILL-7998498f",
+    "solverVersion": "fillSlots-py-0.96.0",
+    "startedAt": "2025-12-06T16:32:19.465907",
+    "ended": "2025-12-06T16:32:19.467755",
+    "durationSeconds": 0.001848,
+    "status": "OPTIMAL",
+    "numSlots": 10,
+    "numAssignments": 10,
+    "numUnmetSlots": 0
+  },
+  "score": {
+    "hard": 0,
+    "soft": 0,
+    "overall": 0
+  },
+  "assignments": [
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-16",
+      "demandId": "DI-2512160001",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2025-12-16T09:00:00",
+      "endDateTime": "2025-12-16",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-001",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-17",
+      "demandId": "DI-2512170001",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2025-12-17T09:00:00",
+      "endDateTime": "2025-12-17",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-002",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-18",
+      "demandId": "DI-2512180001",
+      "shiftCode": "N",
+      "patternDay": 2,
+      "startDateTime": "2025-12-18T22:00:00",
+      "endDateTime": "2025-12-19T07:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-003",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-19",
+      "demandId": "DI-2512190001",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2025-12-19T09:00:00",
+      "endDateTime": "2025-12-19",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-004",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-20",
+      "demandId": "DI-2512200001",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2025-12-20T09:00:00",
+      "endDateTime": "2025-12-20",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-005",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-23",
+      "demandId": "DI-2512230001",
+      "shiftCode": "E",
+      "patternDay": 2,
+      "startDateTime": "2025-12-23T14:00:00",
+      "endDateTime": "2025-12-23",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-006",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-24",
+      "demandId": "DI-2512240001",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2025-12-24T09:00:00",
+      "endDateTime": "2025-12-24",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-007",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-27",
+      "demandId": "DI-2512270001",
+      "shiftCode": "N",
+      "patternDay": 2,
+      "startDateTime": "2025-12-27T22:00:00",
+      "endDateTime": "2025-12-28T07:00:00",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-008",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-30",
+      "demandId": "DI-2512300001",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2025-12-30T09:00:00",
+      "endDateTime": "2025-12-30",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-009",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    },
+    {
+      "employeeId": "00073354",
+      "date": "2025-12-31",
+      "demandId": "DI-2512310001",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2025-12-31T09:00:00",
+      "endDateTime": "2025-12-31",
+      "hours": {
+        "gross": 9.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 0.0
+      },
+      "slotId": "SLOT-010",
+      "source": "fill_slots",
+      "employeeType": "existing"
+    }
+  ],
+  "unmetDemand": [],
+  "meta": {
+    "requestId": "fill-7998498f",
+    "generatedAt": "2025-12-06T16:32:19.467760",
+    "inputHash": "84513f412dde4f9e",
+    "warnings": []
+  }
+}
