@@ -699,7 +699,7 @@ async def configure_endpoint(
         # ====== FORMAT OUTPUT ======
         output_config = format_output_config(
             optimized_result,
-            config_input["requirements"]
+            config_input  # Pass full config, not just requirements
         )
         
         # ====== ENRICH RESPONSE ======
