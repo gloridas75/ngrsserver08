@@ -5,7 +5,7 @@
 """
 from ortools.sat.python import cp_model
 import importlib, pkgutil
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import time
 import os
 from collections import defaultdict
@@ -890,35 +890,78 @@ def calculate_employee_work_pattern(base_pattern: list, offset: int) -> list:
     return base_pattern[offset:] + base_pattern[:offset]
 
 
-def calculate_pattern_day(assignment_date: date, pattern_start_date: date, employee_offset: int, pattern_length: int) -> int:
+def calculate_pattern_day(assignment_date: date, pattern_start_date: date, employee_offset: int, pattern_length: int, coverage_days: List[str] = None) -> int:
     """Calculate which day of the work pattern this assignment falls on.
+    
+    **CRITICAL**: Pattern cycles through COVERAGE DAYS ONLY, not calendar days.
+    This ensures proper rotation for Mon-Fri patterns (ignoring Sat/Sun).
     
     Args:
         assignment_date: The date of this assignment
         pattern_start_date: The anchor date for the rotation pattern (shiftStartDate)
         employee_offset: Employee's rotation offset (0 to pattern_length-1)
         pattern_length: Length of the work pattern cycle
+        coverage_days: List of day names covered (e.g., ['Monday', 'Tuesday', ...])
+                      If None, counts all calendar days (legacy behavior)
     
     Returns:
         Integer from 0 to (pattern_length-1) indicating position in the pattern cycle
         
-    Formula:
-        patternDay = (days_since_start + employee_offset) % pattern_length
+    Formula (coverage-aware):
+        1. Build list of coverage dates between pattern_start_date and assignment_date
+        2. Count only days matching coverage_days
+        3. patternDay = (coverage_days_count + employee_offset) % pattern_length
         
-    Example:
-        Pattern: [D, D, N, N, O, O] (length=6)
-        Start date: 2025-12-01
-        Employee offset: 0, Assignment date: 2025-12-01 (0 days after start)
-        Result: (0 + 0) % 6 = 0 (Pattern[0] = 'D')
+    Example (Mon-Fri coverage):
+        Pattern: ['D', 'D', 'D', 'D', 'O'] (length=5)
+        Coverage: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        Start: 2025-12-01 (Monday)
         
-        Employee offset: 3, Assignment date: 2025-12-01 (0 days after start)
-        Result: (0 + 3) % 6 = 3 (Pattern[3] = 'N')
-        
-        Employee offset: 1, Assignment date: 2025-12-02 (1 day after start)
-        Result: (1 + 1) % 6 = 2 (Pattern[2] = 'N')
+        Employee offset: 0
+        - Mon 12/01 (0 coverage days): (0 + 0) % 5 = 0 → 'D'
+        - Tue 12/02 (1 coverage days): (1 + 0) % 5 = 1 → 'D'
+        - Sat 12/06 (IGNORED - not in coverage)
+        - Sun 12/07 (IGNORED - not in coverage)
+        - Mon 12/08 (5 coverage days): (5 + 0) % 5 = 0 → 'D' (NEW CYCLE)
     """
-    days_since_start = (assignment_date - pattern_start_date).days
-    pattern_day = (days_since_start + employee_offset) % pattern_length
+    if coverage_days is None or len(coverage_days) == 0:
+        # Legacy behavior: count all calendar days
+        days_since_start = (assignment_date - pattern_start_date).days
+        pattern_day = (days_since_start + employee_offset) % pattern_length
+        return pattern_day
+    
+    # NEW: Coverage-aware counting
+    # Map day names to weekday numbers
+    day_name_mapping = {
+        'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3,
+        'Friday': 4, 'Saturday': 5, 'Sunday': 6,
+        'Mon': 0, 'Tue': 1, 'Wed': 2, 'Thu': 3,
+        'Fri': 4, 'Sat': 5, 'Sun': 6
+    }
+    
+    # Build set of allowed weekdays
+    allowed_weekdays = set()
+    for day_name in coverage_days:
+        if day_name in day_name_mapping:
+            allowed_weekdays.add(day_name_mapping[day_name])
+    
+    if not allowed_weekdays:
+        # Fallback to legacy if we couldn't parse coverage days
+        days_since_start = (assignment_date - pattern_start_date).days
+        pattern_day = (days_since_start + employee_offset) % pattern_length
+        return pattern_day
+    
+    # Count coverage days between pattern_start_date and assignment_date
+    coverage_day_count = 0
+    current_date = pattern_start_date
+    
+    while current_date < assignment_date:
+        if current_date.weekday() in allowed_weekdays:
+            coverage_day_count += 1
+        current_date += timedelta(days=1)
+    
+    # Calculate pattern position using coverage day count
+    pattern_day = (coverage_day_count + employee_offset) % pattern_length
     return pattern_day
 
 
@@ -962,7 +1005,8 @@ def extract_assignments(ctx, solver) -> list:
                         assignment_date=slot.date,
                         pattern_start_date=slot.patternStartDate,  # From slot (shiftStartDate)
                         employee_offset=emp_offset,
-                        pattern_length=pattern_length
+                        pattern_length=pattern_length,
+                        coverage_days=slot.coverageDays  # CRITICAL: Pass coverage days for proper rotation
                     )
                     
                     assignment = {

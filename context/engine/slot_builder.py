@@ -57,6 +57,7 @@ class Slot:
     rotationSequence: List[str]
     patternStartDate: date
     coverageAnchor: date
+    coverageDays: List[str]  # Day names this requirement covers (e.g., ['Monday', 'Tuesday', ...])
     preferredTeams: List[str]
     whitelist: Dict[str, List[str]]
     blacklist: Dict[str, List[Dict[str, str]]]
@@ -325,6 +326,7 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                                 rotationSequence=work_pattern,
                                 patternStartDate=base,
                                 coverageAnchor=coverage_anchor_date,
+                                coverageDays=coverage_days_names,
                                 preferredTeams=preferred_teams,
                                 whitelist=whitelist,
                                 blacklist=blacklist
