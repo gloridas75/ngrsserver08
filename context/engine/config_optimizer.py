@@ -165,14 +165,18 @@ def simulate_coverage_with_preprocessing(
         coverage_per_employee = work_days_in_cycle / cycle_length
         min_employees = ceil(headcount / coverage_per_employee)
         
+        # Calculate expected coverage: employees * work_days_per_cycle / cycle_length
+        # This gives average daily coverage
+        expected_daily_coverage = min_employees * coverage_per_employee
+        
         return {
             'employeeCount': min_employees,
             'strictEmployees': min_employees,
             'flexibleEmployees': 0,
             'trulyFlexibleEmployees': 0,
             'offsets': [i % cycle_length for i in range(min_employees)],
-            'coverageComplete': False,
-            'coverageRange': (0, 0),
+            'coverageComplete': expected_daily_coverage >= headcount,
+            'coverageRange': (int(expected_daily_coverage), int(expected_daily_coverage)),
             'calendarDays': len(calendar_dates)
         }
 
@@ -312,14 +316,22 @@ def optimize_all_requirements(
             # Convert to output format
             formatted_configs = []
             for config in top_configs:
+                # Calculate expected coverage rate
+                if config['coverageComplete']:
+                    expected_coverage = 100.0
+                else:
+                    # Calculate based on coverage range vs required headcount
+                    required_headcount = list(requirement['headcountPerShift'].values())[0]
+                    max_coverage = config['coverageRange'][1] if config['coverageRange'] else 0
+                    expected_coverage = round((max_coverage / required_headcount * 100) if required_headcount > 0 else 0.0, 2)
+                
                 formatted_configs.append({
                     'workPattern': config['pattern'],
                     'employeesRequired': config['employeeCount'],
                     'strictEmployees': config['strictEmployees'],
                     'flexibleEmployees': config['flexibleEmployees'],
                     'employeeOffsets': config['offsets'],
-                    'expectedCoverageRate': 100.0 if config['coverageComplete'] else 
-                                           (config['coverageRange'][1] / requirement['headcountPerShift'][requirement['shiftTypes'][0]] * 100),
+                    'expectedCoverageRate': expected_coverage,
                     'score': config['score']
                 })
             
