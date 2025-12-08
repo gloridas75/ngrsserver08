@@ -1,0 +1,586 @@
+{
+  "schemaVersion": "0.8",
+  "configType": "optimizedRosterConfiguration",
+  "generatedAt": "2025-12-07T17:20:00.815989",
+  "summary": {
+    "totalRequirements": 2,
+    "totalEmployees": 45,
+    "planningHorizon": {
+      "startDate": "2026-03-01T00:00:00",
+      "endDate": "2026-03-31T00:00:00",
+      "days": 31
+    }
+  },
+  "recommendations": [
+    {
+      "requirementId": "REQ_52_1_WEEKDAY",
+      "requirementName": "Weekday Coverage (Mon-Fri)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 18,
+        "employeesRequiredPerShift": {
+          "D": 18
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 180.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 12.0,
+        "requiredPerShift": {
+          "D": 10
+        },
+        "requiredPerDay": 10
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 62
+      },
+      "notes": [
+        "\u2b50 RECOMMENDED: Best overall score",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_52_1_WEEKDAY",
+      "requirementName": "Weekday Coverage (Mon-Fri)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "O",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 18,
+        "employeesRequiredPerShift": {
+          "D": 18
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 180.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 12.0,
+        "requiredPerShift": {
+          "D": 10
+        },
+        "requiredPerDay": 10
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 62
+      },
+      "notes": [
+        "Alternative #2: Second best option",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_52_1_WEEKDAY",
+      "requirementName": "Weekday Coverage (Mon-Fri)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 18,
+        "employeesRequiredPerShift": {
+          "D": 18
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 180.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 15.0,
+        "requiredPerShift": {
+          "D": 10
+        },
+        "requiredPerDay": 10
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 155
+      },
+      "notes": [
+        "Alternative #3: Third best option",
+        "Pattern has 5 work days and 1 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_52_1_WEEKDAY",
+      "requirementName": "Weekday Coverage (Mon-Fri)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "O",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 20,
+        "employeesRequiredPerShift": {
+          "D": 20
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 1813.22
+      },
+      "coverage": {
+        "expectedCoverageRate": 83.87,
+        "daysFullyCovered": 26,
+        "daysUndercovered": 5,
+        "averageAvailable": 10.0,
+        "requiredPerShift": {
+          "D": 10
+        },
+        "requiredPerDay": 10
+      },
+      "quality": {
+        "balanceScore": 99.68,
+        "variance": 0.32,
+        "totalExcessCoverage": 5
+      },
+      "notes": [
+        "Alternative #4",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "Warning: Only 83.9% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_52_1_WEEKDAY",
+      "requirementName": "Weekday Coverage (Mon-Fri)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 20,
+        "employeesRequiredPerShift": {
+          "D": 20
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 3426.46
+      },
+      "coverage": {
+        "expectedCoverageRate": 67.74,
+        "daysFullyCovered": 21,
+        "daysUndercovered": 10,
+        "averageAvailable": 10.0,
+        "requiredPerShift": {
+          "D": 10
+        },
+        "requiredPerDay": 10
+      },
+      "quality": {
+        "balanceScore": 99.35,
+        "variance": 0.65,
+        "totalExcessCoverage": 10
+      },
+      "notes": [
+        "Alternative #5",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "Warning: Only 67.7% coverage - may need more employees",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_53_1_FULLWEEK",
+      "requirementName": "Full Week Coverage (7 days)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "O",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 27,
+        "employeesRequiredPerShift": {
+          "D": 27
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 270.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 18.0,
+        "requiredPerShift": {
+          "D": 15
+        },
+        "requiredPerDay": 15
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 93
+      },
+      "notes": [
+        "\u2b50 RECOMMENDED: Best overall score",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_53_1_FULLWEEK",
+      "requirementName": "Full Week Coverage (7 days)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 27,
+        "employeesRequiredPerShift": {
+          "D": 27
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 270.25
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 22.48,
+        "requiredPerShift": {
+          "D": 15
+        },
+        "requiredPerDay": 15
+      },
+      "quality": {
+        "balanceScore": 99.75,
+        "variance": 0.25,
+        "totalExcessCoverage": 232
+      },
+      "notes": [
+        "Alternative #2: Second best option",
+        "Pattern has 5 work days and 1 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_53_1_FULLWEEK",
+      "requirementName": "Full Week Coverage (7 days)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 27,
+        "employeesRequiredPerShift": {
+          "D": 27
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 270.68
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 17.97,
+        "requiredPerShift": {
+          "D": 15
+        },
+        "requiredPerDay": 15
+      },
+      "quality": {
+        "balanceScore": 99.32,
+        "variance": 0.68,
+        "totalExcessCoverage": 92
+      },
+      "notes": [
+        "Alternative #3: Third best option",
+        "Pattern has 4 work days and 2 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_53_1_FULLWEEK",
+      "requirementName": "Full Week Coverage (7 days)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 30,
+        "employeesRequiredPerShift": {
+          "D": 30
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 300.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 15.0,
+        "requiredPerShift": {
+          "D": 15
+        },
+        "requiredPerDay": 15
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 0
+      },
+      "notes": [
+        "Alternative #4",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    },
+    {
+      "requirementId": "REQ_53_1_FULLWEEK",
+      "requirementName": "Full Week Coverage (7 days)",
+      "productType": "APO",
+      "rank": "SER",
+      "scheme": "A",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "O",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 30,
+        "employeesRequiredPerShift": {
+          "D": 30
+        },
+        "rotationOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          1,
+          2,
+          3
+        ],
+        "cycleLength": 6,
+        "score": 300.0
+      },
+      "coverage": {
+        "expectedCoverageRate": 100.0,
+        "daysFullyCovered": 31,
+        "daysUndercovered": 0,
+        "averageAvailable": 15.0,
+        "requiredPerShift": {
+          "D": 15
+        },
+        "requiredPerDay": 15
+      },
+      "quality": {
+        "balanceScore": 100.0,
+        "variance": 0.0,
+        "totalExcessCoverage": 0
+      },
+      "notes": [
+        "Alternative #5",
+        "Pattern has 3 work days and 3 off days per 6-day cycle",
+        "\u2713 Achieves 100% coverage with this configuration",
+        "\u2713 Excellent workload balance across employees"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "planningHorizon": {
+    "startDate": "2026-03-01",
+    "endDate": "2026-03-31"
+  },
+  "requirements": [
+    {
+      "requirementId": "REQ_52_1",
+      "requirementName": "Weekday APO Coverage (Mon-Fri)",
+      "coverageDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "shiftTypes": ["D"],
+      "headcountByShift": {"D": 10},
+      "strictAdherence": true
+    }
+  ],
+  "constraints": {
+    "maxRegularHoursPerWeek": 44,
+    "maxOvertimeHoursPerMonth": 72,
+    "maxConsecutiveWorkDays": 12,
+    "minRestDaysBetweenShifts": 1
+  }
+}

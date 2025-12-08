@@ -4,7 +4,7 @@ Fast Pre-Flight Feasibility Checker for NGRS Solver
 Performs quick mathematical validation WITHOUT running CP-SAT solver.
 Helps identify obvious infeasibility issues before expensive solver execution.
 
-Uses config_optimizer logic for fast employee count estimation.
+UPGRADED: Uses ICPMP v2.0 logic for accurate employee count estimation.
 """
 import sys
 import pathlib
@@ -15,7 +15,8 @@ from datetime import datetime
 from collections import defaultdict
 from math import ceil
 
-from context.engine.coverage_simulator import calculate_min_employees
+# ICPMP v2.0: Use sophisticated coverage simulation
+from context.engine.config_optimizer import simulate_coverage_with_preprocessing
 
 
 def quick_feasibility_check(input_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -181,7 +182,7 @@ def _analyze_requirement(
     constraints: Dict
 ) -> Dict[str, Any]:
     """
-    Analyze single requirement for feasibility.
+    Analyze single requirement for feasibility using ICPMP v2.0 logic.
     
     Returns estimated employee count and issues.
     """
@@ -192,6 +193,7 @@ def _analyze_requirement(
     rank_id = requirement.get('rankId', '')
     gender_req = requirement.get('gender', 'Any')
     scheme_req = requirement.get('Scheme', 'Global')
+    coverage_days = requirement.get('coverageDays', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
     
     issues = []
     
@@ -220,29 +222,54 @@ def _analyze_requirement(
                 f"Requirement {req_id}: No {gender_req} employees available"
             )
     
-    # Calculate required employees using work pattern
-    if work_pattern:
-        cycle_length = len(work_pattern)
-        work_days = sum(1 for d in work_pattern if d != 'O')
+    # ICPMP v2.0: Use coverage-aware simulation for accurate estimates
+    if work_pattern and len(work_pattern) > 0:
+        pattern = work_pattern
     else:
-        # Default assumption: 4 on, 2 off
-        cycle_length = 6
-        work_days = 4
+        # Default pattern: 4 on, 2 off (6-day cycle)
+        pattern = ['D', 'D', 'D', 'D', 'O', 'O']
     
-    # Get shift hours (use default 11.0 = 12 gross - 1 lunch)
-    shift_hours = 11.0
+    # Validate pattern length matches coverage days
+    if len(pattern) != len(coverage_days):
+        # Adjust pattern to match coverage days
+        cycle_length = len(coverage_days)
+        work_days = max(1, int(cycle_length * 0.7))  # ~70% work days
+        pattern = ['D'] * work_days + ['O'] * (cycle_length - work_days)
     
-    # Use coverage simulator calculation
-    min_employees = calculate_min_employees(
-        pattern=work_pattern if work_pattern else ['D'] * work_days + ['O'] * (cycle_length - work_days),
-        headcount_per_day=headcount,
-        days_in_horizon=days_in_horizon,
-        max_weekly_hours=constraints.get('maxWeeklyNormalHours', 44.0),
-        shift_normal_hours=shift_hours
-    )
-    
-    # Add 20% buffer for max estimate (accounts for constraints, unavailability, etc.)
-    max_employees = ceil(min_employees * 1.2)
+    try:
+        # Use ICPMP v2.0 simulation for accurate employee count
+        start_date = datetime(2026, 1, 1)  # Use arbitrary start date for simulation
+        
+        # Calculate reasonable available_employees for simulation
+        # We want strict + flexible employees, not truly flexible
+        cycle_length = len(pattern)
+        work_days = sum(1 for d in pattern if d != 'O')
+        rough_estimate = ceil(headcount / (work_days / cycle_length)) if cycle_length > 0 else headcount * 2
+        available_for_sim = min(200, max(rough_estimate * 3, 20))  # Give generous pool but not excessive
+        
+        sim_result = simulate_coverage_with_preprocessing(
+            pattern=pattern,
+            headcount=headcount,
+            coverage_days=coverage_days,
+            days_in_horizon=days_in_horizon,
+            start_date=start_date,
+            available_employees=available_for_sim
+        )
+        
+        # For feasibility, we care about strict + flexible (pattern-following) employees
+        # Truly flexible employees would be manually assigned, so exclude from estimate
+        min_employees = sim_result['strictEmployees'] + sim_result['flexibleEmployees']
+        
+        # Add small buffer for max since flexible assignments may vary
+        max_employees = ceil(min_employees * 1.1) if min_employees > 0 else 1
+        
+    except Exception as e:
+        # Fallback to basic calculation if simulation fails
+        cycle_length = len(pattern)
+        work_days = sum(1 for d in pattern if d != 'O')
+        coverage_per_employee = work_days / cycle_length if cycle_length > 0 else 0.7
+        min_employees = ceil(headcount / coverage_per_employee) if coverage_per_employee > 0 else headcount * 2
+        max_employees = ceil(min_employees * 1.2)
     
     # Check if we have enough matching employees
     if matching_count < min_employees:
@@ -255,12 +282,14 @@ def _analyze_requirement(
         "product_type": product_type,
         "rank_id": rank_id,
         "headcount": headcount,
-        "work_pattern": work_pattern,
+        "work_pattern": pattern,
+        "coverage_days": coverage_days,
         "employees_required_min": min_employees,
         "employees_required_max": max_employees,
         "employees_matching": matching_count,
         "sufficient": matching_count >= min_employees,
-        "issues": issues
+        "issues": issues,
+        "estimation_method": "ICPMP v2.0"
     }
 
 

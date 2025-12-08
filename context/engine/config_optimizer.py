@@ -105,7 +105,8 @@ def simulate_coverage_with_preprocessing(
     headcount: int,
     coverage_days: List[str],
     days_in_horizon: int,
-    start_date: datetime
+    start_date: datetime,
+    available_employees: int = 200
 ) -> Dict:
     """
     Simulate coverage using rotation preprocessing logic.
@@ -147,14 +148,26 @@ def simulate_coverage_with_preprocessing(
             pattern_info=pattern_info
         )
         
+        # Extract employee counts from simulation result
+        strict_count = result.get('strict_count', 0)
+        flexible_count = result.get('flexible_count', 0)
+        truly_flexible_count = result.get('truly_flexible_count', 0)
+        
+        # Extract offsets from strict + flexible employees
+        all_offsets = []
+        for emp in result.get('strict_employees', []):
+            all_offsets.append(emp['rotationOffset'])
+        for emp in result.get('flexible_candidates', []):
+            all_offsets.append(emp['rotationOffset'])
+        
         return {
-            'employeeCount': result['strict_employees'] + result['flexible_employees'] + result['truly_flexible'],
-            'strictEmployees': result['strict_employees'],
-            'flexibleEmployees': result['flexible_employees'],
-            'trulyFlexibleEmployees': result['truly_flexible'],
-            'offsets': result['offsets'],
-            'coverageComplete': result['coverage_complete'],
-            'coverageRange': result['coverage_range'],
+            'employeeCount': strict_count + flexible_count + truly_flexible_count,
+            'strictEmployees': strict_count,
+            'flexibleEmployees': flexible_count,
+            'trulyFlexibleEmployees': truly_flexible_count,
+            'offsets': all_offsets,
+            'coverageComplete': result.get('coverage_complete', False),
+            'coverageRange': (result.get('min_coverage', 0), result.get('max_coverage', 0)),
             'calendarDays': len(calendar_dates)
         }
     except Exception as e:

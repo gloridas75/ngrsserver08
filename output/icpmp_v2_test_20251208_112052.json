@@ -1,0 +1,414 @@
+{
+  "schemaVersion": "0.8",
+  "configType": "optimizedRosterConfiguration",
+  "generatedAt": "2025-12-08T11:20:52.008074",
+  "organizationId": "ORG_TEST",
+  "planningHorizon": {
+    "startDate": "2026-03-01",
+    "endDate": "2026-03-31",
+    "totalDays": 31
+  },
+  "summary": {
+    "totalRequirements": 2,
+    "totalEmployees": 34,
+    "optimizerVersion": "ICPMP v2.0 (Enhanced)"
+  },
+  "recommendations": [
+    {
+      "requirementId": "REQ_52_1",
+      "requirementName": "Weekday APO Coverage (Mon-Fri)",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 13,
+        "strictEmployees": 13,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1,
+          2
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1130
+      }
+    },
+    {
+      "requirementId": "REQ_52_1",
+      "requirementName": "Weekday APO Coverage (Mon-Fri)",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 17,
+        "strictEmployees": 17,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1170
+      }
+    },
+    {
+      "requirementId": "REQ_52_1",
+      "requirementName": "Weekday APO Coverage (Mon-Fri)",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "O",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 17,
+        "strictEmployees": 17,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1,
+          2,
+          3,
+          4,
+          0,
+          1
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1170
+      }
+    },
+    {
+      "requirementId": "REQ_53_1",
+      "requirementName": "Full Week APO Coverage (7 days)",
+      "alternativeRank": 1,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 21,
+        "strictEmployees": 21,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1210
+      }
+    },
+    {
+      "requirementId": "REQ_53_1",
+      "requirementName": "Full Week APO Coverage (7 days)",
+      "alternativeRank": 2,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "O",
+          "D",
+          "D",
+          "D",
+          "O"
+        ],
+        "employeesRequired": 21,
+        "strictEmployees": 21,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1210
+      }
+    },
+    {
+      "requirementId": "REQ_53_1",
+      "requirementName": "Full Week APO Coverage (7 days)",
+      "alternativeRank": 3,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "D",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 27,
+        "strictEmployees": 27,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1270
+      }
+    },
+    {
+      "requirementId": "REQ_53_1",
+      "requirementName": "Full Week APO Coverage (7 days)",
+      "alternativeRank": 4,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "O",
+          "D",
+          "D",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 27,
+        "strictEmployees": 27,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1270
+      }
+    },
+    {
+      "requirementId": "REQ_53_1",
+      "requirementName": "Full Week APO Coverage (7 days)",
+      "alternativeRank": 5,
+      "configuration": {
+        "workPattern": [
+          "D",
+          "D",
+          "D",
+          "O",
+          "O",
+          "O",
+          "O"
+        ],
+        "employeesRequired": 35,
+        "strictEmployees": 35,
+        "flexibleEmployees": 0,
+        "employeeOffsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "coverage": {
+        "expectedCoverageRate": 0.0,
+        "coverageType": "partial"
+      },
+      "quality": {
+        "score": 1350
+      }
+    }
+  ]
+}
