@@ -79,6 +79,43 @@ def combine(d: date, time_str: str) -> datetime:
     return datetime.combine(d, datetime.min.time().replace(hour=hour, minute=minute))
 
 
+def normalize_scheme(scheme_value: str, scheme_map: Optional[Dict[str, str]] = None) -> str:
+    """Normalize scheme value to short code format (A, B, P, or Global).
+    
+    Handles both formats:
+    - Full name: "Scheme A", "Scheme B", "Scheme P" → "A", "B", "P"
+    - Short code: "A", "B", "P" → "A", "B", "P" (no change)
+    - Global: "Global" → "Global" (no change)
+    
+    Args:
+        scheme_value: The scheme value from input (can be "Scheme P" or "P")
+        scheme_map: Optional schemeMap from input (e.g., {"A": "Scheme A", "B": "Scheme B", "P": "Scheme P"})
+    
+    Returns:
+        Normalized short code: "A", "B", "P", or "Global"
+    """
+    if not scheme_value or scheme_value == "Global":
+        return "Global"
+    
+    # If scheme_map is provided, try reverse lookup
+    if scheme_map:
+        # Check if value is already a short code (key in scheme_map)
+        if scheme_value in scheme_map:
+            return scheme_value
+        
+        # Try to find matching short code by value ("Scheme P" → "P")
+        for short_code, full_name in scheme_map.items():
+            if full_name == scheme_value:
+                return short_code
+    
+    # Fallback: If it starts with "Scheme ", extract the letter
+    if scheme_value.startswith("Scheme "):
+        return scheme_value.replace("Scheme ", "").strip()
+    
+    # Already in short format
+    return scheme_value
+
+
 def daterange(start: date, end: date) -> List[date]:
     """Generate a list of dates from start (inclusive) to end (inclusive).
     
@@ -135,6 +172,9 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
             public_holidays.add(ph_date)
         except:
             pass
+    
+    # Get schemeMap for normalizing scheme values
+    scheme_map = inputs.get("schemeMap", {})
     
     slots: List[Slot] = []
     
@@ -205,7 +245,9 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 rank_id = req.get("rankId")
                 headcount = req.get("headcount", 1)
                 gender_req = req.get("gender", "Any")
-                scheme_req = req.get("Scheme", "Global")
+                # Normalize scheme value: "Scheme P" → "P", "Scheme A" → "A", etc.
+                scheme_req_raw = req.get("Scheme", "Global")
+                scheme_req = normalize_scheme(scheme_req_raw, scheme_map)
                 required_quals = req.get("requiredQualifications", [])
                 
                 # Support both old "rotationSequence" and new "workPattern" field names

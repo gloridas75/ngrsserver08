@@ -836,6 +836,10 @@ async def solve_async(
                 f"employees_provided={feasibility_result['analysis']['employees_provided']} "
                 f"employees_required={feasibility_result['analysis']['employees_required_min']}-{feasibility_result['analysis']['employees_required_max']}"
             )
+            # DEBUG: Log first requirement details
+            if feasibility_result.get('analysis', {}).get('by_requirement'):
+                first_req = feasibility_result['analysis']['by_requirement'][0]
+                logger.info(f"First requirement fields: {sorted(first_req.keys())}")
         except Exception as check_error:
             # Don't fail job submission if feasibility check fails
             logger.warning(f"Feasibility check failed for requestId={request_id}: {check_error}")

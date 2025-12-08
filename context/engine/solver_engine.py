@@ -201,10 +201,12 @@ def build_model(ctx):
                 continue
             
             # v0.70: Check scheme requirement
+            # Note: slot.schemeRequirement is already normalized to short code (A/B/P/Global) by slot_builder
             scheme_req = slot.schemeRequirement
             emp_scheme = emp.get('scheme', '')
             scheme_allowed = True
             
+            # Both are now in short format, so direct comparison works
             if scheme_req != 'Global' and scheme_req != emp_scheme:
                 scheme_allowed = False
                 scheme_filtered += 1

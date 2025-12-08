@@ -192,7 +192,10 @@ def _analyze_requirement(
     product_type = requirement.get('productTypeId', '')
     rank_id = requirement.get('rankId', '')
     gender_req = requirement.get('gender', 'Any')
-    scheme_req = requirement.get('Scheme', 'Global')
+    # Normalize scheme: "Scheme P" → "P", "Scheme A" → "A", etc.
+    scheme_req_raw = requirement.get('Scheme', 'Global')
+    scheme_map = data.get('schemeMap', {})
+    scheme_req = _normalize_scheme(scheme_req_raw, scheme_map)
     coverage_days = requirement.get('coverageDays', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
     
     issues = []
@@ -293,6 +296,35 @@ def _analyze_requirement(
     }
 
 
+def _normalize_scheme(scheme_value: str, scheme_map: Dict[str, str] = None) -> str:
+    """Normalize scheme value to short code format (A, B, P, or Global).
+    
+    Args:
+        scheme_value: The scheme value from input (can be "Scheme P" or "P")
+        scheme_map: Optional schemeMap from input
+    
+    Returns:
+        Normalized short code: "A", "B", "P", or "Global"
+    """
+    if not scheme_value or scheme_value == "Global":
+        return "Global"
+    
+    if scheme_map:
+        # Check if value is already a short code
+        if scheme_value in scheme_map:
+            return scheme_value
+        # Try reverse lookup
+        for short_code, full_name in scheme_map.items():
+            if full_name == scheme_value:
+                return short_code
+    
+    # Fallback: extract letter from "Scheme X"
+    if scheme_value.startswith("Scheme "):
+        return scheme_value.replace("Scheme ", "").strip()
+    
+    return scheme_value
+
+
 def _filter_matching_employees(
     employees: List[Dict],
     product_type: str,
@@ -322,8 +354,9 @@ def _filter_matching_employees(
                 continue
         
         # Check scheme (if not Global)
+        # Note: scheme_req is already normalized to short code (A/B/P) by caller
         if scheme_req != 'Global':
-            emp_scheme = emp.get('scheme', '')
+            emp_scheme = emp.get('scheme', '')  # Employee scheme is already in short format
             if emp_scheme != scheme_req:
                 continue
         
