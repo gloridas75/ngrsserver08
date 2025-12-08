@@ -1,52 +1,63 @@
 #!/usr/bin/env python3
-"""Configuration Optimizer - Find optimal work patterns and employee counts.
+"""
+Enhanced Configuration Optimizer (ICPMP v2.0)
 
-This module optimizes roster configuration by finding the best:
-1. Work patterns for each requirement
-2. Minimum employee count needed
-3. Rotation offsets for employees
+Key Improvements:
+1. Coverage-aware pattern generation (5-day for Mon-Fri, 7-day for full week)
+2. Integration with rotation_preprocessor for intelligent offset distribution
+3. Pattern length validation against coverage days
+4. Support for flexible employees (offset=-1)
+5. Calendar-aware employee count calculation
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Dict, Tuple, Optional
 from itertools import product
-from .coverage_simulator import (
-    simulate_coverage,
-    calculate_min_employees,
-    verify_pattern_feasibility,
-    generate_staggered_offsets,
-    evaluate_coverage_quality
-)
+from math import ceil
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def generate_pattern_candidates(
+def generate_coverage_aware_patterns(
     shift_types: List[str],
-    cycle_length: int = 6,
+    coverage_days: List[str],
     min_work_days: int = 3,
     max_work_days: int = 5
 ) -> List[List[str]]:
     """
-    Generate candidate work patterns based on allowed shift types.
+    Generate work patterns that match coverage requirements.
     
-    If shiftTypes = ["D"] -> Only D patterns
-    If shiftTypes = ["N"] -> Only N patterns  
-    If shiftTypes = ["D", "N"] -> D patterns, N patterns, AND mixed D+N patterns
+    **KEY IMPROVEMENT**: Cycle length matches coverage days!
+    - Mon-Fri (5 days) → 5-day patterns
+    - 7 days → 7-day patterns
+    - 6 days → 6-day patterns
     
     Args:
         shift_types: Available shift types (e.g., ['D'], ['N'], or ['D', 'N'])
-        cycle_length: Length of rotation cycle
+        coverage_days: Days needing coverage (e.g., ['Mon','Tue','Wed','Thu','Fri'])
         min_work_days: Minimum work days in cycle
         max_work_days: Maximum work days in cycle
     
     Returns:
-        List of candidate patterns
+        List of candidate patterns matching coverage length
     """
+    # Cycle length = number of coverage days
+    cycle_length = len(coverage_days)
+    
+    # Adjust work day limits to cycle length
+    max_work_days = min(max_work_days, cycle_length - 1)  # At least 1 rest day
+    min_work_days = min(min_work_days, max_work_days)
+    
     candidates = []
     
-    # Single shift type patterns - always generate for each shift type provided
+    # Single shift type patterns
     for shift in shift_types:
         for work_days in range(min_work_days, max_work_days + 1):
             off_days = cycle_length - work_days
+            
+            if off_days < 1:
+                continue  # Must have at least 1 rest day
             
             # Consecutive work days pattern
             pattern = [shift] * work_days + ['O'] * off_days
@@ -54,7 +65,6 @@ def generate_pattern_candidates(
             
             # Distributed pattern (if possible)
             if work_days >= 2 and off_days >= 2:
-                # Split work days: first half, off, second half, off
                 first_half = work_days // 2
                 second_half = work_days - first_half
                 first_off = off_days // 2
@@ -64,30 +74,17 @@ def generate_pattern_candidates(
                 if len(pattern) == cycle_length:
                     candidates.append(pattern)
     
-    # Mixed shift patterns - ONLY if multiple shift types are provided
-    # This means requirement explicitly wants mixed D+N patterns
+    # Mixed shift patterns (if multiple shift types requested)
     if len(shift_types) >= 2:
         for work_days in range(min_work_days, max_work_days + 1):
             off_days = cycle_length - work_days
             
-            # Various D+N mix combinations
-            for split in range(1, work_days):
-                # Pattern: D's then N's
-                pattern = [shift_types[0]] * split + [shift_types[1]] * (work_days - split) + ['O'] * off_days
-                if len(pattern) == cycle_length:
-                    candidates.append(pattern)
-                
-                # Pattern: N's then D's (reverse)
-                pattern = [shift_types[1]] * split + [shift_types[0]] * (work_days - split) + ['O'] * off_days
-                if len(pattern) == cycle_length:
-                    candidates.append(pattern)
+            if off_days < 1:
+                continue
             
-            # Alternating D/N patterns for longer work stretches
-            if work_days >= 4:
-                pattern = []
-                for i in range(work_days):
-                    pattern.append(shift_types[i % 2])
-                pattern.extend(['O'] * off_days)
+            for split in range(1, work_days):
+                # D's then N's
+                pattern = [shift_types[0]] * split + [shift_types[1]] * (work_days - split) + ['O'] * off_days
                 if len(pattern) == cycle_length:
                     candidates.append(pattern)
     
@@ -103,153 +100,185 @@ def generate_pattern_candidates(
     return unique_patterns
 
 
-def optimize_requirement_config(
+def simulate_coverage_with_preprocessing(
+    pattern: List[str],
+    headcount: int,
+    coverage_days: List[str],
+    days_in_horizon: int,
+    start_date: datetime
+) -> Dict:
+    """
+    Simulate coverage using rotation preprocessing logic.
+    
+    **KEY IMPROVEMENT**: Uses actual calendar simulation with coverage day filtering
+    
+    Returns:
+        Dict with coverage stats including strict/flexible employee distribution
+    """
+    from .rotation_preprocessor import (
+        generate_coverage_calendar,
+        simulate_pattern_filling
+    )
+    
+    # Generate calendar filtered by coverage days
+    calendar_dates = []
+    for day_offset in range(days_in_horizon):
+        current_date = start_date + timedelta(days=day_offset)
+        weekday = current_date.strftime('%a')
+        if weekday in coverage_days:
+            calendar_dates.append(current_date.strftime('%Y-%m-%d'))
+    
+    # Simulate pattern filling
+    pattern_info = {
+        'pattern_key': tuple(pattern),
+        'workPattern': pattern,
+        'combined_headcount': headcount,
+        'coverage_days': set(coverage_days)
+    }
+    
+    try:
+        result = simulate_pattern_filling(
+            work_pattern=pattern,
+            combined_headcount=headcount,
+            coverage_days=set(coverage_days),
+            start_date=start_date.strftime('%Y-%m-%d'),
+            end_date=(start_date + timedelta(days=days_in_horizon-1)).strftime('%Y-%m-%d'),
+            available_employees=200,  # Generous pool for simulation
+            pattern_info=pattern_info
+        )
+        
+        return {
+            'employeeCount': result['strict_employees'] + result['flexible_employees'] + result['truly_flexible'],
+            'strictEmployees': result['strict_employees'],
+            'flexibleEmployees': result['flexible_employees'],
+            'trulyFlexibleEmployees': result['truly_flexible'],
+            'offsets': result['offsets'],
+            'coverageComplete': result['coverage_complete'],
+            'coverageRange': result['coverage_range'],
+            'calendarDays': len(calendar_dates)
+        }
+    except Exception as e:
+        logger.warning(f"Preprocessing simulation failed: {e}, falling back to basic calculation")
+        # Fallback to simple calculation
+        cycle_length = len(pattern)
+        work_days_in_cycle = sum(1 for d in pattern if d != 'O')
+        coverage_per_employee = work_days_in_cycle / cycle_length
+        min_employees = ceil(headcount / coverage_per_employee)
+        
+        return {
+            'employeeCount': min_employees,
+            'strictEmployees': min_employees,
+            'flexibleEmployees': 0,
+            'trulyFlexibleEmployees': 0,
+            'offsets': [i % cycle_length for i in range(min_employees)],
+            'coverageComplete': False,
+            'coverageRange': (0, 0),
+            'calendarDays': len(calendar_dates)
+        }
+
+
+def optimize_requirement_config_v2(
     requirement: Dict,
     constraints: Dict,
     days_in_horizon: int,
-    anchor_date: datetime,
+    start_date: datetime,
     shift_definitions: Optional[Dict[str, Dict]] = None,
     top_n: int = 5
 ) -> List[Dict]:
     """
-    Find top N optimal configurations for a single requirement.
+    Enhanced configuration optimizer with coverage-aware pattern generation.
     
-    Args:
-        requirement: Requirement specification
-        constraints: Constraint parameters
-        days_in_horizon: Planning horizon length
-        anchor_date: Coverage anchor date
-        shift_definitions: Optional dict mapping shift codes to definitions
-                          e.g., {"D": {"grossHours": 12.0, "lunchBreak": 1.0}}
-        top_n: Number of top patterns to return (default: 5)
-    
-    Returns:
-        List of top N configurations sorted by score (best first)
+    **KEY IMPROVEMENTS**:
+    - Generates patterns matching coverage day length
+    - Uses rotation preprocessing for accurate employee counts
+    - Validates pattern length vs coverage
+    - Supports flexible employees
     """
     shift_types = requirement['shiftTypes']
     headcount_per_shift = requirement['headcountPerShift']
-
-    # Generate candidate patterns
-    candidates = generate_pattern_candidates(
+    coverage_days = requirement.get('coverageDays', ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'])
+    
+    # Generate coverage-aware patterns
+    candidates = generate_coverage_aware_patterns(
         shift_types=shift_types,
-        cycle_length=6,  # Standard 6-day cycle
+        coverage_days=coverage_days,
         min_work_days=3,
-        max_work_days=5
+        max_work_days=min(5, len(coverage_days) - 1)
     )
-
-    print(f"  Generated {len(candidates)} candidate patterns for {requirement['id']}")
-
-    # Evaluate each candidate
+    
+    logger.info(f"  Generated {len(candidates)} coverage-aware patterns for {requirement['id']}")
+    logger.info(f"  Coverage: {', '.join(coverage_days)} ({len(coverage_days)} days)")
+    
     all_configs = []
     
-    max_weekly_hours = constraints.get('maxWeeklyNormalHours', 44)
-
     for pattern in candidates:
-        # Check feasibility
-        is_feasible, issues = verify_pattern_feasibility(pattern, constraints)
-        if not is_feasible:
+        # VALIDATION: Pattern length must match coverage length
+        if len(pattern) != len(coverage_days):
+            logger.warning(f"  ⚠️ Skipping pattern {pattern}: length {len(pattern)} != coverage days {len(coverage_days)}")
             continue
-
-        # For mixed patterns, calculate min employees for each shift type
-        min_employees_total = 0
-        shift_employee_counts = {}
-        for shift in shift_types:
-            # Count how many days this shift appears in the pattern
-            shift_days = sum(1 for d in pattern if d == shift)
-            if shift_days == 0:
-                continue
-            headcount = headcount_per_shift.get(shift, 0)
-            
-            # Get shift-specific hours
-            if shift_definitions and shift in shift_definitions:
-                shift_def = shift_definitions[shift]
-                gross_hours = shift_def.get('grossHours', 12.0)
-                lunch_break = shift_def.get('lunchBreak', 1.0)
-                shift_hours = gross_hours - lunch_break
-            else:
-                shift_hours = 11.0  # Default: 12 gross - 1 lunch
-            
-            min_employees = calculate_min_employees(
-                pattern,
-                headcount,
-                days_in_horizon,
-                max_weekly_hours,
-                shift_hours
-            )
-            shift_employee_counts[shift] = min_employees
-            min_employees_total += min_employees
-
-        # Optimize for large employee counts (100+)
-        if min_employees_total > 100:
-            offsets = [i % len(pattern) for i in range(min_employees_total)]
-        else:
-            offsets = generate_staggered_offsets(min_employees_total, len(pattern))
-
-        # Simulate coverage for mixed patterns
-        coverage = simulate_coverage(
-            pattern,
-            min_employees_total,
-            offsets,
-            headcount_per_shift,
-            days_in_horizon,
-            anchor_date
+        
+        # Get headcount (for single shift, it's the only key)
+        total_headcount = sum(headcount_per_shift.values())
+        
+        # Simulate coverage with preprocessing
+        sim_result = simulate_coverage_with_preprocessing(
+            pattern=pattern,
+            headcount=total_headcount,
+            coverage_days=coverage_days,
+            days_in_horizon=days_in_horizon,
+            start_date=start_date
         )
-
-        # Evaluate quality
-        quality = evaluate_coverage_quality(
-            coverage['coverageMap'],
-            headcount_per_shift
-        )
-
-        # Score: prioritize fewer employees + high coverage + balance
-        coverage_penalty = (100 - coverage['coverageRate']) * 100
-        employee_penalty = min_employees_total * 10
-        balance_penalty = quality['variance']
-
-        score = coverage_penalty + employee_penalty + balance_penalty
-
+        
+        # Calculate score
+        employee_penalty = sim_result['employeeCount'] * 10
+        coverage_penalty = 0 if sim_result['coverageComplete'] else 1000
+        flexible_bonus = -sim_result['flexibleEmployees'] * 5  # Reward flexibility
+        
+        score = employee_penalty + coverage_penalty + flexible_bonus
+        
         all_configs.append({
             'pattern': pattern,
-            'employeeCount': min_employees_total,
-            'shiftEmployeeCounts': shift_employee_counts,
-            'offsets': offsets,
-            'coverage': coverage,
-            'quality': quality,
+            'employeeCount': sim_result['employeeCount'],
+            'strictEmployees': sim_result['strictEmployees'],
+            'flexibleEmployees': sim_result['flexibleEmployees'],
+            'trulyFlexibleEmployees': sim_result['trulyFlexibleEmployees'],
+            'offsets': sim_result['offsets'],
+            'coverageComplete': sim_result['coverageComplete'],
+            'coverageRange': sim_result['coverageRange'],
+            'calendarDays': sim_result['calendarDays'],
             'score': round(score, 2)
         })
-
-    # Sort by score (best first) and return top N
+    
+    # Sort and return top N
     all_configs.sort(key=lambda x: x['score'])
-    top_configs = all_configs[:top_n]
-
-    return top_configs
+    return all_configs[:top_n]
 
 
 def optimize_all_requirements(
     requirements: List[Dict],
     constraints: Dict,
     planning_horizon: Dict,
-    shift_definitions: Optional[Dict[str, Dict]] = None
+    shift_definitions: Optional[Dict[str, Dict]] = None,
+    top_n: int = 5
 ) -> Dict:
     """
-    Optimize configuration for all requirements.
+    Optimize configuration for all requirements using ICPMP v2.
     
     Args:
         requirements: List of requirement specifications
         constraints: Constraint parameters
         planning_horizon: Planning horizon with start/end dates
-        shift_definitions: Optional dict mapping shift codes to definitions
-                          e.g., {"D": {"grossHours": 12.0, "lunchBreak": 1.0}}
+        top_n: Number of top patterns to return per requirement
     
     Returns:
-        Optimal configuration for all requirements
+        Dict mapping requirement IDs to their top configurations
     """
     start_date = datetime.fromisoformat(planning_horizon['startDate'])
     end_date = datetime.fromisoformat(planning_horizon['endDate'])
     days_in_horizon = (end_date - start_date).days + 1
     
     print(f"\n{'='*80}")
-    print(f"OPTIMIZING CONFIGURATION FOR {len(requirements)} REQUIREMENTS")
+    print(f"OPTIMIZING CONFIGURATION - ICPMP v2 (Enhanced)")
     print(f"{'='*80}\n")
     print(f"Planning horizon: {start_date.date()} to {end_date.date()} ({days_in_horizon} days)\n")
     
@@ -257,33 +286,51 @@ def optimize_all_requirements(
     total_employees_best = 0
     
     for req in requirements:
-        print(f"Optimizing: {req['id']} ({req['name']})")
-        headcount_summary = ', '.join([f"{shift}: {count}" for shift, count in req['headcountPerShift'].items()])
-        print(f"  Shift types: {req['shiftTypes']}, Headcount: {headcount_summary}")
+        req_id = req.get('requirementId', req.get('id'))
+        req_name = req.get('requirementName', req.get('name'))
         
-        top_configs = optimize_requirement_config(
-            req,
-            constraints,
-            days_in_horizon,
-            start_date,
-            shift_definitions=shift_definitions,
-            top_n=5  # Get top 5 patterns
+        print(f"Optimizing: {req_id} ({req_name})")
+        
+        # Build requirement dict in expected format
+        requirement = {
+            'id': req_id,
+            'name': req_name,
+            'coverageDays': req['coverageDays'],
+            'shiftTypes': req['shiftTypes'],
+            'headcountPerShift': req.get('headcountByShift', req.get('headcountPerShift', {}))
+        }
+        
+        top_configs = optimize_requirement_config_v2(
+            requirement=requirement,
+            constraints=constraints,
+            days_in_horizon=days_in_horizon,
+            start_date=start_date,
+            top_n=top_n
         )
         
         if top_configs:
-            optimized_configs[req['id']] = top_configs
-            best_config = top_configs[0]  # Best is first
+            # Convert to output format
+            formatted_configs = []
+            for config in top_configs:
+                formatted_configs.append({
+                    'workPattern': config['pattern'],
+                    'employeesRequired': config['employeeCount'],
+                    'strictEmployees': config['strictEmployees'],
+                    'flexibleEmployees': config['flexibleEmployees'],
+                    'employeeOffsets': config['offsets'],
+                    'expectedCoverageRate': 100.0 if config['coverageComplete'] else 
+                                           (config['coverageRange'][1] / requirement['headcountPerShift'][requirement['shiftTypes'][0]] * 100),
+                    'score': config['score']
+                })
+            
+            optimized_configs[req_id] = formatted_configs
+            best_config = top_configs[0]
             total_employees_best += best_config['employeeCount']
             
-            print(f"  ✓ Found {len(top_configs)} feasible patterns")
-            print(f"  ✓ Best pattern: {best_config['pattern']}")
+            print(f"  ✓ Found {len(top_configs)} coverage-aware patterns")
+            print(f"  ✓ Best pattern: {best_config['pattern']} ({len(best_config['pattern'])}-day cycle)")
             print(f"  ✓ Employees needed: {best_config['employeeCount']}")
-            print(f"  ✓ Coverage rate: {best_config['coverage']['coverageRate']:.1f}%")
-            print(f"  ✓ Balance score: {best_config['quality']['balanceScore']:.1f}")
-            
-            # Show alternatives if available
-            if len(top_configs) > 1:
-                print(f"  ℹ️  Alternative patterns available: {len(top_configs) - 1}")
+            print(f"  ✓ Coverage: {'Complete' if best_config['coverageComplete'] else 'Partial'}")
             print()
         else:
             print(f"  ✗ No feasible configuration found!")
@@ -296,138 +343,75 @@ def optimize_all_requirements(
     print(f"Total employees needed (using best patterns): {total_employees_best}")
     print(f"{'='*80}\n")
     
-    return {
-        'requirements': optimized_configs,
-        'summary': {
-            'totalRequirements': len(requirements),
-            'totalEmployees': total_employees_best,
-            'planningHorizon': {
-                'startDate': start_date.isoformat(),
-                'endDate': end_date.isoformat(),
-                'days': days_in_horizon
-            }
-        }
-    }
+    return optimized_configs
 
 
-def format_output_config(optimized_result: Dict, requirements: List[Dict]) -> Dict:
+def format_output_config(optimized_result: Dict, input_config: Dict) -> Dict:
     """
-    Format optimized result for output JSON with top 5 patterns per requirement.
+    Format optimized result for JSON output.
     
     Args:
-        optimized_result: Result from optimize_all_requirements
-        requirements: Original requirement specifications
+        optimized_result: Result from optimize_all_requirements_v2
+        input_config: Original input configuration
     
     Returns:
-        Formatted configuration with top 5 alternatives per requirement
+        Formatted output configuration
     """
-    req_map = {req['id']: req for req in requirements}
+    recommendations = []
     
-    formatted = {
-        'schemaVersion': '0.8',
-        'configType': 'optimizedRosterConfiguration',
-        'generatedAt': datetime.now().isoformat(),
-        'summary': optimized_result['summary'],
-        'recommendations': []
-    }
-    
-    for req_id, config_list in optimized_result['requirements'].items():
-        req = req_map.get(req_id, {})
+    for req_id, configs in optimized_result.items():
+        # Find requirement details
+        req = next(r for r in input_config['requirements'] 
+                  if r.get('requirementId', r.get('id')) == req_id)
         
-        # Each requirement now has a list of top configs
-        for rank, config in enumerate(config_list, 1):
-            # Limit offsets display for large teams
-            display_offsets = config['offsets'][:10] if config['employeeCount'] <= 100 else []
-            
-            recommendation = {
+        for rank, config in enumerate(configs, 1):
+            recommendations.append({
                 'requirementId': req_id,
-                'requirementName': req.get('name', ''),
-                'productType': req.get('productType', ''),
-                'rank': req.get('rank', ''),
-                'scheme': req.get('scheme', ''),
-                'alternativeRank': rank,  # 1 = best, 2 = second best, etc.
+                'requirementName': req.get('requirementName', req.get('name')),
+                'alternativeRank': rank,
                 'configuration': {
-                    'workPattern': config['pattern'],
-                    'employeesRequired': config['employeeCount'],
-                    'employeesRequiredPerShift': config.get('shiftEmployeeCounts', {}),
-                    'rotationOffsets': display_offsets,
-                    'cycleLength': len(config['pattern']),
-                    'score': config['score']
+                    'workPattern': config['workPattern'],
+                    'employeesRequired': config['employeesRequired'],
+                    'strictEmployees': config['strictEmployees'],
+                    'flexibleEmployees': config['flexibleEmployees'],
+                    'employeeOffsets': config['employeeOffsets']
                 },
                 'coverage': {
-                    'expectedCoverageRate': round(config['coverage']['coverageRate'], 2),
-                    'daysFullyCovered': config['coverage']['daysFullyCovered'],
-                    'daysUndercovered': config['coverage']['daysUndercovered'],
-                    'averageAvailable': config['coverage']['averageAvailable'],
-                    'requiredPerShift': config['coverage'].get('requiredPerShift', {}),
-                    'requiredPerDay': config['coverage'].get('requiredPerDay', {})
+                    'expectedCoverageRate': config['expectedCoverageRate'],
+                    'coverageType': 'complete' if config['expectedCoverageRate'] >= 100 else 'partial'
                 },
                 'quality': {
-                    'balanceScore': config['quality']['balanceScore'],
-                    'variance': config['quality']['variance'],
-                    'totalExcessCoverage': config['quality']['totalExcessCoverage']
-                },
-                'notes': _generate_notes(config, req, rank)
-            }
-            
-            formatted['recommendations'].append(recommendation)
+                    'score': config['score']
+                }
+            })
     
-    return formatted
-
-
-def _generate_notes(config: Dict, requirement: Dict, rank: int = 1) -> List[str]:
-    """Generate helpful notes about the configuration."""
-    notes = []
+    # Calculate summary
+    total_employees = sum(
+        configs[0]['employeesRequired'] 
+        for configs in optimized_result.values() 
+        if configs
+    )
     
-    # Add rank indicator
-    if rank == 1:
-        notes.append("⭐ RECOMMENDED: Best overall score")
-    elif rank <= 3:
-        notes.append(f"Alternative #{rank}: {_rank_description(rank)}")
-    else:
-        notes.append(f"Alternative #{rank}")
-    
-    pattern = config['pattern']
-    work_days = sum(1 for d in pattern if d != 'O')
-    off_days = len(pattern) - work_days
-    
-    notes.append(f"Pattern has {work_days} work days and {off_days} off days per {len(pattern)}-day cycle")
-    
-    # Team size notes
-    if config['employeeCount'] > 100:
-        notes.append(f"⚠ Large team ({config['employeeCount']} employees) - optimized for performance")
-    elif config['employeeCount'] > 50:
-        notes.append(f"Large team ({config['employeeCount']} employees) - consider splitting requirement")
-    elif config['employeeCount'] <= 10:
-        notes.append(f"✓ Small team ({config['employeeCount']} employees) - easy to manage")
-    
-    if config['coverage']['coverageRate'] == 100:
-        notes.append("✓ Achieves 100% coverage with this configuration")
-    elif config['coverage']['coverageRate'] >= 95:
-        notes.append(f"Achieves {config['coverage']['coverageRate']:.1f}% coverage (near-optimal)")
-    else:
-        notes.append(f"Warning: Only {config['coverage']['coverageRate']:.1f}% coverage - may need more employees")
-    
-    if config['quality']['variance'] < 1.0:
-        notes.append("✓ Excellent workload balance across employees")
-    elif config['quality']['variance'] < 2.0:
-        notes.append("Good workload balance")
-    
-    return notes
-
-
-def _rank_description(rank: int) -> str:
-    """Get description for alternative rank."""
-    descriptions = {
-        2: "Second best option",
-        3: "Third best option",
-        4: "Fourth option",
-        5: "Fifth option"
+    return {
+        'schemaVersion': input_config.get('schemaVersion', '0.8'),
+        'configType': 'optimizedRosterConfiguration',
+        'generatedAt': datetime.now().isoformat(),
+        'organizationId': input_config.get('organizationId', 'ORG_TEST'),
+        'planningHorizon': input_config['planningHorizon'],
+        'summary': {
+            'totalRequirements': len(input_config['requirements']),
+            'totalEmployees': total_employees,
+            'optimizerVersion': 'ICPMP v2.0 (Enhanced)'
+        },
+        'recommendations': recommendations
     }
-    return descriptions.get(rank, f"Alternative option")
-    
-    offsets = config['offsets']
-    if len(set(offsets)) == len(offsets):
-        notes.append("✓ All employees have unique rotation offsets for maximum diversity")
-    
-    return notes
+
+
+# Export functions
+__all__ = [
+    'generate_coverage_aware_patterns',
+    'simulate_coverage_with_preprocessing',
+    'optimize_requirement_config_v2',
+    'optimize_all_requirements',
+    'format_output_config'
+]

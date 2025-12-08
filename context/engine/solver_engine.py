@@ -528,6 +528,14 @@ def build_model(ctx):
             else:
                 # MODE 1: Use fixed offset from employee data (for existing employees in incremental mode)
                 emp_offset = emp.get('rotationOffset', 0)
+                
+                # SPECIAL HANDLING: offset=-1 means "truly flexible" employee from preprocessing
+                # These employees can work ANY shift without pattern constraints
+                if emp_offset == -1:
+                    # No pattern constraint for flexible employees
+                    # They can be assigned to any shift
+                    continue
+                
                 emp_cycle_day = (days_from_base + emp_offset) % cycle_days
                 expected_shift = rotation_seq[emp_cycle_day]
                 
@@ -1612,6 +1620,38 @@ def solve(ctx):
     print(f"[solve] Status: {solver_status}")
     print(f"{'='*80}\n")
     
+    # Calculate employee utilization statistics
+    employees = ctx.get('employees', [])
+    total_employees = len(employees)
+    
+    # Count employees by rotation offset type
+    strict_adherence = 0
+    flexible_employees = 0
+    for emp in employees:
+        offset = emp.get('rotationOffset', 0)
+        if offset == -1:
+            flexible_employees += 1
+        else:
+            strict_adherence += 1
+    
+    # Count employees who were actually assigned
+    assigned_employee_ids = set()
+    for assignment in assignments:
+        if assignment.get('employeeId'):
+            assigned_employee_ids.add(assignment['employeeId'])
+    
+    employees_assigned = len(assigned_employee_ids)
+    employees_not_assigned = total_employees - employees_assigned
+    
+    employee_utilization = {
+        "totalEmployees": total_employees,
+        "strictAdherence": strict_adherence,
+        "flexiblePattern": flexible_employees,
+        "employeesAssigned": employees_assigned,
+        "employeesNotAssigned": employees_not_assigned,
+        "utilizationPercentage": round((employees_assigned / total_employees * 100), 1) if total_employees > 0 else 0
+    }
+    
     # Build solver result dict with scores
     solver_result = {
         "status_code": status,
@@ -1624,7 +1664,8 @@ def solve(ctx):
             "soft": soft_score,
             "overall": hard_score + soft_score
         },
-        "scoreBreakdown": score_breakdown
+        "scoreBreakdown": score_breakdown,
+        "employeeUtilization": employee_utilization
     }
     
     # Add optimized offsets to result if they were computed
