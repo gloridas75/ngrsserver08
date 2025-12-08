@@ -1,0 +1,326 @@
+#!/bin/bash
+#
+# NGRS Solver - Graceful Update & Restart Script
+# Usage: ./deploy_update.sh
+#
+# This script safely deploys code updates and restarts the service.
+#
+
+set -e  # Exit on error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Configuration
+SERVICE_NAME="ngrs-solver"
+LOG_FILE="/var/log/ngrs-solver.log"
+BACKUP_DIR="/opt/ngrs-solver-backups"
+APP_DIR="/opt/ngrs-solver"
+
+echo -e "${BLUE}=========================================${NC}"
+echo -e "${BLUE}NGRS Solver - Graceful Update & Restart${NC}"
+echo -e "${BLUE}=========================================${NC}"
+echo ""
+
+# Function to print status messages
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Function to check if running as correct user
+check_user() {
+    if [ "$EUID" -eq 0 ]; then 
+        print_error "Do not run this script as root. Run as ubuntu user with sudo privileges."
+        exit 1
+    fi
+}
+
+# Function to create backup
+create_backup() {
+    print_status "Creating backup..."
+    
+    # Create backup directory if it doesn't exist
+    sudo mkdir -p "$BACKUP_DIR"
+    
+    # Generate timestamp
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+    BACKUP_PATH="$BACKUP_DIR/ngrs-solver_$TIMESTAMP"
+    
+    # Copy current code
+    sudo cp -r "$APP_DIR" "$BACKUP_PATH"
+    
+    print_success "Backup created at: $BACKUP_PATH"
+    echo ""
+}
+
+# Function to stop service gracefully
+stop_service() {
+    print_status "Stopping $SERVICE_NAME service gracefully..."
+    
+    # Check if service is running
+    if sudo systemctl is-active --quiet $SERVICE_NAME; then
+        # Stop the service
+        sudo systemctl stop $SERVICE_NAME
+        
+        # Wait for service to stop
+        for i in {1..10}; do
+            if ! sudo systemctl is-active --quiet $SERVICE_NAME; then
+                print_success "Service stopped successfully"
+                echo ""
+                return 0
+            fi
+            sleep 1
+        done
+        
+        print_warning "Service taking longer to stop..."
+        sleep 5
+    else
+        print_status "Service is not running"
+        echo ""
+    fi
+}
+
+# Function to check for processes on port 8080
+check_port() {
+    print_status "Checking if port 8080 is free..."
+    
+    # Check for processes using port 8080
+    PORT_PIDS=$(sudo lsof -ti :8080 2>/dev/null || true)
+    
+    if [ -n "$PORT_PIDS" ]; then
+        print_warning "Found processes on port 8080: $PORT_PIDS"
+        print_status "Killing processes..."
+        echo "$PORT_PIDS" | xargs -r sudo kill -9
+        sleep 2
+        print_success "Port 8080 is now free"
+    else
+        print_success "Port 8080 is free"
+    fi
+    echo ""
+}
+
+# Function to pull latest code
+pull_code() {
+    print_status "Pulling latest code from GitHub..."
+    
+    cd "$APP_DIR"
+    
+    # Show current commit
+    CURRENT_COMMIT=$(git rev-parse --short HEAD)
+    print_status "Current commit: $CURRENT_COMMIT"
+    
+    # Pull latest code
+    git pull origin main
+    
+    # Show new commit
+    NEW_COMMIT=$(git rev-parse --short HEAD)
+    print_status "New commit: $NEW_COMMIT"
+    
+    if [ "$CURRENT_COMMIT" = "$NEW_COMMIT" ]; then
+        print_warning "No new changes pulled"
+    else
+        print_success "Code updated successfully"
+    fi
+    echo ""
+}
+
+# Function to check Python syntax
+check_syntax() {
+    print_status "Checking Python syntax..."
+    
+    cd "$APP_DIR"
+    source venv/bin/activate
+    
+    # Check main files for syntax errors
+    SYNTAX_ERROR=0
+    
+    for file in src/api_server.py context/engine/solver_engine.py context/engine/slot_builder.py; do
+        if [ -f "$file" ]; then
+            if python3 -m py_compile "$file" 2>/dev/null; then
+                echo -e "  ${GREEN}✓${NC} $file"
+            else
+                echo -e "  ${RED}✗${NC} $file"
+                SYNTAX_ERROR=1
+            fi
+        fi
+    done
+    
+    if [ $SYNTAX_ERROR -eq 1 ]; then
+        print_error "Syntax errors found! Aborting deployment."
+        exit 1
+    fi
+    
+    print_success "All files passed syntax check"
+    echo ""
+}
+
+# Function to clear log file
+clear_logs() {
+    print_status "Clearing old logs..."
+    
+    if [ -f "$LOG_FILE" ]; then
+        # Archive old log
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        sudo mv "$LOG_FILE" "$LOG_FILE.$TIMESTAMP"
+        sudo touch "$LOG_FILE"
+        sudo chown ubuntu:ubuntu "$LOG_FILE"
+        print_success "Old logs archived to $LOG_FILE.$TIMESTAMP"
+    else
+        sudo touch "$LOG_FILE"
+        sudo chown ubuntu:ubuntu "$LOG_FILE"
+        print_success "Log file created"
+    fi
+    echo ""
+}
+
+# Function to start service
+start_service() {
+    print_status "Starting $SERVICE_NAME service..."
+    
+    sudo systemctl start $SERVICE_NAME
+    
+    # Wait for service to start
+    sleep 3
+    
+    # Check if service started successfully
+    if sudo systemctl is-active --quiet $SERVICE_NAME; then
+        print_success "Service started successfully"
+    else
+        print_error "Service failed to start"
+        print_error "Check logs: tail -50 $LOG_FILE"
+        exit 1
+    fi
+    echo ""
+}
+
+# Function to verify service
+verify_service() {
+    print_status "Verifying service health..."
+    
+    # Wait a bit for service to fully initialize
+    sleep 5
+    
+    # Check if port 8080 is listening
+    if sudo lsof -i :8080 | grep -q LISTEN; then
+        print_success "Port 8080 is listening"
+    else
+        print_error "Port 8080 is NOT listening!"
+        print_status "Checking logs for errors..."
+        tail -30 "$LOG_FILE"
+        exit 1
+    fi
+    
+    # Test health endpoint
+    print_status "Testing health endpoint..."
+    HEALTH_RESPONSE=$(curl -s http://localhost:8080/health || echo "failed")
+    
+    if [[ "$HEALTH_RESPONSE" == *"ok"* ]]; then
+        print_success "Health check passed"
+    else
+        print_error "Health check failed: $HEALTH_RESPONSE"
+        exit 1
+    fi
+    
+    # Test version endpoint
+    print_status "Testing version endpoint..."
+    VERSION_RESPONSE=$(curl -s http://localhost:8080/version || echo "failed")
+    
+    if [[ "$VERSION_RESPONSE" == *"version"* ]]; then
+        print_success "Version endpoint working"
+        echo -e "${GREEN}Version info:${NC}"
+        echo "$VERSION_RESPONSE" | python3 -m json.tool 2>/dev/null || echo "$VERSION_RESPONSE"
+    else
+        print_warning "Version endpoint returned: $VERSION_RESPONSE"
+    fi
+    
+    echo ""
+}
+
+# Function to show service status
+show_status() {
+    print_status "Service status:"
+    sudo systemctl status $SERVICE_NAME --no-pager -l
+    echo ""
+}
+
+# Function to show recent logs
+show_logs() {
+    print_status "Recent logs (last 20 lines):"
+    echo -e "${YELLOW}--------------------------------${NC}"
+    tail -20 "$LOG_FILE"
+    echo -e "${YELLOW}--------------------------------${NC}"
+    echo ""
+}
+
+# Main execution
+main() {
+    echo "Starting deployment process..."
+    echo ""
+    
+    # Check user
+    check_user
+    
+    # Create backup
+    create_backup
+    
+    # Stop service gracefully
+    stop_service
+    
+    # Check and free port
+    check_port
+    
+    # Pull latest code
+    pull_code
+    
+    # Check syntax
+    check_syntax
+    
+    # Clear logs
+    clear_logs
+    
+    # Start service
+    start_service
+    
+    # Verify service
+    verify_service
+    
+    # Show status
+    show_status
+    
+    # Show recent logs
+    show_logs
+    
+    # Final summary
+    echo -e "${GREEN}=========================================${NC}"
+    echo -e "${GREEN}✓ Deployment completed successfully!${NC}"
+    echo -e "${GREEN}=========================================${NC}"
+    echo ""
+    echo "Service is running and healthy."
+    echo "You can now test the API at: https://ngrssolver09.comcentricapps.com"
+    echo ""
+    echo "Useful commands:"
+    echo "  - Check status: sudo systemctl status $SERVICE_NAME"
+    echo "  - View logs: tail -f $LOG_FILE"
+    echo "  - Restart: sudo systemctl restart $SERVICE_NAME"
+    echo "  - Stop: sudo systemctl stop $SERVICE_NAME"
+    echo ""
+}
+
+# Run main function
+main

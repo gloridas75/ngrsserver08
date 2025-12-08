@@ -6,6 +6,7 @@
 from ortools.sat.python import cp_model
 import importlib, pkgutil
 from datetime import datetime, date, timedelta
+from typing import List, Optional
 import time
 import os
 from collections import defaultdict
