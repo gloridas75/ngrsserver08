@@ -177,11 +177,27 @@ def build_model(ctx):
     x = {}
     gender_filtered = 0
     scheme_filtered = 0
+    product_filtered = 0
+    rank_filtered = 0
     blacklist_filtered = 0
     
     for slot in slots:
         for emp in employees:
             emp_id = emp.get('employeeId')
+            
+            # v0.70: Check product type requirement
+            slot_product = slot.productTypeId
+            emp_product = emp.get('productTypeId', '')
+            if slot_product and emp_product != slot_product:
+                product_filtered += 1
+                continue
+            
+            # v0.70: Check rank requirement
+            slot_rank = slot.rankId
+            emp_rank = emp.get('rankId', '')
+            if slot_rank and emp_rank != slot_rank:
+                rank_filtered += 1
+                continue
             
             # v0.70: Check gender requirement
             gender_req = slot.genderRequirement
@@ -293,6 +309,10 @@ def build_model(ctx):
             x[(slot.slot_id, emp_id)] = model.NewBoolVar(var_name)
     
     print(f"[build_model] ✓ Created {len(x)} decision variables")
+    if product_filtered > 0:
+        print(f"  ℹ️  Filtered {product_filtered} employee-slot pairs based on product type requirement")
+    if rank_filtered > 0:
+        print(f"  ℹ️  Filtered {rank_filtered} employee-slot pairs based on rank requirement")
     if gender_filtered > 0:
         print(f"  ℹ️  Filtered {gender_filtered} employee-slot pairs based on gender requirement")
     if scheme_filtered > 0:
