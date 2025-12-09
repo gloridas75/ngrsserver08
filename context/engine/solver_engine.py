@@ -12,7 +12,7 @@ import os
 from collections import defaultdict
 from .data_loader import load_input
 from .score_helpers import ScoreBook
-from .slot_builder import build_slots
+from .slot_builder import build_slots, normalize_scheme
 
 # Optimization mode constants
 OPTIMIZATION_MODE_BALANCE = "balanceWorkload"
@@ -154,6 +154,7 @@ def build_model(ctx):
     ctx['slots'] = slots  # Store in context for constraint use
     
     employees = ctx.get('employees', [])
+    scheme_map = ctx.get('schemeMap', {})  # Load scheme mapping for normalization
     
     # Performance optimization: Create lookup caches
     ctx['employee_lookup'] = {emp.get('employeeId') or emp.get('id'): emp for emp in employees}
@@ -219,7 +220,8 @@ def build_model(ctx):
             # v0.70: Check scheme requirement
             # Note: slot.schemeRequirement is already normalized to short code (A/B/P/Global) by slot_builder
             scheme_req = slot.schemeRequirement
-            emp_scheme = emp.get('scheme', '')
+            emp_scheme_raw = emp.get('scheme', '')
+            emp_scheme = normalize_scheme(emp_scheme_raw, scheme_map)  # Normalize employee scheme too
             scheme_allowed = True
             
             # Both are now in short format, so direct comparison works
