@@ -82,35 +82,41 @@ def combine(d: date, time_str: str) -> datetime:
 def normalize_scheme(scheme_value: str, scheme_map: Optional[Dict[str, str]] = None) -> str:
     """Normalize scheme value to short code format (A, B, P, or Global).
     
-    Handles both formats:
-    - Full name: "Scheme A", "Scheme B", "Scheme P" → "A", "B", "P"
-    - Short code: "A", "B", "P" → "A", "B", "P" (no change)
-    - Global: "Global" → "Global" (no change)
+    Handles both formats (case-insensitive):
+    - Full name: "Scheme A", "scheme A", "SCHEME A" → "A"
+    - Short code: "A", "a" → "A"
+    - Global: "Global", "global" → "Global"
     
     Args:
-        scheme_value: The scheme value from input (can be "Scheme P" or "P")
+        scheme_value: The scheme value from input (can be "Scheme P" or "P" or "scheme p")
         scheme_map: Optional schemeMap from input (e.g., {"A": "Scheme A", "B": "Scheme B", "P": "Scheme P"})
     
     Returns:
         Normalized short code: "A", "B", "P", or "Global"
     """
-    if not scheme_value or scheme_value == "Global":
+    if not scheme_value:
         return "Global"
     
-    # If scheme_map is provided, try reverse lookup
+    # Handle "Global" case-insensitively
+    if scheme_value.lower() == "global":
+        return "Global"
+    
+    # If scheme_map is provided, try reverse lookup (case-insensitive)
     if scheme_map:
-        # Check if value is already a short code (key in scheme_map)
-        if scheme_value in scheme_map:
-            return scheme_value
+        # Check if value is already a short code (key in scheme_map) - case-insensitive
+        for short_code in scheme_map.keys():
+            if scheme_value.upper() == short_code.upper():
+                return short_code  # Return the canonical short code from map
         
-        # Try to find matching short code by value ("Scheme P" → "P")
+        # Try to find matching short code by value ("Scheme P" → "P") - case-insensitive
         for short_code, full_name in scheme_map.items():
-            if full_name == scheme_value:
+            if full_name.lower() == scheme_value.lower():
                 return short_code
     
-    # Fallback: If it starts with "Scheme ", extract the letter
-    if scheme_value.startswith("Scheme "):
-        return scheme_value.replace("Scheme ", "").strip()
+    # Fallback: If it starts with "Scheme " (case-insensitive), extract the letter
+    if scheme_value.lower().startswith("scheme "):
+        extracted = scheme_value[7:].strip()  # Extract after "scheme "
+        return extracted.upper()  # Normalize to uppercase
     
     # Already in short format
     return scheme_value
