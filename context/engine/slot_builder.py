@@ -79,6 +79,46 @@ def combine(d: date, time_str: str) -> datetime:
     return datetime.combine(d, datetime.min.time().replace(hour=hour, minute=minute))
 
 
+def normalize_qualifications(required_quals) -> List[Dict[str, any]]:
+    """Normalize qualification requirements to group format.
+    
+    Handles both formats:
+    - Simple array: ["QUAL1", "QUAL2"] → single group with matchType="ALL"
+    - Group format: [{"groupId": "...", "matchType": "ANY", "qualifications": [...]}]
+    
+    Args:
+        required_quals: Either list of strings or list of group dicts
+        
+    Returns:
+        List of qualification groups (always in group format)
+    """
+    if not required_quals:
+        return []
+    
+    # Check if already in group format (first element is a dict with 'qualifications' key)
+    if required_quals and isinstance(required_quals[0], dict) and 'qualifications' in required_quals[0]:
+        # Already in group format - validate and return
+        normalized = []
+        for idx, group in enumerate(required_quals):
+            normalized.append({
+                'groupId': group.get('groupId', f'group_{idx}'),
+                'matchType': group.get('matchType', 'ALL'),
+                'qualifications': group.get('qualifications', [])
+            })
+        return normalized
+    
+    # Old format (simple array) - convert to single group with ALL logic
+    if required_quals and isinstance(required_quals[0], str):
+        return [{
+            'groupId': 'default',
+            'matchType': 'ALL',
+            'qualifications': required_quals
+        }]
+    
+    # Empty or invalid format
+    return []
+
+
 def normalize_scheme(scheme_value: str, scheme_map: Optional[Dict[str, str]] = None) -> str:
     """Normalize scheme value to short code format (A, B, P, or Global).
     
@@ -254,7 +294,10 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 # Normalize scheme value: "Scheme P" → "P", "Scheme A" → "A", etc.
                 scheme_req_raw = req.get("Scheme", "Global")
                 scheme_req = normalize_scheme(scheme_req_raw, scheme_map)
-                required_quals = req.get("requiredQualifications", [])
+                
+                # Normalize qualifications to group format (backwards compatible)
+                required_quals_raw = req.get("requiredQualifications", [])
+                required_quals = normalize_qualifications(required_quals_raw)
                 
                 # Support both old "rotationSequence" and new "workPattern" field names
                 work_pattern = req.get("workPattern") or req.get("rotationSequence", [])
