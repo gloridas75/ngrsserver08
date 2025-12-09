@@ -113,11 +113,6 @@ def simulate_coverage_with_preprocessing(
     
     **KEY IMPROVEMENT**: Uses actual calendar simulation with coverage day filtering
     
-    **CRITICAL**: For patterns with multiple shift codes (e.g., D-D-N-N-O-O),
-    headcount applies PER SHIFT TYPE, not per day total.
-    - Pattern ["D","D","N","N","O","O"] with headcount=20 means:
-      20 D slots + 20 N slots = 40 slots per work day
-    
     Returns:
         Dict with coverage stats including strict/flexible employee distribution
     """
@@ -134,23 +129,18 @@ def simulate_coverage_with_preprocessing(
         if weekday in coverage_days:
             calendar_dates.append(current_date.strftime('%Y-%m-%d'))
     
-    # CRITICAL FIX: Calculate actual slots per day based on unique shift codes
-    # If pattern has multiple shift types (D, N), headcount applies to EACH shift type
-    unique_shift_codes = set(code for code in pattern if code != 'O')
-    slots_per_work_day = len(unique_shift_codes) * headcount
-    
     # Simulate pattern filling
     pattern_info = {
         'pattern_key': tuple(pattern),
         'workPattern': pattern,
-        'combined_headcount': slots_per_work_day,  # Use total slots, not just headcount
+        'combined_headcount': headcount,
         'coverage_days': set(coverage_days)
     }
     
     try:
         result = simulate_pattern_filling(
             work_pattern=pattern,
-            combined_headcount=slots_per_work_day,  # Use total slots per day
+            combined_headcount=headcount,
             coverage_days=set(coverage_days),
             start_date=start_date.strftime('%Y-%m-%d'),
             end_date=(start_date + timedelta(days=days_in_horizon-1)).strftime('%Y-%m-%d'),
@@ -178,20 +168,15 @@ def simulate_coverage_with_preprocessing(
             'offsets': all_offsets,
             'coverageComplete': result.get('coverage_complete', False),
             'coverageRange': (result.get('min_coverage', 0), result.get('max_coverage', 0)),
-            'calendarDays': len(calendar_dates),
-            'uniqueShiftCodes': len(unique_shift_codes),
-            'slotsPerWorkDay': slots_per_work_day
+            'calendarDays': len(calendar_dates)
         }
     except Exception as e:
         logger.warning(f"Preprocessing simulation failed: {e}, falling back to basic calculation")
-        # Fallback to simple calculation with multi-shift support
-        unique_shift_codes = set(code for code in pattern if code != 'O')
-        slots_per_work_day = len(unique_shift_codes) * headcount
-        
+        # Fallback to simple calculation
         cycle_length = len(pattern)
         work_days_in_cycle = sum(1 for d in pattern if d != 'O')
         coverage_per_employee = work_days_in_cycle / cycle_length
-        min_employees = ceil(slots_per_work_day / coverage_per_employee)
+        min_employees = ceil(headcount / coverage_per_employee)
         
         # Calculate expected coverage: employees * work_days_per_cycle / cycle_length
         # This gives average daily coverage
@@ -203,9 +188,7 @@ def simulate_coverage_with_preprocessing(
             'flexibleEmployees': 0,
             'trulyFlexibleEmployees': 0,
             'offsets': [i % cycle_length for i in range(min_employees)],
-            'uniqueShiftCodes': len(unique_shift_codes),
-            'slotsPerWorkDay': slots_per_work_day,
-            'coverageComplete': expected_daily_coverage >= slots_per_work_day,
+            'coverageComplete': expected_daily_coverage >= headcount,
             'coverageRange': (int(expected_daily_coverage), int(expected_daily_coverage)),
             'calendarDays': len(calendar_dates)
         }

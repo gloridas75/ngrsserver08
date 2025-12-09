@@ -34,20 +34,6 @@ def get_pattern_cycle_length(work_pattern: List[str]) -> int:
     return len(work_pattern)
 
 
-def get_unique_shift_codes(work_pattern: List[str]) -> int:
-    """
-    Get the number of unique shift codes in the pattern (excluding 'O').
-    
-    Args:
-        work_pattern: List like ['D', 'D', 'N', 'N', 'O', 'O']
-    
-    Returns:
-        Number of unique shift codes (e.g., 2 for D and N)
-    """
-    unique_codes = set(code for code in work_pattern if code != 'O')
-    return len(unique_codes)
-
-
 def has_off_days(work_pattern: List[str]) -> bool:
     """
     Check if work pattern contains off days ('O').
@@ -115,38 +101,20 @@ def get_current_offset_distribution(employees: List[Dict[str, Any]]) -> Counter:
     return Counter(offsets)
 
 
-def stagger_offsets(
-    employees: List[Dict[str, Any]], 
-    cycle_length: int,
-    shift_code_multiplier: int = 1
-) -> int:
+def stagger_offsets(employees: List[Dict[str, Any]], cycle_length: int) -> int:
     """
     Distribute employees evenly across rotation offsets.
-    
-    CRITICAL: For patterns with multiple shift codes (e.g., D-D-N-N-O-O),
-    we need MORE employees per offset position to cover all shifts.
-    
-    Example: Pattern D-D-N-N-O-O with headcount=20
-    - 2 shift codes (D, N) × 20 headcount = 40 slots per work day
-    - Need 60 employees total (10 per offset × 6 offsets)
-    - NOT 30 employees!
     
     Args:
         employees: List of employee objects (modified in place)
         cycle_length: Pattern cycle length (e.g., 6 for DDNNOO)
-        shift_code_multiplier: Number of unique shift codes in pattern
     
     Returns:
         Number of employees updated
     """
     updated_count = 0
     
-    # Distribute employees across offsets
-    # With shift_code_multiplier, we group employees:
-    # - Offsets 0,1,2,3,4,5 (cycle positions)
-    # - Multiple employees at same offset for different shift coverage
     for i, emp in enumerate(employees):
-        # Round-robin distribution across cycle positions
         new_offset = i % cycle_length
         old_offset = emp.get('rotationOffset', 0)
         
@@ -199,22 +167,16 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
     
     # Determine cycle length from patterns
     cycle_length = 6  # Default for DDNNOO
-    shift_code_multiplier = 1  # Default for single shift type
     demand_items = input_data.get('demandItems', [])
     if demand_items and demand_items[0].get('requirements'):
         first_pattern = demand_items[0]['requirements'][0].get('workPattern', [])
         if first_pattern:
             cycle_length = get_pattern_cycle_length(first_pattern)
-            shift_code_multiplier = get_unique_shift_codes(first_pattern)
-            logger.info(f"Detected pattern: {first_pattern}")
-            logger.info(f"  - Cycle length: {cycle_length}")
-            logger.info(f"  - Unique shift codes: {shift_code_multiplier}")
-            if shift_code_multiplier > 1:
-                logger.info(f"  ⚠️  Multi-shift pattern detected! Headcount applies PER shift type")
+            logger.info(f"Detected pattern cycle length: {cycle_length} from {first_pattern}")
     
     # Apply staggered offsets
-    logger.info(f"Applying staggered offsets across {cycle_length} positions...")
-    updated_count = stagger_offsets(employees, cycle_length, shift_code_multiplier)
+    logger.info(f"Applying staggered offsets across {cycle_length} values...")
+    updated_count = stagger_offsets(employees, cycle_length)
     
     # Report results
     after_dist = get_current_offset_distribution(employees)
