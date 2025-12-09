@@ -83,13 +83,19 @@ stop_service() {
             if ! sudo systemctl is-active --quiet $SERVICE_NAME; then
                 print_success "Service stopped successfully"
                 echo ""
-                return 0
+                break
             fi
             sleep 1
         done
         
-        print_warning "Service taking longer to stop..."
-        sleep 5
+        # Force kill any remaining processes
+        print_status "Ensuring all processes are terminated..."
+        sudo pkill -9 -f '/opt/ngrs-solver' 2>/dev/null || true
+        sudo pkill -9 -f 'uvicorn' 2>/dev/null || true
+        sudo pkill -9 -f 'api_server' 2>/dev/null || true
+        sleep 2
+        print_success "All processes terminated"
+        echo ""
     else
         print_status "Service is not running"
         echo ""
@@ -100,18 +106,30 @@ stop_service() {
 check_port() {
     print_status "Checking if port 8080 is free..."
     
-    # Check for processes using port 8080
-    PORT_PIDS=$(sudo lsof -ti :8080 2>/dev/null || true)
+    # Try multiple times to ensure port is free
+    for attempt in {1..3}; do
+        PORT_PIDS=$(sudo lsof -ti :8080 2>/dev/null || true)
+        
+        if [ -n "$PORT_PIDS" ]; then
+            print_warning "Found processes on port 8080 (attempt $attempt): $PORT_PIDS"
+            print_status "Killing processes..."
+            echo "$PORT_PIDS" | xargs -r sudo kill -9
+            sleep 2
+        else
+            print_success "Port 8080 is free"
+            echo ""
+            return 0
+        fi
+    done
     
+    # Final check
+    PORT_PIDS=$(sudo lsof -ti :8080 2>/dev/null || true)
     if [ -n "$PORT_PIDS" ]; then
-        print_warning "Found processes on port 8080: $PORT_PIDS"
-        print_status "Killing processes..."
-        echo "$PORT_PIDS" | xargs -r sudo kill -9
-        sleep 2
-        print_success "Port 8080 is now free"
-    else
-        print_success "Port 8080 is free"
+        print_error "Unable to free port 8080 after multiple attempts"
+        exit 1
     fi
+    
+    print_success "Port 8080 is now free"
     echo ""
 }
 
