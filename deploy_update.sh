@@ -137,6 +137,13 @@ pull_code() {
     else
         print_success "Code updated successfully"
     fi
+    
+    # Clean up Python bytecode cache files
+    print_status "Cleaning Python bytecode cache..."
+    find . -type f -name "*.pyc" -delete
+    find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    print_success "Python cache cleaned"
+    
     echo ""
 }
 
