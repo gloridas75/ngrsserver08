@@ -50,6 +50,7 @@ from src.resource_monitor import (
     apply_resource_limits_to_solver,
     estimate_problem_complexity
 )
+from src.input_validator import validate_input, ValidationResult
 
 # ============================================================================
 # LOGGING SETUP
@@ -267,6 +268,67 @@ def get_input_json(request_obj: Optional[SolveRequest], uploaded_file_json: Opti
 async def health():
     """Health check endpoint."""
     return HealthResponse(status="ok")
+
+
+@app.post("/validate")
+async def validate_input_endpoint(request: Request):
+    """
+    Validate solver input without running the solver.
+    
+    Performs comprehensive validation including:
+    - Schema structure and required fields
+    - Business logic (shift definitions, work patterns, etc.)
+    - Scheme consistency across requirements and employees
+    - Feasibility pre-checks (matching employees for requirements)
+    
+    Returns:
+    - 200: Validation complete (check "valid" field in response)
+    - 400: Invalid JSON format
+    
+    Response includes:
+    - valid: boolean indicating if input is valid
+    - errors: List of blocking errors (prevent solver execution)
+    - warnings: List of warnings (informational, don't block execution)
+    
+    Each error/warning includes:
+    - field: JSON path to the problematic field
+    - code: Machine-readable error code
+    - message: Human-readable description
+    - severity: "error" or "warning"
+    """
+    try:
+        raw_body = await request.body()
+        input_json = json.loads(raw_body)
+        
+        # Run validation
+        validation_result = validate_input(input_json)
+        
+        # Build response
+        response = validation_result.to_dict()
+        
+        # Add summary
+        response["summary"] = {
+            "total_errors": len(validation_result.errors),
+            "total_warnings": len(validation_result.warnings),
+            "can_submit": validation_result.is_valid
+        }
+        
+        return ORJSONResponse(
+            status_code=200,
+            content=response
+        )
+        
+    except json.JSONDecodeError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid JSON: {str(e)}"
+        )
+    except Exception as e:
+        logger.error(f"Validation error: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Validation failed: {str(e)}"
+        )
 
 
 @app.get("/version")
@@ -821,6 +883,32 @@ async def solve_async(
             priority = raw_body_json.get("priority", 0)
             ttl_seconds = raw_body_json.get("ttl_seconds")
             webhook_url = raw_body_json.get("webhook_url")
+        
+        # ====== INPUT VALIDATION ======
+        # Validate input structure and business logic before submission
+        validation_result = validate_input(input_json)
+        
+        if not validation_result.is_valid:
+            logger.warning(
+                f"async_job_validation_failed requestId={request_id} "
+                f"errors={len(validation_result.errors)} "
+                f"first_error={validation_result.errors[0].code if validation_result.errors else 'none'}"
+            )
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "status": "validation_failed",
+                    "message": "Input validation failed. Please fix errors and resubmit.",
+                    **validation_result.to_dict()
+                }
+            )
+        
+        # Log warnings if any
+        if validation_result.warnings:
+            logger.info(
+                f"async_job_validation_warnings requestId={request_id} "
+                f"warnings={len(validation_result.warnings)}"
+            )
         
         # ====== AUTO-STAGGER ROTATION OFFSETS ======
         # Automatically ensure employees have staggered offsets for O-pattern coverage
