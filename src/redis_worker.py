@@ -17,6 +17,7 @@ from src.redis_job_manager import RedisJobManager, JobStatus
 from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
 from src.output_builder import build_output
+from src.preprocessing.icpmp_integration import ICPMPPreprocessor
 
 
 def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
@@ -77,16 +78,69 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
             start_time = time.time()
             
             try:
+                # ============================================================
+                # ICPMP v3.0 PREPROCESSING PHASE
+                # ============================================================
+                print(f"[WORKER-{worker_id}] Running ICPMP v3.0 preprocessing for job {job_id}")
+                preprocessing_start = time.time()
+                
+                try:
+                    preprocessor = ICPMPPreprocessor(input_data)
+                    preprocessing_result = preprocessor.preprocess_all_requirements()
+                    
+                    # Replace employee list with filtered, optimized employees
+                    input_data['employees'] = preprocessing_result['filtered_employees']
+                    
+                    preprocessing_time = time.time() - preprocessing_start
+                    print(f"[WORKER-{worker_id}] ICPMP preprocessing completed in {preprocessing_time:.2f}s")
+                    print(f"[WORKER-{worker_id}] Selected {len(preprocessing_result['filtered_employees'])} employees "
+                          f"(utilization: {preprocessing_result['summary']['utilization_rate']:.1%})")
+                    
+                    # Store ICPMP metadata for output
+                    icpmp_metadata = preprocessing_result['icpmp_metadata']
+                    icpmp_warnings = preprocessing_result['warnings']
+                    
+                except Exception as preprocessing_error:
+                    # If preprocessing fails, log error and continue with original employee list
+                    print(f"[WORKER-{worker_id}] ICPMP preprocessing failed: {preprocessing_error}")
+                    print(f"[WORKER-{worker_id}] Continuing with original employee list")
+                    traceback.print_exc()
+                    icpmp_metadata = None
+                    icpmp_warnings = [f"Preprocessing failed: {str(preprocessing_error)}"]
+                
+                # ============================================================
+                # CP-SAT SOLVER EXECUTION
+                # ============================================================
+                print(f"[WORKER-{worker_id}] Starting CP-SAT solver for job {job_id}")
+                solver_start = time.time()
+                
                 # Load and solve
                 ctx = load_input(input_data)
                 ctx["timeLimit"] = input_data.get("solverRunTime", {}).get("maxSeconds", 15)
                 
                 status_code, solver_result, assignments, violations = solve(ctx)
                 
+                solver_time = time.time() - solver_start
+                print(f"[WORKER-{worker_id}] CP-SAT solver completed in {solver_time:.2f}s")
+                
                 # Build output
                 result = build_output(
                     input_data, ctx, status_code, solver_result, assignments, violations
                 )
+                
+                # Enrich output with ICPMP metadata if preprocessing was successful
+                if icpmp_metadata:
+                    result['icpmp_preprocessing'] = {
+                        'enabled': True,
+                        'preprocessing_time_seconds': preprocessing_time,
+                        'requirements': icpmp_metadata,
+                        'warnings': icpmp_warnings
+                    }
+                elif icpmp_warnings:
+                    result['icpmp_preprocessing'] = {
+                        'enabled': False,
+                        'warnings': icpmp_warnings
+                    }
                 
                 elapsed_time = time.time() - start_time
                 
