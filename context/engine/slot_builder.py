@@ -289,7 +289,20 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 requirement_id = req.get("requirementId", f"REQ{req_idx}")
                 product_type = req.get("productTypeId")  # v0.70 schema uses productTypeId
                 rank_id = req.get("rankId")
-                headcount = req.get("headcount", 1)
+                
+                # Normalize headcount to support both formats:
+                # Legacy: "headcount": 10 (single value for all shifts)
+                # New: "headcount": {"D": 10, "N": 10} (per-shift headcount)
+                headcount_raw = req.get("headcount", 1)
+                if isinstance(headcount_raw, dict):
+                    # New format: per-shift headcount
+                    headcount_by_shift = headcount_raw
+                    print(f"      Requirement {requirement_id}: Using per-shift headcount {headcount_by_shift}")
+                else:
+                    # Legacy format: single headcount applies to all shifts
+                    headcount_by_shift = {}  # Will be populated per shift code
+                    default_headcount = headcount_raw
+                
                 gender_req = req.get("gender", "Any")
                 # Normalize scheme value: "Scheme P" → "P", "Scheme A" → "A", etc.
                 scheme_req_raw = req.get("Scheme", "Global")
@@ -306,7 +319,14 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     print(f"      ⚠️  Requirement {requirement_id} has empty work pattern, skipping")
                     continue
                 
-                print(f"      Requirement {requirement_id}: product={product_type}, rank={rank_id}, headcount={headcount}, gender={gender_req}, scheme={scheme_req}")
+                print(f"      Requirement {requirement_id}: product={product_type}, rank={rank_id}, gender={gender_req}, scheme={scheme_req}")
+                
+                # Display headcount info
+                if isinstance(headcount_raw, dict):
+                    print(f"        Headcount (per-shift): {headcount_by_shift}")
+                else:
+                    print(f"        Headcount (legacy): {default_headcount} per shift")
+                
                 print(f"        Work Pattern: {work_pattern}")
                 
                 # Determine the shift code to use (first non-"O" code from sequence)
@@ -364,14 +384,27 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     if not shift_detail:
                         continue
                     
+                    # Determine headcount for this specific shift code
+                    if isinstance(headcount_raw, dict):
+                        # New format: use per-shift headcount
+                        shift_headcount = headcount_by_shift.get(shift_code, 0)
+                        if shift_headcount == 0:
+                            print(f"        ⚠️  Shift {shift_code} has 0 headcount, skipping")
+                            continue
+                    else:
+                        # Legacy format: use default headcount for all shifts
+                        shift_headcount = default_headcount
+                    
+                    print(f"        Creating {shift_headcount} position(s) for shift {shift_code}")
+                    
                     # Parse shift times
                     start_time_str = shift_detail.get("start", "00:00")
                     end_time_str = shift_detail.get("end", "00:00")
                     next_day_flag = shift_detail.get("nextDay", False)
                     
-                    # Generate slots for each position (headcount times)
+                    # Generate slots for each position (shift_headcount times)
                     # Each slot is individual (headcount=1 per slot)
-                    for position_idx in range(headcount):
+                    for position_idx in range(shift_headcount):
                         position_slot_count = 0
                         
                         for cur_day in daterange(start_date, end_date):

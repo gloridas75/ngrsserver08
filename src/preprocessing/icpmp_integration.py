@@ -165,7 +165,36 @@ class ICPMPPreprocessor:
         """
         req_id = req.get('requirementId', 'UNKNOWN')
         work_pattern = req.get('workPattern', [])
-        headcount = req.get('headcount', 1)
+        
+        # Normalize headcount to support both formats:
+        # Legacy: "headcount": 10 (single value)
+        # New: "headcount": {"D": 10, "N": 10} (per-shift)
+        headcount_raw = req.get('headcount', 1)
+        
+        if isinstance(headcount_raw, dict):
+            # New format: per-shift headcount
+            # Calculate total slots needed per day
+            total_headcount_per_day = sum(headcount_raw.values())
+            headcount_by_shift = headcount_raw
+            logger.info(f"    Headcount (new format): {headcount_by_shift}, Total per day: {total_headcount_per_day}")
+        else:
+            # Legacy format: single headcount value
+            # Count unique shift types in pattern (excluding 'O')
+            shift_types = set(s for s in work_pattern if s != 'O')
+            
+            if len(shift_types) > 1:
+                # Multiple shift types: multiply by shift count
+                total_headcount_per_day = headcount_raw * len(shift_types)
+                headcount_by_shift = {shift: headcount_raw for shift in shift_types}
+                logger.info(f"    Headcount (legacy): {headcount_raw} × {len(shift_types)} shifts = {total_headcount_per_day} total per day")
+            else:
+                # Single shift type: use as-is
+                total_headcount_per_day = headcount_raw
+                headcount_by_shift = {list(shift_types)[0]: headcount_raw} if shift_types else {}
+                logger.info(f"    Headcount (legacy single-shift): {headcount_raw}")
+        
+        # Use total headcount for ICPMP calculation
+        headcount = total_headcount_per_day
         
         # Extract coverage parameters from shifts (first shift for simplicity)
         shifts = demand_item.get('shifts', [{}])
