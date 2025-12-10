@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICPMP Calculator - NGRS Solver</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .mode-panel {
+            display: none;
+        }
+
+        .mode-panel.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .form-group input[type="number"],
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            font-family: monospace;
+        }
+
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+
+        .form-group input[type="number"]:focus,
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea:disabled,
+        .form-group textarea[readonly] {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .pattern-input-wrapper {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .pattern-input-wrapper input {
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .pattern-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pattern-buttons button {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .pattern-buttons button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .file-upload {
+            padding: 20px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f5f7fa;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .calculate-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-button:active {
+            transform: translateY(0);
+        }
+
+        .calculate-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-section.visible {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item .label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .result-item .value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .result-highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .result-highlight .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .result-highlight .value {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .error-message {
+            background: #f5576c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            display: none;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+
+        .loading .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .preset-patterns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preset-button {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+
+        .preset-button:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧮 ICPMP Calculator</h1>
+            <p>Initial Cycle Pattern Manpower Predictor</p>
+            
+            <div class="mode-selector">
+                <button type="button" class="mode-btn active" onclick="switchMode('v1')">v1.0 - Simple</button>
+                <button type="button" class="mode-btn" onclick="switchMode('v2')">v2.0 - Optimizer</button>
+                <button type="button" class="mode-btn" onclick="switchMode('v3')">v3.0 - U-Slots ⭐</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- V1.0 Mode: Simple Calculator -->
+            <div id="mode-v1" class="mode-panel active">
+                <form id="icpmpForm">
+                    <div class="form-group">
+                        <label for="headcount">Headcount</label>
+                        <input 
+                            type="number" 
+                            id="headcount" 
+                            name="headcount" 
+                            min="1" 
+                            required 
+                            placeholder="e.g., 10"
+                        >
+                        <small>Number of employees needed per shift per day</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="workPattern">Work Pattern</label>
+                        <input 
+                            type="text" 
+                            id="workPattern" 
+                            name="workPattern" 
+                            required 
+                            placeholder="e.g., D,D,N,N,O,O"
+                        >
+                        <small>Comma-separated shift codes (D=Day, N=Night, O=Off). Example: D,D,N,N,O,O</small>
+                        
+                        <div class="preset-patterns">
+                            <strong style="width: 100%; margin-bottom: 5px; display: block; font-size: 0.9em;">Quick Presets:</strong>
+                            <button type="button" class="preset-button" onclick="setPattern('D,D,N,N,O,O')">D-D-N-N-O-O</button>
+                            <button type="button" class="preset-button" onclick="setPattern('D,D,D,D,O,D,D,D,D,D,O')">4ON-1OFF-5ON-1OFF</button>
+                            <button type="button" class="preset-button" onclick="setPattern('D,D,D,D,D,O,O')">5ON-2OFF</button>
+                            <button type="button" class="preset-button" onclick="setPattern('D,D,D,O')">3ON-1OFF</button>
+                            <button type="button" class="preset-button" onclick="setPattern('N,N,N,N,O,O,O')">4N-3OFF</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="calculate-button" id="calculateBtn">
+                        Calculate Required Employees
+                    </button>
+                </form>
+            </div>
+
+            <!-- V2.0 Mode: Configuration Optimizer -->
+            <div id="mode-v2" class="mode-panel">
+                <p style="text-align: center; padding: 40px; color: #666;">
+                    <strong>Coming Soon</strong><br>
+                    Pattern optimization with coverage-aware generation
+                </p>
+            </div>
+
+            <!-- V3.0 Mode: U-Slot Optimal Calculator -->
+            <div id="mode-v3" class="mode-panel">
+                <div class="form-group">
+                    <label for="jsonInput">Solver JSON Input (Schema v0.70)</label>
+                    <textarea id="jsonInput" 
+                              spellcheck="false" 
+                              autocomplete="off"
+                              placeholder='{
+  "fixedRotationOffset": true,
+  "planningHorizon": {
+    "startDate": "2026-01-01",
+    "endDate": "2026-01-31"
+  },
+  "demandItems": [{
+    "demandItemId": "48",
+    "requirements": [{
+      "requirementId": "48_1",
+      "workPattern": ["D","D","D","D","O","O"],
+      "headcount": 5
+    }]
+  }]
+}'></textarea>
+                    <small>Paste your solver schema JSON or upload a file below. Click inside the box and press Ctrl+V (or Cmd+V on Mac)</small>
+                </div>
+
+                <div class="pattern-buttons" style="margin-bottom: 15px;">
+                    <button type="button" onclick="clearJsonInput()">🗑️ Clear</button>
+                    <button type="button" onclick="formatJsonInput()">✨ Format JSON</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="file-upload" for="jsonFile">
+                        📁 Or Upload JSON File
+                        <input type="file" id="jsonFile" accept=".json" onchange="loadJsonFile(event)">
+                    </label>
+                </div>
+
+                <div class="pattern-buttons">
+                    <button type="button" onclick="loadExampleJson('pattern1')">Example: 7-day Pattern</button>
+                    <button type="button" onclick="loadExampleJson('pattern2')">Example: 12-day Pattern</button>
+                </div>
+
+                <button type="button" class="calculate-button" onclick="calculateV3()">
+                    Calculate Optimal Employees (v3.0)
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Calculating...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage"></div>
+
+            <!-- V1.0 Result Section -->
+            <div class="result-section" id="resultSection">
+                <div class="result-highlight">
+                    <div class="label">Required Employees</div>
+                    <div class="value" id="requiredEmployees">-</div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Pattern Analysis</h3>
+                    <div class="result-item">
+                        <span class="label">Cycle Length:</span>
+                        <span class="value" id="cycleLength">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Work Days:</span>
+                        <span class="value" id="workDays">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Off Days:</span>
+                        <span class="value" id="offDays">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Unique Shift Codes:</span>
+                        <span class="value" id="uniqueShiftCodes">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Slots Per Work Day:</span>
+                        <span class="value" id="slotsPerWorkDay">-</span>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Calculation Details</h3>
+                    <div class="result-item">
+                        <span class="label">Headcount:</span>
+                        <span class="value" id="resultHeadcount">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Work Pattern:</span>
+                        <span class="value" id="resultPattern">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Formula:</span>
+                        <span class="value" id="formula">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- V3.0 Result Section -->
+            <div class="result-section" id="resultSectionV3"></div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle between local and production
+        const USE_LOCAL = true; // Set to false for production
+        const API_BASE_URL = USE_LOCAL ? 'http://localhost:8080' : 'https://ngrssolver09.comcentricapps.com';
+        let currentMode = 'v1';
+
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update mode buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update mode panels
+            document.querySelectorAll('.mode-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById(`mode-${mode}`).classList.add('active');
+            
+            // Hide results
+            document.getElementById('resultSection').classList.remove('visible');
+            document.getElementById('resultSectionV3').classList.remove('visible');
+            document.getElementById('errorMessage').classList.remove('visible');
+            
+            // Focus on textarea when switching to v3 mode
+            if (mode === 'v3') {
+                setTimeout(() => {
+                    const textarea = document.getElementById('jsonInput');
+                    if (textarea) {
+                        textarea.focus();
+                        console.log('v3.0 mode activated - textarea ready for input');
+                    }
+                }, 100);
+            }
+        }
+
+        function setPattern(pattern) {
+            document.getElementById('workPattern').value = pattern;
+        }
+
+        function loadJsonFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('jsonInput').value = e.target.result;
+                    console.log('JSON file loaded successfully');
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function clearJsonInput() {
+            document.getElementById('jsonInput').value = '';
+            document.getElementById('jsonInput').focus();
+            console.log('JSON input cleared');
+        }
+
+        function formatJsonInput() {
+            const textarea = document.getElementById('jsonInput');
+            const value = textarea.value.trim();
+            if (!value) {
+                showError('No JSON to format');
+                return;
+            }
+            try {
+                const parsed = JSON.parse(value);
+                textarea.value = JSON.stringify(parsed, null, 2);
+                console.log('JSON formatted successfully');
+            } catch (e) {
+                showError('Invalid JSON: ' + e.message);
+            }
+        }
+
+        function loadExampleJson(example) {
+            let exampleJson;
+            if (example === 'pattern1') {
+                exampleJson = {
+                    "fixedRotationOffset": true,
+                    "planningHorizon": {
+                        "startDate": "2026-01-01",
+                        "endDate": "2026-01-31"
+                    },
+                    "demandItems": [{
+                        "demandItemId": "TEST_1",
+                        "requirements": [{
+                            "requirementId": "TEST_1_1",
+                            "workPattern": ["D","D","D","D","D","O","O"],
+                            "headcount": 5
+                        }]
+                    }]
+                };
+            } else if (example === 'pattern2') {
+                exampleJson = {
+                    "fixedRotationOffset": true,
+                    "planningHorizon": {
+                        "startDate": "2026-01-01",
+                        "endDate": "2026-01-31"
+                    },
+                    "demandItems": [{
+                        "demandItemId": "TEST_2",
+                        "requirements": [{
+                            "requirementId": "TEST_2_1",
+                            "workPattern": ["D","D","D","D","O","O","D","D","D","D","D","O"],
+                            "headcount": 5
+                        }]
+                    }]
+                };
+            }
+            document.getElementById('jsonInput').value = JSON.stringify(exampleJson, null, 2);
+        }
+
+        // V1.0 Calculator
+        document.getElementById('icpmpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const headcount = parseInt(document.getElementById('headcount').value);
+            const workPatternInput = document.getElementById('workPattern').value;
+            
+            // Parse work pattern
+            const workPattern = workPatternInput.split(',').map(s => s.trim().toUpperCase());
+            
+            // Validate pattern
+            if (workPattern.length === 0) {
+                showError('Please enter a valid work pattern');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('visible');
+            document.getElementById('resultSection').classList.remove('visible');
+            document.getElementById('errorMessage').classList.remove('visible');
+            document.getElementById('calculateBtn').disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/icpmp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        headcount: headcount,
+                        workPattern: workPattern
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `Server error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayResult(result, headcount, workPattern);
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Failed to calculate. Please check your inputs and try again.');
+            } finally {
+                document.getElementById('loading').classList.remove('visible');
+                document.getElementById('calculateBtn').disabled = false;
+            }
+        });
+
+        function displayResult(result, headcount, workPattern) {
+            // Update highlight - total employees needed
+            document.getElementById('requiredEmployees').textContent = result.employeesNeeded;
+
+            // Update pattern analysis
+            document.getElementById('cycleLength').textContent = `${result.cycleLength} days`;
+            document.getElementById('workDays').textContent = `${result.workDays} days`;
+            document.getElementById('offDays').textContent = `${result.cycleLength - result.workDays} days`;
+            document.getElementById('uniqueShiftCodes').textContent = `${result.uniqueShiftCodes} (${result.shiftTypes.join(', ')})`;
+            document.getElementById('slotsPerWorkDay').textContent = result.slotsPerWorkDay;
+
+            // Update calculation details
+            document.getElementById('resultHeadcount').textContent = headcount;
+            document.getElementById('resultPattern').textContent = result.workPattern.join('-');
+            document.getElementById('formula').textContent = result.formula;
+
+            // Show result section
+            document.getElementById('resultSection').classList.add('visible');
+        }
+
+        // V3.0 Calculator
+        async function calculateV3() {
+            const jsonInput = document.getElementById('jsonInput').value.trim();
+            
+            if (!jsonInput) {
+                showError('Please enter solver JSON input');
+                return;
+            }
+
+            let parsedJson;
+            try {
+                parsedJson = JSON.parse(jsonInput);
+            } catch (e) {
+                showError('Invalid JSON format: ' + e.message);
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').classList.add('visible');
+            document.getElementById('resultSectionV3').classList.remove('visible');
+            document.getElementById('errorMessage').classList.remove('visible');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/icpmp/v3`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(parsedJson)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `Server error: ${response.status}`);
+                }
+
+                const result = await response.json();
+                displayV3Result(result);
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Failed to calculate v3.0. Please check your JSON input.');
+            } finally {
+                document.getElementById('loading').classList.remove('visible');
+            }
+        }
+
+        function displayV3Result(result) {
+            const container = document.getElementById('resultSectionV3');
+            
+            let html = `
+                <div class="result-highlight">
+                    <div class="label">Total Employees Required (All Requirements)</div>
+                    <div class="value">${result.summary.totalEmployeesRequired}</div>
+                </div>
+                
+                <div class="result-card">
+                    <h3>Summary</h3>
+                    <div class="result-item">
+                        <span class="label">Algorithm:</span>
+                        <span class="value">${result.algorithm} - ${result.optimality}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Total Requirements:</span>
+                        <span class="value">${result.summary.totalRequirements}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Successful:</span>
+                        <span class="value">${result.summary.successfulCalculations}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Computation Time:</span>
+                        <span class="value">${result.summary.computationTimeMs} ms</span>
+                    </div>
+                </div>
+            `;
+
+            // Display each requirement result
+            result.results.forEach((req, index) => {
+                if (req.error) {
+                    html += `
+                        <div class="result-card">
+                            <h3>Requirement ${req.requirementId} - ERROR</h3>
+                            <p style="color: #f5576c;">${req.error}</p>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="result-card">
+                            <h3>Requirement: ${req.requirementId}</h3>
+                            <div class="result-item">
+                                <span class="label">Employees Required:</span>
+                                <span class="value" style="font-size: 1.3em; color: #667eea; font-weight: bold;">${req.configuration.employeesRequired}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="label">Optimality:</span>
+                                <span class="value">${req.configuration.optimality}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="label">Lower Bound:</span>
+                                <span class="value">${req.configuration.lowerBound} employees</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="label">Attempts Required:</span>
+                                <span class="value">${req.configuration.attemptsRequired}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="label">Coverage Rate:</span>
+                                <span class="value">${req.coverage.achievedRate}%</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="label">Total Work Days:</span>
+                                <span class="value">${req.coverage.totalWorkDays}</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="label">Total U-Slots:</span>
+                                <span class="value" style="color: #764ba2; font-weight: bold;">${req.coverage.totalUSlots}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="result-card">
+                            <h3>Employee Patterns (${req.requirementId})</h3>
+                            <div style="max-height: 400px; overflow-y: auto;">
+                    `;
+                    
+                    req.employeePatterns.forEach(emp => {
+                        const patternStr = emp.pattern.join('');
+                        const highlightedPattern = patternStr.replace(/U/g, '<span style="color: #764ba2; font-weight: bold;">U</span>');
+                        
+                        html += `
+                            <div style="margin-bottom: 15px; padding: 10px; background: #f5f7fa; border-radius: 4px;">
+                                <div style="font-weight: bold; margin-bottom: 5px;">
+                                    Employee #${emp.employeeNumber} (Offset: ${emp.rotationOffset})
+                                </div>
+                                <div style="font-family: monospace; font-size: 0.9em; margin-bottom: 5px; line-height: 1.4;">
+                                    ${highlightedPattern}
+                                </div>
+                                <div style="font-size: 0.85em; color: #666;">
+                                    Work: ${emp.workDays} days | U-Slots: ${emp.uSlots} | Rest: ${emp.restDays} | Utilization: ${emp.utilization}%
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html;
+            container.classList.add('visible');
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.classList.add('visible');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorElement.classList.remove('visible');
+            }, 5000);
+        }
+
+        // Auto-focus on headcount field
+        document.getElementById('headcount').focus();
+        
+        // Add paste event listener to jsonInput for debugging
+        const jsonTextarea = document.getElementById('jsonInput');
+        if (jsonTextarea) {
+            jsonTextarea.addEventListener('paste', function(e) {
+                console.log('Paste event detected in jsonInput');
+                // Let the default paste behavior work
+            });
+            
+            jsonTextarea.addEventListener('input', function(e) {
+                console.log('Input event in jsonInput, length:', e.target.value.length);
+            });
+            
+            // Make sure textarea is not readonly or disabled
+            jsonTextarea.removeAttribute('readonly');
+            jsonTextarea.removeAttribute('disabled');
+        }
+    </script>
+</body>
+</html>

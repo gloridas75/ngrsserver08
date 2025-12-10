@@ -32,6 +32,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
 from context.engine.config_optimizer import optimize_all_requirements, format_output_config
+from context.engine.config_optimizer_v3 import optimize_multiple_requirements
 from src.models import (
     SolveRequest, SolveResponse, HealthResponse, 
     Score, SolverRunMetadata, Meta, Violation,
@@ -791,6 +792,306 @@ async def configure_endpoint(
         error_msg = f"Configuration optimization error: {str(e)}"
         logger.error(
             "configure requestId=%s error=%s durMs=%s",
+            request_id,
+            str(e),
+            elapsed_ms,
+            exc_info=True
+        )
+        raise HTTPException(status_code=500, detail=error_msg)
+
+
+@app.post("/icpmp", response_class=ORJSONResponse)
+async def icpmp_calculate(request: Request):
+    """
+    Simple ICPMP Calculator: Calculate employees needed for a specific work pattern.
+    
+    This endpoint performs a straightforward calculation without optimization.
+    It tells you how many employees are needed to maintain the specified
+    headcount with the given work pattern.
+    
+    Input Schema:
+    {
+        "headcount": 10,
+        "workPattern": ["D", "D", "N", "N", "O", "O"]
+    }
+    
+    Returns:
+    {
+        "employeesNeeded": 30,
+        "cycleLength": 6,
+        "workDays": 4,
+        "uniqueShiftCodes": 2,
+        "slotsPerWorkDay": 20,
+        "formula": "2 shifts × 10 headcount × (6 cycle / 4 work days) = 30"
+    }
+    """
+    request_id = request.state.request_id
+    start_time = time.perf_counter()
+    
+    try:
+        # Parse input
+        raw_body = await request.body()
+        if not raw_body:
+            raise HTTPException(status_code=400, detail="Empty request body")
+        
+        data = json.loads(raw_body)
+        headcount = data.get('headcount')
+        work_pattern = data.get('workPattern')
+        
+        if not headcount or not work_pattern:
+            raise HTTPException(
+                status_code=400,
+                detail="Missing required fields: 'headcount' and 'workPattern'"
+            )
+        
+        if not isinstance(headcount, int) or headcount < 1:
+            raise HTTPException(status_code=400, detail="headcount must be a positive integer")
+        
+        if not isinstance(work_pattern, list) or len(work_pattern) == 0:
+            raise HTTPException(status_code=400, detail="workPattern must be a non-empty array")
+        
+        # Calculate
+        cycle_length = len(work_pattern)
+        work_days = sum(1 for shift in work_pattern if shift != 'O')
+        
+        if work_days == 0:
+            raise HTTPException(status_code=400, detail="workPattern must contain at least one work day (non-'O' shift)")
+        
+        # Get unique shift codes (excluding 'O')
+        unique_shifts = set(shift for shift in work_pattern if shift != 'O')
+        unique_shift_count = len(unique_shifts)
+        
+        # Calculate slots per work day
+        slots_per_work_day = headcount * unique_shift_count
+        
+        # Calculate employees needed
+        # Formula: unique_shifts * headcount * (cycle_length / work_days)
+        employees_needed = int(unique_shift_count * headcount * (cycle_length / work_days))
+        
+        # Build formula string
+        formula = f"{unique_shift_count} shifts × {headcount} headcount × ({cycle_length} cycle / {work_days} work days) = {employees_needed}"
+        
+        result = {
+            "employeesNeeded": employees_needed,
+            "cycleLength": cycle_length,
+            "workDays": work_days,
+            "uniqueShiftCodes": unique_shift_count,
+            "shiftTypes": list(unique_shifts),
+            "slotsPerWorkDay": slots_per_work_day,
+            "formula": formula,
+            "workPattern": work_pattern
+        }
+        
+        elapsed_ms = int((time.perf_counter() - start_time) * 1000)
+        logger.info(
+            "icpmp requestId=%s headcount=%d pattern=%s employees=%d durMs=%d",
+            request_id,
+            headcount,
+            '-'.join(work_pattern),
+            employees_needed,
+            elapsed_ms
+        )
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=422, detail=f"Invalid JSON: {str(e)}")
+    except Exception as e:
+        elapsed_ms = int((time.perf_counter() - start_time) * 1000)
+        error_msg = f"ICPMP calculation error: {str(e)}"
+        logger.error(
+            "icpmp requestId=%s error=%s durMs=%s",
+            request_id,
+            str(e),
+            elapsed_ms,
+            exc_info=True
+        )
+        raise HTTPException(status_code=500, detail=error_msg)
+
+
+@app.post("/icpmp/v3", response_class=ORJSONResponse)
+async def icpmp_v3_calculate(request: Request):
+    """
+    ICPMP v3.0: Optimal Employee Calculator with U-Slot Injection
+    
+    Calculates the mathematically MINIMAL number of employees needed
+    using strategic "U" (unassigned) slot injection. All employees follow
+    strict patterns with U-slots injected when coverage would exceed headcount.
+    
+    Key Features:
+    - Proven optimal employee count (try-minimal-first algorithm)
+    - All employees on strict patterns (no flexible category)
+    - U-slots for predictable scheduling
+    - Handles public holidays and coverage day filtering
+    
+    Input Schema (solver v0.70 subset):
+    {
+        "fixedRotationOffset": true,
+        "planningHorizon": {
+            "startDate": "2026-01-01",
+            "endDate": "2026-01-31"
+        },
+        "publicHolidays": ["2026-01-01"],
+        "coverageDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        "demandItems": [
+            {
+                "demandItemId": "48",
+                "requirements": [
+                    {
+                        "requirementId": "48_1",
+                        "workPattern": ["D","D","D","D","O","O"],
+                        "headcount": 5
+                    }
+                ]
+            }
+        ]
+    }
+    
+    Returns (per requirement):
+    {
+        "requirementId": "48_1",
+        "configuration": {
+            "employeesRequired": 6,
+            "optimality": "PROVEN_MINIMAL",
+            "algorithm": "GREEDY_INCREMENTAL",
+            "lowerBound": 5,
+            "attemptsRequired": 2,
+            "offsetDistribution": {"0": 1, "1": 1, "2": 1, "3": 1, "4": 1, "5": 1}
+        },
+        "employeePatterns": [
+            {
+                "employeeNumber": 1,
+                "rotationOffset": 0,
+                "pattern": ["D","D","D","D","O","O",...],
+                "workDays": 23,
+                "uSlots": 0,
+                "restDays": 8,
+                "utilization": 100.0
+            }
+        ],
+        "coverage": {
+            "achievedRate": 100.0,
+            "totalWorkDays": 155,
+            "totalUSlots": 35,
+            "dailyCoverageDetails": {...}
+        }
+    }
+    """
+    request_id = request.state.request_id
+    start_time = time.perf_counter()
+    
+    try:
+        # Parse input
+        raw_body = await request.body()
+        if not raw_body:
+            raise HTTPException(status_code=400, detail="Empty request body")
+        
+        data = json.loads(raw_body)
+        
+        # Validate required fields
+        planning_horizon = data.get('planningHorizon')
+        demand_items = data.get('demandItems')
+        
+        if not planning_horizon:
+            raise HTTPException(status_code=400, detail="Missing required field: 'planningHorizon'")
+        
+        if not planning_horizon.get('startDate') or not planning_horizon.get('endDate'):
+            raise HTTPException(
+                status_code=400,
+                detail="planningHorizon must contain 'startDate' and 'endDate'"
+            )
+        
+        if not demand_items or not isinstance(demand_items, list):
+            raise HTTPException(status_code=400, detail="Missing or invalid 'demandItems' array")
+        
+        # Extract optional parameters
+        public_holidays = data.get('publicHolidays', [])
+        coverage_days = data.get('coverageDays')  # Optional - defaults to all days
+        
+        # Flatten requirements from all demand items
+        all_requirements = []
+        for demand_item in demand_items:
+            demand_item_id = demand_item.get('demandItemId', 'unknown')
+            requirements = demand_item.get('requirements', [])
+            
+            for req in requirements:
+                # Add demandItemId context to requirement
+                req_with_context = req.copy()
+                req_with_context['demandItemId'] = demand_item_id
+                
+                # Generate requirementId if not present
+                if 'requirementId' not in req_with_context:
+                    req_with_context['requirementId'] = f"{demand_item_id}_{len(all_requirements) + 1}"
+                
+                all_requirements.append(req_with_context)
+        
+        if not all_requirements:
+            raise HTTPException(
+                status_code=400,
+                detail="No requirements found in demandItems"
+            )
+        
+        logger.info(
+            "icpmp_v3 requestId=%s requirements=%d horizon=%s->%s",
+            request_id,
+            len(all_requirements),
+            planning_horizon['startDate'],
+            planning_horizon['endDate']
+        )
+        
+        # Calculate optimal employees for each requirement
+        results = optimize_multiple_requirements(
+            requirements=all_requirements,
+            planning_horizon=planning_horizon,
+            public_holidays=public_holidays,
+            coverage_days=coverage_days
+        )
+        
+        # Build response
+        elapsed_ms = int((time.perf_counter() - start_time) * 1000)
+        
+        response = {
+            "version": "3.0",
+            "algorithm": "U_SLOT_INJECTION",
+            "optimality": "PROVEN_MINIMAL",
+            "planningHorizon": planning_horizon,
+            "publicHolidays": public_holidays,
+            "coverageDays": coverage_days,
+            "results": results,
+            "summary": {
+                "totalRequirements": len(all_requirements),
+                "successfulCalculations": sum(1 for r in results if 'error' not in r),
+                "failedCalculations": sum(1 for r in results if 'error' in r),
+                "totalEmployeesRequired": sum(
+                    r['configuration']['employeesRequired'] 
+                    for r in results if 'configuration' in r
+                ),
+                "computationTimeMs": elapsed_ms
+            }
+        }
+        
+        logger.info(
+            "icpmp_v3 requestId=%s success=%d failed=%d totalEmployees=%d durMs=%d",
+            request_id,
+            response['summary']['successfulCalculations'],
+            response['summary']['failedCalculations'],
+            response['summary']['totalEmployeesRequired'],
+            elapsed_ms
+        )
+        
+        return response
+        
+    except HTTPException:
+        raise
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=422, detail=f"Invalid JSON: {str(e)}")
+    except Exception as e:
+        elapsed_ms = int((time.perf_counter() - start_time) * 1000)
+        error_msg = f"ICPMP v3.0 calculation error: {str(e)}"
+        logger.error(
+            "icpmp_v3 requestId=%s error=%s durMs=%s",
             request_id,
             str(e),
             elapsed_ms,

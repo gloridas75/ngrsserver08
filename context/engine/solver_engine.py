@@ -604,97 +604,12 @@ def build_model(ctx):
     else:
         print(f"  ✓ Added {pattern_constraints} work pattern constraints (HARD, all fixed offsets)\n")
     
-    # ========== HYBRID CONTINUOUS PATTERN ADHERENCE ==========
-    # STRATEGY: Apply strict adherence to SOME employees, leave others flexible
-    # This mimics the Excel approach: 6 employees with strict patterns fill ~89%, 
-    # then flexible employees fill remaining gaps
-    print(f"[build_model] Adding HYBRID continuous pattern adherence...")
-    adherence_constraints = 0
-    
-    # Determine which employees should have strict adherence
-    # Strategy 1: Use input config 'strictAdherenceRatio' (default 0.6 = 60% strict, 40% flexible)
-    # Strategy 2: Mark employees explicitly via 'strictAdherence' flag in employee data
-    # Strategy 3: Auto-select based on employee count and pattern complexity
-    
-    solver_config = ctx.get('solverConfig', {})
-    strict_ratio = solver_config.get('strictAdherenceRatio', 0.6)  # Default 60/40 split
-    
-    max_employees = ctx.get('maxEmployeesToUse', len(employees))
-    strict_adherence_count = max(1, int(max_employees * strict_ratio))  # At least 1 strict employee
-    
-    # Sort employees by ID for consistency, take first N for strict adherence
-    sorted_employees = sorted(employees, key=lambda e: e.get('employeeId', ''))
-    strict_employees = set(e.get('employeeId') for e in sorted_employees[:strict_adherence_count])
-    flexible_employees = set(e.get('employeeId') for e in sorted_employees[strict_adherence_count:])
-    
-    print(f"  Strategy: {len(strict_employees)} employees with STRICT adherence ({strict_ratio*100:.0f}%), {len(flexible_employees)} FLEXIBLE ({(1-strict_ratio)*100:.0f}%)")
-    
-    if True:
-        # Get rotation sequence from first slot
-        rotation_seq = None
-        base_date = None
-        for slot in slots:
-            if slot.rotationSequence and slot.coverageAnchor:
-                rotation_seq = slot.rotationSequence
-                base_date = slot.coverageAnchor
-                break
-        
-        if not rotation_seq or not base_date:
-            print(f"  ⚠️  No rotation sequence found, skipping continuous adherence\n")
-        else:
-            cycle_days = len(rotation_seq)
-            print(f"  Pattern: {rotation_seq}, Cycle: {cycle_days} days, Base: {base_date}")
-            
-            # Group slots by (date, shiftCode)
-            slots_by_date_shift = {}
-            for slot in slots:
-                key = (slot.date, slot.shiftCode)
-                if key not in slots_by_date_shift:
-                    slots_by_date_shift[key] = []
-                slots_by_date_shift[key].append(slot)
-            
-            for emp in employees:
-                emp_id = emp.get('employeeId')
-                emp_offset = emp.get('rotationOffset', 0)
-                
-                # Get employee_used indicator (created earlier in optimization mode setup)
-                emp_used_var = employee_used_vars.get(emp_id)
-                if emp_used_var is None:
-                    continue  # Skip employees without usage tracking
-                
-                # HYBRID LOGIC: Only apply strict adherence to designated employees
-                # Allow employee attribute override: if 'strictAdherence' is explicitly set, use that
-                is_strict = emp.get('strictAdherence', emp_id in strict_employees)
-                
-                if not is_strict:
-                    continue  # Skip flexible employees - they can work whenever needed
-                
-                # For each unique (date, shiftCode) combination
-                for (date, shift_code), slot_list in slots_by_date_shift.items():
-                    days_from_base = (date - base_date).days
-                    emp_cycle_day = (days_from_base + emp_offset) % cycle_days
-                    expected_shift = rotation_seq[emp_cycle_day]
-                    
-                    # Get all slots of this (date, shift) that this employee can work
-                    employee_slots = [s for s in slot_list if (s.slot_id, emp_id) in x]
-                    if not employee_slots:
-                        continue
-                    
-                    # If not an off-day AND shift code matches:
-                    # IF employee is used (emp_used_var=1), THEN must work this (date, shift)
-                    if expected_shift != 'O' and shift_code == expected_shift:
-                        slot_vars = [x[(s.slot_id, emp_id)] for s in employee_slots]
-                        # Conditional: emp_used_var=1 => sum(slot_vars) >= 1
-                        model.Add(sum(slot_vars) >= 1).OnlyEnforceIf(emp_used_var)
-                        adherence_constraints += 1
-            
-            print(f"  ✓ Added {adherence_constraints} CONDITIONAL adherence constraints")
-            print(f"     {len(strict_employees)} strict employees, {len(flexible_employees)} flexible employees")
-            print(f"  ℹ️  STRICT employees: IF used, THEN work all pattern days")
-            print(f"  ℹ️  FLEXIBLE employees: Can work any available day (within pattern)\n")
-    
-    if adherence_constraints == 0:
-        print(f"  ⚠️  No adherence constraints added - all employees flexible\n")
+    # ========== HYBRID CONTINUOUS PATTERN ADHERENCE (REMOVED) ==========
+    # REMOVED: This was causing infeasibility by forcing employees to work ALL pattern days
+    # Work pattern constraints above are sufficient - they block off-days and wrong shifts
+    print(f"[build_model] STRICT adherence constraints REMOVED - all employees flexible within pattern")
+    print(f"  ℹ️  Employees can work any 'D' day that matches their rotation offset")
+    print(f"  ℹ️  Weekly/monthly hour caps will naturally limit assignments\n")
     
     
     # ========== ROTATION CONTINUITY (DISABLED) ==========

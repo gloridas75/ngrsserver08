@@ -1,0 +1,51 @@
+{
+  "summary": {
+    "total_requirements_processed": 1,
+    "total_employees_selected": 15,
+    "total_employees_available": 26,
+    "utilization_rate": 0.5769230769230769
+  },
+  "icpmp_metadata": {
+    "24_1": {
+      "demandId": "DI-2512010803-60100799",
+      "optimal_employees": 15,
+      "selected_count": 15,
+      "u_slots_total": 38,
+      "offset_distribution": {
+        "0": 2,
+        "1": 2,
+        "2": 2,
+        "3": 1,
+        "4": 1,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1
+      },
+      "is_optimal": true,
+      "coverage_rate": 100.0
+    }
+  },
+  "warnings": [],
+  "selected_employee_ids": [
+    "00153291",
+    "00153409",
+    "00153741",
+    "00153964",
+    "00154163",
+    "00154165",
+    "00156224",
+    "00156697",
+    "00156710",
+    "00156775",
+    "00157057",
+    "00157752",
+    "00158151",
+    "00158431",
+    "00158629"
+  ],
+  "selected_employee_count": 15
+}
