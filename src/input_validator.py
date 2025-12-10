@@ -219,12 +219,11 @@ def _validate_requirement(req: dict, path: str, result: ValidationResult,
                          all_shift_codes: set):
     """Validate individual requirement"""
     
-    # Required fields
+    # Required fields (headcount removed from here, validated separately)
     required_fields = {
         'requirementId': str,
         'productTypeId': str,
         'rankId': str,
-        'headcount': int,
         'workPattern': list
     }
     
@@ -236,14 +235,34 @@ def _validate_requirement(req: dict, path: str, result: ValidationResult,
             result.add_error(f"{path}.{field}", "INVALID_TYPE", 
                            f"Field '{field}' must be of type {expected_type.__name__}")
     
-    # Validate headcount
-    if 'headcount' in req and isinstance(req['headcount'], int):
+    # Validate headcount - support both formats: int (legacy) or dict (new)
+    if 'headcount' not in req:
+        result.add_error(f"{path}.headcount", "MISSING_FIELD", 
+                       "Required field 'headcount' is missing")
+    elif isinstance(req['headcount'], int):
+        # Legacy format: single integer
         if req['headcount'] <= 0:
             result.add_error(f"{path}.headcount", "INVALID_VALUE", 
                            "headcount must be greater than 0")
         elif req['headcount'] > 100:
             result.add_warning(f"{path}.headcount", "HIGH_HEADCOUNT", 
                              f"headcount of {req['headcount']} is very high")
+    elif isinstance(req['headcount'], dict):
+        # New format: per-shift headcount like {"D": 10, "N": 10}
+        if not req['headcount']:
+            result.add_error(f"{path}.headcount", "EMPTY_DICT", 
+                           "headcount dict cannot be empty")
+        else:
+            for shift_code, count in req['headcount'].items():
+                if not isinstance(count, int) or count <= 0:
+                    result.add_error(f"{path}.headcount.{shift_code}", "INVALID_VALUE", 
+                                   f"headcount for shift '{shift_code}' must be a positive integer")
+                elif count > 100:
+                    result.add_warning(f"{path}.headcount.{shift_code}", "HIGH_HEADCOUNT", 
+                                     f"headcount of {count} for shift '{shift_code}' is very high")
+    else:
+        result.add_error(f"{path}.headcount", "INVALID_TYPE", 
+                       "headcount must be either an integer or a dictionary (e.g., {'D': 10, 'N': 10})")
     
     # Validate work pattern
     if 'workPattern' in req and isinstance(req['workPattern'], list):
@@ -519,7 +538,15 @@ def _validate_feasibility(data: dict, result: ValidationResult):
             req_product = requirement.get('productTypeId', '')
             req_rank = requirement.get('rankId', '')
             req_scheme_raw = requirement.get('Scheme', 'Global')
-            req_headcount = requirement.get('headcount', 1)
+            
+            # Normalize headcount to handle both formats
+            req_headcount_raw = requirement.get('headcount', 1)
+            if isinstance(req_headcount_raw, dict):
+                # New format: sum all shift headcounts
+                req_headcount = sum(req_headcount_raw.values())
+            else:
+                # Legacy format: use as-is
+                req_headcount = req_headcount_raw
             
             # Normalize requirement scheme
             if req_scheme_raw == 'Global' or req_scheme_raw == 'global':
