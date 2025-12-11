@@ -16,7 +16,7 @@ from collections import defaultdict
 from math import ceil
 
 # ICPMP v2.0: Use sophisticated coverage simulation
-from context.engine.config_optimizer import simulate_coverage_with_preprocessing
+from context.engine.config_optimizer_v3 import simulate_coverage_with_preprocessing
 
 
 def quick_feasibility_check(input_data: Dict[str, Any]) -> Dict[str, Any]:

@@ -17,7 +17,7 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 import json
 import argparse
 from datetime import datetime
-from context.engine.config_optimizer import optimize_all_requirements, format_output_config
+from context.engine.config_optimizer_v3 import optimize_all_requirements, format_output_config
 
 
 def load_requirements(filepath: str) -> dict:

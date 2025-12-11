@@ -31,7 +31,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
-from context.engine.config_optimizer import optimize_all_requirements, format_output_config
+from context.engine.config_optimizer_v3 import optimize_all_requirements, format_output_config
 from context.engine.config_optimizer_v3 import optimize_multiple_requirements
 from src.models import (
     SolveRequest, SolveResponse, HealthResponse, 
