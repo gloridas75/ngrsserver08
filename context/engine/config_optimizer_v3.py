@@ -24,6 +24,38 @@ from collections import defaultdict
 logger = logging.getLogger(__name__)
 
 
+def calculate_pattern_tightness_buffer(work_days: int, cycle_length: int) -> float:
+    """
+    Calculate buffer percentage based on pattern density (work ratio).
+    
+    Tight patterns with high work ratios need more buffer employees to handle:
+    - Rotation offset alignment issues
+    - Constraint interaction conflicts (C2 weekly hours, C5 consecutive days, C8 rest periods)
+    - Minimal flexibility for scheduling adjustments
+    
+    Args:
+        work_days: Number of work days in pattern cycle
+        cycle_length: Total pattern cycle length
+        
+    Returns:
+        Buffer multiplier (e.g., 0.25 for 25% buffer)
+        
+    Examples:
+        DDDDDOD (6/7 = 85.7%): 25% buffer - very tight, needs significant flexibility
+        DDDDOOD (4/7 = 57.1%): 5% buffer - loose, minimal extra needed
+    """
+    work_ratio = work_days / cycle_length
+    
+    if work_ratio >= 0.85:  # 6/7, 5/6 patterns - VERY TIGHT
+        return 0.25  # 25% buffer
+    elif work_ratio >= 0.75:  # 5/7, 4/5 patterns - TIGHT
+        return 0.15  # 15% buffer
+    elif work_ratio >= 0.60:  # 4/7, 3/5 patterns - MODERATE
+        return 0.10  # 10% buffer
+    else:  # <60% - LOOSE
+        return 0.05  # 5% buffer
+
+
 def calculate_optimal_with_u_slots(
     pattern: List[str],
     headcount: int,
@@ -81,13 +113,22 @@ def calculate_optimal_with_u_slots(
     # Absolute minimum from work capacity
     capacity_minimum = ceil(total_coverage_needed / work_days_per_cycle)
     
+    # Calculate pattern tightness buffer
+    tightness_buffer = calculate_pattern_tightness_buffer(work_days_per_cycle, cycle_length)
+    work_ratio = work_days_per_cycle / cycle_length
+    
+    # Apply buffer to pattern-based minimum for tight patterns
+    buffered_minimum = ceil(pattern_based_minimum * (1 + tightness_buffer))
+    
     # Take the maximum (most constrained)
-    lower_bound = max(headcount, pattern_based_minimum)
+    lower_bound = max(headcount, buffered_minimum)
     
     logger.info(f"[{requirement_id}] Starting optimal calculation:")
     logger.info(f"  Pattern: {pattern} (cycle={cycle_length}, work_days={work_days_per_cycle})")
+    logger.info(f"  Work ratio: {work_ratio:.1%} (tightness buffer: {tightness_buffer:.0%})")
     logger.info(f"  Headcount: {headcount}, Calendar days: {len(calendar)}")
-    logger.info(f"  Lower bound: {lower_bound} employees (pattern-based={pattern_based_minimum}, capacity={capacity_minimum})")
+    logger.info(f"  Base minimum: {pattern_based_minimum} → Buffered minimum: {buffered_minimum}")
+    logger.info(f"  Lower bound: {lower_bound} employees (pattern-based={pattern_based_minimum}, buffered={buffered_minimum}, capacity={capacity_minimum})")
     
     # Try increasing employee counts from lower bound
     upper_bound = lower_bound + max_attempts
