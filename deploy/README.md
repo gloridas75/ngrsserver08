@@ -2,6 +2,13 @@
 
 Simple deployment scripts for running NGRS Solver on AWS EC2 (or any Linux server).
 
+## 🌐 Production Environment
+
+**Current Production**: [https://ngrssolver09.comcentricapps.com](https://ngrssolver09.comcentricapps.com)  
+**Infrastructure**: Ubuntu 22.04 EC2 instance (NOT AWS App Runner)  
+**Server**: `ec2-47-130-131-6.ap-southeast-1.compute.amazonaws.com`  
+**Deployment Method**: systemd service with Docker Redis
+
 ## Quick Start
 
 ### 1. Launch EC2 Instance

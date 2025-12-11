@@ -8,7 +8,7 @@ import json
 import hashlib
 from datetime import datetime, timedelta
 from collections import defaultdict
-from context.engine.time_utils import split_shift_hours
+from context.engine.time_utils import split_shift_hours, calculate_mom_compliant_hours
 
 
 def build_employee_roster(input_data, ctx, assignments):
@@ -457,26 +457,33 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         try:
             start_dt = datetime.fromisoformat(assignment.get('startDateTime'))
             end_dt = datetime.fromisoformat(assignment.get('endDateTime'))
+            emp_id = assignment.get('employeeId')
+            assignment_date = assignment.get('date')
             
-            # Calculate hour breakdown
-            hours_dict = split_shift_hours(start_dt, end_dt)
+            # Get date object for MOM calculations
+            date_obj = datetime.fromisoformat(assignment_date).date()
             
-            # Add hour breakdown to assignment
+            # Calculate MOM-compliant hour breakdown
+            hours_dict = calculate_mom_compliant_hours(
+                start_dt=start_dt,
+                end_dt=end_dt,
+                employee_id=emp_id,
+                assignment_date_obj=date_obj,
+                all_assignments=assignments
+            )
+            
+            # Add hour breakdown to assignment (including restDayPay)
             assignment['hours'] = {
                 'gross': hours_dict['gross'],
                 'lunch': hours_dict['lunch'],
                 'normal': hours_dict['normal'],
                 'ot': hours_dict['ot'],
+                'restDayPay': hours_dict['restDayPay'],
                 'paid': hours_dict['paid']
             }
             
-            # Accumulate totals per employee
-            emp_id = assignment.get('employeeId')
-            assignment_date = assignment.get('date')
-            
             # Week calculation: ISO week (Mon-Sun)
             try:
-                date_obj = datetime.fromisoformat(assignment_date).date()
                 iso_year, iso_week, _ = date_obj.isocalendar()
                 week_key = f"{iso_year}-W{iso_week:02d}"
                 month_key = f"{iso_year}-{date_obj.month:02d}"
@@ -550,9 +557,14 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         input_data
     )
     
+    # Extract ICPMP preprocessing metadata if available
+    icpmp_preprocessing = ctx.get('icpmp_preprocessing', None)
+    publicHolidays = input_data.get('publicHolidays', [])
+    
     output = {
         "schemaVersion": "0.95",
         "planningReference": ctx.get("planningReference", "UNKNOWN"),
+        "publicHolidays": publicHolidays,
         "solverRun": {
             "runId": "SRN-local-0.4",
             "solverVersion": "optSolve-py-0.95.0",
@@ -578,6 +590,10 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             "employeeHours": employee_hours_summary
         }
     }
+    
+    # Add ICPMP preprocessing data if available (for transparency and debugging)
+    if icpmp_preprocessing:
+        output["icpmpPreprocessing"] = icpmp_preprocessing
     
     return output
 
@@ -639,13 +655,27 @@ def build_incremental_output(
     employee_weekly_normal = defaultdict(float)
     employee_monthly_ot = defaultdict(float)
     
+    # Combine locked and new for MOM context analysis
+    all_assignments_for_context = locked_assignments + new_assignments
+    
     for assignment in new_assignments:
         try:
             start_dt = datetime.fromisoformat(assignment.get('startDateTime'))
             end_dt = datetime.fromisoformat(assignment.get('endDateTime'))
+            emp_id = assignment.get('employeeId')
+            assignment_date = assignment.get('date')
             
-            # Calculate hour breakdown
-            hours_dict = split_shift_hours(start_dt, end_dt)
+            # Get date object for MOM calculations
+            date_obj = datetime.fromisoformat(assignment_date).date()
+            
+            # Calculate MOM-compliant hour breakdown
+            hours_dict = calculate_mom_compliant_hours(
+                start_dt=start_dt,
+                end_dt=end_dt,
+                employee_id=emp_id,
+                assignment_date_obj=date_obj,
+                all_assignments=all_assignments_for_context
+            )
             
             # Add audit trail
             audit_info = {
@@ -656,7 +686,7 @@ def build_incremental_output(
                 "previousJobId": None
             }
             
-            # Add hour breakdown + audit to assignment
+            # Add hour breakdown + audit to assignment (including restDayPay)
             enriched_assignment = {
                 **assignment,
                 'hours': {
@@ -664,6 +694,7 @@ def build_incremental_output(
                     'lunch': hours_dict['lunch'],
                     'normal': hours_dict['normal'],
                     'ot': hours_dict['ot'],
+                    'restDayPay': hours_dict['restDayPay'],
                     'paid': hours_dict['paid']
                 },
                 "auditInfo": audit_info

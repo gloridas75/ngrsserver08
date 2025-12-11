@@ -6,7 +6,7 @@ from datetime import datetime
 from collections import defaultdict
 from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
-from context.engine.time_utils import split_shift_hours
+from context.engine.time_utils import split_shift_hours, calculate_mom_compliant_hours
 from src.ratio_cache import RatioCache
 
 def compute_input_hash(input_data):
@@ -82,26 +82,33 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
         try:
             start_dt = datetime.fromisoformat(assignment.get('startDateTime'))
             end_dt = datetime.fromisoformat(assignment.get('endDateTime'))
+            emp_id = assignment.get('employeeId')
+            assignment_date = assignment.get('date')
             
-            # Calculate hour breakdown
-            hours_dict = split_shift_hours(start_dt, end_dt)
+            # Get date object for MOM calculations
+            date_obj = datetime.fromisoformat(assignment_date).date()
             
-            # Add hour breakdown to assignment
+            # Calculate MOM-compliant hour breakdown
+            hours_dict = calculate_mom_compliant_hours(
+                start_dt=start_dt,
+                end_dt=end_dt,
+                employee_id=emp_id,
+                assignment_date_obj=date_obj,
+                all_assignments=assignments
+            )
+            
+            # Add hour breakdown to assignment (including restDayPay)
             assignment['hours'] = {
                 'gross': hours_dict['gross'],
                 'lunch': hours_dict['lunch'],
                 'normal': hours_dict['normal'],
                 'ot': hours_dict['ot'],
+                'restDayPay': hours_dict['restDayPay'],
                 'paid': hours_dict['paid']
             }
             
-            # Accumulate totals per employee
-            emp_id = assignment.get('employeeId')
-            assignment_date = assignment.get('date')
-            
             # Week calculation: assume ISO week (Mon-Sun)
             try:
-                date_obj = datetime.fromisoformat(assignment_date).date()
                 iso_year, iso_week, _ = date_obj.isocalendar()
                 week_key = f"{iso_year}-W{iso_week:02d}"
                 
@@ -117,7 +124,7 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
         except Exception as e:
             # If hour calculation fails, just skip the annotation
             assignment['hours'] = {
-                'gross': 0, 'lunch': 0, 'normal': 0, 'ot': 0, 'paid': 0,
+                'gross': 0, 'lunch': 0, 'normal': 0, 'ot': 0, 'restDayPay': 0, 'paid': 0,
                 'error': str(e)
             }
         

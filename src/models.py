@@ -445,7 +445,7 @@ class EmptySlot(BaseModel):
     demandId: Optional[str] = Field(None, description="Demand item ID")
     startTime: str = Field(..., description="Shift start time (HH:MM:SS)")
     endTime: str = Field(..., description="Shift end time (HH:MM:SS)")
-    hours: Dict[str, float] = Field(..., description="Hour breakdown: gross, lunch, normal, ot")
+    hours: Dict[str, float] = Field(..., description="Hour breakdown: gross, lunch, normal, ot, restDayPay")
 
 
 class EmployeeAvailability(BaseModel):

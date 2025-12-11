@@ -2018,17 +2018,108 @@
             const assignments = outputData.assignments || [];
             const employeeInfo = {};
             
-            // Extract newRotationOffset and workPattern from assignments
+            // Extract newRotationOffset from assignments
             assignments.forEach(a => {
                 if (a.employeeId && !employeeInfo[a.employeeId]) {
                     employeeInfo[a.employeeId] = {
                         newRotationOffset: a.newRotationOffset !== undefined ? a.newRotationOffset : 'N/A',
-                        workPattern: a.workPattern || []
+                        requirementId: a.requirementId
                     };
                 }
             });
 
-            Object.entries(employeeHours).forEach(([empId, data]) => {
+            // Get BASE work pattern from demand requirement (not employee-specific)
+            const getBaseWorkPattern = (requirementId) => {
+                // Try to get from ICPMP preprocessing first
+                if (outputData.icpmp_preprocessing?.requirements) {
+                    const reqData = outputData.icpmp_preprocessing.requirements[requirementId];
+                    if (reqData?.work_pattern) {
+                        return reqData.work_pattern;
+                    }
+                }
+                
+                // Try from output data's unmetDemand structure
+                if (outputData.unmetDemand && Array.isArray(outputData.unmetDemand)) {
+                    for (const demand of outputData.unmetDemand) {
+                        if (demand.requirementId === requirementId && demand.workPattern) {
+                            return demand.workPattern;
+                        }
+                    }
+                }
+                
+                // Fallback to input data if available
+                if (inputData?.demandItems) {
+                    for (const demandItem of inputData.demandItems) {
+                        for (const req of demandItem.requirements || []) {
+                            if (req.requirementId === requirementId && req.workPattern) {
+                                return req.workPattern;
+                            }
+                        }
+                    }
+                }
+                
+                // Last resort: reconstruct from ALL assignments for this requirement
+                const reqAssignments = assignments.filter(a => 
+                    a.requirementId === requirementId &&
+                    a.patternDay !== undefined
+                );
+                
+                if (reqAssignments.length > 0) {
+                    // Find max pattern day to determine pattern length
+                    const maxPatternDay = Math.max(...reqAssignments.map(a => a.patternDay));
+                    const pattern = new Array(maxPatternDay + 1).fill(null);
+                    
+                    // Fill in shift codes for each pattern day
+                    reqAssignments.forEach(a => {
+                        if (a.patternDay < pattern.length && !pattern[a.patternDay]) {
+                            pattern[a.patternDay] = a.shiftCode;
+                        }
+                    });
+                    
+                    // Detect cycle length by checking date gaps
+                    const sortedAssigns = reqAssignments.sort((a, b) => a.date.localeCompare(b.date));
+                    let cycleLength = maxPatternDay + 1;
+                    
+                    for (let i = 1; i < Math.min(sortedAssigns.length, 10); i++) {
+                        if (sortedAssigns[i].patternDay === 0 && sortedAssigns[i-1].patternDay === maxPatternDay) {
+                            const date1 = new Date(sortedAssigns[i-1].date);
+                            const date2 = new Date(sortedAssigns[i].date);
+                            cycleLength = Math.round((date2 - date1) / (1000 * 60 * 60 * 24));
+                            break;
+                        }
+                    }
+                    
+                    // Fill remaining days with 'O'
+                    for (let i = pattern.length; i < cycleLength; i++) {
+                        pattern[i] = 'O';
+                    }
+                    
+                    return pattern.filter(p => p !== null);
+                }
+                
+                return [];
+            };
+            
+            // Get employee-specific work pattern (rotated according to their offset)
+            const getWorkPattern = (empId, requirementId, rotationOffset) => {
+                const basePattern = getBaseWorkPattern(requirementId);
+                
+                if (basePattern.length === 0 || rotationOffset === undefined || rotationOffset === null) {
+                    return basePattern;
+                }
+                
+                // Rotate the pattern according to employee's rotation offset
+                // Rotation offset shifts where the employee starts in the pattern
+                const offset = rotationOffset % basePattern.length;
+                const rotatedPattern = [
+                    ...basePattern.slice(offset),
+                    ...basePattern.slice(0, offset)
+                ];
+                
+                return rotatedPattern;
+            };
+
+            Object.entries(employeeHours).sort((a, b) => a[0].localeCompare(b[0])).forEach(([empId, data], index) => {
                 const card = document.createElement('div');
                 card.className = 'employee-card';
 
@@ -2037,11 +2128,14 @@
                 
                 const empData = employeeInfo[empId] || {};
                 const rotationOffset = empData.newRotationOffset !== undefined ? empData.newRotationOffset : 'N/A';
-                const workPattern = empData.workPattern || [];
-                const workPatternStr = workPattern.length > 0 ? workPattern.join(', ') : 'N/A';
+                const workPattern = getWorkPattern(empId, empData.requirementId, empData.newRotationOffset) || [];
+                const workPatternStr = workPattern.length > 0 ? `[${workPattern.join(' → ')}]` : 'N/A';
 
                 card.innerHTML = `
-                    <h3>${empId}</h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <h3 style="margin: 0;">${empId}</h3>
+                        <span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9em; font-weight: 600;">#${index + 1}</span>
+                    </div>
                     <div class="employee-stats">
                         <div class="stat-item">
                             <div class="label">Rotation Offset</div>
@@ -2155,23 +2249,63 @@
             const allDates = [...new Set(assignments.map(a => a.date))].sort();
             const employees = Object.keys(assignmentsByEmployee).sort();
 
-            // Create calendar table with dates as columns
-            let html = '<div class="calendar-grid"><table class="calendar-table"><thead><tr>';
-            html += '<th class="calendar-date-header">Employee</th>';
-
-            // Date column headers
+            // Group dates by month for better 3-month display
+            const datesByMonth = {};
             allDates.forEach(date => {
-                html += `<th class="calendar-date-header">${date}</th>`;
+                const month = date.substring(0, 7); // YYYY-MM
+                if (!datesByMonth[month]) datesByMonth[month] = [];
+                datesByMonth[month].push(date);
             });
+            const months = Object.keys(datesByMonth).sort();
+            
+            // For large date ranges (> 31 days), show month-grouped view
+            const isLongRange = allDates.length > 31;
+
+            // Create calendar table with dates as columns
+            let html = '<div class="calendar-grid" style="overflow-x: auto;">';
+            
+            if (isLongRange) {
+                html += `<p style="margin-bottom: 15px; color: #667eea; font-weight: 600;">📅 Showing ${allDates.length} days across ${months.length} month(s): ${months.join(', ')}</p>`;
+            }
+            
+            html += '<table class="calendar-table"><thead>';
+            
+            // Add month headers if multiple months
+            if (isLongRange && months.length > 1) {
+                html += '<tr><th class="calendar-date-header" rowspan="2" style="vertical-align: middle;">S.No</th>';
+                html += '<th class="calendar-date-header" rowspan="2" style="vertical-align: middle;">Employee</th>';
+                months.forEach(month => {
+                    const monthDates = datesByMonth[month];
+                    const monthName = new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                    html += `<th colspan="${monthDates.length}" class="calendar-date-header" style="background: #667eea; color: white;">${monthName}</th>`;
+                });
+                html += '</tr><tr>';
+                months.forEach(month => {
+                    datesByMonth[month].forEach(date => {
+                        const day = date.substring(8); // DD
+                        html += `<th class="calendar-date-header" style="font-size: 0.85em;">${day}</th>`;
+                    });
+                });
+                html += '</tr>';
+            } else {
+                html += '<tr><th class="calendar-date-header">S.No</th>';
+                html += '<th class="calendar-date-header">Employee</th>';
+                allDates.forEach(date => {
+                    html += `<th class="calendar-date-header">${date}</th>`;
+                });
+                html += '</tr>';
+            }
+            html += '</thead><tbody>';
 
             html += '</tr></thead><tbody>';
 
             // Fill in employees (rows) and their assignments by date (columns)
-            employees.forEach(emp => {
+            employees.forEach((emp, index) => {
                 const isNewEmployee = newEmployeeIds.has(emp);
                 const empBadge = isNewEmployee ? ' <span class="assignment-badge badge-new">✨ NEW</span>' : '';
                 
                 html += '<tr>';
+                html += `<td class="calendar-date-header" style="text-align: center; font-weight: bold; color: #667eea;">${index + 1}</td>`;
                 html += `<td class="calendar-date-header"><strong>${emp}</strong>${empBadge}</td>`;
 
                 allDates.forEach(date => {

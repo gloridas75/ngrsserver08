@@ -2,7 +2,8 @@
 
 **Next-Generation Roster Scheduling Solver** - An intelligent shift scheduling optimizer powered by Google OR-Tools CP-SAT solver with REST API and Redis-based async job processing.
 
-🌐 **Live Demo**: [https://ngrssolver08.comcentricapps.com](https://ngrssolver08.comcentricapps.com)
+🌐 **Production**: [https://ngrssolver09.comcentricapps.com](https://ngrssolver09.comcentricapps.com)  
+🖥️ **Infrastructure**: Ubuntu 22.04 EC2 (AWS) with Docker, Redis, and systemd service
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![OR-Tools](https://img.shields.io/badge/OR--Tools-9.11-green.svg)](https://developers.google.com/optimization)

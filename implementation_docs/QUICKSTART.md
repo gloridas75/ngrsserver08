@@ -1,6 +1,25 @@
 # Quick Start Guide
 
-## Running the Solver
+## 🌐 Production API
+
+**Production URL**: [https://ngrssolver09.comcentricapps.com](https://ngrssolver09.comcentricapps.com)  
+**Infrastructure**: Ubuntu 22.04 EC2 (AWS) - NOT App Runner  
+**API Base**: `https://ngrssolver09.comcentricapps.com`
+
+### Quick Test
+```bash
+# Check production status
+curl https://ngrssolver09.comcentricapps.com/health
+
+# Submit async job
+curl -X POST https://ngrssolver09.comcentricapps.com/solve/async \
+  -H "Content-Type: application/json" \
+  -d @your_input.json
+```
+
+---
+
+## Running the Solver Locally
 
 ### Option 1: Auto-generated Timestamp Filename (Recommended)
 Generates filename with pattern `output_DDMM_HHmm.json`

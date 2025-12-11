@@ -255,3 +255,224 @@ def calculate_daily_gross_hours(shifts_same_day: list) -> float:
     for start_dt, end_dt in shifts_same_day:
         total += span_hours(start_dt, end_dt)
     return round(total, 2)
+
+
+# ============ MOM COMPLIANCE HELPERS ============
+
+def get_calendar_week_bounds(date_obj) -> tuple:
+    """Get Monday and Sunday of the calendar week for a given date.
+    
+    Args:
+        date_obj: date object
+    
+    Returns:
+        Tuple of (monday_date, sunday_date)
+    
+    Examples:
+        2026-01-07 (Wed) → (2026-01-05 Mon, 2026-01-11 Sun)
+        2026-01-11 (Sun) → (2026-01-05 Mon, 2026-01-11 Sun)
+    """
+    from datetime import timedelta
+    
+    # Get weekday (0=Monday, 6=Sunday)
+    weekday = date_obj.weekday()
+    
+    # Calculate Monday of this week
+    monday = date_obj - timedelta(days=weekday)
+    
+    # Calculate Sunday of this week
+    sunday = monday + timedelta(days=6)
+    
+    return (monday, sunday)
+
+
+def count_work_days_in_calendar_week(
+    employee_id: str,
+    date_obj,
+    all_assignments: list
+) -> int:
+    """Count work days for an employee in the calendar week (Mon-Sun) containing the given date.
+    
+    Args:
+        employee_id: Employee ID
+        date_obj: date object to determine which calendar week
+        all_assignments: All assignments list (must have 'employeeId', 'date', 'shiftCode')
+    
+    Returns:
+        Number of work days (D/N shifts, excluding O) in that calendar week
+    
+    Examples:
+        Week with [D,D,O,D,D,D,O] → 5 work days
+        Week with [D,D,D,D,O,O,O] → 4 work days
+    """
+    monday, sunday = get_calendar_week_bounds(date_obj)
+    
+    # Filter assignments for this employee in this week
+    work_days = set()
+    for assignment in all_assignments:
+        if assignment.get('employeeId') != employee_id:
+            continue
+        
+        assign_date_str = assignment.get('date')
+        if not assign_date_str:
+            continue
+        
+        try:
+            from datetime import datetime as dt
+            assign_date = dt.fromisoformat(assign_date_str).date()
+            
+            # Check if in this calendar week
+            if monday <= assign_date <= sunday:
+                shift_code = assignment.get('shiftCode', '')
+                # Count D/N shifts only (work days), exclude O
+                if shift_code and shift_code != 'O':
+                    work_days.add(assign_date_str)
+        except Exception:
+            continue
+    
+    return len(work_days)
+
+
+def find_consecutive_position(
+    employee_id: str,
+    current_date_obj,
+    all_assignments: list
+) -> int:
+    """Find the position of current date in consecutive work days sequence.
+    
+    Looks backward from current date to find consecutive work days.
+    
+    Args:
+        employee_id: Employee ID
+        current_date_obj: Current date object
+        all_assignments: All assignments list
+    
+    Returns:
+        Position in consecutive sequence (1-based). Returns 1 if first work day or after gap.
+    
+    Examples:
+        [O,O,D,D,D,D,O] current=index 5 → position 4 (4th consecutive day)
+        [D,D,O,D,D,D,O] current=index 5 → position 3 (3rd consecutive after gap)
+        [D,D,D,D,D,D,D] current=index 6 → position 7 (7th consecutive)
+    """
+    from datetime import timedelta
+    
+    # Build set of work dates for this employee
+    work_dates = set()
+    for assignment in all_assignments:
+        if assignment.get('employeeId') != employee_id:
+            continue
+        
+        assign_date_str = assignment.get('date')
+        shift_code = assignment.get('shiftCode', '')
+        
+        if assign_date_str and shift_code and shift_code != 'O':
+            try:
+                from datetime import datetime as dt
+                assign_date = dt.fromisoformat(assign_date_str).date()
+                work_dates.add(assign_date)
+            except Exception:
+                continue
+    
+    # Count consecutive work days including current date
+    position = 1
+    check_date = current_date_obj - timedelta(days=1)
+    
+    # Look backward to count consecutive days
+    while check_date in work_dates:
+        position += 1
+        check_date -= timedelta(days=1)
+    
+    return position
+
+
+def calculate_mom_compliant_hours(
+    start_dt: datetime,
+    end_dt: datetime,
+    employee_id: str,
+    assignment_date_obj,
+    all_assignments: list
+) -> dict:
+    """Calculate MOM-compliant work hours with pattern-based normal/OT split.
+    
+    Rules:
+    - 4 work days/week: 11.0h normal + rest OT
+    - 5 work days/week: 8.8h normal + rest OT
+    - 6 work days/week, position 1-5: 8.8h normal + rest OT
+    - 6 work days/week, position 6+: 0h normal, 8.0h rest day pay, rest OT
+    - MOM minimum: 1 weekly off day (max 6 consecutive work days)
+    
+    Args:
+        start_dt: Shift start datetime
+        end_dt: Shift end datetime
+        employee_id: Employee ID
+        assignment_date_obj: Assignment date (date object)
+        all_assignments: All assignments for context analysis
+    
+    Returns:
+        Dictionary with keys:
+        - 'gross': Total duration
+        - 'lunch': Meal break (0.0 or 1.0)
+        - 'normal': Normal hours (MOM compliant)
+        - 'ot': Overtime hours
+        - 'restDayPay': Rest day pay (8.0h for 6th+ consecutive day, else 0.0)
+        - 'paid': Total paid hours
+    
+    Examples:
+        4 days/week, 12h shift → {normal: 11.0, ot: 0.0, restDayPay: 0.0}
+        5 days/week, 12h shift → {normal: 8.8, ot: 2.2, restDayPay: 0.0}
+        6 days/week, pos 3, 12h → {normal: 8.8, ot: 2.2, restDayPay: 0.0}
+        6 days/week, pos 6, 12h → {normal: 0.0, ot: 3.0, restDayPay: 8.0}
+    """
+    # Calculate basic components
+    gross = span_hours(start_dt, end_dt)
+    ln = lunch_hours(gross)
+    
+    # Get work days in calendar week and consecutive position
+    work_days_in_week = count_work_days_in_calendar_week(
+        employee_id, assignment_date_obj, all_assignments
+    )
+    consecutive_position = find_consecutive_position(
+        employee_id, assignment_date_obj, all_assignments
+    )
+    
+    # Initialize rest day pay
+    rest_day_pay = 0.0
+    
+    # Apply MOM-compliant formulas based on work days per week
+    if work_days_in_week == 4:
+        # 4 days/week: 11.0h normal + rest OT
+        normal = min(11.0, gross - ln)
+        ot = max(0.0, gross - ln - 11.0)
+    
+    elif work_days_in_week == 5:
+        # 5 days/week: 8.8h normal + rest OT
+        normal = min(8.8, gross - ln)
+        ot = max(0.0, gross - ln - 8.8)
+    
+    elif work_days_in_week >= 6:
+        # 6+ days/week: Check consecutive position
+        if consecutive_position >= 6:
+            # 6th+ consecutive day: 0h normal, 8.0h rest day pay, rest OT
+            normal = 0.0
+            rest_day_pay = 8.0
+            ot = max(0.0, gross - ln - rest_day_pay)
+        else:
+            # Position 1-5: 8.8h normal + rest OT
+            normal = min(8.8, gross - ln)
+            ot = max(0.0, gross - ln - 8.8)
+    
+    else:
+        # Fallback for < 4 days (shouldn't happen with MOM compliance, but handle gracefully)
+        # Use 8.8h formula as conservative default
+        normal = min(8.8, gross - ln)
+        ot = max(0.0, gross - ln - 8.8)
+    
+    return {
+        'gross': round(gross, 2),
+        'lunch': round(ln, 2),
+        'normal': round(normal, 2),
+        'ot': round(ot, 2),
+        'restDayPay': round(rest_day_pay, 2),
+        'paid': round(gross, 2)  # Paid hours = gross (includes everything)
+    }
