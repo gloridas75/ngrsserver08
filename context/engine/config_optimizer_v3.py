@@ -492,3 +492,173 @@ def optimize_multiple_requirements(
             })
     
     return results
+
+
+# ============================================================
+# LEGACY COMPATIBILITY WRAPPERS (for /configure endpoint)
+# ============================================================
+# These functions provide backward compatibility with the old
+# config_optimizer.py API but use v3 logic internally
+
+def optimize_all_requirements(
+    requirements: List[Dict],
+    constraints: Dict,
+    planning_horizon: Dict,
+    shift_definitions: Optional[Dict[str, Dict]] = None,
+    top_n: int = 5
+) -> Dict:
+    """
+    Legacy wrapper for /configure endpoint compatibility.
+    
+    Note: This is a simplified implementation using ICPMP v3 logic.
+    The original v2 implementation had more complex multi-pattern
+    evaluation that is not needed for current use cases.
+    
+    Args:
+        requirements: List of requirement specifications
+        constraints: Constraint parameters (unused in v3)
+        planning_horizon: Planning horizon with start/end dates
+        shift_definitions: Shift definitions (unused in v3)
+        top_n: Number of alternatives to return (v3 only returns 1 optimal)
+    
+    Returns:
+        Dict mapping requirement IDs to their configurations
+    """
+    logger.info("Using ICPMP v3 logic for configuration optimization")
+    
+    # Convert requirements to v3 format and calculate
+    results = optimize_multiple_requirements(
+        requirements=requirements,
+        planning_horizon=planning_horizon,
+        public_holidays=[],  # Not provided in /configure
+        coverage_days=[]  # Calculate from requirement
+    )
+    
+    # Convert v3 results to old format
+    optimized_configs = {}
+    for result in results:
+        if result.get('status') == 'FAILED':
+            continue
+            
+        req_id = result['requirementId']
+        config = result['configuration']
+        
+        # Format as old-style config
+        optimized_configs[req_id] = [{
+            'workPattern': config.get('workPattern', 'UNKNOWN'),
+            'employeesRequired': config.get('employeesRequired', 0),
+            'strictEmployees': config.get('employeesRequired', 0),  # v3 has no flexible
+            'flexibleEmployees': 0,  # v3 uses all strict
+            'employeeOffsets': config.get('rotationOffsets', []),
+            'expectedCoverageRate': result['coverage'].get('achievedRate', 0),
+            'score': 0  # v3 doesn't use scoring
+        }]
+    
+    return optimized_configs
+
+
+def format_output_config(optimized_result: Dict, input_config: Dict) -> Dict:
+    """
+    Legacy wrapper to format optimization results for /configure endpoint.
+    
+    Args:
+        optimized_result: Result from optimize_all_requirements
+        input_config: Original input configuration
+    
+    Returns:
+        Formatted output configuration
+    """
+    recommendations = []
+    
+    for req_id, configs in optimized_result.items():
+        # Find requirement details
+        req = next((r for r in input_config['requirements'] 
+                   if r.get('requirementId', r.get('id')) == req_id), None)
+        
+        if not req:
+            continue
+            
+        for rank, config in enumerate(configs, 1):
+            recommendations.append({
+                'requirementId': req_id,
+                'requirementName': req.get('requirementName', req.get('name')),
+                'alternativeRank': rank,
+                'configuration': {
+                    'workPattern': config['workPattern'],
+                    'employeesRequired': config['employeesRequired'],
+                    'strictEmployees': config['strictEmployees'],
+                    'flexibleEmployees': config['flexibleEmployees'],
+                    'employeeOffsets': config['employeeOffsets']
+                },
+                'coverage': {
+                    'expectedCoverageRate': config['expectedCoverageRate'],
+                    'coverageType': 'complete' if config['expectedCoverageRate'] >= 100 else 'partial'
+                },
+                'quality': {
+                    'score': config['score']
+                }
+            })
+    
+    # Calculate summary
+    total_employees = sum(
+        configs[0]['employeesRequired'] 
+        for configs in optimized_result.values() 
+        if configs
+    )
+    
+    return {
+        'schemaVersion': input_config.get('schemaVersion', '0.95'),
+        'configType': 'optimizedRosterConfiguration',
+        'generatedAt': datetime.now().isoformat(),
+        'organizationId': input_config.get('organizationId', 'ORG_TEST'),
+        'planningHorizon': input_config['planningHorizon'],
+        'summary': {
+            'totalRequirements': len(input_config['requirements']),
+            'totalEmployees': total_employees,
+            'optimizerVersion': 'ICPMP v3.0 (with tightness buffer)'
+        },
+        'recommendations': recommendations
+    }
+
+
+def simulate_coverage_with_preprocessing(
+    pattern: List[str],
+    headcount: int,
+    coverage_days: List[str],
+    days_in_horizon: int,
+    start_date: datetime
+) -> Dict:
+    """
+    Legacy wrapper for feasibility checker.
+    
+    Simulates coverage using v3 placement logic.
+    """
+    calendar = coverage_days  # Use coverage days directly
+    anchor_date = start_date.isoformat()
+    
+    # Use v3's try_placement_with_n_employees to simulate
+    # Start with mathematical minimum
+    cycle_length = len(pattern)
+    work_days = sum(1 for d in pattern if d != 'O')
+    base_minimum = ceil(headcount * cycle_length / work_days)
+    
+    # Try placement
+    result = try_placement_with_n_employees(
+        num_employees=base_minimum,
+        pattern=pattern,
+        headcount=headcount,
+        calendar=calendar,
+        anchor_date=anchor_date,
+        cycle_length=cycle_length
+    )
+    
+    return {
+        'employeeCount': base_minimum,
+        'strictEmployees': base_minimum,
+        'flexibleEmployees': 0,
+        'trulyFlexibleEmployees': 0,
+        'offsets': list(result['offset_distribution'].keys()),
+        'coverageComplete': result['is_feasible'],
+        'coverageRange': [0, headcount] if result['is_feasible'] else [0, 0],
+        'calendarDays': len(calendar)
+    }
