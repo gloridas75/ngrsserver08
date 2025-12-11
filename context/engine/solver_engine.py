@@ -1044,25 +1044,66 @@ def calculate_scores(ctx, assignments) -> tuple:
                     slot_rank = getattr(slot, 'rankId', None)
                     slot_scheme = getattr(slot, 'schemeRequirement', 'Global')
                     slot_duration = (slot.end - slot.start).total_seconds() / 3600.0
+                    slot_gender = getattr(slot, 'genderRequirement', None)
                     
-                    # Check C11: Rank mismatch
+                    # Build detailed blocking analysis
+                    blocking_reasons = []
+                    detailed_reasons = []
+                    
+                    # Build employee capabilities lookup
                     employee_ranks = {emp.get('employeeId'): emp.get('rankId') for emp in employees_list}
-                    if slot_rank and not any(rank == slot_rank for rank in employee_ranks.values()):
-                        blocking_reasons.append('C11-rankId')
+                    employee_schemes = {emp.get('employeeId'): emp.get('scheme', 'A') for emp in employees_list}
+                    employee_genders = {emp.get('employeeId'): emp.get('gender') for emp in employees_list}
+                    employee_types = {emp.get('employeeId'): emp.get('employmentType') for emp in employees_list}
                     
-                    # Check C1: Scheme daily hours
-                    if slot_scheme == 'P' and slot_duration > 9.0:
-                        blocking_reasons.append('C1-scheme-hours')
-                    elif slot_scheme == 'B' and slot_duration > 13.0:
-                        blocking_reasons.append('C1-scheme-hours')
-                    elif slot_scheme == 'A' and slot_duration > 14.0:
-                        blocking_reasons.append('C1-scheme-hours')
+                    # Check C11: Rank mismatch - no employees with required rank
+                    if slot_rank:
+                        matching_ranks = [emp_id for emp_id, rank in employee_ranks.items() if rank == slot_rank]
+                        if not matching_ranks:
+                            blocking_reasons.append('C11_rank_mismatch')
+                            detailed_reasons.append(f"Required rank '{slot_rank}' not available in any employee")
+                    
+                    # Check C9: Gender requirement - no employees with required gender
+                    if slot_gender:
+                        matching_genders = [emp_id for emp_id, gender in employee_genders.items() if gender == slot_gender]
+                        if not matching_genders:
+                            blocking_reasons.append('C9_gender_balance')
+                            detailed_reasons.append(f"Required gender '{slot_gender}' not available")
+                    
+                    # Check C1: Scheme daily hours - shift too long for employee schemes
+                    scheme_compatible = []
+                    for emp_id, scheme in employee_schemes.items():
+                        max_hours = {'P': 9.0, 'B': 13.0, 'A': 14.0}.get(scheme, 14.0)
+                        if slot_duration <= max_hours:
+                            scheme_compatible.append(emp_id)
+                    
+                    if not scheme_compatible:
+                        blocking_reasons.append('C1_scheme_hours')
+                        detailed_reasons.append(f"Shift {slot_duration:.1f}h exceeds all scheme limits (P:9h, B:13h, A:14h)")
+                    
+                    # Check for pattern-based issues
+                    if hasattr(slot, 'position_index') and hasattr(slot, 'shiftPatternId'):
+                        employee_patterns = {emp.get('employeeId'): emp.get('workPattern', '') for emp in employees_list}
+                        compatible_patterns = [e for e, p in employee_patterns.items() if p]
+                        if not compatible_patterns:
+                            blocking_reasons.append('S1_rotation_pattern')
+                            detailed_reasons.append(f"Pattern-based slot but no employees have work patterns")
+                    
+                    # If no specific reasons found, provide general analysis
+                    if not blocking_reasons:
+                        blocking_reasons.append('constraint_combination')
+                        detailed_reasons.append(
+                            f"Multiple hard constraints (work pattern, consecutive days, rest periods, "
+                            f"weekly hours, or other MOM rules) prevented all employees from being assigned"
+                        )
                 
-                # Record violation with constraint info
+                # Record violation with detailed constraint info
                 constraint_id = blocking_reasons[0] if blocking_reasons else 'unknown'
+                reason_text = '; '.join(detailed_reasons) if detailed_reasons else 'Unknown constraint violation'
+                
                 score_book.hard(
-                    f"hard-{constraint_id}",
-                    f"Slot {slot_id} on {a.get('date')} for {a.get('demandId')} is unassigned"
+                    f"hard_{constraint_id}",
+                    f"Slot {slot_id} on {a.get('date')} unassigned - {reason_text}"
                 )
     
     # Filter out unassigned slots for constraint checking (only check actual assignments)
