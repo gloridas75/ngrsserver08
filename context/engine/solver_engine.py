@@ -1064,7 +1064,8 @@ def calculate_scores(ctx, assignments) -> tuple:
                             detailed_reasons.append(f"Required rank '{slot_rank}' not available in any employee")
                     
                     # Check C9: Gender requirement - no employees with required gender
-                    if slot_gender:
+                    # Note: "Any" means no gender restriction, so skip checking
+                    if slot_gender and slot_gender not in ['Any', 'any', None]:
                         matching_genders = [emp_id for emp_id, gender in employee_genders.items() if gender == slot_gender]
                         if not matching_genders:
                             blocking_reasons.append('C9_gender_balance')
