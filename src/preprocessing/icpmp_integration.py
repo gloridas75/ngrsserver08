@@ -236,6 +236,67 @@ class ICPMPPreprocessor:
             anchor_date=coverage_anchor
         )
         
+        # POST-ICPMP VALIDATION: Check if all required offsets are covered
+        # This handles edge cases where ICPMP's greedy U-slot simulation
+        # returns feasible=True, but CP-SAT fails due to missing offsets
+        pattern_length = len(work_pattern)
+        selected_offsets = set(icpmp_result['configuration']['offsetDistribution'].keys())
+        required_offsets = set(range(pattern_length))
+        missing_offsets = required_offsets - selected_offsets
+        
+        if missing_offsets:
+            logger.warning(f"    ⚠️  ICPMP selected {len(selected_offsets)} offsets but pattern requires {pattern_length}")
+            logger.warning(f"    Missing offsets: {sorted(missing_offsets)}")
+            logger.warning(f"    This can cause CP-SAT infeasibility due to incomplete pattern coverage")
+            logger.warning(f"    Recalculating with pattern_length ({pattern_length}) employees to ensure full offset coverage...")
+            
+            # Force recalculation with pattern_length employees
+            from context.engine.config_optimizer_v3 import try_placement_with_n_employees
+            
+            recalc_result = try_placement_with_n_employees(
+                num_employees=pattern_length,
+                pattern=work_pattern,
+                headcount=headcount,
+                calendar=calendar,
+                anchor_date=coverage_anchor,
+                cycle_length=pattern_length
+            )
+            
+            if recalc_result['is_feasible']:
+                # Rebuild icpmp_result format with recalculated values
+                icpmp_result = {
+                    'requirementId': req_id,
+                    'configuration': {
+                        'employeesRequired': pattern_length,
+                        'optimality': 'FORCED_FULL_OFFSET_COVERAGE',
+                        'algorithm': 'GREEDY_INCREMENTAL_WITH_VALIDATION',
+                        'lowerBound': icpmp_result['configuration']['lowerBound'],
+                        'attemptsRequired': pattern_length - icpmp_result['configuration']['lowerBound'] + 1,
+                        'offsetDistribution': recalc_result['offset_distribution']
+                    },
+                    'employeePatterns': recalc_result['employees'],
+                    'coverage': {
+                        'achievedRate': recalc_result['coverage_rate'],
+                        'totalWorkDays': recalc_result['total_work_days'],
+                        'totalUSlots': recalc_result['total_u_slots'],
+                        'dailyCoverageDetails': recalc_result['daily_coverage']
+                    },
+                    'metadata': {
+                        'patternCycleLength': pattern_length,
+                        'workDaysPerCycle': sum(1 for s in work_pattern if s != 'O'),
+                        'planningHorizonDays': len(calendar),
+                        'totalCoverageNeeded': len(calendar) * headcount,
+                        'validationApplied': True,
+                        'originalEmployeesRequired': icpmp_result['configuration']['employeesRequired']
+                    }
+                }
+                logger.info(f"    ✓ Validation fix applied: Using {pattern_length} employees with all offsets [0-{pattern_length-1}]")
+            else:
+                logger.error(f"    ✗ Recalculation with {pattern_length} employees still not feasible!")
+                logger.error(f"    This indicates a deeper issue with the pattern or calendar configuration")
+        else:
+            logger.info(f"    ✓ Offset validation passed: All {pattern_length} offsets covered")
+        
         return icpmp_result
     
     def _select_and_assign_employees(self, requirement: Dict, demand_item: Dict, 
