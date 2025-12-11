@@ -113,22 +113,45 @@ def calculate_optimal_with_u_slots(
     # Absolute minimum from work capacity
     capacity_minimum = ceil(total_coverage_needed / work_days_per_cycle)
     
-    # Calculate pattern tightness buffer
-    tightness_buffer = calculate_pattern_tightness_buffer(work_days_per_cycle, cycle_length)
+    # Calculate smart buffer based on distribution efficiency
+    # Goal: Target a number of employees that distributes evenly across rotation positions
+    # to minimize U-slots while ensuring feasibility
+    
+    # Check if pattern_based_minimum distributes evenly
+    employees_per_position = pattern_based_minimum / cycle_length
     work_ratio = work_days_per_cycle / cycle_length
     
-    # Apply buffer to pattern-based minimum for tight patterns
-    buffered_minimum = ceil(pattern_based_minimum * (1 + tightness_buffer))
+    if pattern_based_minimum % cycle_length == 0:
+        # Perfect distribution - no buffer needed
+        buffered_minimum = pattern_based_minimum
+        buffer_reason = "even distribution"
+    elif work_ratio >= 0.85:
+        # Very tight patterns (6/7, 5/6) - round up to next multiple of cycle_length
+        # This ensures at least 2 employees per position for maximum flexibility
+        buffered_minimum = ceil(pattern_based_minimum / cycle_length) * cycle_length
+        buffer_reason = f"tight pattern - rounded to next multiple of {cycle_length}"
+    elif work_ratio >= 0.75:
+        # Tight patterns (5/7, 4/5) - add employees to reach better distribution
+        # Target: at least avg 1.5 employees per position
+        target = cycle_length * 1.5
+        buffered_minimum = max(pattern_based_minimum, ceil(target))
+        buffer_reason = "tight pattern - target 1.5 per position"
+    else:
+        # Moderate/loose patterns - minimal buffer (just round up to ensure coverage)
+        buffered_minimum = pattern_based_minimum + 1
+        buffer_reason = "safety buffer"
     
     # Take the maximum (most constrained)
     lower_bound = max(headcount, buffered_minimum)
     
     logger.info(f"[{requirement_id}] Starting optimal calculation:")
     logger.info(f"  Pattern: {pattern} (cycle={cycle_length}, work_days={work_days_per_cycle})")
-    logger.info(f"  Work ratio: {work_ratio:.1%} (tightness buffer: {tightness_buffer:.0%})")
+    logger.info(f"  Work ratio: {work_ratio:.1%}")
     logger.info(f"  Headcount: {headcount}, Calendar days: {len(calendar)}")
-    logger.info(f"  Base minimum: {pattern_based_minimum} → Buffered minimum: {buffered_minimum}")
-    logger.info(f"  Lower bound: {lower_bound} employees (pattern-based={pattern_based_minimum}, buffered={buffered_minimum}, capacity={capacity_minimum})")
+    logger.info(f"  Base minimum: {pattern_based_minimum} employees")
+    logger.info(f"  Distribution: {pattern_based_minimum / cycle_length:.2f} employees/position")
+    logger.info(f"  Buffered minimum: {buffered_minimum} ({buffer_reason})")
+    logger.info(f"  Lower bound: {lower_bound} employees (capacity={capacity_minimum})")
     
     # Try increasing employee counts from lower bound
     upper_bound = lower_bound + max_attempts
