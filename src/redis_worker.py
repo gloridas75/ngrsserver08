@@ -18,6 +18,7 @@ from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
 from src.output_builder import build_output
 from src.preprocessing.icpmp_integration import ICPMPPreprocessor
+from src.offset_manager import ensure_staggered_offsets
 
 
 def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
@@ -73,6 +74,14 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                 continue
             
             input_data = job_info.input_data
+            
+            # ============================================================
+            # ROTATION OFFSET STAGGERING
+            # ============================================================
+            # Ensure rotation offsets are staggered (0, 1, 2, ...) for proper coverage
+            # This MUST happen before preprocessing
+            print(f"[WORKER-{worker_id}] Staggering rotation offsets for job {job_id}")
+            input_data = ensure_staggered_offsets(input_data)
             
             # Run solver
             start_time = time.time()
