@@ -228,12 +228,17 @@ class ICPMPPreprocessor:
         logger.info(f"    Running ICPMP v3.0: pattern={len(work_pattern)}-day, HC={headcount}, "
                    f"coverage={len(calendar)} days")
         
-        # Call ICPMP v3.0
+        # Extract scheme from requirement for scheme-aware capacity calculation
+        scheme = req.get('scheme', 'A')
+        logger.info(f"    Requirement scheme: {scheme}")
+        
+        # Call ICPMP v3.0 with scheme parameter
         icpmp_result = calculate_optimal_with_u_slots(
             pattern=work_pattern,
             headcount=headcount,
             calendar=calendar,
-            anchor_date=coverage_anchor
+            anchor_date=coverage_anchor,
+            scheme=scheme  # Pass scheme for capacity calculation
         )
         
         # POST-ICPMP VALIDATION: Check if all required offsets are covered

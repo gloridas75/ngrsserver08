@@ -10,6 +10,7 @@ Key Features:
 - All employees follow strict patterns (no flexible category)
 - U-slots injected when coverage would exceed headcount
 - Handles public holidays and coverage day filtering
+- Scheme-aware capacity calculation (Scheme P: max 4 days/week)
 
 Algorithm Guarantee:
 First feasible solution found is PROVEN OPTIMAL (can't use fewer employees)
@@ -22,6 +23,88 @@ from typing import List, Dict, Any, Tuple, Optional
 from collections import defaultdict
 
 logger = logging.getLogger(__name__)
+
+# Scheme P (Part-time) Constraints - MOM Employment Act
+# These values are used throughout the solver workflow
+SCHEME_P_CONSTRAINTS = {
+    # Weekly capacity limits (C6 constraint)
+    'max_days_per_week': 4,  # Scheme P employees can work maximum 4 days per week
+    'max_hours_if_4_days': 34.98,  # If working ≤4 days/week: max 34.98h/week (C6 constraint)
+    'max_hours_if_5plus_days': 29.98,  # If working >4 days/week: max 29.98h/week (C6 constraint)
+    'max_daily_hours_gross': 9,  # Max 9h gross per day (includes 1h lunch for 8h+ shifts)
+    
+    # Shift configurations by work days per week
+    # Used by solver to determine feasible shift lengths
+    'shift_configs': {
+        4: {'gross_hours': 9, 'lunch_hours': 1.0, 'net_hours': 8},    # ≤4 days: 9h gross (8h net + 1h lunch)
+        5: {'gross_hours': 6, 'lunch_hours': 0.75, 'net_hours': 5.25}, # 5 days: 6h gross (5.25h net + 0.75h lunch)
+        6: {'gross_hours': 5, 'lunch_hours': 0, 'net_hours': 5},       # 6 days: 5h gross (no lunch)
+        7: {'gross_hours': 4, 'lunch_hours': 0, 'net_hours': 4}        # 7 days: 4h gross (no lunch)
+    },
+    
+    # Normal hour thresholds for payroll calculations
+    # Used by time_utils.calculate_mom_compliant_hours() to split Normal vs OT
+    'normal_threshold_4_days': 8.745,  # 34.98h ÷ 4 days = 8.745h normal/day
+    # For 5+ days/week: 29.98h ÷ days_per_week
+    # 5 days: 29.98 ÷ 5 = 5.996h normal/day
+    # 6 days: 29.98 ÷ 6 = 4.996h normal/day
+    # 7 days: 29.98 ÷ 7 = 4.283h normal/day
+    
+    # Lunch deduction rules (MOM Employment Act)
+    # Used to calculate net hours from gross hours
+    'lunch_rules': {
+        'min_hours_for_1h_lunch': 8.0,      # ≥8h gross: 1h lunch
+        'min_hours_for_45min_lunch': 6.0,   # 6-7.99h gross: 45min (0.75h) lunch
+        # <6h gross: No lunch deduction
+    },
+    
+    # Overtime rules
+    'max_ot_per_month': 72,  # Max 72h OT per month (MOM limit for all schemes)
+    'max_ot_per_day': 12,    # Max 12h OT per day (9h gross for Scheme P)
+}
+
+
+def calculate_scheme_max_days_per_week(scheme: str) -> int:
+    """
+    Calculate maximum work days per week for a given employment scheme.
+    
+    This function implements MOM (Ministry of Manpower) regulatory constraints
+    for different employment schemes. Critical for ICPMP lower bound calculation.
+    
+    Args:
+        scheme: Employee scheme code ('A', 'B', 'P', or 'Global')
+        
+    Returns:
+        Maximum work days per week as integer
+        
+    Scheme Definitions:
+        - Scheme A: Full-time, max 14h/day gross → typically 6 days/week (need 1 rest day)
+        - Scheme B: Full-time, max 13h/day gross → typically 6 days/week (need 1 rest day)
+        - Scheme P: Part-time, max 4 days/week (C6 constraint)
+        - Global: Use conservative estimate (4 days for mixed pools)
+        
+    Note:
+        For Scheme P, the 4 days/week limit comes from C6 constraint:
+        - If working ≤4 days: max 34.98h/week
+        - If working >4 days: max 29.98h/week
+        Since typical shifts are 8-9h gross (8h net), working >4 days is impractical.
+    """
+    if scheme == 'P':
+        # Part-time employees (Scheme P) limited to 4 days/week
+        # This is based on C6 weekly hour constraints (34.98h / 29.98h)
+        return SCHEME_P_CONSTRAINTS['max_days_per_week']
+    elif scheme in ['A', 'B']:
+        # Full-time schemes: Need at least 1 rest day per week (C3 constraint)
+        # So maximum is 6 work days per week
+        return 6
+    elif scheme == 'Global':
+        # Mixed scheme pools: Use conservative estimate
+        # Assume mix includes Scheme P, so limit to 4 days
+        return 4
+    else:
+        # Unknown scheme: Use safe default (6 days, allows most patterns)
+        logger.warning(f"Unknown scheme '{scheme}', defaulting to 6 days/week max")
+        return 6
 
 
 def calculate_pattern_tightness_buffer(work_days: int, cycle_length: int) -> float:
@@ -62,7 +145,8 @@ def calculate_optimal_with_u_slots(
     calendar: List[str],
     anchor_date: str,
     requirement_id: str = "unknown",
-    max_attempts: int = 50
+    max_attempts: int = 50,
+    scheme: str = "A"
 ) -> Dict[str, Any]:
     """
     Calculate optimal employee count with U-slot injection.
@@ -77,6 +161,7 @@ def calculate_optimal_with_u_slots(
         anchor_date: Reference date for pattern alignment
         requirement_id: Identifier for tracking
         max_attempts: Maximum employee counts to try beyond lower bound
+        scheme: Employment scheme ('A', 'B', 'P', or 'Global') for capacity constraints
         
     Returns:
         Dictionary with:
@@ -93,6 +178,29 @@ def calculate_optimal_with_u_slots(
     if work_days_per_cycle == 0:
         raise ValueError(f"Pattern {pattern} has no work days (all 'O')")
     
+    # SCHEME-AWARE CAPACITY CALCULATION
+    # For Scheme P: Limit capacity to max 4 days/week (C6 constraint)
+    # This prevents underestimation of required employees
+    
+    scheme_max_days_per_week = calculate_scheme_max_days_per_week(scheme)
+    
+    # Convert weekly limit to per-cycle basis
+    # Example: 4 days/week × (7 days cycle / 7 days week) = 4 days/cycle
+    weeks_per_cycle = cycle_length / 7.0
+    scheme_max_days_per_cycle = scheme_max_days_per_week * weeks_per_cycle
+    
+    # For Scheme P: Use the MORE RESTRICTIVE of pattern days or scheme capacity
+    # For other schemes: Use pattern days (no artificial limit)
+    if scheme == 'P':
+        effective_work_capacity = min(work_days_per_cycle, scheme_max_days_per_cycle)
+        if effective_work_capacity < work_days_per_cycle:
+            logger.info(f"[{requirement_id}] Scheme P capacity limit applied: "
+                       f"{work_days_per_cycle} pattern days → {effective_work_capacity:.1f} effective days/cycle "
+                       f"(max {scheme_max_days_per_week} days/week)")
+    else:
+        # Scheme A/B/Global: No artificial capacity limit
+        effective_work_capacity = work_days_per_cycle
+    
     # Calculate mathematical lower bound
     # The lower bound is the maximum of:
     # 1. headcount (need at least HC employees for any single day)
@@ -108,15 +216,16 @@ def calculate_optimal_with_u_slots(
     # then minimum employees is roughly: headcount * (cycle_length / work_days)
     # But this can be less if calendar length allows pattern repetition
     
-    pattern_based_minimum = ceil(headcount * cycle_length / work_days_per_cycle)
+    # IMPORTANT: Use effective_work_capacity (scheme-adjusted) instead of work_days_per_cycle
+    pattern_based_minimum = ceil(headcount * cycle_length / effective_work_capacity)
     
-    # Absolute minimum from work capacity
-    capacity_minimum = ceil(total_coverage_needed / work_days_per_cycle)
+    # Absolute minimum from work capacity (also use effective capacity)
+    capacity_minimum = ceil(total_coverage_needed / effective_work_capacity)
     
     # Calculate smart buffer based on distribution efficiency
     # Goal: Balance between even distribution and minimizing employee idle time
     
-    work_ratio = work_days_per_cycle / cycle_length
+    work_ratio = effective_work_capacity / cycle_length
     employees_per_position = pattern_based_minimum / cycle_length
     
     # Check how evenly the base minimum distributes
@@ -150,7 +259,11 @@ def calculate_optimal_with_u_slots(
     lower_bound = max(headcount, buffered_minimum)
     
     logger.info(f"[{requirement_id}] Starting optimal calculation:")
+    logger.info(f"  Scheme: {scheme} (max {scheme_max_days_per_week} days/week)")
     logger.info(f"  Pattern: {pattern} (cycle={cycle_length}, work_days={work_days_per_cycle})")
+    if scheme == 'P' and effective_work_capacity < work_days_per_cycle:
+        logger.info(f"  ⚠️  Scheme P capacity limit: {work_days_per_cycle} → {effective_work_capacity:.1f} days/cycle")
+    logger.info(f"  Effective work capacity: {effective_work_capacity:.1f} days/cycle")
     logger.info(f"  Work ratio: {work_ratio:.1%}")
     logger.info(f"  Headcount: {headcount}, Calendar days: {len(calendar)}")
     logger.info(f"  Base minimum: {pattern_based_minimum} employees")

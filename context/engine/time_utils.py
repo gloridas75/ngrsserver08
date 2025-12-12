@@ -391,16 +391,25 @@ def calculate_mom_compliant_hours(
     end_dt: datetime,
     employee_id: str,
     assignment_date_obj,
-    all_assignments: list
+    all_assignments: list,
+    employee_scheme: str = 'A'
 ) -> dict:
-    """Calculate MOM-compliant work hours with pattern-based normal/OT split.
+    """Calculate MOM-compliant work hours with scheme-aware normal/OT split.
     
-    Rules:
+    Rules for Scheme A/B (Full-time):
     - 4 work days/week: 11.0h normal + rest OT
     - 5 work days/week: 8.8h normal + rest OT
     - 6 work days/week, position 1-5: 8.8h normal + rest OT
     - 6 work days/week, position 6+: 0h normal, 8.0h rest day pay, rest OT
     - MOM minimum: 1 weekly off day (max 6 consecutive work days)
+    
+    Rules for Scheme P (Part-time):
+    - ≤4 days/week: 34.98h max → 8.745h normal/day threshold, rest is OT
+    - 5th day (after working 4 days): Entire shift is OT
+    - 5 days/week: 29.98h max → 5.996h normal/day (typically 6h shifts with 0.75h lunch)
+    - 6 days/week: 29.98h max → 4.996h normal/day (typically 5h shifts, no lunch)
+    - 7 days/week: 29.98h max → 4.283h normal/day (typically 4h shifts, no lunch)
+    - OT cap: 72h/month (same as Scheme A/B)
     
     Args:
         start_dt: Shift start datetime
@@ -408,21 +417,25 @@ def calculate_mom_compliant_hours(
         employee_id: Employee ID
         assignment_date_obj: Assignment date (date object)
         all_assignments: All assignments for context analysis
+        employee_scheme: Employment scheme ('A', 'B', or 'P'). Defaults to 'A'.
     
     Returns:
         Dictionary with keys:
         - 'gross': Total duration
-        - 'lunch': Meal break (0.0 or 1.0)
+        - 'lunch': Meal break (0.0, 0.75, or 1.0)
         - 'normal': Normal hours (MOM compliant)
         - 'ot': Overtime hours
         - 'restDayPay': Rest day pay (8.0h for 6th+ consecutive day, else 0.0)
         - 'paid': Total paid hours
     
-    Examples:
+    Examples (Scheme A/B):
         4 days/week, 12h shift → {normal: 11.0, ot: 0.0, restDayPay: 0.0}
         5 days/week, 12h shift → {normal: 8.8, ot: 2.2, restDayPay: 0.0}
-        6 days/week, pos 3, 12h → {normal: 8.8, ot: 2.2, restDayPay: 0.0}
-        6 days/week, pos 6, 12h → {normal: 0.0, ot: 3.0, restDayPay: 8.0}
+    
+    Examples (Scheme P):
+        4 days/week, 8h net → {normal: 8.0, ot: 0.0} (8h < 8.745h threshold)
+        4 days/week, 10h net → {normal: 8.745, ot: 1.255} (exceeds threshold)
+        5 days (5th day), 8h net → {normal: 0.0, ot: 8.0} (entire 5th day is OT)
     """
     # Calculate basic components
     gross = span_hours(start_dt, end_dt)
@@ -439,36 +452,92 @@ def calculate_mom_compliant_hours(
     # Initialize rest day pay
     rest_day_pay = 0.0
     
-    # Apply MOM-compliant formulas based on work days per week
-    if work_days_in_week == 4:
-        # 4 days/week: 11.0h normal + rest OT
-        normal = min(11.0, gross - ln)
-        ot = max(0.0, gross - ln - 11.0)
-    
-    elif work_days_in_week == 5:
-        # 5 days/week: 8.8h normal + rest OT
-        normal = min(8.8, gross - ln)
-        ot = max(0.0, gross - ln - 8.8)
-    
-    elif work_days_in_week >= 6:
-        # 6+ days/week: Check if 6th consecutive day WITHIN SAME ISO WEEK
-        # Rest-day pay only applies when all 6 consecutive days fall in same ISO week
-        # This encourages solver to pack 6 work days within single week (reduces gaps)
-        if consecutive_position >= 6:
-            # 6th+ consecutive day within same ISO week: 0h normal, 8.0h rest day pay, rest OT
-            normal = 0.0
-            rest_day_pay = 8.0
-            ot = max(0.0, gross - ln - rest_day_pay)
+    # Apply scheme-specific normal/OT calculation rules
+    if employee_scheme == 'P':
+        # SCHEME P (PART-TIME) - C6 constraint-aware calculations
+        # Reference: config_optimizer_v3.SCHEME_P_CONSTRAINTS
+        
+        if work_days_in_week <= 4:
+            # ≤4 days/week: Max 34.98h/week
+            # Normal threshold: 34.98h ÷ 4 days = 8.745h/day
+            # Example: 8h shift → all normal (8h < 8.745h), OT: 0h
+            # Example: 10h shift → normal: 8.745h, OT: 1.255h
+            normal_threshold = 8.745  # 34.98 / 4
+            normal = min(normal_threshold, gross - ln)
+            ot = max(0.0, gross - ln - normal_threshold)
+        
+        elif work_days_in_week == 5:
+            # 5 days/week: Max 29.98h/week
+            # Normal threshold: 29.98h ÷ 5 days = 5.996h/day
+            # Typically: 6h gross shifts (5.25h net + 0.75h lunch)
+            # 5th day (after 4 days): Entire shift is OT
+            # NOTE: Solver should prevent 5-day patterns via C6 constraint,
+            # but if it happens, treat 5th consecutive day as all OT
+            if consecutive_position >= 5:
+                # 5th+ consecutive day: Entire shift is OT
+                normal = 0.0
+                ot = gross - ln
+            else:
+                # Position 1-4: Apply normal threshold
+                normal_threshold = 5.996  # 29.98 / 5
+                normal = min(normal_threshold, gross - ln)
+                ot = max(0.0, gross - ln - normal_threshold)
+        
+        elif work_days_in_week == 6:
+            # 6 days/week: Max 29.98h/week
+            # Normal threshold: 29.98h ÷ 6 days = 4.996h/day
+            # Typically: 5h gross shifts (no lunch)
+            normal_threshold = 4.996  # 29.98 / 6
+            normal = min(normal_threshold, gross - ln)
+            ot = max(0.0, gross - ln - normal_threshold)
+        
+        elif work_days_in_week >= 7:
+            # 7 days/week: Max 29.98h/week
+            # Normal threshold: 29.98h ÷ 7 days = 4.283h/day
+            # Typically: 4h gross shifts (no lunch)
+            normal_threshold = 4.283  # 29.98 / 7
+            normal = min(normal_threshold, gross - ln)
+            ot = max(0.0, gross - ln - normal_threshold)
+        
         else:
-            # Position 1-5: 8.8h normal + rest OT
-            normal = min(8.8, gross - ln)
-            ot = max(0.0, gross - ln - 8.8)
+            # Fallback for < 4 days (shouldn't happen, but handle gracefully)
+            # Use ≤4 days threshold as conservative default
+            normal_threshold = 8.745
+            normal = min(normal_threshold, gross - ln)
+            ot = max(0.0, gross - ln - normal_threshold)
     
     else:
-        # Fallback for < 4 days (shouldn't happen with MOM compliance, but handle gracefully)
-        # Use 8.8h formula as conservative default
-        normal = min(8.8, gross - ln)
-        ot = max(0.0, gross - ln - 8.8)
+        # SCHEME A/B (FULL-TIME) - Original logic
+        
+        if work_days_in_week == 4:
+            # 4 days/week: 11.0h normal + rest OT
+            normal = min(11.0, gross - ln)
+            ot = max(0.0, gross - ln - 11.0)
+        
+        elif work_days_in_week == 5:
+            # 5 days/week: 8.8h normal + rest OT
+            normal = min(8.8, gross - ln)
+            ot = max(0.0, gross - ln - 8.8)
+        
+        elif work_days_in_week >= 6:
+            # 6+ days/week: Check if 6th consecutive day WITHIN SAME ISO WEEK
+            # Rest-day pay only applies when all 6 consecutive days fall in same ISO week
+            # This encourages solver to pack 6 work days within single week (reduces gaps)
+            if consecutive_position >= 6:
+                # 6th+ consecutive day within same ISO week: 0h normal, 8.0h rest day pay, rest OT
+                normal = 0.0
+                rest_day_pay = 8.0
+                ot = max(0.0, gross - ln - rest_day_pay)
+            else:
+                # Position 1-5: 8.8h normal + rest OT
+                normal = min(8.8, gross - ln)
+                ot = max(0.0, gross - ln - 8.8)
+        
+        else:
+            # Fallback for < 4 days (shouldn't happen with MOM compliance, but handle gracefully)
+            # Use 8.8h formula as conservative default
+            normal = min(8.8, gross - ln)
+            ot = max(0.0, gross - ln - 8.8)
     
     return {
         'gross': round(gross, 2),

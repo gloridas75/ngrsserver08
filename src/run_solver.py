@@ -77,6 +77,9 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
     employee_weekly_normal = defaultdict(float)  # emp_id -> total normal hours for week
     employee_monthly_ot = defaultdict(float)     # emp_id -> total OT hours for month
     
+    # Build employee lookup dictionary for scheme information
+    employee_dict = {emp['employeeId']: emp for emp in ctx.get('employees', [])}
+    
     for assignment in assignments:
         # Parse start and end datetimes
         try:
@@ -88,13 +91,18 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
             # Get date object for MOM calculations
             date_obj = datetime.fromisoformat(assignment_date).date()
             
-            # Calculate MOM-compliant hour breakdown
+            # Get employee scheme for scheme-aware hour calculations
+            employee = employee_dict.get(emp_id, {})
+            emp_scheme = employee.get('scheme', 'A')  # Default to Scheme A if not found
+            
+            # Calculate MOM-compliant hour breakdown (scheme-aware)
             hours_dict = calculate_mom_compliant_hours(
                 start_dt=start_dt,
                 end_dt=end_dt,
                 employee_id=emp_id,
                 assignment_date_obj=date_obj,
-                all_assignments=assignments
+                all_assignments=assignments,
+                employee_scheme=emp_scheme  # Pass scheme for Scheme P calculations
             )
             
             # Add hour breakdown to assignment (including restDayPay)

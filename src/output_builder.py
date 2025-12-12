@@ -453,6 +453,9 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     employee_weekly_normal = defaultdict(float)  # emp_id:week -> hours
     employee_monthly_ot = defaultdict(float)     # emp_id:month -> hours
     
+    # Build employee lookup dictionary for scheme information
+    employee_dict = {emp['employeeId']: emp for emp in ctx.get('employees', [])}
+    
     for assignment in assignments:
         try:
             start_dt = datetime.fromisoformat(assignment.get('startDateTime'))
@@ -463,13 +466,18 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             # Get date object for MOM calculations
             date_obj = datetime.fromisoformat(assignment_date).date()
             
-            # Calculate MOM-compliant hour breakdown
+            # Get employee scheme for scheme-aware hour calculations
+            employee = employee_dict.get(emp_id, {})
+            emp_scheme = employee.get('scheme', 'A')  # Default to Scheme A if not found
+            
+            # Calculate MOM-compliant hour breakdown (scheme-aware)
             hours_dict = calculate_mom_compliant_hours(
                 start_dt=start_dt,
                 end_dt=end_dt,
                 employee_id=emp_id,
                 assignment_date_obj=date_obj,
-                all_assignments=assignments
+                all_assignments=assignments,
+                employee_scheme=emp_scheme  # Pass scheme for Scheme P calculations
             )
             
             # Add hour breakdown to assignment (including restDayPay)
@@ -655,6 +663,9 @@ def build_incremental_output(
     employee_weekly_normal = defaultdict(float)
     employee_monthly_ot = defaultdict(float)
     
+    # Build employee lookup dictionary for scheme information
+    employee_dict = {emp['employeeId']: emp for emp in ctx.get('employees', [])}
+    
     # Combine locked and new for MOM context analysis
     all_assignments_for_context = locked_assignments + new_assignments
     
@@ -668,13 +679,18 @@ def build_incremental_output(
             # Get date object for MOM calculations
             date_obj = datetime.fromisoformat(assignment_date).date()
             
-            # Calculate MOM-compliant hour breakdown
+            # Get employee scheme for scheme-aware hour calculations
+            employee = employee_dict.get(emp_id, {})
+            emp_scheme = employee.get('scheme', 'A')  # Default to Scheme A if not found
+            
+            # Calculate MOM-compliant hour breakdown (scheme-aware)
             hours_dict = calculate_mom_compliant_hours(
                 start_dt=start_dt,
                 end_dt=end_dt,
                 employee_id=emp_id,
                 assignment_date_obj=date_obj,
-                all_assignments=all_assignments_for_context
+                all_assignments=all_assignments_for_context,
+                employee_scheme=emp_scheme  # Pass scheme for Scheme P calculations
             )
             
             # Add audit trail
