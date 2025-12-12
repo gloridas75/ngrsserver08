@@ -156,12 +156,38 @@ pull_code() {
         print_success "Code updated successfully"
     fi
     
-    # Clean up Python bytecode cache files
-    print_status "Cleaning Python bytecode cache..."
-    find . -type f -name "*.pyc" -delete
-    find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-    print_success "Python cache cleaned"
+    echo ""
+}
+
+# Function to clear all caches
+clear_cache() {
+    print_status "Clearing all Python caches..."
     
+    cd "$APP_DIR"
+    
+    # Remove Python bytecode cache files
+    print_status "  → Removing .pyc files..."
+    find . -type f -name "*.pyc" -delete 2>/dev/null || true
+    
+    # Remove __pycache__ directories
+    print_status "  → Removing __pycache__ directories..."
+    find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    
+    # Remove .pytest_cache if exists
+    if [ -d ".pytest_cache" ]; then
+        print_status "  → Removing .pytest_cache..."
+        rm -rf .pytest_cache
+    fi
+    
+    # Clear pip cache (optional, but helps with clean installs)
+    if [ -d "venv" ]; then
+        print_status "  → Clearing pip cache..."
+        source venv/bin/activate
+        pip cache purge 2>/dev/null || true
+        deactivate
+    fi
+    
+    print_success "All caches cleared"
     echo ""
 }
 
@@ -312,6 +338,9 @@ main() {
     
     # Pull latest code
     pull_code
+    
+    # Clear all caches (critical for Python module reloading)
+    clear_cache
     
     # Check syntax
     check_syntax
