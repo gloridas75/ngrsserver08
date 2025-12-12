@@ -93,7 +93,10 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
             
             # Get employee scheme for scheme-aware hour calculations
             employee = employee_dict.get(emp_id, {})
-            emp_scheme = employee.get('scheme', 'A')  # Default to Scheme A if not found
+            emp_scheme_raw = employee.get('scheme', 'A')  # Default to Scheme A if not found
+            # Normalize scheme to handle both 'P' and 'Scheme P' formats
+            from context.engine.time_utils import normalize_scheme
+            emp_scheme = normalize_scheme(emp_scheme_raw)
             
             # Calculate MOM-compliant hour breakdown (scheme-aware)
             hours_dict = calculate_mom_compliant_hours(

@@ -22,6 +22,36 @@ from datetime import datetime, time
 from typing import Optional, Dict, List, Tuple
 
 
+def normalize_scheme(scheme_value: str) -> str:
+    """
+    Normalize scheme value to single letter code.
+    Handles both short codes ('P', 'A', 'B') and full names ('Scheme P', 'Scheme A', 'Scheme B').
+    
+    Args:
+        scheme_value: Either 'P' or 'Scheme P' format
+    
+    Returns:
+        Single letter code: 'P', 'A', or 'B'
+    """
+    if not scheme_value:
+        return 'A'  # Default to Scheme A
+    
+    scheme_str = str(scheme_value).strip()
+    
+    # If already a single letter, return it
+    if len(scheme_str) == 1 and scheme_str.upper() in ('A', 'B', 'P'):
+        return scheme_str.upper()
+    
+    # Extract letter from "Scheme X" format
+    if scheme_str.startswith('Scheme '):
+        letter = scheme_str.split()[-1].strip().upper()
+        if letter in ('A', 'B', 'P'):
+            return letter
+    
+    # Default fallback
+    return 'A'
+
+
 def span_hours(start_dt: datetime, end_dt: datetime) -> float:
     """Calculate gross hours between two datetimes.
     
