@@ -439,8 +439,16 @@ def calculate_mom_compliant_hours(
     # Initialize rest day pay
     rest_day_pay = 0.0
     
-    # Apply MOM-compliant formulas based on work days per week
-    if work_days_in_week == 4:
+    # PRIORITY CHECK: Rest-day pay for 6th+ consecutive day (MOM regulation)
+    # MOM requires rest day after max 6 consecutive work days, regardless of ISO week boundaries
+    if consecutive_position >= 6:
+        # 6th+ consecutive day: 0h normal, 8.0h rest day pay, rest OT
+        normal = 0.0
+        rest_day_pay = 8.0
+        ot = max(0.0, gross - ln - rest_day_pay)
+    
+    # Apply normal MOM formulas if not rest day
+    elif work_days_in_week == 4:
         # 4 days/week: 11.0h normal + rest OT
         normal = min(11.0, gross - ln)
         ot = max(0.0, gross - ln - 11.0)
@@ -451,16 +459,9 @@ def calculate_mom_compliant_hours(
         ot = max(0.0, gross - ln - 8.8)
     
     elif work_days_in_week >= 6:
-        # 6+ days/week: Check consecutive position
-        if consecutive_position >= 6:
-            # 6th+ consecutive day: 0h normal, 8.0h rest day pay, rest OT
-            normal = 0.0
-            rest_day_pay = 8.0
-            ot = max(0.0, gross - ln - rest_day_pay)
-        else:
-            # Position 1-5: 8.8h normal + rest OT
-            normal = min(8.8, gross - ln)
-            ot = max(0.0, gross - ln - 8.8)
+        # 6+ days/week (but not 6th consecutive): 8.8h normal + rest OT
+        normal = min(8.8, gross - ln)
+        ot = max(0.0, gross - ln - 8.8)
     
     else:
         # Fallback for < 4 days (shouldn't happen with MOM compliance, but handle gracefully)
