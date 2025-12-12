@@ -69,6 +69,42 @@ create_backup() {
     echo ""
 }
 
+# Function to cleanup old backups
+cleanup_old_backups() {
+    print_status "Cleaning up old backups (older than 1 day)..."
+    
+    if [ ! -d "$BACKUP_DIR" ]; then
+        print_status "No backup directory found, skipping cleanup"
+        echo ""
+        return
+    fi
+    
+    # Find and count backups older than 1 day
+    OLD_BACKUPS=$(find "$BACKUP_DIR" -maxdepth 1 -type d -name "ngrs-solver_*" -mtime +1 2>/dev/null || true)
+    
+    if [ -z "$OLD_BACKUPS" ]; then
+        print_status "No old backups to clean up"
+        echo ""
+        return
+    fi
+    
+    # Count old backups
+    BACKUP_COUNT=$(echo "$OLD_BACKUPS" | wc -l)
+    print_status "Found $BACKUP_COUNT old backup(s) to remove"
+    
+    # Delete old backups
+    echo "$OLD_BACKUPS" | while read -r backup; do
+        if [ -d "$backup" ]; then
+            BACKUP_NAME=$(basename "$backup")
+            print_status "  → Removing $BACKUP_NAME"
+            sudo rm -rf "$backup"
+        fi
+    done
+    
+    print_success "Old backups cleaned up successfully"
+    echo ""
+}
+
 # Function to stop service gracefully
 stop_service() {
     print_status "Stopping $SERVICE_NAME service gracefully..."
@@ -329,6 +365,9 @@ main() {
     
     # Create backup
     create_backup
+    
+    # Cleanup old backups (older than 1 day)
+    cleanup_old_backups
     
     # Stop service gracefully
     stop_service
