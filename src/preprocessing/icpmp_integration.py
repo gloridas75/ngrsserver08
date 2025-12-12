@@ -371,6 +371,7 @@ class ICPMPPreprocessor:
         - requiredQualifications
         - gender
         - scheme (if not "Global")
+        - shift duration compatibility (MOM hour limits)
         - whitelist/blacklist
         
         Args:
@@ -383,6 +384,7 @@ class ICPMPPreprocessor:
         import copy
         
         eligible = []
+        filtered_count = 0
         
         # Extract criteria
         product_type = requirement.get('productTypeId')
@@ -391,6 +393,18 @@ class ICPMPPreprocessor:
         required_quals = set(requirement.get('requiredQualifications', []))
         gender_req = requirement.get('gender', 'Any')
         scheme_req = requirement.get('scheme', 'Global')
+        
+        # Calculate maximum shift duration for scheme compatibility check
+        max_shift_hours = self._calculate_max_shift_duration(demand_item)
+        
+        # MOM scheme hour limits (from constraint C6)
+        SCHEME_HOUR_LIMITS = {
+            'A': 14,  # Full-time Scheme A
+            'B': 13,  # Full-time Scheme B
+            'P': 9    # Part-time Scheme P (MOM regulated)
+        }
+        
+        logger.debug(f"    Max shift duration: {max_shift_hours:.1f}h")
         
         # Extract whitelist/blacklist from first shift
         shifts = demand_item.get('shifts', [{}])
@@ -421,6 +435,17 @@ class ICPMPPreprocessor:
             if gender_req != 'Any' and emp.get('gender') != gender_req:
                 continue
             
+            # Check shift duration compatibility (MOM hour limits)
+            # Filter out employees whose scheme limit is less than shift duration
+            emp_scheme = emp.get('scheme', 'Unknown')
+            scheme_limit = SCHEME_HOUR_LIMITS.get(emp_scheme, 14)  # Default to Scheme A limit
+            
+            if max_shift_hours > scheme_limit:
+                logger.debug(f"      Employee {emp['employeeId']} (Scheme {emp_scheme}, {scheme_limit}h limit) "
+                           f"filtered: shift {max_shift_hours:.1f}h exceeds limit")
+                filtered_count += 1
+                continue
+            
             # Check scheme (if not Global)
             if scheme_req != 'Global' and emp.get('scheme') != scheme_req:
                 continue
@@ -432,6 +457,11 @@ class ICPMPPreprocessor:
             
             # Eligible - add deep copy to avoid mutating original
             eligible.append(copy.deepcopy(emp))
+        
+        # Log filtering summary
+        if filtered_count > 0:
+            logger.info(f"    Shift duration filter: Excluded {filtered_count} employees "
+                       f"(shift {max_shift_hours:.1f}h exceeds their scheme limit)")
         
         return eligible
     
@@ -545,6 +575,54 @@ class ICPMPPreprocessor:
         )
         
         return selected_sorted[:optimal_count]
+    
+    def _calculate_max_shift_duration(self, demand_item: Dict) -> float:
+        """
+        Calculate maximum shift duration from demand item shifts.
+        
+        This is used to filter employees based on MOM scheme hour limits:
+        - Scheme A: max 14h/day
+        - Scheme B: max 13h/day
+        - Scheme P: max 9h/day (part-time)
+        
+        Args:
+            demand_item: Demand item containing shifts
+        
+        Returns:
+            Maximum shift duration in hours (considering nextDay flag)
+        """
+        max_hours = 0.0
+        
+        shifts = demand_item.get('shifts', [])
+        for shift in shifts:
+            shift_details = shift.get('shiftDetails', [])
+            for detail in shift_details:
+                start = detail.get('start', '00:00:00')
+                end = detail.get('end', '00:00:00')
+                next_day = detail.get('nextDay', False)
+                
+                try:
+                    # Parse times (handle both HH:MM:SS and HH:MM formats)
+                    start_parts = start.split(':')
+                    end_parts = end.split(':')
+                    
+                    start_h = int(start_parts[0])
+                    start_m = int(start_parts[1]) if len(start_parts) > 1 else 0
+                    end_h = int(end_parts[0])
+                    end_m = int(end_parts[1]) if len(end_parts) > 1 else 0
+                    
+                    # Calculate duration
+                    hours = end_h - start_h + (end_m - start_m) / 60.0
+                    if next_day:
+                        hours += 24
+                    
+                    max_hours = max(max_hours, hours)
+                    
+                except (ValueError, IndexError) as e:
+                    logger.warning(f"Failed to parse shift times: {start} to {end}. Error: {e}")
+                    continue
+        
+        return max_hours
     
     def _generate_coverage_calendar(self, coverage_days: List[str], start_date: str, 
                                    end_date: str, public_holidays: List[str],
