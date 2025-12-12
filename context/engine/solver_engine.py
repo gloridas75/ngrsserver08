@@ -786,7 +786,8 @@ def apply_constraints(model, ctx):
         'S13_substitute_logic',
         'S14_midmonth_insert',
         'S15_demand_coverage_score',
-        'S16_whitelist_blacklist'
+        'S16_whitelist_blacklist',
+        'S18_minimize_gaps'
     ]
     
     all_constraints = hard_constraints + soft_constraints
@@ -1553,6 +1554,62 @@ def solve(ctx):
     
     model = build_model(ctx)
     apply_constraints(model, ctx)
+    
+    # ========== ADD GAP PENALTIES TO OBJECTIVE (S18) ==========
+    # S18 creates gap tracking variables during add_constraints()
+    # Now we need to incorporate them into the CP-SAT objective
+    gap_penalty_vars = ctx.get('gap_penalty_vars', [])
+    if gap_penalty_vars:
+        # Get current objective expression components from ctx
+        total_unassigned = ctx.get('total_unassigned')
+        x = ctx.get('x', {})
+        
+        # Gap penalty weight (align with soft constraint priority)
+        GAP_MULTIPLIER = 1_000  # Same as SOFT_MULTIPLIER
+        
+        # Calculate total gap penalty
+        total_gap_penalty = sum(gap_penalty_vars)
+        
+        # Rebuild objective including gap penalties
+        # Get optimization mode
+        solver_config = ctx.get('solverConfig', {})
+        optimization_mode = solver_config.get('optimizationMode', OPTIMIZATION_MODE_BALANCE)
+        
+        BIG_MULTIPLIER = 1_000_000
+        MEDIUM_MULTIPLIER = 100_000
+        SOFT_MULTIPLIER = 1_000
+        
+        total_assignments = sum(x.values())
+        
+        # Get existing penalty terms
+        total_rotation_violations = ctx.get('total_rotation_violations', 0)
+        total_anchor_penalty = ctx.get('total_anchor_penalty', 0)
+        total_employees_used = ctx.get('total_employees_used', 0)
+        
+        print(f"[build_model] Updating objective with S18 gap penalties...")
+        print(f"  Gap penalty variables: {len(gap_penalty_vars)}")
+        print(f"  Gap penalty weight: {GAP_MULTIPLIER:,}×")
+        
+        if optimization_mode == OPTIMIZATION_MODE_MINIMIZE:
+            objective_expr = (
+                BIG_MULTIPLIER * total_unassigned +
+                MEDIUM_MULTIPLIER * total_employees_used +
+                SOFT_MULTIPLIER * total_rotation_violations +
+                SOFT_MULTIPLIER * total_anchor_penalty +
+                GAP_MULTIPLIER * total_gap_penalty -  # NEW: Gap penalties
+                total_assignments
+            )
+        else:
+            objective_expr = (
+                BIG_MULTIPLIER * total_unassigned +
+                SOFT_MULTIPLIER * total_rotation_violations +
+                SOFT_MULTIPLIER * total_anchor_penalty +
+                GAP_MULTIPLIER * total_gap_penalty -  # NEW: Gap penalties
+                total_assignments
+            )
+        
+        model.Minimize(objective_expr)
+        print(f"  ✓ Objective updated with gap minimization\n")
     
     # Solve with adaptive time limit
     num_slots = len(ctx.get('slots', []))
