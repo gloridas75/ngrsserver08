@@ -1,9 +1,16 @@
-"""S17: Work Continuity - Minimize gaps in employee work schedules (SOFT constraint).
+"""S17: Work Continuity - Encourage 6-day same-week patterns and reduce gaps (SOFT constraint).
 
-Penalizes "gaps" or isolated unassigned days between work assignments.
-Encourages clustering of work days and consolidation of off-days.
+Soft constraint that rewards:
+1. **6 work days within same ISO week** (primary goal - fills more slots, reduces gaps)
+2. Consecutive work day sequences (fewer gaps = better)
+3. Alignment with DDDDDOD pattern (6 work + 1 off)
 
-This helps reduce scattered U-slots and improves roster readability.
+Strategy:
+- REWARD: Employees who work 6 days within single ISO week
+- PENALIZE: Gaps that break potential 6-day weeks
+- PENALIZE: Cross-week fragmentation (e.g., 4 days week1 + 2 days week2)
+
+This encourages solver to pack work days efficiently within ISO weeks.
 """
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -11,12 +18,12 @@ from datetime import datetime, timedelta
 
 def score_violations(ctx, assignments, score_book):
     """
-    Score work continuity violations: penalize gaps between work assignments.
+    Score work continuity - reward 6-day same-week patterns, penalize gaps.
     
-    Strategy:
-    1. For each employee, identify sequences of: Work - Gap - Work
-    2. Penalize each gap day (U-slot between assigned shifts)
-    3. Larger gaps get higher penalties
+    Scoring Rules:
+    1. -200 points: Employee works 6 days in single ISO week (REWARD - negative reduces total penalty)
+    2. +50 points per gap day: Gaps between work days (PENALTY)
+    3. +100 points: 6 consecutive days but spanning 2 ISO weeks (PENALTY)
     
     Args:
         ctx: Context dict
@@ -24,72 +31,104 @@ def score_violations(ctx, assignments, score_book):
         score_book: ScoreBook instance for recording violations
     """
     
-    employees = ctx.get('employees', [])
-    slots = ctx.get('slots', [])
+    # Get config
+    config = ctx.get('solverScoreConfig', {})
+    same_week_6day_bonus = config.get('sameWeek6DayBonus', -200)  # Negative = reward (reduces penalty)
+    gap_penalty = config.get('gapPenalty', 50)
+    cross_week_penalty = config.get('crossWeekPenalty', 100)
     
-    if not assignments or not employees:
-        return
+    # Group assignments by employee and ISO week
+    employee_dates = defaultdict(list)
+    employee_weeks = defaultdict(lambda: defaultdict(int))  # emp -> week_key -> work_day_count
     
-    # Get planning horizon dates
-    all_dates = sorted(set(slot.date for slot in slots))
-    if len(all_dates) < 3:
-        # Too short to have meaningful gaps
-        return
-    
-    # Group assignments by employee and date
-    emp_work_dates = defaultdict(set)
     for assignment in assignments:
         emp_id = assignment.get('employeeId')
         date_str = assignment.get('date')
-        if emp_id and date_str:
-            # Convert string to date object for comparison
-            if isinstance(date_str, str):
-                date_obj = datetime.fromisoformat(date_str).date()
+        shift_code = assignment.get('shiftCode', '')
+        
+        if emp_id and date_str and shift_code and shift_code != 'O':
+            try:
+                if isinstance(date_str, str):
+                    date_obj = datetime.fromisoformat(date_str).date()
+                else:
+                    date_obj = date_str
+                    
+                employee_dates[emp_id].append(date_obj)
+                
+                # Track work days per ISO week
+                iso_year, iso_week, _ = date_obj.isocalendar()
+                week_key = f"{iso_year}-W{iso_week:02d}"
+                employee_weeks[emp_id][week_key] += 1
+            except:
+                continue
+    
+    total_penalty = 0
+    rewards = 0
+    gap_penalties = 0
+    cross_week_penalties = 0
+    six_day_weeks = 0
+    
+    # Score each employee
+    for emp_id, dates in employee_dates.items():
+        if len(dates) < 2:
+            continue
+        
+        sorted_dates = sorted(dates)
+        
+        # 1. REWARD: Count 6-day same-week patterns
+        for week_key, work_days in employee_weeks[emp_id].items():
+            if work_days == 6:
+                # Employee worked 6 days in this ISO week - REWARD!
+                total_penalty += same_week_6day_bonus  # Negative value = reduces penalty
+                rewards += abs(same_week_6day_bonus)
+                six_day_weeks += 1
+        
+        # 2. PENALIZE: Gaps between work days
+        for i in range(len(sorted_dates) - 1):
+            gap = (sorted_dates[i + 1] - sorted_dates[i]).days - 1
+            
+            if gap > 0 and gap <= 7:  # Only penalize gaps up to 7 days
+                # Gap found - penalize
+                gap_cost = gap_penalty * gap
+                total_penalty += gap_cost
+                gap_penalties += gap_cost
+        
+        # 3. PENALIZE: 6 consecutive days spanning 2 ISO weeks
+        # Find consecutive sequences of 6+ days
+        consecutive_count = 1
+        for i in range(len(sorted_dates) - 1):
+            if (sorted_dates[i + 1] - sorted_dates[i]).days == 1:
+                consecutive_count += 1
+                
+                # Check if we hit 6 consecutive
+                if consecutive_count == 6:
+                    # Check if all 6 days are in same ISO week
+                    seq_start = sorted_dates[i - 4]
+                    seq_end = sorted_dates[i + 1]
+                    
+                    start_week = f"{seq_start.isocalendar()[0]}-W{seq_start.isocalendar()[1]:02d}"
+                    end_week = f"{seq_end.isocalendar()[0]}-W{seq_end.isocalendar()[1]:02d}"
+                    
+                    if start_week != end_week:
+                        # 6 consecutive days span 2 weeks - penalize
+                        total_penalty += cross_week_penalty
+                        cross_week_penalties += cross_week_penalty
             else:
-                date_obj = date_str
-            emp_work_dates[emp_id].add(date_obj)
+                consecutive_count = 1  # Reset on gap
     
-    total_gap_days = 0
-    total_gap_sequences = 0
+    # Record violation (or reward) if there's activity
+    if total_penalty != 0 or rewards > 0:
+        score_book.add_violation(
+            constraint_id='S17',
+            constraint_name='Work Continuity',
+            violation_type='continuity_scoring',
+            penalty=max(0, total_penalty),  # Don't allow negative total
+            details=f"6-day same-week rewards: {six_day_weeks} weeks (-{rewards}pts), "
+                    f"Gap penalties: +{gap_penalties}pts, "
+                    f"Cross-week penalties: +{cross_week_penalties}pts, "
+                    f"Net: {round(total_penalty, 2)}pts"
+        )
     
-    # For each employee, find gaps
-    for emp in employees:
-        emp_id = emp.get('employeeId')
-        
-        if emp_id not in emp_work_dates:
-            continue  # Employee has no assignments
-        
-        work_dates = sorted(emp_work_dates[emp_id])
-        
-        if len(work_dates) < 2:
-            continue  # Need at least 2 work days to have a gap
-        
-        # Find gaps: days between work assignments that are not worked
-        for i in range(len(work_dates) - 1):
-            start_work = work_dates[i]
-            end_work = work_dates[i + 1]
-            
-            # Calculate days between these work days
-            days_between = (end_work - start_work).days - 1  # Exclude the work days themselves
-            
-            if days_between > 0 and days_between <= 7:
-                # There's a gap of 1-7 days (anything longer is likely intentional rest period)
-                # Check if these gap days are actually available (not rest pattern days)
-                
-                # Penalize the gap
-                gap_penalty = days_between * 10  # 10 points per gap day
-                total_gap_days += days_between
-                total_gap_sequences += 1
-                
-                score_book.add_violation(
-                    constraint_id='S17',
-                    constraint_name='Work Continuity',
-                    violation_type='gap_in_schedule',
-                    penalty=gap_penalty,
-                    details=f"Employee {emp_id}: {days_between}-day gap between {start_work} and {end_work}"
-                )
-    
-    if total_gap_sequences > 0:
-        print(f"[S17] Work Continuity (SOFT)")
-        print(f"     Total gaps: {total_gap_sequences} sequences ({total_gap_days} gap days)")
-        print(f"     Total penalty: {total_gap_sequences * total_gap_days * 10}")
+    if six_day_weeks > 0:
+        print(f"[S17] Work Continuity: {six_day_weeks} employees with 6-day same-week patterns (-{rewards}pts reward)")
+
