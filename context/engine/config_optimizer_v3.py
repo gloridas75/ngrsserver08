@@ -73,7 +73,7 @@ def calculate_scheme_max_days_per_week(scheme: str) -> int:
     for different employment schemes. Used by ICPMP for capacity calculation.
     
     Args:
-        scheme: Employee scheme code ('A', 'B', 'P', or 'Global')
+        scheme: Employee scheme code ('A', 'B', 'P', 'Scheme A', 'Scheme B', 'Scheme P', or 'Global')
         
     Returns:
         Maximum work days per week as integer
@@ -88,22 +88,28 @@ def calculate_scheme_max_days_per_week(scheme: str) -> int:
     IMPORTANT: Scheme P is NOT limited by days/week, only by hours/week.
     C6 enforces 34.98h NORMAL hours/week. Additional hours are OT (max 72h/month).
     """
-    if scheme == 'P':
+    # Check for 'Global' first (before normalization, as normalize_scheme converts it to 'A')
+    if scheme == 'Global':
+        # Mixed scheme pools: Use conservative estimate
+        # Assume mix includes Scheme P, so limit to 4 days
+        return 4
+    
+    # Normalize scheme: "Scheme P" → "P", "Scheme A" → "A", etc.
+    from context.engine.time_utils import normalize_scheme
+    scheme_normalized = normalize_scheme(scheme)
+    
+    if scheme_normalized == 'P':
         # Scheme P: NO day limit, only hour limit (34.98h normal/week)
         # Can work 6-7 days/week with OT hours
         # Return 6 as practical maximum (same as Scheme A/B)
         return 6
-    elif scheme in ['A', 'B']:
+    elif scheme_normalized in ['A', 'B']:
         # Full-time schemes: Need at least 1 rest day per week (C3 constraint)
         # So maximum is 6 work days per week
         return 6
-    elif scheme == 'Global':
-        # Mixed scheme pools: Use conservative estimate
-        # Assume mix includes Scheme P, so limit to 4 days
-        return 4
     else:
         # Unknown scheme: Use safe default (6 days, allows most patterns)
-        logger.warning(f"Unknown scheme '{scheme}', defaulting to 6 days/week max")
+        logger.warning(f"Unknown scheme '{scheme}' (normalized: '{scheme_normalized}'), defaulting to 6 days/week max")
         return 6
 
 
@@ -179,18 +185,48 @@ def calculate_optimal_with_u_slots(
         raise ValueError(f"Pattern {pattern} has no work days (all 'O')")
     
     # SCHEME-AWARE CAPACITY CALCULATION
-    # Scheme P: Hour-based limits (34.98h normal/week), NOT day-based
-    # Employees can work full pattern if OT hours are available
+    # Scheme P: Hour-based limits - must account for NORMAL hour threshold!
     
     scheme_max_days_per_week = calculate_scheme_max_days_per_week(scheme)
     
-    # For ALL schemes: Use pattern work days as capacity
-    # Scheme P is NOT artificially limited - C6 enforces hour limits in solver
-    effective_work_capacity = work_days_per_cycle
+    # Import normalize_scheme to handle "Scheme P" format
+    from context.engine.time_utils import normalize_scheme
+    scheme_normalized = normalize_scheme(scheme)
     
-    # Note: Previous implementation incorrectly limited Scheme P to 4 days/week
-    # Correct interpretation: Scheme P employees CAN work 6-7 days/week
-    # Example: 6 days × 8h = 32h normal (within 34.98h) + 16h OT (within 72h/month)
+    # CRITICAL FIX: Scheme P capacity is HOUR-LIMITED, not day-limited!
+    # C2 constraint enforces weekly NORMAL hour caps that effectively reduce capacity
+    if scheme_normalized == 'P':
+        # Scheme P Weekly Normal Hour Limits (enforced by C2):
+        # - ≤4 days/week: 34.98h max → 8.745h/day threshold
+        # - 5 days/week: 29.98h max → 5.996h/day threshold  
+        # - 6 days/week: 29.98h max → 4.996h/day threshold
+        # - 7 days/week: 29.98h max → 4.283h/day threshold
+        
+        # Assume standard 8h net shifts (9h gross - 1h lunch)
+        # For 6-day pattern: Only 4.996h per shift count as NORMAL
+        # Remaining hours are OT (limited capacity)
+        
+        # Conservative capacity estimate for ICPMP:
+        # Use NORMAL hour threshold to calculate effective days/week
+        if work_days_per_cycle <= 4:
+            max_normal_hours_per_week = 34.98
+            effective_days_per_week = 34.98 / 8.0  # ≈4.37 days/week
+        else:
+            # 5+ days: Lower threshold (29.98h/week)
+            max_normal_hours_per_week = 29.98
+            effective_days_per_week = 29.98 / 8.0  # ≈3.75 days/week
+        
+        # Scale to cycle length (pattern may be 7, 14, or 21 days)
+        weeks_per_cycle = cycle_length / 7.0
+        effective_work_capacity = effective_days_per_week * weeks_per_cycle
+        
+        logger.info(f"  Scheme P capacity adjustment:")
+        logger.info(f"    Pattern work days: {work_days_per_cycle}")
+        logger.info(f"    Normal hour limit: {max_normal_hours_per_week}h/week")
+        logger.info(f"    Effective capacity: {effective_work_capacity:.2f} days/cycle (was {work_days_per_cycle})")
+    else:
+        # Scheme A/B: Use pattern work days as-is
+        effective_work_capacity = work_days_per_cycle
     
     # Calculate mathematical lower bound
     # The lower bound is the maximum of:

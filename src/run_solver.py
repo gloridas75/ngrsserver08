@@ -429,10 +429,18 @@ def main():
         # Extract components from unified solver result for compatibility
         # with build_output_schema (which expects old format)
         status = result.get('status')
+        
+        # Add timestamps for output schema compatibility
+        from datetime import datetime as dt
+        now = dt.now().isoformat()
+        
         solver_result = {
             'status': status,
             'scores': result.get('score', {}),
-            'scoreBreakdown': result.get('scoreBreakdown', {})
+            'scoreBreakdown': result.get('scoreBreakdown', {}),
+            'start_timestamp': now,
+            'end_timestamp': now,
+            'duration_seconds': result.get('durationSeconds', 0)
         }
         assignments = result.get('assignments', [])
         violations = result.get('violations', [])

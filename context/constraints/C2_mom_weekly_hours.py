@@ -24,7 +24,7 @@ Input Schema (v0.70):
 - slots: [{ slot_id, requirementId, date, shiftCode, ... }]
 """
 from datetime import datetime, timedelta
-from context.engine.time_utils import split_shift_hours
+from context.engine.time_utils import split_shift_hours, normalize_scheme
 from collections import defaultdict
 
 
@@ -71,7 +71,7 @@ def count_work_days_in_pattern(pattern: list) -> int:
     return sum(1 for day in pattern if day != 'O')
 
 
-def calculate_pattern_aware_hours(pattern: list, pattern_day: int, gross_hours: float, lunch_hours: float) -> tuple:
+def calculate_pattern_aware_hours(pattern: list, pattern_day: int, gross_hours: float, lunch_hours: float, employee_scheme: str = 'A') -> tuple:
     """Calculate normal and OT hours based on work pattern (MATCHES time_utils.py logic).
     
     Args:
@@ -79,15 +79,20 @@ def calculate_pattern_aware_hours(pattern: list, pattern_day: int, gross_hours: 
         pattern_day: Pattern day index (0-based)
         gross_hours: Gross shift hours
         lunch_hours: Lunch break hours
+        employee_scheme: 'A', 'B', or 'P' (defaults to 'A')
     
     Returns:
         Tuple of (normal_hours, ot_hours)
     
-    Examples:
+    Examples (Scheme A/B):
         4-day pattern, 12h shift → (11.0, 0.0)
         5-day pattern, 12h shift → (8.8, 2.2)
         6-day pattern, position 3, 12h → (8.8, 2.2)
         6-day pattern, position 6, 12h → (0.0, 3.0) [rest day pay = 8.0h]
+    
+    Examples (Scheme P):
+        4-day pattern, 8h net → (8.0, 0.0)  # 8h < 8.745h threshold
+        6-day pattern, 8h net → (4.996, 3.004)  # 29.98h ÷ 6 = 4.996h/day threshold
     """
     if not pattern or pattern_day >= len(pattern):
         # Fallback: use 8.8h formula
@@ -101,6 +106,41 @@ def calculate_pattern_aware_hours(pattern: list, pattern_day: int, gross_hours: 
     
     working_hours = gross_hours - lunch_hours  # Net working time
     
+    # SCHEME P (PART-TIME) - Different thresholds than A/B
+    if employee_scheme == 'P':
+        if work_days_count <= 4:
+            # ≤4 days/week: Max 34.98h/week → 8.745h/day threshold
+            normal_threshold = 8.745
+            normal = min(normal_threshold, working_hours)
+            ot = max(0.0, working_hours - normal_threshold)
+        elif work_days_count == 5:
+            # 5 days/week: Max 29.98h/week → 5.996h/day threshold
+            # 5th day: Entire shift is OT
+            if consecutive_pos >= 5:
+                normal = 0.0
+                ot = working_hours
+            else:
+                normal_threshold = 5.996
+                normal = min(normal_threshold, working_hours)
+                ot = max(0.0, working_hours - normal_threshold)
+        elif work_days_count == 6:
+            # 6 days/week: Max 29.98h/week → 4.996h/day threshold
+            normal_threshold = 4.996
+            normal = min(normal_threshold, working_hours)
+            ot = max(0.0, working_hours - normal_threshold)
+        elif work_days_count >= 7:
+            # 7 days/week: Max 29.98h/week → 4.283h/day threshold
+            normal_threshold = 4.283
+            normal = min(normal_threshold, working_hours)
+            ot = max(0.0, working_hours - normal_threshold)
+        else:
+            # Fallback
+            normal = min(8.745, working_hours)
+            ot = max(0.0, working_hours - 8.745)
+        
+        return round(normal, 2), round(ot, 2)
+    
+    # SCHEME A/B (FULL-TIME) - Original logic
     if work_days_count == 4:
         # 4 days/week: 11.0h normal per shift
         normal = min(11.0, working_hours)
@@ -151,13 +191,18 @@ def add_constraints(model, ctx):
         print(f"[C2] Warning: Slots or decision variables not available")
         return
     
-    # Build employee work pattern map
+    # Build employee work pattern and scheme maps
     emp_patterns = {}  # emp_id -> work_pattern list
+    emp_schemes = {}   # emp_id -> scheme ('A', 'B', or 'P')
     
     for emp in employees:
         emp_id = emp.get('employeeId')
         pattern = emp.get('workPattern', [])
+        scheme_raw = emp.get('scheme', 'A')
+        scheme_normalized = normalize_scheme(scheme_raw)
+        
         emp_patterns[emp_id] = pattern
+        emp_schemes[emp_id] = scheme_normalized
     
     # Extract shift information by demand and shift code
     shift_info = {}
@@ -219,8 +264,9 @@ def add_constraints(model, ctx):
             print(f"[C2] INCREMENTAL MODE: Using locked weekly hours for {len(locked_weekly_hours)} employees")
     
     for emp_id, weeks in emp_week_slots.items():
-        # Get employee's work pattern
+        # Get employee's work pattern and scheme
         work_pattern = emp_patterns.get(emp_id, [])
+        emp_scheme = emp_schemes.get(emp_id, 'A')
         
         for week_key, week_slots in weeks.items():
             # For each slot in this week, calculate pattern-aware normal hours
@@ -244,9 +290,9 @@ def add_constraints(model, ctx):
                     lunch = hours_data.get('lunch', 0)
                     pattern_day = getattr(slot, 'patternDay', 0)
                     
-                    # Use pattern-aware calculation
+                    # Use pattern-aware calculation with employee scheme
                     normal_hours, _ = calculate_pattern_aware_hours(
-                        work_pattern, pattern_day, gross, lunch
+                        work_pattern, pattern_day, gross, lunch, emp_scheme
                     )
                     
                     var = x[(slot.slot_id, emp_id)]
@@ -280,6 +326,7 @@ def add_constraints(model, ctx):
     monthly_constraints = 0
     for emp_id, months in emp_month_slots.items():
         work_pattern = emp_patterns.get(emp_id, [])
+        emp_scheme = emp_schemes.get(emp_id, 'A')
         
         for month_key, month_slots in months.items():
             weighted_assignments = []
@@ -302,9 +349,9 @@ def add_constraints(model, ctx):
                     lunch = hours_data.get('lunch', 0)
                     pattern_day = getattr(slot, 'patternDay', 0)
                     
-                    # Use pattern-aware calculation
+                    # Use pattern-aware calculation with employee scheme
                     _, ot_hours = calculate_pattern_aware_hours(
-                        work_pattern, pattern_day, gross, lunch
+                        work_pattern, pattern_day, gross, lunch, emp_scheme
                     )
                     
                     var = x[(slot.slot_id, emp_id)]
@@ -321,18 +368,22 @@ def add_constraints(model, ctx):
                 model.Add(constraint_expr <= 720)  # 72 hours = 720 tenths
                 monthly_constraints += 1
     
-    # Count employees with 6-day patterns
+    # Count employees with 6-day patterns and Scheme P
     six_day_employees = sum(1 for emp_id in emp_patterns 
                            if emp_patterns[emp_id] and 
                            sum(1 for d in emp_patterns[emp_id] if d not in ['O', '0']) >= 6)
+    scheme_p_count = sum(1 for scheme in emp_schemes.values() if scheme == 'P')
     
     print(f"[C2] Weekly & Monthly Hours Constraints (HARD) - PATTERN-AWARE")
-    print(f"     Employees: {len(employees)} ({six_day_employees} with 6+ day patterns)")
+    print(f"     Employees: {len(employees)} ({six_day_employees} with 6+ day patterns, {scheme_p_count} Scheme P)")
     print(f"     Slots: {len(slots)}")
-    print(f"     Formula:")
+    print(f"     Formula (Scheme A/B):")
     print(f"       • 4 days/week: 11.0h normal/shift → 4 × 11.0h = 44h/week")
     print(f"       • 5 days/week: 8.8h normal/shift → 5 × 8.8h = 44h/week")
     print(f"       • 6 days/week: 8.8h (pos 1-5) + 0h (pos 6+) → 5 × 8.8h = 44h/week")
-    print(f"     ✓ Added {weekly_constraints} weekly normal hours constraints (≤44h)")
+    print(f"     Formula (Scheme P):")
+    print(f"       • ≤4 days/week: 8.745h normal/shift → ≤34.98h/week")
+    print(f"       • 6 days/week: 4.996h normal/shift → ≤29.98h/week (rest is OT)")
+    print(f"     ✓ Added {weekly_constraints} weekly normal hours constraints (≤44h for A/B, ≤34.98h for P)")
     print(f"     ✓ Added {monthly_constraints} monthly OT hours constraints (≤72h)\n")
 

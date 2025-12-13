@@ -77,31 +77,36 @@ def add_constraints(model, ctx):
     max_normal_hours_per_week = 34.98  # Scheme P weekly normal hour cap
     
     for (emp_id, week_key), week_slots in emp_week_slots.items():
-        # Calculate NORMAL hours for this week
-        # Normal hours = hours that count against the 34.98h cap
-        # For Scheme P: Use gross hours as approximation (solver will handle OT split)
-        normal_hour_terms = []
+        # Calculate NET hours for this week (gross - lunch)
+        # For Scheme P: Net hours up to 34.98h are normal, rest are OT
+        # This allows 6-day patterns: 6 days × 8h net = 48h → 34.98h normal + 13.02h OT
+        net_hour_terms = []
+        
+        from context.engine.time_utils import lunch_hours
         
         for slot in week_slots:
             if (slot.slot_id, emp_id) in x:
                 var = x[(slot.slot_id, emp_id)]
                 gross_hours = (slot.end - slot.start).total_seconds() / 3600.0
+                lunch = lunch_hours(gross_hours)
+                net_hours = gross_hours - lunch  # Actual working hours
                 
-                if gross_hours > 0:
+                if net_hours > 0:
                     # For CP-SAT, scale hours to integer tenths (×10)
                     # 8.0h → 80, 8.745h → 87 (rounded)
-                    int_hours = int(round(gross_hours * 10))
-                    normal_hour_terms.append(var * int_hours)
+                    int_hours = int(round(net_hours * 10))
+                    net_hour_terms.append(var * int_hours)
         
-        if not normal_hour_terms:
+        if not net_hour_terms:
             continue
         
-        total_normal_hours_var = sum(normal_hour_terms)
+        total_net_hours_var = sum(net_hour_terms)
         
-        # CONSTRAINT: Normal hours per week <= 34.98h
+        # CONSTRAINT: Net hours per week <= 34.98h (normal hour cap)
+        # Hours beyond 34.98h automatically become OT (calculated post-solve)
         # Scaled: <=349.8 → 350 (in tenths)
         max_hours_scaled = int(round(max_normal_hours_per_week * 10))  # 349.8 → 350
-        model.Add(total_normal_hours_var <= max_hours_scaled)
+        model.Add(total_net_hours_var <= max_hours_scaled)
         
         constraints_added += 1
     

@@ -1,0 +1,241 @@
+
+╔════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                               ICPMP v3.0 WORKFLOW DIAGRAM                                              ║
+║                    Incremental Configuration Pattern Matching Preprocessor                             ║
+╚════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+
+                                    ┌─────────────────────────────┐
+                                    │   SOLVER INPUT JSON         │
+                                    │                             │
+                                    │  • 74 employees (no pattern)│
+                                    │  • 1 demand item            │
+                                    │  • 1 requirement            │
+                                    │  • Planning: 30 days        │
+                                    └──────────┬──────────────────┘
+                                               │
+                                               ▼
+                    ╔══════════════════════════════════════════════════════════╗
+                    ║  PHASE 1: INITIALIZATION                                 ║
+                    ║  (ICPMPPreprocessor.__init__)                            ║
+                    ╚══════════════════════════════════════════════════════════╝
+                                               │
+                                               │ Load employees, horizon, holidays
+                                               │ Init: assigned_ids, metadata, warnings
+                                               ▼
+                    ╔══════════════════════════════════════════════════════════╗
+                    ║  PHASE 2: REQUIREMENT PROCESSING                         ║
+                    ║  (preprocess_all_requirements)                           ║
+                    ╚══════════════════════════════════════════════════════════╝
+                                               │
+                       ┌───────────────────────┼───────────────────────┐
+                       │                       │                       │
+                       ▼                       ▼                       ▼
+              Extract params          Generate calendar       FOR EACH REQUIREMENT
+              • requirementId         • 30 dates (Jun 2026)         │
+              • workPattern: DDDDDOD  • Exclude PH                   │
+              • headcount: 8          • coverageDays: Mon-Sun        │
+              • scheme: A                                            │
+                       │                       │                     │
+                       └───────────────────────┴─────────────────────┘
+                                               │
+                                               ▼
+          ╔════════════════════════════════════════════════════════════════════════╗
+          ║  PHASE 3: ICPMP v3.0 OPTIMIZATION (calculate_optimal_with_u_slots)    ║
+          ╚════════════════════════════════════════════════════════════════════════╝
+                                               │
+                    ┌──────────────────────────┼──────────────────────────┐
+                    │                          │                          │
+                    ▼                          ▼                          ▼
+          ┌─────────────────────┐   ┌───────────────────────┐   ┌──────────────────┐
+          │ STEP 3.1:           │   │ STEP 3.2:             │   │ STEP 3.3:        │
+          │ CALCULATE LOWER     │   │ TRY-MINIMAL-FIRST     │   │ VALIDATION       │
+          │ BOUND               │   │ SEARCH                │   │                  │
+          │                     │   │                       │   │ Check offsets    │
+          │ • Scheme capacity:6 │──▶│ FOR N = 12 to 12+50:  │──▶│ {0,1,2,3,4,5,6} │
+          │ • Pattern min: 10   │   │   Try N employees     │   │ ✓ All covered    │
+          │ • Buffer: +2        │   │   with U-injection    │   │                  │
+          │ • Lower bound: 12   │   │                       │   │ If missing →     │
+          │                     │   │ ┌─────────────────┐   │   │ recalculate      │
+          └─────────────────────┘   │ │ N = 12:         │   │   └──────────────────┘
+                                    │ │ • Distribute    │   │            │
+                                    │ │   offsets       │   │            │
+                                    │ │ • Simulate      │   │            │
+                                    │ │   day-by-day    │   │            │
+                                    │ │                 │   │            │
+                                    │ │ FOR each date:  │   │            │
+                                    │ │   FOR employee: │   │            │
+                                    │ │     IF O → 'O'  │   │            │
+                                    │ │     IF full→'U' │◀──┼────────────┘
+                                    │ │     ELSE → 'D'  │   │ U-SLOT INJECTION!
+                                    │ │                 │   │
+                                    │ │ Result:         │   │
+                                    │ │ ✓ FEASIBLE!     │   │
+                                    │ │ • Work: 240     │   │
+                                    │ │ • U-slots: 69   │   │
+                                    │ │ • Rest: 71      │   │
+                                    │ └─────────────────┘   │
+                                    └───────────┬───────────┘
+                                                │
+                                                ▼
+                         ┌────────────────────────────────────────────┐
+                         │ ICPMP RESULT:                              │
+                         │ • employeesRequired: 12                    │
+                         │ • employeePatterns: [12 patterns with U]   │
+                         │ • offsetDistribution: {0:2,1:2,...,6:1}    │
+                         │ • optimality: PROVEN_MINIMAL               │
+                         └────────────────┬───────────────────────────┘
+                                          │
+                                          ▼
+       ╔═══════════════════════════════════════════════════════════════════════════╗
+       ║  PHASE 4: EMPLOYEE SELECTION & ASSIGNMENT                                 ║
+       ║  (_select_and_assign_employees)                                           ║
+       ╚═══════════════════════════════════════════════════════════════════════════╝
+                                          │
+          ┌───────────────────────────────┼───────────────────────────────┐
+          │                               │                               │
+          ▼                               ▼                               ▼
+   ┌────────────────┐            ┌─────────────────┐           ┌──────────────────┐
+   │ STEP 4.1:      │            │ STEP 4.2:       │           │ STEP 4.3:        │
+   │ FILTER         │            │ SCHEME MIX      │           │ BALANCED SCORING │
+   │                │            │                 │           │                  │
+   │ 74 employees   │───────────▶│ IF Global:      │──────────▶│ Score by:        │
+   │   ↓ rank=SER   │            │  Proportional   │           │  -hours×1000     │
+   │   ↓ product=APO│            │  A:5 B:4 P:3    │           │  +seniority×10   │
+   │   ↓ gender=Any │            │ ELSE:           │           │                  │
+   │   ↓ scheme=A   │            │  All from       │           │ Sort descending  │
+   │   ↓ not_used   │            │  scheme         │           │ Take top 12      │
+   │                │            │                 │           │                  │
+   │ 50 eligible    │            └─────────────────┘           └──────────────────┘
+   └────────────────┘                     │                             │
+                                          └──────────┬──────────────────┘
+                                                     │
+                                                     ▼
+                                          ┌────────────────────────┐
+                                          │ STEP 4.4:              │
+                                          │ ASSIGN OFFSETS         │
+                                          │                        │
+                                          │ Emp1: offset=0         │
+                                          │  pattern=['D','D','U'] │
+                                          │ Emp2: offset=0         │
+                                          │  pattern=['D','U','D'] │
+                                          │ ...                    │
+                                          │ Emp12: offset=6        │
+                                          │  pattern=['U','D','O'] │
+                                          └────────────┬───────────┘
+                                                       │
+                                                       ▼
+                                          ┌────────────────────────┐
+                                          │ STEP 4.5:              │
+                                          │ TRACK ASSIGNMENT       │
+                                          │                        │
+                                          │ assigned_ids.add(...)  │
+                                          │ (prevent double-assign)│
+                                          └────────────┬───────────┘
+                                                       │
+                                                       ▼
+                    ╔══════════════════════════════════════════════════════════╗
+                    ║  PHASE 5: OUTPUT & METADATA                              ║
+                    ╚══════════════════════════════════════════════════════════╝
+                                                       │
+                                                       ▼
+                              ┌─────────────────────────────────────┐
+                              │ RETURN:                             │
+                              │                                     │
+                              │ filtered_employees: [12 with        │
+                              │   rotationOffset + workPattern]     │
+                              │                                     │
+                              │ icpmp_metadata: {                   │
+                              │   optimal_employees: 12             │
+                              │   u_slots_total: 69                 │
+                              │   offset_distribution: {...}        │
+                              │ }                                   │
+                              │                                     │
+                              │ summary: {                          │
+                              │   utilization_rate: 16.2%           │
+                              │ }                                   │
+                              └──────────────┬──────────────────────┘
+                                             │
+                                             ▼
+          ╔══════════════════════════════════════════════════════════════════════╗
+          ║  PHASE 6: INTEGRATION WITH SOLVER                                    ║
+          ║  (src/solver.py)                                                     ║
+          ╚══════════════════════════════════════════════════════════════════════╝
+                                             │
+                    ┌────────────────────────┼────────────────────────┐
+                    │                        │                        │
+                    ▼                        ▼                        ▼
+         ┌───────────────────┐   ┌────────────────────┐   ┌──────────────────┐
+         │ REPLACE EMPLOYEES │   │ LOAD INTO CP-SAT   │   │ BUILD OUTPUT     │
+         │                   │   │                    │   │                  │
+         │ 74 → 12 employees │──▶│ ctx = load_input() │──▶│ Include ICPMP    │
+         │ with patterns     │   │ + icpmp_metadata   │   │ metadata         │
+         │ + offsets         │   │                    │   │                  │
+         └───────────────────┘   │ CP-SAT enforces:   │   │ icpmpPreprocessing│
+                                  │ • 'U' = blocked    │   │ in output JSON   │
+                                  │ • 'O' = blocked    │   │                  │
+                                  │ • 'D' = allowed    │   │                  │
+                                  └────────────────────┘   └──────────────────┘
+                                             │
+                                             ▼
+                                  ┌─────────────────────┐
+                                  │ CP-SAT SOLVER       │
+                                  │                     │
+                                  │ Variables: 2,880    │
+                                  │ Status: OPTIMAL     │
+                                  │ Time: 3.7s          │
+                                  │ Assignments: 240    │
+                                  └──────────┬──────────┘
+                                             │
+                                             ▼
+                                  ┌─────────────────────┐
+                                  │   FINAL OUTPUT      │
+                                  │                     │
+                                  │ ✓ OPTIMAL roster    │
+                                  │ ✓ 12 employees      │
+                                  │ ✓ 240 assignments   │
+                                  │ ✓ 0 unassigned      │
+                                  │ ✓ 3.7s total        │
+                                  └─────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+KEY TRANSFORMATIONS:
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+  INPUT:  74 employees (no patterns) + 1 requirement (DDDDDOD, HC=8)
+          ↓
+  ICPMP:  Calculate optimal = 12 employees
+          ↓
+  SELECT: Pick 12 best from 74 (balanced, scheme-aware)
+          ↓
+  ASSIGN: Give each: rotationOffset + workPattern with U-slots
+          ↓
+  SOLVER: CP-SAT respects U-slots (blocked days)
+          ↓
+  OUTPUT: OPTIMAL roster with 12 employees, 240 assignments
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+
+
+KEY FEATURES:
+═════════════
+
+✓ PROVEN OPTIMAL: First feasible = minimal employee count
+✓ SCHEME-AWARE: Respects A/B/P capacity limits (max 6 days/week)
+✓ FAIR DISTRIBUTION: Prefers employees with fewer working hours
+✓ U-SLOT INJECTION: Strategic gaps when coverage already met
+✓ OFFSET VALIDATION: Ensures all pattern offsets represented
+✓ PROPORTIONAL MIX: Global scheme maintains A/B/P ratios
+✓ FAST PREPROCESSING: <0.01s (vs minutes in CP-SAT)
+
+
+CRITICAL INSIGHT - S18 CONTRADICTION:
+══════════════════════════════════════
+
+ICPMP creates 69 U-slots (gaps) by design → enables 12 employees instead of more
+S18 penalizes gaps with 1,000× weight → tries to eliminate what ICPMP created
+Result: CP-SAT spends 10+ minutes resolving contradictory objectives
+
+SOLUTION: Keep ICPMP enabled, S18 disabled permanently
+Performance: 3.7s (without S18) vs 10+ minutes (with S18)
