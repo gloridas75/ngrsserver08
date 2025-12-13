@@ -90,32 +90,40 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                 # ============================================================
                 # ICPMP v3.0 PREPROCESSING PHASE
                 # ============================================================
-                print(f"[WORKER-{worker_id}] Running ICPMP v3.0 preprocessing for job {job_id}")
-                preprocessing_start = time.time()
+                # Check if input is already preprocessed (v0.70 schema means ICPMP already applied)
+                schema_version = input_data.get('schemaVersion', '0.95')
                 
-                try:
-                    preprocessor = ICPMPPreprocessor(input_data)
-                    preprocessing_result = preprocessor.preprocess_all_requirements()
-                    
-                    # Replace employee list with filtered, optimized employees
-                    input_data['employees'] = preprocessing_result['filtered_employees']
-                    
-                    preprocessing_time = time.time() - preprocessing_start
-                    print(f"[WORKER-{worker_id}] ICPMP preprocessing completed in {preprocessing_time:.2f}s")
-                    print(f"[WORKER-{worker_id}] Selected {len(preprocessing_result['filtered_employees'])} employees "
-                          f"(utilization: {preprocessing_result['summary']['utilization_rate']:.1%})")
-                    
-                    # Store ICPMP metadata for output
-                    icpmp_metadata = preprocessing_result['icpmp_metadata']
-                    icpmp_warnings = preprocessing_result['warnings']
-                    
-                except Exception as preprocessing_error:
-                    # If preprocessing fails, log error and continue with original employee list
-                    print(f"[WORKER-{worker_id}] ICPMP preprocessing failed: {preprocessing_error}")
-                    print(f"[WORKER-{worker_id}] Continuing with original employee list")
-                    traceback.print_exc()
+                if schema_version == '0.70':
+                    print(f"[WORKER-{worker_id}] Input is v0.70 (already preprocessed), skipping ICPMP")
                     icpmp_metadata = None
-                    icpmp_warnings = [f"Preprocessing failed: {str(preprocessing_error)}"]
+                    icpmp_warnings = []
+                else:
+                    print(f"[WORKER-{worker_id}] Running ICPMP v3.0 preprocessing for job {job_id}")
+                    preprocessing_start = time.time()
+                    
+                    try:
+                        preprocessor = ICPMPPreprocessor(input_data)
+                        preprocessing_result = preprocessor.preprocess_all_requirements()
+                        
+                        # Replace employee list with filtered, optimized employees
+                        input_data['employees'] = preprocessing_result['filtered_employees']
+                        
+                        preprocessing_time = time.time() - preprocessing_start
+                        print(f"[WORKER-{worker_id}] ICPMP preprocessing completed in {preprocessing_time:.2f}s")
+                        print(f"[WORKER-{worker_id}] Selected {len(preprocessing_result['filtered_employees'])} employees "
+                              f"(utilization: {preprocessing_result['summary']['utilization_rate']:.1%})")
+                        
+                        # Store ICPMP metadata for output
+                        icpmp_metadata = preprocessing_result['icpmp_metadata']
+                        icpmp_warnings = preprocessing_result['warnings']
+                        
+                    except Exception as preprocessing_error:
+                        # If preprocessing fails, log error and continue with original employee list
+                        print(f"[WORKER-{worker_id}] ICPMP preprocessing failed: {preprocessing_error}")
+                        print(f"[WORKER-{worker_id}] Continuing with original employee list")
+                        traceback.print_exc()
+                        icpmp_metadata = None
+                        icpmp_warnings = [f"Preprocessing failed: {str(preprocessing_error)}"]
                 
                 # ============================================================
                 # CP-SAT SOLVER EXECUTION
