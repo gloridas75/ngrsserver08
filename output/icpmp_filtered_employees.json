@@ -65,9 +65,9 @@
       "D",
       "D",
       "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -89,9 +89,9 @@
       "D",
       "D",
       "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -112,10 +112,10 @@
       "D",
       "D",
       "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -136,10 +136,10 @@
       "D",
       "D",
       "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -159,11 +159,11 @@
     "workPattern": [
       "D",
       "D",
-      "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -183,11 +183,11 @@
     "workPattern": [
       "D",
       "D",
-      "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -206,12 +206,12 @@
     "unavailability": [],
     "workPattern": [
       "D",
-      "D",
-      "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -230,12 +230,12 @@
     "unavailability": [],
     "workPattern": [
       "D",
-      "D",
-      "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -253,13 +253,13 @@
     "preferences": {},
     "unavailability": [],
     "workPattern": [
-      "D",
-      "D",
-      "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -277,13 +277,13 @@
     "preferences": {},
     "unavailability": [],
     "workPattern": [
-      "D",
-      "D",
-      "D",
-      "D",
-      "D",
       "O",
-      "O"
+      "O",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D"
     ],
     "_icpmp_requirement_id": "102_1"
   },
@@ -301,12 +301,12 @@
     "preferences": {},
     "unavailability": [],
     "workPattern": [
-      "D",
-      "D",
-      "D",
-      "D",
-      "D",
       "O",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
       "O"
     ],
     "_icpmp_requirement_id": "102_1"
@@ -325,12 +325,12 @@
     "preferences": {},
     "unavailability": [],
     "workPattern": [
-      "D",
-      "D",
-      "D",
-      "D",
-      "D",
       "O",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
       "O"
     ],
     "_icpmp_requirement_id": "102_1"
