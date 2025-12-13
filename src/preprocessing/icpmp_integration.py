@@ -232,13 +232,19 @@ class ICPMPPreprocessor:
         scheme = req.get('scheme', 'A')
         logger.info(f"    Requirement scheme: {scheme}")
         
-        # Call ICPMP v3.0 with scheme parameter
+        # NEW: Extract OT-aware ICPMP flag (default False for backward compatibility)
+        enable_ot_aware_icpmp = req.get('enableOtAwareIcpmp', False)
+        if enable_ot_aware_icpmp:
+            logger.info(f"    OT-aware ICPMP: ENABLED (will consider OT capacity for Scheme P)")
+        
+        # Call ICPMP v3.0 with scheme parameter and OT-aware flag
         icpmp_result = calculate_optimal_with_u_slots(
             pattern=work_pattern,
             headcount=headcount,
             calendar=calendar,
             anchor_date=coverage_anchor,
-            scheme=scheme  # Pass scheme for capacity calculation
+            scheme=scheme,  # Pass scheme for capacity calculation
+            enable_ot_aware_icpmp=enable_ot_aware_icpmp  # NEW: Pass OT-aware flag
         )
         
         # POST-ICPMP VALIDATION: Check if all required offsets are covered
@@ -264,7 +270,9 @@ class ICPMPPreprocessor:
                 headcount=headcount,
                 calendar=calendar,
                 anchor_date=coverage_anchor,
-                cycle_length=pattern_length
+                cycle_length=pattern_length,
+                scheme="A",  # Default to Scheme A for legacy recalculation
+                enable_ot_aware=False
             )
             
             if recalc_result['is_feasible']:

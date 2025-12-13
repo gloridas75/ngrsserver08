@@ -152,7 +152,8 @@ def calculate_optimal_with_u_slots(
     anchor_date: str,
     requirement_id: str = "unknown",
     max_attempts: int = 50,
-    scheme: str = "A"
+    scheme: str = "A",
+    enable_ot_aware_icpmp: bool = False
 ) -> Dict[str, Any]:
     """
     Calculate optimal employee count with U-slot injection.
@@ -168,6 +169,7 @@ def calculate_optimal_with_u_slots(
         requirement_id: Identifier for tracking
         max_attempts: Maximum employee counts to try beyond lower bound
         scheme: Employment scheme ('A', 'B', 'P', or 'Global') for capacity constraints
+        enable_ot_aware_icpmp: If True, consider OT capacity when injecting U-slots (Scheme P only)
         
     Returns:
         Dictionary with:
@@ -216,14 +218,36 @@ def calculate_optimal_with_u_slots(
             max_normal_hours_per_week = 29.98
             effective_days_per_week = 29.98 / 8.0  # ≈3.75 days/week
         
+        # NEW: OT-AWARE CAPACITY ADJUSTMENT
+        # If enabled, add OT capacity to effective capacity
+        if enable_ot_aware_icpmp:
+            # Scheme P can work up to 72h OT per month
+            max_ot_per_month = 72.0
+            planning_horizon_days = len(calendar)
+            planning_horizon_months = planning_horizon_days / 30.5  # Average month length
+            
+            # Calculate OT capacity in days per week
+            # 72h/month ÷ 4.33 weeks/month ÷ 8h/shift ≈ 2.08 shifts/week
+            ot_shifts_per_week = (max_ot_per_month / 4.33) / 8.0
+            
+            # Add OT capacity to effective capacity
+            effective_days_per_week_with_ot = effective_days_per_week + ot_shifts_per_week
+            
+            logger.info(f"  Scheme P OT-aware capacity adjustment:")
+            logger.info(f"    Normal capacity: {effective_days_per_week:.2f} days/week")
+            logger.info(f"    OT capacity: {ot_shifts_per_week:.2f} shifts/week")
+            logger.info(f"    Total capacity: {effective_days_per_week_with_ot:.2f} days/week")
+            
+            effective_days_per_week = effective_days_per_week_with_ot
+        
         # Scale to cycle length (pattern may be 7, 14, or 21 days)
         weeks_per_cycle = cycle_length / 7.0
         effective_work_capacity = effective_days_per_week * weeks_per_cycle
         
-        logger.info(f"  Scheme P capacity adjustment:")
+        logger.info(f"  Scheme P capacity calculation:")
         logger.info(f"    Pattern work days: {work_days_per_cycle}")
         logger.info(f"    Normal hour limit: {max_normal_hours_per_week}h/week")
-        logger.info(f"    Effective capacity: {effective_work_capacity:.2f} days/cycle (was {work_days_per_cycle})")
+        logger.info(f"    Effective capacity: {effective_work_capacity:.2f} days/cycle (pattern: {work_days_per_cycle})")
     else:
         # Scheme A/B: Use pattern work days as-is
         effective_work_capacity = work_days_per_cycle
@@ -305,7 +329,8 @@ def calculate_optimal_with_u_slots(
         logger.debug(f"[{requirement_id}] Trying {num_employees} employees...")
         
         result = try_placement_with_n_employees(
-            num_employees, pattern, headcount, calendar, anchor_date, cycle_length
+            num_employees, pattern, headcount, calendar, anchor_date, cycle_length,
+            scheme=scheme, enable_ot_aware=enable_ot_aware_icpmp
         )
         
         if result['is_feasible']:
@@ -352,7 +377,9 @@ def try_placement_with_n_employees(
     headcount: int,
     calendar: List[str],
     anchor_date: str,
-    cycle_length: int
+    cycle_length: int,
+    scheme: str = "A",
+    enable_ot_aware: bool = False
 ) -> Dict[str, Any]:
     """
     Attempt to cover all days with exactly N employees using U-slot injection.
@@ -361,7 +388,8 @@ def try_placement_with_n_employees(
     1. Distribute employees evenly across rotation offsets
     2. For each employee, simulate work pattern across calendar
     3. Inject 'U' slot when adding employee would create over-coverage
-    4. Check if full coverage achieved (every day has exactly HC employees)
+    4. (NEW) If enable_ot_aware=True: Consider OT capacity before injecting U-slots
+    5. Check if full coverage achieved (every day has exactly HC employees)
     
     Args:
         num_employees: Number of employees to try
@@ -370,6 +398,8 @@ def try_placement_with_n_employees(
         calendar: List of dates (ISO format)
         anchor_date: Reference date for pattern alignment
         cycle_length: Length of pattern cycle
+        scheme: Employment scheme ('A', 'B', 'P') for OT-aware logic
+        enable_ot_aware: If True, consider OT capacity when injecting U-slots
         
     Returns:
         Dictionary with:
@@ -817,7 +847,9 @@ def simulate_coverage_with_preprocessing(
         headcount=headcount,
         calendar=calendar,
         anchor_date=anchor_date,
-        cycle_length=cycle_length
+        cycle_length=cycle_length,
+        scheme="A",  # Default to Scheme A for legacy function
+        enable_ot_aware=False
     )
     
     return {

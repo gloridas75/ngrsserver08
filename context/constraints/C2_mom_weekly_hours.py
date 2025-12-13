@@ -313,8 +313,20 @@ def add_constraints(model, ctx):
                     week_tuple = (iso_year, iso_week)
                     locked_hours = locked_weekly_hours[emp_id].get(week_tuple, 0.0)
                 
+                # SCHEME-AWARE WEEKLY NORMAL CAP
+                # Scheme A/B: 44h/week
+                # Scheme P: 34.98h (≤4 days) or 29.98h (5+ days)
+                if emp_scheme == 'P':
+                    work_days_count = count_work_days_in_pattern(work_pattern)
+                    if work_days_count <= 4:
+                        weekly_normal_cap = 34.98
+                    else:
+                        weekly_normal_cap = 29.98
+                else:
+                    weekly_normal_cap = 44.0
+                
                 # Calculate remaining capacity
-                remaining_capacity = 44.0 - locked_hours
+                remaining_capacity = weekly_normal_cap - locked_hours
                 remaining_capacity_int = int(round(remaining_capacity * 10))
                 
                 # Create constraint: sum(var_i * normal_hours_i) <= remaining_capacity
