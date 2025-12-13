@@ -753,7 +753,7 @@ def apply_constraints(model, ctx):
     # Load all hard constraints (C13 permanently removed)
     hard_constraints = [
         'C1_mom_daily_hours',
-        'C2_mom_weekly_hours', 
+        'C2_mom_weekly_hours_pattern_aware',  # Use pattern-aware version for correct 6-day handling
         'C3_consecutive_days',
         'C4_rest_period',
         'C5_offday_rules',

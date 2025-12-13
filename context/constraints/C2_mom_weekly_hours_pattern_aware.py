@@ -130,15 +130,48 @@ def add_constraints(model, ctx):
         print(f"[C2] Warning: Slots or decision variables not available")
         return
     
-    # Build employee work pattern map
+    # Build requirement → pattern mapping from demandItems
+    # This is needed for v0.70 schema where ICPMP assigns patterns to requirements,
+    # not directly to employees
+    req_patterns = {}
+    for demand in demand_items:
+        for req in demand.get('requirements', []):
+            req_id = req.get('requirementId')
+            pattern = req.get('workPattern', [])
+            if req_id and pattern:
+                req_patterns[req_id] = pattern
+    
+    # Build employee → pattern mapping by checking which slots they can be assigned to
+    # This works because slots have requirementId, and requirements have workPattern
     emp_patterns = {}
     for emp in employees:
         emp_id = emp.get('employeeId')
-        pattern = emp.get('workPattern', [])
+        pattern = emp.get('workPattern', [])  # Try direct first (v0.95+)
+        
         if not pattern:
-            # Fallback: assume 5-day pattern
-            pattern = ['D', 'D', 'D', 'D', 'D', 'O', 'O']
+            # Find pattern from slots this employee can be assigned to
+            # Check first slot with this employee in decision variables
+            for slot in slots:
+                if (slot.slot_id, emp_id) in x:
+                    # This employee can be assigned to this slot
+                    req_id = getattr(slot, 'requirementId', None)
+                    if req_id and req_id in req_patterns:
+                        pattern = req_patterns[req_id]
+                        break  # Found pattern, stop searching
+            
+            if not pattern:
+                # Fallback: assume 5-day pattern
+                pattern = ['D', 'D', 'D', 'D', 'D', 'O', 'O']
+        
         emp_patterns[emp_id] = pattern
+    
+    # Debug: Check pattern detection
+    pattern_lengths = [len(p) for p in emp_patterns.values()]
+    work_days_counts = [sum(1 for d in p if d != 'O') for p in emp_patterns.values()]
+    print(f"[C2] DEBUG: Pattern lengths: min={min(pattern_lengths) if pattern_lengths else 0}, max={max(pattern_lengths) if pattern_lengths else 0}")
+    print(f"[C2] DEBUG: Work days: min={min(work_days_counts) if work_days_counts else 0}, max={max(work_days_counts) if work_days_counts else 0}")
+    print(f"[C2] DEBUG: Sample patterns: {list(emp_patterns.values())[:3]}")
+    print(f"[C2] DEBUG: Requirement patterns available: {list(req_patterns.values())}")
 
     # Extract shift information by demand and shift code
     shift_info = {}
