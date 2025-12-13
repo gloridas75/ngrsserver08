@@ -232,10 +232,12 @@ class ICPMPPreprocessor:
         scheme = req.get('scheme', 'A')
         logger.info(f"    Requirement scheme: {scheme}")
         
-        # NEW: Extract OT-aware ICPMP flag (default False for backward compatibility)
-        enable_ot_aware_icpmp = req.get('enableOtAwareIcpmp', False)
+        # Extract OT-aware ICPMP flag (default TRUE for optimal Scheme P staffing)
+        enable_ot_aware_icpmp = req.get('enableOtAwareIcpmp', True)
         if enable_ot_aware_icpmp:
             logger.info(f"    OT-aware ICPMP: ENABLED (will consider OT capacity for Scheme P)")
+        else:
+            logger.info(f"    OT-aware ICPMP: DISABLED (using conservative capacity)")
         
         # Call ICPMP v3.0 with scheme parameter and OT-aware flag
         icpmp_result = calculate_optimal_with_u_slots(
