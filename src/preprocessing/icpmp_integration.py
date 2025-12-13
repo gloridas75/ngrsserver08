@@ -356,14 +356,16 @@ class ICPMPPreprocessor:
             requirement=requirement
         )
         
-        # Step 5: Apply rotation offsets
+        # Step 5: Apply rotation offsets AND work patterns
+        work_pattern = requirement.get('workPattern', [])
         for i, emp in enumerate(selected):
             offset = offset_list[i] if i < len(offset_list) else 0
             emp['rotationOffset'] = offset
+            emp['workPattern'] = work_pattern  # Assign work pattern from requirement
             emp['_icpmp_requirement_id'] = req_id  # Track which requirement assigned this
             self.assigned_employee_ids.add(emp['employeeId'])
         
-        logger.info(f"    Offsets applied to {len(selected)} employees")
+        logger.info(f"    Offsets and work patterns applied to {len(selected)} employees")
         
         return selected
     
