@@ -175,12 +175,13 @@ curl -X POST http://localhost:8080/solve/async \
   -H "Content-Type: application/json" \
   -d '{"input": {...}, "webhookUrl": "https://webhook.site/xyz"}'
 
-# Poll status
-curl http://localhost:8080/solve/async/{job_id}/status
+# Poll status (correct endpoint - no /status suffix)
+curl http://localhost:8080/solve/async/{job_id}
 ```
 - Jobs persist in Redis (`RedisJobManager`)
 - Workers process via `redis_worker.py`
 - TTL: 1 hour (configurable)
+- **Note**: Production uses Ubuntu's built-in Redis server (no Docker container needed)
 
 ### 3. POST /configure (ICPMP v3)
 Configuration optimizer—suggests work patterns, staffing levels, rotation offsets:
