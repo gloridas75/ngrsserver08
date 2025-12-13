@@ -90,15 +90,31 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                 # ============================================================
                 # ICPMP v3.0 PREPROCESSING PHASE
                 # ============================================================
-                # Check if input is already preprocessed (v0.70 schema means ICPMP already applied)
-                schema_version = input_data.get('schemaVersion', '0.95')
+                # Check if input is ACTUALLY preprocessed (has work patterns and filtered employees)
+                # Don't trust schema version alone - verify the data
+                employees = input_data.get('employees', [])
+                employees_with_patterns = sum(1 for e in employees if e.get('workPattern'))
                 
-                if schema_version == '0.70':
-                    print(f"[WORKER-{worker_id}] Input is v0.70 (already preprocessed), skipping ICPMP")
+                # Determine if preprocessing needed
+                needs_preprocessing = True
+                skip_reason = None
+                
+                if employees_with_patterns > 0 and employees_with_patterns == len(employees):
+                    # All employees have patterns - likely preprocessed
+                    needs_preprocessing = False
+                    skip_reason = "all employees have work patterns assigned"
+                elif len(employees) == 0:
+                    # No employees - nothing to preprocess
+                    needs_preprocessing = False
+                    skip_reason = "no employees in input"
+                
+                if not needs_preprocessing:
+                    print(f"[WORKER-{worker_id}] Skipping ICPMP: {skip_reason}")
                     icpmp_metadata = None
                     icpmp_warnings = []
                 else:
                     print(f"[WORKER-{worker_id}] Running ICPMP v3.0 preprocessing for job {job_id}")
+                    print(f"[WORKER-{worker_id}] Input: {len(employees)} employees, {employees_with_patterns} have patterns")
                     preprocessing_start = time.time()
                     
                     try:
