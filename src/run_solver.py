@@ -8,8 +8,7 @@ from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
 from context.engine.time_utils import split_shift_hours, calculate_mom_compliant_hours
 from src.ratio_cache import RatioCache
-from src.preprocessing.icpmp_integration import ICPMPPreprocessor
-from src.offset_manager import ensure_staggered_offsets
+from src.solver import solve_problem
 
 def compute_input_hash(input_data):
     """Compute SHA256 hash of input JSON (excluding non-serializable runtime data)."""
@@ -255,67 +254,11 @@ def main():
     outfile_path.parent.mkdir(parents=True, exist_ok=True)
 
     # ============================================================
-    # ICPMP v3.0 PREPROCESSING PHASE (same as redis_worker)
+    # UNIFIED SOLVER - ALL LOGIC IN src/solver.py
     # ============================================================
-    # Load the raw input JSON first
+    # Load the raw input JSON
     with open(infile_path, 'r', encoding='utf-8') as f:
         input_data = json.load(f)
-    
-    # Ensure rotation offsets are staggered
-    print(f"[CLI] Staggering rotation offsets...")
-    input_data = ensure_staggered_offsets(input_data)
-    
-    # Check if input is ACTUALLY preprocessed (has work patterns assigned)
-    employees = input_data.get('employees', [])
-    employees_with_patterns = sum(1 for e in employees if e.get('workPattern'))
-    
-    needs_preprocessing = True
-    skip_reason = None
-    
-    if employees_with_patterns > 0 and employees_with_patterns == len(employees):
-        # All employees have patterns - already preprocessed
-        needs_preprocessing = False
-        skip_reason = "all employees have work patterns assigned"
-    elif len(employees) == 0:
-        # No employees - nothing to preprocess
-        needs_preprocessing = False
-        skip_reason = "no employees in input"
-    
-    if not needs_preprocessing:
-        print(f"[CLI] Skipping ICPMP: {skip_reason}")
-    else:
-        print(f"\n{'='*70}")
-        print(f"ICPMP v3.0 PREPROCESSING")
-        print(f"{'='*70}")
-        print(f"[CLI] Input: {len(employees)} employees, {employees_with_patterns} have patterns")
-        print(f"[CLI] Running ICPMP v3.0 preprocessing...")
-        
-        try:
-            preprocessor = ICPMPPreprocessor(input_data)
-            preprocessing_result = preprocessor.preprocess_all_requirements()
-            
-            # Replace employee list with filtered, optimized employees
-            original_count = len(input_data['employees'])
-            input_data['employees'] = preprocessing_result['filtered_employees']
-            filtered_count = len(input_data['employees'])
-            
-            print(f"[CLI] ✓ ICPMP preprocessing completed")
-            print(f"[CLI] ✓ Filtered: {original_count} → {filtered_count} employees")
-            print(f"[CLI] ✓ Utilization: {preprocessing_result['summary']['utilization_rate']:.1%}")
-            print(f"{'='*70}\n")
-            
-        except Exception as preprocessing_error:
-            # If preprocessing fails, log error and continue with original employee list
-            print(f"[CLI] ✗ ICPMP preprocessing failed: {preprocessing_error}")
-            print(f"[CLI] → Continuing with original employee list")
-            import traceback
-            traceback.print_exc()
-
-    # Load input (now with filtered employees if ICPMP ran)
-    ctx = load_input(input_data)
-    ctx["timeLimit"] = args.time_limit
-
-    # TODO: optionally validate against context/schemas/input.schema.json
 
     # Check if auto-optimization is requested in requirements block
     auto_optimize_ratio = False
@@ -323,7 +266,7 @@ def main():
     first_req = None
     first_demand = None
     
-    demand_items = ctx.get('demandItems', [])
+    demand_items = input_data.get('demandItems', [])
     if demand_items:
         first_demand = demand_items[0]
         requirements = first_demand.get('requirements', [])
@@ -479,8 +422,24 @@ def main():
             # Fall back to solving with default ratio
             status, solver_result, assignments, violations = solve(ctx)
     else:
-        # Solve once with configured or default ratio
-        status, solver_result, assignments, violations = solve(ctx)
+        # No ratio optimization - use unified solver
+        print(f"[CLI] Using unified solver (no ratio optimization)")
+        result = solve_problem(input_data, log_prefix="[CLI]")
+        
+        # Extract components from unified solver result for compatibility
+        # with build_output_schema (which expects old format)
+        status = result.get('status')
+        solver_result = {
+            'status': status,
+            'scores': result.get('score', {}),
+            'scoreBreakdown': result.get('scoreBreakdown', {})
+        }
+        assignments = result.get('assignments', [])
+        violations = result.get('violations', [])
+        
+        # Load ctx for build_output_schema (it needs employee info)
+        ctx = load_input(input_data)
+        ctx["timeLimit"] = args.time_limit
 
     # Build output in expected schema format
     output = build_output_schema(str(infile_path), ctx, status, solver_result, assignments, violations)
