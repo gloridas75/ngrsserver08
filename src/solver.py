@@ -186,7 +186,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         input_data, ctx, status_code, solver_result, assignments, violations
     )
     
-    total_time = time.time() - start_time
+    total_time = time.time() - overall_start
     print(f"{log_prefix} ✓ Total time: {total_time:.2f}s (ICPMP: {preprocessing_time:.2f}s, Solve: {solver_time:.2f}s)")
     
     return result
