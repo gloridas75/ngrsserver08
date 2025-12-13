@@ -151,29 +151,32 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                 ctx = load_input(input_data)
                 ctx["timeLimit"] = input_data.get("solverRunTime", {}).get("maxSeconds", 15)
                 
+                # CRITICAL: Pass ICPMP metadata to ctx BEFORE solving
+                # build_output() expects this in ctx to include it in the output
+                if icpmp_metadata:
+                    ctx['icpmp_preprocessing'] = {
+                        'enabled': True,
+                        'preprocessing_time_seconds': preprocessing_time,
+                        'original_employee_count': len(employees),
+                        'selected_employee_count': len(input_data['employees']),
+                        'requirements': icpmp_metadata,
+                        'warnings': icpmp_warnings
+                    }
+                elif icpmp_warnings:
+                    ctx['icpmp_preprocessing'] = {
+                        'enabled': False,
+                        'warnings': icpmp_warnings
+                    }
+                
                 status_code, solver_result, assignments, violations = solve(ctx)
                 
                 solver_time = time.time() - solver_start
                 print(f"[WORKER-{worker_id}] CP-SAT solver completed in {solver_time:.2f}s")
                 
-                # Build output
+                # Build output (will automatically include ICPMP metadata from ctx)
                 result = build_output(
                     input_data, ctx, status_code, solver_result, assignments, violations
                 )
-                
-                # Enrich output with ICPMP metadata if preprocessing was successful
-                if icpmp_metadata:
-                    result['icpmp_preprocessing'] = {
-                        'enabled': True,
-                        'preprocessing_time_seconds': preprocessing_time,
-                        'requirements': icpmp_metadata,
-                        'warnings': icpmp_warnings
-                    }
-                elif icpmp_warnings:
-                    result['icpmp_preprocessing'] = {
-                        'enabled': False,
-                        'warnings': icpmp_warnings
-                    }
                 
                 elapsed_time = time.time() - start_time
                 
