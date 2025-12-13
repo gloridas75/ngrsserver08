@@ -8,6 +8,8 @@ from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
 from context.engine.time_utils import split_shift_hours, calculate_mom_compliant_hours
 from src.ratio_cache import RatioCache
+from src.preprocessing.icpmp_integration import ICPMPPreprocessor
+from src.offset_manager import ensure_staggered_offsets
 
 def compute_input_hash(input_data):
     """Compute SHA256 hash of input JSON (excluding non-serializable runtime data)."""
@@ -252,8 +254,65 @@ def main():
     # Ensure output directory exists
     outfile_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Load input
-    ctx = load_input(str(infile_path))
+    # ============================================================
+    # ICPMP v3.0 PREPROCESSING PHASE (same as redis_worker)
+    # ============================================================
+    # Load the raw input JSON first
+    with open(infile_path, 'r', encoding='utf-8') as f:
+        input_data = json.load(f)
+    
+    # Ensure rotation offsets are staggered
+    print(f"[CLI] Staggering rotation offsets...")
+    input_data = ensure_staggered_offsets(input_data)
+    
+    # Check if input is ACTUALLY preprocessed (has work patterns assigned)
+    employees = input_data.get('employees', [])
+    employees_with_patterns = sum(1 for e in employees if e.get('workPattern'))
+    
+    needs_preprocessing = True
+    skip_reason = None
+    
+    if employees_with_patterns > 0 and employees_with_patterns == len(employees):
+        # All employees have patterns - already preprocessed
+        needs_preprocessing = False
+        skip_reason = "all employees have work patterns assigned"
+    elif len(employees) == 0:
+        # No employees - nothing to preprocess
+        needs_preprocessing = False
+        skip_reason = "no employees in input"
+    
+    if not needs_preprocessing:
+        print(f"[CLI] Skipping ICPMP: {skip_reason}")
+    else:
+        print(f"\n{'='*70}")
+        print(f"ICPMP v3.0 PREPROCESSING")
+        print(f"{'='*70}")
+        print(f"[CLI] Input: {len(employees)} employees, {employees_with_patterns} have patterns")
+        print(f"[CLI] Running ICPMP v3.0 preprocessing...")
+        
+        try:
+            preprocessor = ICPMPPreprocessor(input_data)
+            preprocessing_result = preprocessor.preprocess_all_requirements()
+            
+            # Replace employee list with filtered, optimized employees
+            original_count = len(input_data['employees'])
+            input_data['employees'] = preprocessing_result['filtered_employees']
+            filtered_count = len(input_data['employees'])
+            
+            print(f"[CLI] ✓ ICPMP preprocessing completed")
+            print(f"[CLI] ✓ Filtered: {original_count} → {filtered_count} employees")
+            print(f"[CLI] ✓ Utilization: {preprocessing_result['summary']['utilization_rate']:.1%}")
+            print(f"{'='*70}\n")
+            
+        except Exception as preprocessing_error:
+            # If preprocessing fails, log error and continue with original employee list
+            print(f"[CLI] ✗ ICPMP preprocessing failed: {preprocessing_error}")
+            print(f"[CLI] → Continuing with original employee list")
+            import traceback
+            traceback.print_exc()
+
+    # Load input (now with filtered employees if ICPMP ran)
+    ctx = load_input(input_data)
     ctx["timeLimit"] = args.time_limit
 
     # TODO: optionally validate against context/schemas/input.schema.json
