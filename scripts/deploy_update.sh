@@ -138,6 +138,49 @@ stop_service() {
     fi
 }
 
+# Function to clear Redis job queue and data
+clear_redis_data() {
+    print_status "Clearing Redis job queue and cached data..."
+    
+    # Check if Redis is available
+    if ! docker ps | grep -q redis 2>/dev/null && ! pgrep -x redis-server >/dev/null 2>&1; then
+        print_warning "Redis not running, skipping Redis cleanup"
+        echo ""
+        return 0
+    fi
+    
+    # Get job statistics before clearing
+    if command -v redis-cli &> /dev/null; then
+        TOTAL_KEYS=$(redis-cli -h localhost -p 6379 --scan --pattern "ngrs:*" 2>/dev/null | wc -l || echo "0")
+        
+        if [ "$TOTAL_KEYS" -gt 0 ]; then
+            print_status "  Found $TOTAL_KEYS Redis keys with prefix 'ngrs:*'"
+            
+            # Delete all ngrs:* keys
+            print_status "  → Deleting ngrs:* keys..."
+            redis-cli -h localhost -p 6379 --scan --pattern "ngrs:*" | xargs -r redis-cli -h localhost -p 6379 DEL >/dev/null 2>&1 || true
+            
+            print_success "Cleared $TOTAL_KEYS Redis keys"
+        else
+            print_status "  No Redis keys found with prefix 'ngrs:*'"
+        fi
+    else
+        print_warning "redis-cli not found, attempting Docker-based cleanup..."
+        
+        # Try via Docker if redis-cli not available
+        if docker ps | grep -q redis 2>/dev/null; then
+            REDIS_CONTAINER=$(docker ps --filter "ancestor=redis" --format "{{.Names}}" | head -n 1)
+            if [ -n "$REDIS_CONTAINER" ]; then
+                print_status "  → Clearing Redis via Docker container: $REDIS_CONTAINER"
+                docker exec "$REDIS_CONTAINER" redis-cli KEYS "ngrs:*" | xargs -r docker exec "$REDIS_CONTAINER" redis-cli DEL >/dev/null 2>&1 || true
+                print_success "Redis cleared via Docker"
+            fi
+        fi
+    fi
+    
+    echo ""
+}
+
 # Function to check for processes on port 8080
 check_port() {
     print_status "Checking if port 8080 is free..."
@@ -371,6 +414,9 @@ main() {
     
     # Stop service gracefully
     stop_service
+    
+    # Clear Redis job queue and data
+    clear_redis_data
     
     # Check and free port
     check_port
