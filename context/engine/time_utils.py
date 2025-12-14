@@ -106,12 +106,14 @@ def is_apgd_d10_employee(employee: dict, requirement: dict = None) -> bool:
     if product != 'APO':
         return False
     
-    # Check flag (defaults to False if requirement not provided or flag not set)
+    # Check flag (defaults to True if requirement not provided or flag not set)
+    # If explicitly set to false, APGD-D10 will be disabled
     if requirement:
-        apgd_enabled = requirement.get('enableAPGD-D10', False)
+        apgd_enabled = requirement.get('enableAPGD-D10', True)
         return apgd_enabled
     
-    return False
+    # No requirement provided - default to True for Scheme A + APO
+    return True
 
 
 def get_apgd_d10_category(employee: dict) -> str:
