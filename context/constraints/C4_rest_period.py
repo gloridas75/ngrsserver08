@@ -1,7 +1,8 @@
-"""C4: Minimum 8h rest between shifts (HARD constraint).
+"""C4: Minimum rest between shifts (HARD constraint).
 
 Enforce minimum rest period between consecutive shifts for the same employee.
-Default: 8 hours = 480 minutes minimum rest between shift end and next shift start.
+Default: 11 hours = 660 minutes minimum rest between shift end and next shift start.
+APGD-D10: 8 hours = 480 minutes minimum rest.
 """
 from collections import defaultdict
 from datetime import timedelta
@@ -10,6 +11,8 @@ from datetime import timedelta
 def add_constraints(model, ctx):
     """
     Enforce minimum rest period between consecutive shifts (HARD).
+    Standard: 11 hours minimum rest.
+    APGD-D10: 8 hours minimum rest.
     
     Strategy: For each employee, identify shift pairs that violate the min rest requirement.
     Add disjunctive constraints: NOT (both shifts assigned).
@@ -18,6 +21,7 @@ def add_constraints(model, ctx):
         model: CP-SAT model
         ctx: Context dict with 'slots', 'employees', 'x', 'constraintList'
     """
+    from context.engine.time_utils import is_apgd_d10_employee
     
     slots = ctx.get('slots', [])
     employees = ctx.get('employees', [])
@@ -28,14 +32,34 @@ def add_constraints(model, ctx):
         print(f"[C4] Warning: Slots, employees, or decision variables not available")
         return
     
+    # Build requirement map for APGD-D10 detection
+    req_map = {}
+    for demand in ctx.get('demandItems', []):
+        for req in demand.get('requirements', []):
+            req_map[req['requirementId']] = req
+    
+    # Identify APGD-D10 employees
+    apgd_employees = set()
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        product = emp.get('productTypeId', '')
+        for req_id, req in req_map.items():
+            if req.get('productTypeId', '') == product:
+                if is_apgd_d10_employee(emp, req):
+                    apgd_employees.add(emp_id)
+                    break
+    
+    if apgd_employees:
+        print(f"[C4] APGD-D10 detected: {len(apgd_employees)} employees with 8-hour minimum rest")
+    
     # Extract min rest requirement from constraint config
-    min_rest_minutes = 480  # Default: 8 hours
+    default_min_rest_minutes = 660  # Default: 11 hours (standard MOM)
+    apgd_min_rest_minutes = 480  # APGD-D10: 8 hours
+    
     for constraint in constraint_list:
         if constraint.get('id') == 'apgdMinRestBetweenShifts':
-            min_rest_minutes = constraint.get('params', {}).get('minRestMinutes', 480)
+            default_min_rest_minutes = constraint.get('params', {}).get('minRestMinutes', 660)
             break
-    
-    min_rest_delta = timedelta(minutes=min_rest_minutes)
     
     # Check for incremental mode
     incremental_ctx = ctx.get('_incremental')
@@ -70,6 +94,10 @@ def add_constraints(model, ctx):
     # For each employee, check all shift pairs
     for emp in employees:
         emp_id = emp.get('employeeId')
+        
+        # Determine minimum rest for this employee
+        emp_min_rest_minutes = apgd_min_rest_minutes if emp_id in apgd_employees else default_min_rest_minutes
+        min_rest_delta = timedelta(minutes=emp_min_rest_minutes)
         
         # Get all slots this employee could be assigned to
         emp_slots = [s for s in slots if (s.slot_id, emp_id) in x]
@@ -131,5 +159,6 @@ def add_constraints(model, ctx):
     
     print(f"[C4] Minimum Rest Between Shifts Constraint (HARD)")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")
-    print(f"     Minimum rest required: {min_rest_minutes} minutes ({min_rest_minutes/60:.1f}h)")
+    print(f"     Standard rest: {default_min_rest_minutes} minutes ({default_min_rest_minutes/60:.1f}h)")
+    print(f"     APGD-D10 rest: {apgd_min_rest_minutes} minutes ({apgd_min_rest_minutes/60:.1f}h)")
     print(f"     ✓ Added {constraints_added} rest period disjunctive constraints\n")

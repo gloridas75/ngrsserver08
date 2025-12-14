@@ -2,6 +2,7 @@
 
 Enforce maximum number of consecutive days an employee can work without a day off.
 Global cap: ≤12 consecutive working days per employee.
+APGD-D10: ≤8 consecutive working days (MOM special approval).
 
 A "working day" is any day the employee is assigned to at least one shift.
 """
@@ -12,15 +13,17 @@ from datetime import datetime, timedelta
 def add_constraints(model, ctx):
     """
     Enforce maximum consecutive working days ≤12 per employee (HARD).
+    APGD-D10 employees: ≤8 consecutive working days.
     
     Strategy: 
     1. Create daily indicator variables: day_worked[(emp_id, date)] = 1 if ANY shift assigned
-    2. For every 13 consecutive calendar days, ensure sum(day_worked) <= 12
+    2. For every 13 consecutive calendar days, ensure sum(day_worked) <= 12 (or 8 for APGD-D10)
     
     Args:
         model: CP-SAT model
         ctx: Context dict with 'employees', 'slots', 'x'
     """
+    from context.engine.time_utils import is_apgd_d10_employee
     
     slots = ctx.get('slots', [])
     employees = ctx.get('employees', [])
@@ -30,7 +33,29 @@ def add_constraints(model, ctx):
         print(f"[C3] Warning: Slots, employees, or decision variables not available")
         return
     
-    max_consecutive = 12  # Hard cap: at most 12 consecutive working days
+    # Build requirement map for APGD-D10 detection
+    req_map = {}
+    for demand in ctx.get('demandItems', []):
+        for req in demand.get('requirements', []):
+            req_map[req['requirementId']] = req
+    
+    # Identify APGD-D10 employees
+    apgd_employees = set()
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        # Try to find matching requirement
+        product = emp.get('productTypeId', '')
+        for req_id, req in req_map.items():
+            if req.get('productTypeId', '') == product:
+                if is_apgd_d10_employee(emp, req):
+                    apgd_employees.add(emp_id)
+                    break
+    
+    if apgd_employees:
+        print(f"[C3] APGD-D10 detected: {len(apgd_employees)} employees with 8-day consecutive limit")
+    
+    max_consecutive = 12  # Default: at most 12 consecutive working days
+    apgd_max_consecutive = 8  # APGD-D10: at most 8 consecutive working days
     
     # Check for incremental mode
     incremental_ctx = ctx.get('_incremental')
@@ -88,6 +113,9 @@ def add_constraints(model, ctx):
         if emp_id not in emp_slots_by_date:
             continue  # No slots for this employee
         
+        # Determine max consecutive days for this employee
+        emp_max_consecutive = apgd_max_consecutive if emp_id in apgd_employees else max_consecutive
+        
         # Create indicator variables: day_worked[(emp_id, date)] = 1 if employee works on date
         day_worked = {}
         
@@ -115,19 +143,19 @@ def add_constraints(model, ctx):
                 # No slots on this date for this employee
                 day_worked[date_str] = 0
         
-        # Now add constraints: for every 13 consecutive calendar days, sum <= 12
+        # Now add constraints: for every (emp_max_consecutive + 1) consecutive calendar days, sum <= emp_max_consecutive
         # INCREMENTAL MODE: Account for locked streak before solve window
         locked_streak = locked_consecutive_days.get(emp_id, 0)
         
         if locked_streak > 0:
             # Employee already worked 'locked_streak' consecutive days before solve window
-            # From the first date in solve window, they can only work (12 - locked_streak) more consecutive days
-            remaining_allowed = max_consecutive - locked_streak
+            # From the first date in solve window, they can only work (emp_max_consecutive - locked_streak) more consecutive days
+            remaining_allowed = emp_max_consecutive - locked_streak
             
             if remaining_allowed <= 0:
                 # Employee already hit max consecutive - cannot work on first days of solve window
                 # Must take a break first
-                print(f"[C3] Employee {emp_id} already worked {locked_streak} consecutive days (>= {max_consecutive})")
+                print(f"[C3] Employee {emp_id} already worked {locked_streak} consecutive days (>= {emp_max_consecutive})")
                 # Force day off on first date (if this is start of solve window)
                 if sorted_dates and sorted_dates[0] in day_worked:
                     var = day_worked[sorted_dates[0]]
@@ -153,16 +181,16 @@ def add_constraints(model, ctx):
                         constraints_added += 1
                         break
         
-        for i in range(len(sorted_dates) - max_consecutive):
-            window_dates = sorted_dates[i:i + max_consecutive + 1]  # 13 consecutive dates
+        for i in range(len(sorted_dates) - emp_max_consecutive):
+            window_dates = sorted_dates[i:i + emp_max_consecutive + 1]  # (emp_max_consecutive + 1) consecutive dates
             
             # Check if these are truly consecutive calendar days
             start_date = window_dates[0]
             end_date = window_dates[-1]
             days_between = (end_date - start_date).days
             
-            if days_between == max_consecutive:  # Exactly 12 days apart = 13 calendar days
-                # Sum of working days in this window must be <= 12
+            if days_between == emp_max_consecutive:  # Exactly emp_max_consecutive days apart
+                # Sum of working days in this window must be <= emp_max_consecutive
                 day_vars_in_window = []
                 for date_str in window_dates:
                     if date_str in day_worked:
@@ -171,9 +199,9 @@ def add_constraints(model, ctx):
                         if not isinstance(var, int):
                             day_vars_in_window.append(var)
                 
-                if len(day_vars_in_window) > max_consecutive:
-                    # Only add constraint if there are potentially >12 working days
-                    model.Add(sum(day_vars_in_window) <= max_consecutive)
+                if len(day_vars_in_window) > emp_max_consecutive:
+                    # Only add constraint if there are potentially more than emp_max_consecutive working days
+                    model.Add(sum(day_vars_in_window) <= emp_max_consecutive)
                     constraints_added += 1
     
     print(f"[C3] Maximum Consecutive Working Days Constraint (HARD)")

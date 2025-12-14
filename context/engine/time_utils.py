@@ -52,6 +52,198 @@ def normalize_scheme(scheme_value: str) -> str:
     return 'A'
 
 
+def normalize_rank(rank_str: str) -> str:
+    """
+    Normalize rank value to uppercase.
+    Handles CPL, SGT, SER, etc.
+    
+    Args:
+        rank_str: Rank identifier (e.g., 'CPL', 'cpl', 'SGT', 'SER')
+    
+    Returns:
+        Uppercase rank string (e.g., 'CPL', 'SGT', 'SER')
+    """
+    if not rank_str:
+        return ''
+    return str(rank_str).strip().upper()
+
+
+def is_apgd_d10_employee(employee: dict, requirement: dict = None) -> bool:
+    """
+    Check if employee qualifies for APGD-D10 special group treatment.
+    
+    APGD-D10 allows Scheme A + APO employees to work 6-7 days/week with monthly hour caps
+    instead of standard weekly limits. Requires MOM special approval (APGD - D10).
+    
+    Detection Criteria:
+    - Scheme: A (normalized)
+    - Product: APO (employee.productTypeId)
+    - Flag: requirement.enableAPGD-D10 = true
+    
+    Args:
+        employee: Employee dict with 'scheme' and 'productTypeId'
+        requirement: Requirement dict (optional, contains 'enableAPGD-D10' flag)
+    
+    Returns:
+        True if employee is APGD-D10 eligible, False otherwise
+    
+    Examples:
+        employee = {'scheme': 'Scheme A', 'productTypeId': 'APO'}
+        requirement = {'enableAPGD-D10': True}
+        → True
+        
+        employee = {'scheme': 'Scheme B', 'productTypeId': 'APO'}
+        requirement = {'enableAPGD-D10': True}
+        → False (Scheme B not eligible)
+    """
+    # Check scheme
+    scheme = normalize_scheme(employee.get('scheme', ''))
+    if scheme != 'A':
+        return False
+    
+    # Check product type
+    product = employee.get('productTypeId', '').upper()
+    if product != 'APO':
+        return False
+    
+    # Check flag (defaults to False if requirement not provided or flag not set)
+    if requirement:
+        apgd_enabled = requirement.get('enableAPGD-D10', False)
+        return apgd_enabled
+    
+    return False
+
+
+def get_apgd_d10_category(employee: dict) -> str:
+    """
+    Determine APGD-D10 category for monthly hour cap calculation.
+    
+    Categories:
+    - 'foreign_cpl_sgt': Foreign (local=0) Corporals/Sergeants → 268h monthly cap
+    - 'standard': All others (locals or other ranks) → 246h monthly cap
+    
+    Args:
+        employee: Employee dict with 'local' and 'rankId'
+    
+    Returns:
+        Category string: 'foreign_cpl_sgt' or 'standard'
+    
+    Examples:
+        {'local': 0, 'rankId': 'CPL'} → 'foreign_cpl_sgt'
+        {'local': 0, 'rankId': 'SGT'} → 'foreign_cpl_sgt'
+        {'local': 0, 'rankId': 'SER'} → 'standard'
+        {'local': 1, 'rankId': 'CPL'} → 'standard' (locals use standard cap)
+    """
+    rank = normalize_rank(employee.get('rankId', ''))
+    is_local = employee.get('local', 1)  # Default to local if not specified
+    
+    # Foreign CPL/SGT get higher cap
+    if is_local == 0 and rank in ['CPL', 'SGT']:
+        return 'foreign_cpl_sgt'
+    
+    return 'standard'
+
+
+def calculate_apgd_d10_hours(
+    start_dt: datetime,
+    end_dt: datetime,
+    employee_id: str,
+    assignment_date_obj,
+    all_assignments: list,
+    employee_dict: dict
+) -> dict:
+    """
+    Calculate APGD-D10 compliant work hours with rest day pay.
+    
+    APGD-D10 Rules:
+    - Weekly normal cap: 44h (same as Scheme A)
+    - Work patterns: 4-7 days/week allowed
+    - Rest day pay: 1 RDP (8h) for 6th day, 2 RDP (16h) for 7th day in same week
+    
+    Hour Breakdown by Pattern:
+    - 4 days: 11.0h normal each = 44h total, 0h OT, 0 RDP
+    - 5 days: 8.8h normal + 2.2h OT each = 44h + 11h OT, 0 RDP
+    - 6 days: Days 1-5 (8.8h+2.2h), Day 6 (3h OT + 8h RDP) = 44h + 14h OT + 1 RDP
+    - 7 days: Days 1-5 (8.8h+2.2h), Days 6-7 (3h OT + 8h RDP each) = 44h + 17h OT + 2 RDP
+    
+    Args:
+        start_dt: Shift start datetime
+        end_dt: Shift end datetime
+        employee_id: Employee ID
+        assignment_date_obj: Assignment date (date object)
+        all_assignments: All assignments for context analysis
+        employee_dict: Employee dictionary
+    
+    Returns:
+        Dictionary with keys:
+        - 'gross': Total duration
+        - 'lunch': Meal break (1.0h for 12h shifts)
+        - 'normal': Normal hours (MOM compliant, max 44h/week)
+        - 'ot': Overtime hours
+        - 'restDayPay': Rest day pay count (0, 1, or 2 = 0h, 8h, or 16h)
+        - 'paid': Total paid hours
+    
+    Examples:
+        4 days/week, 12h shift → {normal: 11.0, ot: 0.0, restDayPay: 0}
+        5 days/week, 12h shift → {normal: 8.8, ot: 2.2, restDayPay: 0}
+        6 days/week, position 6, 12h shift → {normal: 0.0, ot: 3.0, restDayPay: 1}
+        7 days/week, position 7, 12h shift → {normal: 0.0, ot: 3.0, restDayPay: 1}
+    """
+    # Calculate basic components
+    gross = span_hours(start_dt, end_dt)
+    ln = lunch_hours(gross)
+    
+    # Get work days in calendar week and consecutive position
+    work_days_in_week = count_work_days_in_calendar_week(
+        employee_id, assignment_date_obj, all_assignments
+    )
+    consecutive_position = find_consecutive_position(
+        employee_id, assignment_date_obj, all_assignments
+    )
+    
+    # Initialize rest day pay count (0, 1, or 2)
+    rest_day_pay_count = 0
+    
+    # APGD-D10 prioritizes consecutive position for RDP
+    # Check consecutive position FIRST before calendar week logic
+    if consecutive_position >= 6:
+        # 6th or 7th consecutive day: 0h normal, 8h rest day pay (1 RDP), rest is OT
+        normal = 0.0
+        rest_day_pay_count = 1  # 1 RDP = 8 hours paid
+        ot = max(0.0, gross - ln - 8.0)  # e.g., 12h gross - 1h lunch - 8h RDP = 3h OT
+    
+    # Calculate normal/OT based on work days pattern (for days 1-5)
+    elif work_days_in_week == 4:
+        # 4 days: 11.0h normal each
+        normal = min(11.0, gross - ln)
+        ot = max(0.0, gross - ln - 11.0)
+    
+    elif work_days_in_week == 5:
+        # 5 days: 8.8h normal + 2.2h OT each
+        normal = min(8.8, gross - ln)
+        ot = max(0.0, gross - ln - 8.8)
+    
+    elif work_days_in_week >= 6:
+        # 6+ days: Days 1-5 use 8.8h normal each
+        # (Day 6+ already handled above by consecutive_position check)
+        normal = min(8.8, gross - ln)
+        ot = max(0.0, gross - ln - 8.8)
+    
+    else:
+        # Fallback for < 4 days (conservative default)
+        normal = min(8.8, gross - ln)
+        ot = max(0.0, gross - ln - 8.8)
+    
+    return {
+        'gross': round(gross, 2),
+        'lunch': round(ln, 2),
+        'normal': round(normal, 2),
+        'ot': round(ot, 2),
+        'restDayPay': rest_day_pay_count,  # Count, not hours (0, 1, or 2)
+        'paid': round(gross, 2)
+    }
+
+
 def span_hours(start_dt: datetime, end_dt: datetime) -> float:
     """Calculate gross hours between two datetimes.
     

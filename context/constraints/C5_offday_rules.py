@@ -2,6 +2,8 @@
 
 Enforce minimum number of off-days: each employee must have at least 1 day off
 per every 7 consecutive calendar days.
+
+APGD-D10: EXEMPT from weekly rest day requirement (can work 7 days/week).
 """
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -10,15 +12,18 @@ from datetime import datetime, timedelta
 def add_constraints(model, ctx):
     """
     Enforce minimum off-days: ≥1 day off per 7 days (HARD).
+    APGD-D10 employees: EXEMPT (can work 7 days/week).
     
     Strategy: 
     1. Create daily indicator variables: day_worked[(emp_id, date)] = 1 if ANY shift assigned
     2. For every 7 consecutive calendar days, ensure sum(day_worked) <= 6
+    3. Skip constraint for APGD-D10 employees
     
     Args:
         model: CP-SAT model
         ctx: Context dict with 'slots', 'employees', 'x'
     """
+    from context.engine.time_utils import is_apgd_d10_employee
     
     slots = ctx.get('slots', [])
     employees = ctx.get('employees', [])
@@ -27,6 +32,26 @@ def add_constraints(model, ctx):
     if not slots or not x or not employees:
         print(f"[C5] Warning: Slots, employees, or decision variables not available")
         return
+    
+    # Build requirement map for APGD-D10 detection
+    req_map = {}
+    for demand in ctx.get('demandItems', []):
+        for req in demand.get('requirements', []):
+            req_map[req['requirementId']] = req
+    
+    # Identify APGD-D10 employees (exempt from weekly rest day)
+    apgd_employees = set()
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        product = emp.get('productTypeId', '')
+        for req_id, req in req_map.items():
+            if req.get('productTypeId', '') == product:
+                if is_apgd_d10_employee(emp, req):
+                    apgd_employees.add(emp_id)
+                    break
+    
+    if apgd_employees:
+        print(f"[C5] APGD-D10 detected: {len(apgd_employees)} employees EXEMPT from weekly rest day")
     
     # Group slots by employee and date
     emp_slots_by_date = defaultdict(lambda: defaultdict(list))  # emp_id -> date_str -> [slot_ids]
@@ -55,6 +80,10 @@ def add_constraints(model, ctx):
     # For each employee, create day-worked indicator variables and add constraints
     for emp in employees:
         emp_id = emp.get('employeeId')
+        
+        # Skip APGD-D10 employees (exempt from weekly rest day)
+        if emp_id in apgd_employees:
+            continue
         
         if emp_id not in emp_slots_by_date:
             continue  # No slots for this employee

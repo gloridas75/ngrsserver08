@@ -6,7 +6,12 @@ from datetime import datetime
 from collections import defaultdict
 from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
-from context.engine.time_utils import split_shift_hours, calculate_mom_compliant_hours
+from context.engine.time_utils import (
+    split_shift_hours, 
+    calculate_mom_compliant_hours,
+    calculate_apgd_d10_hours,
+    is_apgd_d10_employee
+)
 from src.ratio_cache import RatioCache
 from src.solver import solve_problem
 
@@ -99,15 +104,37 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
             from context.engine.time_utils import normalize_scheme
             emp_scheme = normalize_scheme(emp_scheme_raw)
             
-            # Calculate MOM-compliant hour breakdown (scheme-aware)
-            hours_dict = calculate_mom_compliant_hours(
-                start_dt=start_dt,
-                end_dt=end_dt,
-                employee_id=emp_id,
-                assignment_date_obj=date_obj,
-                all_assignments=assignments,
-                employee_scheme=emp_scheme  # Pass scheme for Scheme P calculations
-            )
+            # Check if employee is APGD-D10 (requires matching requirement)
+            is_apgd = False
+            product = employee.get('productTypeId', '')
+            for demand in ctx.get('demandItems', []):
+                for req in demand.get('requirements', []):
+                    if req.get('productTypeId', '') == product:
+                        if is_apgd_d10_employee(employee, req):
+                            is_apgd = True
+                            break
+                if is_apgd:
+                    break
+            
+            # Calculate hour breakdown (APGD-D10 or standard)
+            if is_apgd:
+                hours_dict = calculate_apgd_d10_hours(
+                    start_dt=start_dt,
+                    end_dt=end_dt,
+                    employee_id=emp_id,
+                    assignment_date_obj=date_obj,
+                    all_assignments=assignments,
+                    employee_dict=employee
+                )
+            else:
+                hours_dict = calculate_mom_compliant_hours(
+                    start_dt=start_dt,
+                    end_dt=end_dt,
+                    employee_id=emp_id,
+                    assignment_date_obj=date_obj,
+                    all_assignments=assignments,
+                    employee_scheme=emp_scheme
+                )
             
             # Add hour breakdown to assignment (including restDayPay)
             assignment['hours'] = {
