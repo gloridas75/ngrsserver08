@@ -728,14 +728,26 @@ def calculate_mom_compliant_hours(
     """
     # Calculate basic components
     gross = span_hours(start_dt, end_dt)
-    ln = lunch_hours(gross)
     
     # For Scheme P, use pattern work days if provided; otherwise count actual days
     # For Scheme A/B, always count actual days in calendar week
     if employee_scheme == 'P' and pattern_work_days is not None:
         # Use pattern-based count (e.g., 6-day pattern = 6 work days)
         work_days_in_week = pattern_work_days
+        
+        # Scheme P has work-pattern-specific lunch rules (per MOM guidelines):
+        # ≤4 days: 1.00h lunch for shifts > 6h
+        # 5 days:  0.75h lunch for shifts > 6h
+        # ≥6 days: 0.00h lunch (no lunch break)
+        if work_days_in_week >= 6:
+            ln = 0.0
+        elif work_days_in_week == 5:
+            ln = 0.75 if gross > 6.0 else 0.0
+        else:  # ≤4 days
+            ln = lunch_hours(gross)  # Standard 1.0h for gross > 6h
     else:
+        # Scheme A/B or Scheme P without pattern: use standard lunch calculation
+        ln = lunch_hours(gross)
         # Count actual work days in this calendar week
         work_days_in_week = count_work_days_in_calendar_week(
             employee_id, assignment_date_obj, all_assignments
@@ -792,9 +804,10 @@ def calculate_mom_compliant_hours(
         
         elif work_days_in_week >= 7:
             # 7 days/week: Max 29.98h/week
-            # Normal threshold: 29.98h ÷ 7 days = 4.283h/day
+            # Normal threshold: 4.0h/day (per MOM guidelines)
             # Typically: 4h gross shifts (no lunch)
-            normal_threshold = 4.283  # 29.98 / 7
+            # Note: Using 4.0h instead of 29.98/7=4.283h per official table
+            normal_threshold = 4.0  # Fixed per MOM Scheme P guidelines
             normal = min(normal_threshold, gross - ln)
             ot = max(0.0, gross - ln - normal_threshold)
         
