@@ -501,13 +501,23 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                     employee_dict=employee
                 )
             else:
+                # For Scheme P, need to pass pattern work days count
+                pattern_work_days = None
+                if emp_scheme == 'P':
+                    # Get employee's work pattern and count work days
+                    emp_pattern = employee.get('workPattern', [])
+                    if emp_pattern:
+                        # Count non-'O' days in pattern
+                        pattern_work_days = len([d for d in emp_pattern if d != 'O'])
+                
                 hours_dict = calculate_mom_compliant_hours(
                     start_dt=start_dt,
                     end_dt=end_dt,
                     employee_id=emp_id,
                     assignment_date_obj=date_obj,
                     all_assignments=assignments,
-                    employee_scheme=emp_scheme
+                    employee_scheme=emp_scheme,
+                    pattern_work_days=pattern_work_days
                 )
             
             # Add hour breakdown to assignment (including restDayPay)
@@ -739,13 +749,23 @@ def build_incremental_output(
                     employee_dict=employee
                 )
             else:
+                # For Scheme P, need to pass pattern work days count
+                pattern_work_days = None
+                if emp_scheme == 'P':
+                    # Get employee's work pattern and count work days
+                    emp_pattern = employee.get('workPattern', [])
+                    if emp_pattern:
+                        # Count non-'O' days in pattern
+                        pattern_work_days = len([d for d in emp_pattern if d != 'O'])
+                
                 hours_dict = calculate_mom_compliant_hours(
                     start_dt=start_dt,
                     end_dt=end_dt,
                     employee_id=emp_id,
                     assignment_date_obj=date_obj,
                     all_assignments=all_assignments_for_context,
-                    employee_scheme=emp_scheme
+                    employee_scheme=emp_scheme,
+                    pattern_work_days=pattern_work_days
                 )
             
             # Add audit trail

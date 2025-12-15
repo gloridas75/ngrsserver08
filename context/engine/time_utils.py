@@ -678,7 +678,8 @@ def calculate_mom_compliant_hours(
     employee_id: str,
     assignment_date_obj,
     all_assignments: list,
-    employee_scheme: str = 'A'
+    employee_scheme: str = 'A',
+    pattern_work_days: int = None
 ) -> dict:
     """Calculate MOM-compliant work hours with scheme-aware normal/OT split.
     
@@ -704,6 +705,8 @@ def calculate_mom_compliant_hours(
         assignment_date_obj: Assignment date (date object)
         all_assignments: All assignments for context analysis
         employee_scheme: Employment scheme ('A', 'B', or 'P'). Defaults to 'A'.
+        pattern_work_days: Number of work days in the employee's pattern (for Scheme P).
+                          If None, will count actual days in calendar week (old behavior).
     
     Returns:
         Dictionary with keys:
@@ -727,10 +730,17 @@ def calculate_mom_compliant_hours(
     gross = span_hours(start_dt, end_dt)
     ln = lunch_hours(gross)
     
-    # Get work days in calendar week, position in week, and consecutive position
-    work_days_in_week = count_work_days_in_calendar_week(
-        employee_id, assignment_date_obj, all_assignments
-    )
+    # For Scheme P, use pattern work days if provided; otherwise count actual days
+    # For Scheme A/B, always count actual days in calendar week
+    if employee_scheme == 'P' and pattern_work_days is not None:
+        # Use pattern-based count (e.g., 6-day pattern = 6 work days)
+        work_days_in_week = pattern_work_days
+    else:
+        # Count actual work days in this calendar week
+        work_days_in_week = count_work_days_in_calendar_week(
+            employee_id, assignment_date_obj, all_assignments
+        )
+    
     work_day_position_in_week = count_work_day_position_in_week(
         employee_id, assignment_date_obj, all_assignments
     )
