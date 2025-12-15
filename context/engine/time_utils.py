@@ -279,24 +279,33 @@ def span_hours(start_dt: datetime, end_dt: datetime) -> float:
 
 
 def lunch_hours(gross: float) -> float:
-    """Calculate lunch break duration.
+    """Calculate lunch break duration based on shift length.
     
-    Industry standard: 1-hour meal break applies only if gross hours > 6.
+    MOM Guidelines (ALL SCHEMES):
+    - Shift > 8h: 1.0h lunch
+    - Shift > 6h but ≤ 8h: 0.75h lunch (45 minutes)
+    - Shift ≤ 6h: 0.0h lunch
     
     Args:
         gross: Gross hours worked
     
     Returns:
-        Lunch hours: 1.0 if gross > 6.0, else 0.0
+        Lunch hours: 1.0, 0.75, or 0.0 based on shift duration
     
     Examples:
         gross=4.0  → 0.0 (no lunch on short shifts)
         gross=6.0  → 0.0 (exactly 6 hours, no lunch)
-        gross=6.5  → 1.0 (more than 6, lunch applies)
-        gross=9.0  → 1.0 (standard 9h shift with lunch)
-        gross=11.0 → 1.0 (11h shift with lunch and OT)
+        gross=7.0  → 0.75 (7h shift gets 45min lunch)
+        gross=8.0  → 0.75 (8h shift gets 45min lunch)
+        gross=9.0  → 1.0 (9h shift gets 1h lunch)
+        gross=12.0 → 1.0 (12h shift gets 1h lunch)
     """
-    return 1.0 if gross > 6.0 else 0.0
+    if gross > 8.0:
+        return 1.0
+    elif gross > 6.0:
+        return 0.75
+    else:
+        return 0.0
 
 
 def split_normal_ot(gross: float) -> tuple:
@@ -729,26 +738,16 @@ def calculate_mom_compliant_hours(
     # Calculate basic components
     gross = span_hours(start_dt, end_dt)
     
+    # Calculate lunch based on shift duration (same for ALL schemes)
+    ln = lunch_hours(gross)
+    
     # For Scheme P, use pattern work days if provided; otherwise count actual days
     # For Scheme A/B, always count actual days in calendar week
     if employee_scheme == 'P' and pattern_work_days is not None:
         # Use pattern-based count (e.g., 6-day pattern = 6 work days)
         work_days_in_week = pattern_work_days
-        
-        # Scheme P has work-pattern-specific lunch rules (per MOM guidelines):
-        # ≤4 days: 1.00h lunch for shifts > 6h
-        # 5 days:  0.75h lunch for shifts > 6h
-        # ≥6 days: 0.00h lunch (no lunch break)
-        if work_days_in_week >= 6:
-            ln = 0.0
-        elif work_days_in_week == 5:
-            ln = 0.75 if gross > 6.0 else 0.0
-        else:  # ≤4 days
-            ln = lunch_hours(gross)  # Standard 1.0h for gross > 6h
     else:
-        # Scheme A/B or Scheme P without pattern: use standard lunch calculation
-        ln = lunch_hours(gross)
-        # Count actual work days in this calendar week
+        # Scheme A/B or Scheme P without pattern: count actual days in calendar week
         work_days_in_week = count_work_days_in_calendar_week(
             employee_id, assignment_date_obj, all_assignments
         )
