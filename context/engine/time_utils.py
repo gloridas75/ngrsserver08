@@ -195,8 +195,11 @@ def calculate_apgd_d10_hours(
     gross = span_hours(start_dt, end_dt)
     ln = lunch_hours(gross)
     
-    # Get work days in calendar week and consecutive position
+    # Get work days in calendar week and position within that week
     work_days_in_week = count_work_days_in_calendar_week(
+        employee_id, assignment_date_obj, all_assignments
+    )
+    work_day_position_in_week = count_work_day_position_in_week(
         employee_id, assignment_date_obj, all_assignments
     )
     consecutive_position = find_consecutive_position(
@@ -206,10 +209,11 @@ def calculate_apgd_d10_hours(
     # Initialize rest day pay count (0, 1, or 2)
     rest_day_pay_count = 0
     
-    # APGD-D10 prioritizes consecutive position for RDP
-    # Check consecutive position FIRST before calendar week logic
-    if consecutive_position >= 6:
-        # 6th or 7th consecutive day: 0h normal, 8h rest day pay (1 RDP), rest is OT
+    # CRITICAL FIX: RDP based on CALENDAR WEEK position, NOT consecutive position
+    # Employee working Thu-Sun (Week 1), Mon-Tue (Week 2): Tuesday is 6th consecutive
+    # but only 2nd day in Week 2 → NO RDP until 6th day IN THE CURRENT WEEK
+    if work_day_position_in_week >= 6:
+        # 6th or 7th WORK DAY in current calendar week: 0h normal, 8h rest day pay (1 RDP), rest is OT
         normal = 0.0
         rest_day_pay_count = 1  # 1 RDP = 8 hours paid
         ot = max(0.0, gross - ln - 8.0)  # e.g., 12h gross - 1h lunch - 8h RDP = 3h OT
@@ -510,6 +514,64 @@ def get_calendar_week_bounds(date_obj) -> tuple:
     return (monday, sunday)
 
 
+def count_work_day_position_in_week(employee_id: str, current_date_obj, all_assignments: list) -> int:
+    """Count which working day position this is within the current calendar week (Mon-Sun).
+    
+    Returns the position (1-7) of the current day among work days in this calendar week.
+    
+    Example:
+        Week: Mon(work), Tue(off), Wed(work), Thu(work), Fri(off), Sat(work), Sun(work)
+        - Monday: position 1 (1st work day this week)
+        - Wednesday: position 2 (2nd work day this week)  
+        - Thursday: position 3 (3rd work day this week)
+        - Saturday: position 4 (4th work day this week)
+        - Sunday: position 5 (5th work day this week)
+    
+    This is CRITICAL for RDP calculation:
+    - RDP applies on 6th/7th WORK DAY of a calendar week
+    - NOT on 6th consecutive day across multiple weeks
+    
+    Args:
+        employee_id: Employee ID
+        current_date_obj: Current assignment date (date object)
+        all_assignments: List of all assignments for context
+    
+    Returns:
+        int: Position (1-7) of current day among work days in this calendar week
+    """
+    from datetime import timedelta
+    
+    # Get week boundaries (Monday to Sunday)
+    week_start = current_date_obj - timedelta(days=current_date_obj.weekday())
+    
+    # Build set of work dates for this employee in this week (up to current date)
+    work_dates_in_week = []
+    for assignment in all_assignments:
+        if assignment.get('employeeId') != employee_id:
+            continue
+        
+        assign_date_str = assignment.get('date')
+        shift_code = assignment.get('shiftCode', '')
+        
+        if assign_date_str and shift_code and shift_code != 'O':
+            try:
+                from datetime import datetime as dt
+                assign_date = dt.fromisoformat(assign_date_str).date()
+                # Only count dates in the same calendar week AND up to current date
+                if week_start <= assign_date <= current_date_obj:
+                    work_dates_in_week.append(assign_date)
+            except Exception:
+                continue
+    
+    # Sort dates and find position
+    work_dates_in_week.sort()
+    try:
+        position = work_dates_in_week.index(current_date_obj) + 1  # 1-indexed
+        return position
+    except ValueError:
+        return 1  # Fallback if current date not found
+
+
 def count_work_days_in_calendar_week(
     employee_id: str,
     date_obj,
@@ -665,8 +727,11 @@ def calculate_mom_compliant_hours(
     gross = span_hours(start_dt, end_dt)
     ln = lunch_hours(gross)
     
-    # Get work days in calendar week and consecutive position
+    # Get work days in calendar week, position in week, and consecutive position
     work_days_in_week = count_work_days_in_calendar_week(
+        employee_id, assignment_date_obj, all_assignments
+    )
+    work_day_position_in_week = count_work_day_position_in_week(
         employee_id, assignment_date_obj, all_assignments
     )
     consecutive_position = find_consecutive_position(
@@ -744,16 +809,21 @@ def calculate_mom_compliant_hours(
             ot = max(0.0, gross - ln - 8.8)
         
         elif work_days_in_week >= 6:
-            # 6+ days/week: Check if 6th consecutive day WITHIN SAME ISO WEEK
-            # Rest-day pay only applies when all 6 consecutive days fall in same ISO week
-            # This encourages solver to pack 6 work days within single week (reduces gaps)
-            if consecutive_position >= 6:
-                # 6th+ consecutive day within same ISO week: 0h normal, 8.0h rest day pay, rest OT
+            # 6+ days/week: RDP applies on 6th+ day IN THE CURRENT CALENDAR WEEK
+            # CRITICAL: Must check work_day_position_in_week, NOT consecutive_position
+            # Example: Employee works Thu-Sun (Week 1), then Mon-Tue (Week 2)
+            #   - Tuesday is 6th consecutive, but only 2nd day in Week 2 → NO RDP
+            #   - RDP only applies if THIS DAY is the 6th+ work day IN THIS CALENDAR WEEK
+            
+            # RDP only on 6th/7th WORK DAY of THE CURRENT CALENDAR WEEK
+            # (not based on consecutive days spanning multiple weeks)
+            if work_day_position_in_week >= 6:
+                # 6th/7th work day IN THIS WEEK: 0h normal, 8.0h rest day pay, rest OT
                 normal = 0.0
                 rest_day_pay = 8.0
                 ot = max(0.0, gross - ln - rest_day_pay)
             else:
-                # Position 1-5: 8.8h normal + rest OT
+                # Position 1-5 in this week: 8.8h normal + rest OT
                 normal = min(8.8, gross - ln)
                 ot = max(0.0, gross - ln - 8.8)
         
