@@ -456,7 +456,15 @@ def build_model(ctx):
     
     # ========== ROTATION OFFSET OPTIMIZATION (OPTIONAL) ==========
     # Check if rotation offsets should be optimized by CP-SAT
-    fixed_rotation_offset = ctx.get('fixedRotationOffset', True)
+    # Support both legacy boolean and new string values
+    fixed_rotation_offset_raw = ctx.get('fixedRotationOffset', True)
+    
+    # Normalize to string for comparison
+    if isinstance(fixed_rotation_offset_raw, bool):
+        fixed_rotation_offset = "auto" if fixed_rotation_offset_raw else "solverOptimized"
+    else:
+        fixed_rotation_offset = fixed_rotation_offset_raw
+    
     offset_vars = {}  # Will store offset decision variables if optimization enabled
     
     # INCREMENTAL MODE ENHANCEMENT: Auto-optimize offsets for new joiners
@@ -469,9 +477,12 @@ def build_model(ctx):
             print(f"[build_model] INCREMENTAL MODE: Auto-optimizing offsets for {len(new_joiner_ids)} new joiners")
             print(f"  Existing employees will keep their fixed offsets")
     
-    if not fixed_rotation_offset or new_joiner_ids:
+    # Determine if solver should optimize offsets
+    solver_optimizes_offsets = (fixed_rotation_offset == "solverOptimized") or new_joiner_ids
+    
+    if solver_optimizes_offsets:
         print(f"[build_model] Creating rotation offset decision variables...")
-        if not fixed_rotation_offset:
+        if fixed_rotation_offset == "solverOptimized":
             print(f"  Mode: CP-SAT will optimize rotation offsets for ALL employees")
         
         # Create offset decision variables for each employee
@@ -481,8 +492,8 @@ def build_model(ctx):
         for emp in employees:
             emp_id = emp.get('employeeId')
             
-            # INCREMENTAL MODE: Only optimize new joiners if fixedRotationOffset=true
-            if fixed_rotation_offset and emp_id not in new_joiner_ids:
+            # INCREMENTAL MODE: Only optimize new joiners if mode is "auto" or "teamOffsets"
+            if fixed_rotation_offset in ["auto", "teamOffsets"] and emp_id not in new_joiner_ids:
                 continue  # Skip existing employees, they keep fixed offsets
             
             # Try to get actual pattern length from slots this employee can work

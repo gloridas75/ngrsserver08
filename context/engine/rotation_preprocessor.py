@@ -37,9 +37,17 @@ def preprocess_rotation_offsets(input_data: dict) -> dict:
         Modified input_data with corrected rotationOffset values and metadata
     """
     
-    # Skip if fixedRotationOffset is false (solver will optimize)
-    if not input_data.get('fixedRotationOffset', True):
-        logger.info("fixedRotationOffset=false, skipping pre-processing")
+    # Skip if mode is solverOptimized (solver will decide)
+    fixed_rotation_offset_raw = input_data.get('fixedRotationOffset', True)
+    
+    # Normalize to string
+    if isinstance(fixed_rotation_offset_raw, bool):
+        mode = "auto" if fixed_rotation_offset_raw else "solverOptimized"
+    else:
+        mode = fixed_rotation_offset_raw
+    
+    if mode == "solverOptimized":
+        logger.info(f"fixedRotationOffset='{mode}', skipping pre-processing")
         return input_data
     
     # Check if all employees have offset=0 (synchronized rest days)

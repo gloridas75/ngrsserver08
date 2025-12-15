@@ -2,8 +2,10 @@
 Rotation Offset Manager
 
 Automatically manages employee rotation offsets for pattern-based scheduling.
-When fixedRotationOffset=true with patterns containing 'O' days, employees need
-staggered offsets to ensure coverage on all calendar days.
+Supports multiple offset assignment modes:
+- "auto": Sequential staggering (0, 1, 2, ...)
+- "teamOffsets": Team-level offset assignment
+- "solverOptimized": Solver decides offsets
 
 Usage:
     from src.offset_manager import ensure_staggered_offsets
@@ -13,10 +15,41 @@ Usage:
 """
 
 import logging
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 from collections import Counter
 
 logger = logging.getLogger(__name__)
+
+
+def normalize_fixed_rotation_offset(value: Union[bool, str]) -> str:
+    """
+    Normalize fixedRotationOffset value to string format.
+    
+    Supports backward compatibility:
+    - true → "auto"
+    - false → "solverOptimized"
+    - String values pass through
+    
+    Args:
+        value: Boolean or string value
+    
+    Returns:
+        Normalized string: "auto", "teamOffsets", or "solverOptimized"
+    """
+    if isinstance(value, bool):
+        return "auto" if value else "solverOptimized"
+    
+    if isinstance(value, str):
+        valid_values = ["auto", "teamOffsets", "solverOptimized"]
+        if value in valid_values:
+            return value
+        else:
+            logger.warning(f"Invalid fixedRotationOffset value '{value}', defaulting to 'auto'")
+            return "auto"
+    
+    # Default fallback
+    logger.warning(f"Unexpected fixedRotationOffset type {type(value)}, defaulting to 'auto'")
+    return "auto"
 
 
 def get_pattern_cycle_length(work_pattern: List[str]) -> int:
@@ -47,44 +80,127 @@ def has_off_days(work_pattern: List[str]) -> bool:
     return 'O' in work_pattern
 
 
-def should_stagger_offsets(input_data: Dict[str, Any]) -> bool:
+def validate_team_offsets(input_data: Dict[str, Any], cycle_length: int) -> tuple[bool, List[str]]:
     """
-    Determine if offsets should be automatically staggered.
-    
-    Criteria:
-    1. fixedRotationOffset must be true
-    2. Work pattern must contain 'O' days
-    3. Employees exist in the input
+    Validate teamOffsets configuration.
     
     Args:
         input_data: Full input JSON data
+        cycle_length: Pattern cycle length
     
     Returns:
-        True if offsets should be staggered
+        Tuple of (is_valid, list_of_errors)
     """
-    # Check fixedRotationOffset
-    if not input_data.get('fixedRotationOffset', False):
-        logger.info("fixedRotationOffset is false - no staggering needed (solver will optimize)")
-        return False
+    errors = []
     
-    # Check if there are employees
+    team_offsets_list = input_data.get('teamOffsets', [])
+    if not team_offsets_list:
+        errors.append("fixedRotationOffset='teamOffsets' requires 'teamOffsets' array in input")
+        return False, errors
+    
+    # Build team offset map
+    team_offset_map = {}
+    for entry in team_offsets_list:
+        team_id = entry.get('teamId')
+        offset = entry.get('rotationOffset')
+        
+        if not team_id:
+            errors.append(f"teamOffsets entry missing 'teamId': {entry}")
+            continue
+        
+        if offset is None:
+            errors.append(f"teamOffsets entry for team '{team_id}' missing 'rotationOffset'")
+            continue
+        
+        # Validate offset within cycle length
+        if not isinstance(offset, int):
+            errors.append(f"Team '{team_id}' has non-integer offset: {offset}")
+            continue
+        
+        if offset < 0 or offset >= cycle_length:
+            errors.append(f"Team '{team_id}' offset {offset} out of range [0, {cycle_length-1}] for cycle length {cycle_length}")
+            continue
+        
+        team_offset_map[team_id] = offset
+    
+    # Check all employees have teams in the map
     employees = input_data.get('employees', [])
-    if not employees:
-        logger.warning("No employees found in input")
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        team_id = emp.get('teamId')
+        
+        if not team_id:
+            errors.append(f"Employee '{emp_id}' missing 'teamId' (required for teamOffsets mode)")
+            continue
+        
+        if team_id not in team_offset_map:
+            errors.append(f"Employee '{emp_id}' has team '{team_id}' not found in teamOffsets array")
+    
+    is_valid = len(errors) == 0
+    return is_valid, errors
+
+
+def apply_team_offsets(input_data: Dict[str, Any]) -> int:
+    """
+    Apply team-level offsets to employees.
+    
+    Args:
+        input_data: Full input JSON data (modified in place)
+    
+    Returns:
+        Number of employees updated
+    """
+    team_offsets_list = input_data.get('teamOffsets', [])
+    
+    # Build team offset map
+    team_offset_map = {}
+    for entry in team_offsets_list:
+        team_id = entry.get('teamId')
+        offset = entry.get('rotationOffset')
+        if team_id and offset is not None:
+            team_offset_map[team_id] = offset
+    
+    # Apply to employees
+    updated_count = 0
+    employees = input_data.get('employees', [])
+    for emp in employees:
+        team_id = emp.get('teamId')
+        if team_id and team_id in team_offset_map:
+            new_offset = team_offset_map[team_id]
+            old_offset = emp.get('rotationOffset', 0)
+            
+            if old_offset != new_offset:
+                emp['rotationOffset'] = new_offset
+                updated_count += 1
+    
+    return updated_count
+
+
+def should_stagger_offsets(mode: str, input_data: Dict[str, Any]) -> bool:
+    """
+    Determine if offsets should be automatically processed.
+    
+    Args:
+        mode: Normalized mode ("auto", "teamOffsets", "solverOptimized")
+        input_data: Full input JSON data
+    
+    Returns:
+        True if offsets need processing
+    """
+    if mode == "solverOptimized":
+        logger.info("Mode 'solverOptimized' - no preprocessing needed (solver will optimize)")
         return False
     
-    # Check if any requirement has 'O' days in pattern
-    demand_items = input_data.get('demandItems', [])
-    for demand in demand_items:
-        requirements = demand.get('requirements', [])
-        for req in requirements:
-            work_pattern = req.get('workPattern', [])
-            if has_off_days(work_pattern):
-                logger.info(f"Found O-pattern in requirement {req.get('requirementId')} - staggering needed")
-                return True
+    if mode in ["auto", "teamOffsets"]:
+        # Check if there are employees
+        employees = input_data.get('employees', [])
+        if not employees:
+            logger.warning("No employees found in input")
+            return False
+        
+        return True
     
-    logger.info("No O-patterns found - staggering not required but harmless")
-    return True  # Stagger anyway for consistency
+    return False
 
 
 def get_current_offset_distribution(employees: List[Dict[str, Any]]) -> Counter:
@@ -127,23 +243,27 @@ def stagger_offsets(employees: List[Dict[str, Any]], cycle_length: int) -> int:
 
 def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) -> Dict[str, Any]:
     """
-    Ensure employees have staggered rotation offsets for pattern-based scheduling.
+    Ensure employees have proper rotation offsets based on fixedRotationOffset mode.
     
-    This function:
-    1. Checks if staggering is needed (fixedRotationOffset=true + O-patterns)
-    2. Determines the cycle length from work patterns
-    3. Distributes employees evenly across offsets (0, 1, 2, ..., cycle_length-1)
-    4. Logs the changes made
+    Supported modes:
+    - "auto": Sequential staggering (0, 1, 2, ...)
+    - "teamOffsets": Apply team-level offsets
+    - "solverOptimized": Skip processing (solver decides)
+    - true (legacy): Converts to "auto"
+    - false (legacy): Converts to "solverOptimized"
     
     Args:
         input_data: Full input JSON data (modified in place)
-        force: If True, stagger even if criteria not met
+        force: If True, process even if mode suggests skipping
     
     Returns:
-        Modified input_data with staggered offsets
+        Modified input_data with offsets applied
+    
+    Raises:
+        ValueError: If validation fails (invalid team offsets, etc.)
     """
     logger.info("=" * 80)
-    logger.info("OFFSET MANAGER: Checking rotation offsets")
+    logger.info("OFFSET MANAGER: Processing rotation offsets")
     logger.info("=" * 80)
     
     employees = input_data.get('employees', [])
@@ -151,18 +271,21 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
         logger.warning("No employees to process")
         return input_data
     
-    # Check if staggering is needed
-    if not force and not should_stagger_offsets(input_data):
-        logger.info("Offset staggering not required for this configuration")
-        return input_data
+    # Normalize and store the mode
+    raw_value = input_data.get('fixedRotationOffset', True)
+    mode = normalize_fixed_rotation_offset(raw_value)
     
-    # Get current state
-    before_dist = get_current_offset_distribution(employees)
-    logger.info(f"Current offset distribution: {dict(sorted(before_dist.items()))}")
+    # Update input_data to use normalized string value
+    if input_data['fixedRotationOffset'] != mode:
+        logger.info(f"Converting fixedRotationOffset: {raw_value} → '{mode}'")
+        input_data['fixedRotationOffset'] = mode
     
-    # Check if already properly staggered
-    if len(before_dist) > 1 and all(count > 0 for count in before_dist.values()):
-        logger.info("✓ Offsets already staggered - no changes needed")
+    logger.info(f"Mode: {mode}")
+    
+    # Check if processing is needed
+    if not force and not should_stagger_offsets(mode, input_data):
+        logger.info(f"No offset processing needed for mode '{mode}'")
+        logger.info("=" * 80)
         return input_data
     
     # Determine cycle length from patterns
@@ -174,14 +297,37 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
             cycle_length = get_pattern_cycle_length(first_pattern)
             logger.info(f"Detected pattern cycle length: {cycle_length} from {first_pattern}")
     
-    # Apply staggered offsets
-    logger.info(f"Applying staggered offsets across {cycle_length} values...")
-    updated_count = stagger_offsets(employees, cycle_length)
+    # Get current state
+    before_dist = get_current_offset_distribution(employees)
+    logger.info(f"Current offset distribution: {dict(sorted(before_dist.items()))}")
     
-    # Report results
+    # Process based on mode
+    if mode == "auto":
+        # Check if already properly staggered
+        if len(before_dist) > 1 and all(count > 0 for count in before_dist.values()):
+            logger.info("✓ Offsets already staggered - no changes needed")
+        else:
+            # Apply sequential staggering
+            logger.info(f"Applying sequential staggered offsets across {cycle_length} values...")
+            updated_count = stagger_offsets(employees, cycle_length)
+            logger.info(f"✓ Updated {updated_count} employees")
+    
+    elif mode == "teamOffsets":
+        # Validate team offsets first
+        is_valid, errors = validate_team_offsets(input_data, cycle_length)
+        if not is_valid:
+            error_msg = "Team offset validation failed:\n  - " + "\n  - ".join(errors)
+            logger.error(error_msg)
+            raise ValueError(error_msg)
+        
+        # Apply team offsets
+        logger.info("Applying team-level offsets...")
+        updated_count = apply_team_offsets(input_data)
+        logger.info(f"✓ Updated {updated_count} employees from team offsets")
+    
+    # Report final state
     after_dist = get_current_offset_distribution(employees)
-    logger.info(f"New offset distribution: {dict(sorted(after_dist.items()))}")
-    logger.info(f"✓ Updated {updated_count} employees")
+    logger.info(f"Final offset distribution: {dict(sorted(after_dist.items()))}")
     
     logger.info("=" * 80)
     
@@ -200,7 +346,9 @@ def validate_offset_configuration(input_data: Dict[str, Any]) -> tuple[bool, Lis
     """
     issues = []
     
-    fixed_offset = input_data.get('fixedRotationOffset', False)
+    raw_value = input_data.get('fixedRotationOffset', True)
+    mode = normalize_fixed_rotation_offset(raw_value)
+    
     employees = input_data.get('employees', [])
     
     if not employees:
@@ -209,27 +357,33 @@ def validate_offset_configuration(input_data: Dict[str, Any]) -> tuple[bool, Lis
     # Check for O-patterns
     has_o_pattern = False
     demand_items = input_data.get('demandItems', [])
+    cycle_length = 6  # default
+    
     for demand in demand_items:
         requirements = demand.get('requirements', [])
         for req in requirements:
             work_pattern = req.get('workPattern', [])
             if has_off_days(work_pattern):
                 has_o_pattern = True
+                cycle_length = len(work_pattern)
                 break
     
-    if not has_o_pattern:
-        return True, []  # No O-patterns, no strict requirements
+    if not has_o_pattern and mode != "solverOptimized":
+        issues.append(f"No O-patterns found but fixedRotationOffset is '{mode}' - consider 'solverOptimized'")
     
-    # For O-patterns, check configuration
-    if not fixed_offset:
-        issues.append("fixedRotationOffset should be true for patterns with 'O' days")
+    # Validate based on mode
+    if mode == "teamOffsets":
+        is_valid, errors = validate_team_offsets(input_data, cycle_length)
+        if not is_valid:
+            issues.extend(errors)
     
-    offset_dist = get_current_offset_distribution(employees)
-    
-    if len(offset_dist) == 1 and 0 in offset_dist:
-        issues.append(f"All {len(employees)} employees have offset 0 - need staggered offsets for O-pattern coverage")
-    elif len(offset_dist) < 3:
-        issues.append(f"Only {len(offset_dist)} different offset values - recommend more variety for better coverage")
+    elif mode == "auto":
+        offset_dist = get_current_offset_distribution(employees)
+        
+        if len(offset_dist) == 1 and 0 in offset_dist:
+            issues.append(f"All {len(employees)} employees have offset 0 - need staggered offsets for O-pattern coverage (will be auto-fixed)")
+        elif len(offset_dist) < 3 and has_o_pattern:
+            issues.append(f"Only {len(offset_dist)} different offset values - recommend more variety for better coverage (will be auto-fixed)")
     
     is_valid = len(issues) == 0
     return is_valid, issues
