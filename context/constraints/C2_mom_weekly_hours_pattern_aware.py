@@ -115,11 +115,13 @@ def add_constraints(model, ctx):
     Enforce weekly normal-hours cap (44h) and monthly OT cap (72h) - HARD constraints.
     
     Uses PATTERN-AWARE normal hours calculation to correctly handle 6-day patterns.
+    APGD-D10 EXEMPTION: APGD-D10 employees exempt from weekly 44h cap (use monthly caps instead).
     
     Args:
         model: CP-SAT model
         ctx: Context dict with 'employees', 'demandItems', 'slots', 'x'
     """
+    from context.engine.time_utils import is_apgd_d10_employee
     
     employees = ctx.get('employees', [])
     demand_items = ctx.get('demandItems', [])
@@ -129,6 +131,26 @@ def add_constraints(model, ctx):
     if not slots or not x:
         print(f"[C2] Warning: Slots or decision variables not available")
         return
+    
+    # Build requirement map for APGD-D10 detection
+    req_map = {}
+    for demand in demand_items:
+        for req in demand.get('requirements', []):
+            req_map[req['requirementId']] = req
+    
+    # Identify APGD-D10 employees (exempt from weekly 44h cap)
+    apgd_employees = set()
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        product = emp.get('productTypeId', '')
+        for req_id, req in req_map.items():
+            if req.get('productTypeId', '') == product:
+                if is_apgd_d10_employee(emp, req):
+                    apgd_employees.add(emp_id)
+                    break
+    
+    if apgd_employees:
+        print(f"[C2] APGD-D10 detected: {len(apgd_employees)} employees EXEMPT from weekly 44h cap")
     
     # Build requirement → pattern mapping from demandItems
     # This is needed for v0.70 schema where ICPMP assigns patterns to requirements,
@@ -223,6 +245,7 @@ def add_constraints(model, ctx):
 
     # ===== ADD CONSTRAINTS FOR WEEKLY NORMAL HOURS <= 44H =====
     weekly_constraints = 0
+    apgd_skipped = 0
     
     # Check for incremental mode locked hours
     incremental_ctx = ctx.get('_incremental')
@@ -233,6 +256,11 @@ def add_constraints(model, ctx):
             print(f"[C2] INCREMENTAL MODE: Using locked weekly hours for {len(locked_weekly_hours)} employees")
     
     for emp_id, weeks in emp_week_slots.items():
+        # Skip APGD-D10 employees (they use monthly caps, not weekly caps)
+        if emp_id in apgd_employees:
+            apgd_skipped += 1
+            continue
+        
         work_pattern = emp_patterns.get(emp_id, [])
         
         for week_key, week_slots in weeks.items():
@@ -331,5 +359,7 @@ def add_constraints(model, ctx):
     print(f"     4-day employees: {four_day_employees} (11.0h normal/shift)")
     print(f"     5-day employees: {five_day_employees} (8.8h normal/shift)")
     print(f"     6-day employees: {six_day_employees} (8.8h normal for first 5 days, 0h for 6th)")
+    if apgd_skipped > 0:
+        print(f"     APGD-D10: {apgd_skipped} employees EXEMPT from weekly 44h cap (use monthly caps)")
     print(f"     ✓ Added {weekly_constraints} weekly normal hours constraints (HARD)")
     print(f"     ✓ Added {monthly_constraints} monthly OT hours constraints (HARD)\n")
