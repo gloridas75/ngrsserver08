@@ -450,42 +450,37 @@ def main():
             status, solver_result, assignments, violations = solve(ctx)
     else:
         # No ratio optimization - use unified solver
+        # This is the SAME path as async API (redis_worker.py)
         print(f"[CLI] Using unified solver (no ratio optimization)")
         result = solve_problem(input_data, log_prefix="[CLI]")
         
-        # Extract components from unified solver result for compatibility
-        # with build_output_schema (which expects old format)
+        # Result from solve_problem() is ALREADY the complete output with:
+        # - Full hour breakdowns (normal, OT, RDP, public holiday hours)
+        # - Employee roster with daily status
+        # - Proper MOM-compliant calculations
+        # Just write it directly - no need to rebuild!
+        output = result
+        
+        # For backwards compatibility with code that expects these variables
         status = result.get('status')
-        
-        # Add timestamps for output schema compatibility
-        from datetime import datetime as dt
-        now = dt.now().isoformat()
-        
-        solver_result = {
-            'status': status,
-            'scores': result.get('score', {}),
-            'scoreBreakdown': result.get('scoreBreakdown', {}),
-            'start_timestamp': now,
-            'end_timestamp': now,
-            'duration_seconds': result.get('durationSeconds', 0)
-        }
         assignments = result.get('assignments', [])
-        violations = result.get('violations', [])
-        
-        # Load ctx for build_output_schema (it needs employee info)
-        ctx = load_input(input_data)
-        ctx["timeLimit"] = args.time_limit
+        solver_run = result.get('solverRun', {})
 
-    # Build output in expected schema format
-    output = build_output_schema(str(infile_path), ctx, status, solver_result, assignments, violations)
+    # Build output in expected schema format (only for ratio optimization path)
+    if auto_optimize_ratio and first_req is not None:
+        output = build_output_schema(str(infile_path), ctx, status, solver_result, assignments, violations)
 
     # Write output
     outfile_path.write_text(json.dumps(output, indent=2), encoding="utf-8")
-    print(f"✓ Solve status: {solver_result['status']} → wrote {outfile_path}")
-    print(f"  Assignments: {len(assignments)}")
-    print(f"  Hard score: {output['score']['hard']}")
-    print(f"  Soft score: {output['score']['soft']}")
-    print(f"  Overall score: {output['score']['overall']}")
+    
+    # Display summary
+    score = output.get('score', {})
+    solver_status = output.get('solverRun', {}).get('status', 'UNKNOWN')
+    print(f"✓ Solve status: {solver_status} → wrote {outfile_path}")
+    print(f"  Assignments: {len(output.get('assignments', []))}")
+    print(f"  Hard score: {score.get('hard', 0)}")
+    print(f"  Soft score: {score.get('soft', 0)}")
+    print(f"  Overall score: {score.get('overall', 0)}")
 
 if __name__ == "__main__":
     main()
