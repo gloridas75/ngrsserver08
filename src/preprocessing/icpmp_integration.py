@@ -414,9 +414,9 @@ class ICPMPPreprocessor:
         eligible = []
         filtered_count = 0
         
-        # Extract criteria
+        # Extract criteria (v0.95: use rankIds plural for multiple rank support)
         product_type = requirement.get('productTypeId')
-        rank = requirement.get('rankId')
+        ranks = requirement.get('rankIds', [])  # Changed from rankId to rankIds
         ou_id = demand_item.get('ouId')
         required_quals = set(requirement.get('requiredQualifications', []))
         gender_req = requirement.get('gender', 'Any')
@@ -454,7 +454,8 @@ class ICPMPPreprocessor:
             # Check basic criteria
             if product_type and emp.get('productTypeId') != product_type:
                 continue
-            if rank and emp.get('rankId') != rank:
+            # v0.95: Support multiple ranks - employee must match ANY rank in the list
+            if ranks and emp.get('rankId') not in ranks:
                 continue
             if ou_id and emp.get('ouId') != ou_id:
                 continue

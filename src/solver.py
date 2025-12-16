@@ -125,6 +125,18 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                 'enabled': False,
                 'warnings': [f"Preprocessing failed: {str(preprocessing_error)}"]
             }
+        
+        # IMPORTANT: If using teamOffsets mode, apply team-based offsets after ICPMP
+        # ICPMP assigns sequential offsets (0, 1, 2...), but teamOffsets mode needs
+        # to override these with team-specific offsets
+        fixed_rotation_offset_mode = input_data.get('fixedRotationOffset', 'auto')
+        if fixed_rotation_offset_mode == 'teamOffsets':
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} APPLYING TEAM-BASED OFFSETS (after ICPMP)")
+            print(f"{log_prefix} ======================================================================")
+            input_data = ensure_staggered_offsets(input_data)
+            print(f"{log_prefix} ✓ Team offsets applied")
+            print()
     
     elif employees_with_patterns > 0:
         # SCENARIO B: Patterns exist → Check if offsets need staggering

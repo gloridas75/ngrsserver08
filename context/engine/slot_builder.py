@@ -30,7 +30,7 @@ class Slot:
         locationId: Location where the shift is located
         ouId: Organizational unit
         productTypeId: Product type (e.g., 'APO', 'AVSO')
-        rankId: Rank requirement
+        rankIds: List of acceptable rank IDs (OR logic - employee must match ANY rank)
         genderRequirement: Gender requirement ('Any', 'M', 'F', 'Mix')
         schemeRequirement: Scheme requirement ('A', 'B', 'P', 'Global')
         requiredQualifications: List of required qualification codes
@@ -50,7 +50,7 @@ class Slot:
     locationId: str
     ouId: str
     productTypeId: str
-    rankId: str
+    rankIds: List[str]  # Changed from rankId (singular) to rankIds (plural) - supports multiple ranks
     genderRequirement: str
     schemeRequirement: str
     requiredQualifications: List[str]
@@ -288,7 +288,8 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
             for req_idx, req in enumerate(requirements):
                 requirement_id = req.get("requirementId", f"REQ{req_idx}")
                 product_type = req.get("productTypeId")  # v0.70 schema uses productTypeId
-                rank_id = req.get("rankId")
+                # Use normalized rankIds (plural) - already converted by data_loader
+                rank_ids = req.get("rankIds", [])  # Changed from rankId to rankIds
                 
                 # Normalize headcount to support both formats:
                 # Legacy: "headcount": 10 (single value for all shifts)
@@ -319,7 +320,7 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     print(f"      ⚠️  Requirement {requirement_id} has empty work pattern, skipping")
                     continue
                 
-                print(f"      Requirement {requirement_id}: product={product_type}, rank={rank_id}, gender={gender_req}, scheme={scheme_req}")
+                print(f"      Requirement {requirement_id}: product={product_type}, ranks={rank_ids}, gender={gender_req}, scheme={scheme_req}")
                 
                 # Display headcount info
                 if isinstance(headcount_raw, dict):
@@ -443,7 +444,7 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                                 locationId=location_id,
                                 ouId=ou_id,
                                 productTypeId=product_type,
-                                rankId=rank_id,
+                                rankIds=rank_ids,  # Changed from rankId to rankIds
                                 genderRequirement=gender_req,
                                 schemeRequirement=scheme_req,
                                 requiredQualifications=required_quals,
@@ -479,7 +480,7 @@ def print_slots(slots: List[Slot], limit: Optional[int] = None) -> None:
         print(f"    Date: {slot.date}, Shift: {slot.shiftCode}")
         print(f"    Time: {slot.start.strftime('%H:%M')} - {slot.end.strftime('%H:%M')} (next_day={slot.end.date() > slot.date})")
         print(f"    Location: {slot.locationId}, OU: {slot.ouId}")
-        print(f"    Product: {slot.productTypeId}, Rank: {slot.rankId}")
+        print(f"    Product: {slot.productTypeId}, Ranks: {slot.rankIds}")  # Changed to rankIds (plural)
         print(f"    Gender: {slot.genderRequirement}, Scheme: {slot.schemeRequirement}")
         print(f"    Required Qualifications: {slot.requiredQualifications}")
         if slot.preferredTeams:

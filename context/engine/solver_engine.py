@@ -193,10 +193,11 @@ def build_model(ctx):
                 product_filtered += 1
                 continue
             
-            # v0.70: Check rank requirement
-            slot_rank = slot.rankId
+            # v0.95: Check rank requirement (supports multiple ranks - OR logic)
+            slot_ranks = slot.rankIds  # Changed from rankId to rankIds
             emp_rank = emp.get('rankId', '')
-            if slot_rank and emp_rank != slot_rank:
+            # Employee must match at least ONE of the acceptable ranks
+            if slot_ranks and emp_rank not in slot_ranks:
                 rank_filtered += 1
                 continue
             
@@ -1053,7 +1054,7 @@ def calculate_scores(ctx, assignments) -> tuple:
                 blocking_reasons = []
                 
                 if slot:
-                    slot_rank = getattr(slot, 'rankId', None)
+                    slot_ranks = getattr(slot, 'rankIds', [])  # Changed from rankId to rankIds
                     slot_scheme = getattr(slot, 'schemeRequirement', 'Global')
                     slot_duration = (slot.end - slot.start).total_seconds() / 3600.0
                     slot_gender = getattr(slot, 'genderRequirement', None)
@@ -1068,12 +1069,12 @@ def calculate_scores(ctx, assignments) -> tuple:
                     employee_genders = {emp.get('employeeId'): emp.get('gender') for emp in employees_list}
                     employee_types = {emp.get('employeeId'): emp.get('employmentType') for emp in employees_list}
                     
-                    # Check C11: Rank mismatch - no employees with required rank
-                    if slot_rank:
-                        matching_ranks = [emp_id for emp_id, rank in employee_ranks.items() if rank == slot_rank]
+                    # Check C11: Rank mismatch - no employees with required ranks
+                    if slot_ranks:
+                        matching_ranks = [emp_id for emp_id, rank in employee_ranks.items() if rank in slot_ranks]
                         if not matching_ranks:
                             blocking_reasons.append('C11_rank_mismatch')
-                            detailed_reasons.append(f"Required rank '{slot_rank}' not available in any employee")
+                            detailed_reasons.append(f"Required ranks {slot_ranks} not available in any employee")
                     
                     # Check C9: Gender requirement - no employees with required gender
                     # Note: "Any" means no gender restriction, so skip checking
@@ -1422,7 +1423,7 @@ def calculate_scores(ctx, assignments) -> tuple:
             )
     
     # ========== C11 CHECK: Rank/Product Type Match ==========
-    # v0.70: rankId is on the slot, not on demandItems
+    # v0.95: rankIds (plural) supports multiple acceptable ranks - OR logic
     slots_dict = {s.slot_id: s for s in ctx.get('slots', [])}
     for a in assigned_slots:
         emp_id = a.get('employeeId')
@@ -1433,11 +1434,12 @@ def calculate_scores(ctx, assignments) -> tuple:
         slot = slots_dict.get(slot_id)
         
         if slot:
-            slot_rank = getattr(slot, 'rankId', 'UNKNOWN')
-            if emp_rank != slot_rank:
+            slot_ranks = getattr(slot, 'rankIds', [])  # Changed from rankId to rankIds
+            # Employee must match at least ONE of the acceptable ranks
+            if slot_ranks and emp_rank not in slot_ranks:
                 score_book.hard(
                     "C11",
-                    f"{emp_id} rank {emp_rank} mismatches slot rank {slot_rank}"
+                    f"{emp_id} rank {emp_rank} not in allowed ranks {slot_ranks}"
                 )
     
     # ========== C15 CHECK: Qualification Expiry Override Control ==========
