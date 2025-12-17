@@ -312,8 +312,8 @@ def calculate_optimal_with_u_slots(
     
     # STRICT PATTERN ENFORCEMENT BUFFER (NEW)
     # With strict patterns (no U-slots), offset distribution constraints may require
-    # more employees than the mathematical minimum suggests. Add 100% buffer.
-    strict_pattern_buffer = 2.0
+    # more employees than the mathematical minimum suggests. Add 50% buffer.
+    strict_pattern_buffer = 1.5
     lower_bound = math.ceil(lower_bound * strict_pattern_buffer)
     
     logger.info(f"[{requirement_id}] Starting optimal calculation:")
