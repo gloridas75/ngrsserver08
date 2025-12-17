@@ -21,6 +21,33 @@ from collections import Counter
 logger = logging.getLogger(__name__)
 
 
+def normalize_rostering_basis(value: Union[str, None]) -> str:
+    """
+    Normalize rosteringBasis value to string format.
+    
+    Args:
+        value: String value or None
+    
+    Returns:
+        Normalized string: "demandBased" or "outcomeBased"
+    """
+    if value is None:
+        logger.info("rosteringBasis not specified, defaulting to 'demandBased'")
+        return "demandBased"
+    
+    if isinstance(value, str):
+        valid_values = ["demandBased", "outcomeBased"]
+        if value in valid_values:
+            return value
+        else:
+            logger.warning(f"Invalid rosteringBasis value '{value}', defaulting to 'demandBased'")
+            return "demandBased"
+    
+    # Default fallback
+    logger.warning(f"Unexpected rosteringBasis type {type(value)}, defaulting to 'demandBased'")
+    return "demandBased"
+
+
 def normalize_fixed_rotation_offset(value: Union[bool, str]) -> str:
     """
     Normalize fixedRotationOffset value to string format.
@@ -50,6 +77,54 @@ def normalize_fixed_rotation_offset(value: Union[bool, str]) -> str:
     # Default fallback
     logger.warning(f"Unexpected fixedRotationOffset type {type(value)}, defaulting to 'auto'")
     return "auto"
+
+
+def validate_rostering_basis_combination(rostering_basis: str, offset_mode: str, input_data: Dict[str, Any]) -> None:
+    """
+    Validate that rosteringBasis and fixedRotationOffset are compatible.
+    
+    Valid combinations:
+    - demandBased + auto
+    - demandBased + solverOptimized
+    - outcomeBased + ouOffsets
+    
+    Invalid combinations:
+    - demandBased + ouOffsets
+    - outcomeBased + auto
+    - outcomeBased + solverOptimized
+    
+    Args:
+        rostering_basis: "demandBased" or "outcomeBased"
+        offset_mode: "auto", "ouOffsets", or "solverOptimized"
+        input_data: Full input JSON data (to check for ouOffsets)
+    
+    Raises:
+        ValueError: If combination is invalid
+    """
+    # Define valid combinations
+    valid_combinations = {
+        "demandBased": ["auto", "solverOptimized"],
+        "outcomeBased": ["ouOffsets"]
+    }
+    
+    # Check if combination is valid
+    allowed_modes = valid_combinations.get(rostering_basis, [])
+    if offset_mode not in allowed_modes:
+        raise ValueError(
+            f"Invalid combination: rosteringBasis='{rostering_basis}' cannot use fixedRotationOffset='{offset_mode}'. "
+            f"Valid modes for {rostering_basis}: {allowed_modes}"
+        )
+    
+    # Additional validation for outcomeBased mode
+    if rostering_basis == "outcomeBased":
+        if offset_mode == "ouOffsets":
+            ou_offsets = input_data.get('ouOffsets', [])
+            if not ou_offsets:
+                raise ValueError(
+                    "outcomeBased mode with fixedRotationOffset='ouOffsets' requires 'ouOffsets' array in input"
+                )
+    
+    logger.info(f"✓ Valid combination: rosteringBasis='{rostering_basis}' + fixedRotationOffset='{offset_mode}'")
 
 
 def get_pattern_cycle_length(work_pattern: List[str]) -> int:
@@ -269,7 +344,16 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
         logger.warning("No employees to process")
         return input_data
     
-    # Normalize and store the mode
+    # Normalize rosteringBasis
+    rostering_basis_raw = input_data.get('rosteringBasis')
+    rostering_basis = normalize_rostering_basis(rostering_basis_raw)
+    
+    # Update input_data to use normalized value
+    if input_data.get('rosteringBasis') != rostering_basis:
+        logger.info(f"Setting rosteringBasis: {rostering_basis_raw} → '{rostering_basis}'")
+        input_data['rosteringBasis'] = rostering_basis
+    
+    # Normalize and store the offset mode
     raw_value = input_data.get('fixedRotationOffset', True)
     mode = normalize_fixed_rotation_offset(raw_value)
     
@@ -277,6 +361,13 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
     if input_data['fixedRotationOffset'] != mode:
         logger.info(f"Converting fixedRotationOffset: {raw_value} → '{mode}'")
         input_data['fixedRotationOffset'] = mode
+    
+    # Validate combination of rosteringBasis and fixedRotationOffset
+    try:
+        validate_rostering_basis_combination(rostering_basis, mode, input_data)
+    except ValueError as e:
+        logger.error(f"Configuration validation failed: {e}")
+        raise
     
     logger.info(f"Mode: {mode}")
     

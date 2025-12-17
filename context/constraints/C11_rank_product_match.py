@@ -49,8 +49,12 @@ def add_constraints(model, ctx):
     # Add constraints: for each slot-employee pair, enforce rank matching
     rank_match_constraints = 0
     for slot in slots:
-        # v0.70: rankId is directly on slot from requirement
-        slot_rank = getattr(slot, 'rankId', 'UNKNOWN')
+        # v0.95: rankIds is a list (OR logic - employee must match ANY rank in the list)
+        slot_ranks = getattr(slot, 'rankIds', [])
+        if not slot_ranks:
+            # Fallback to singular rankId for backward compatibility
+            slot_rank = getattr(slot, 'rankId', None)
+            slot_ranks = [slot_rank] if slot_rank else []
         
         for emp in employees:
             emp_id = emp.get('employeeId')
@@ -59,8 +63,9 @@ def add_constraints(model, ctx):
             if (slot.slot_id, emp_id) not in x:
                 continue
             
-            # If ranks don't match, this employee cannot be assigned to this slot
-            if emp_rank != slot_rank:
+            # If employee's rank is NOT in the slot's accepted ranks, block assignment
+            # This implements OR logic: employee must have at least one matching rank
+            if slot_ranks and emp_rank not in slot_ranks:
                 var = x[(slot.slot_id, emp_id)]
                 # Add constraint: var must be 0 (not assigned)
                 model.Add(var == 0)
@@ -78,16 +83,21 @@ def add_constraints(model, ctx):
         product = getattr(slot, 'productTypeId', 'UNKNOWN')
         product_counts[product] += 1
     
-    # Count by rank from slots
+    # Count by rankIds from slots (combine all ranks)
     slot_rank_counts = defaultdict(int)
     for slot in slots:
-        rank = getattr(slot, 'rankId', 'UNKNOWN')
-        slot_rank_counts[rank] += 1
+        ranks = getattr(slot, 'rankIds', [])
+        if not ranks:
+            # Fallback to singular rankId
+            rank = getattr(slot, 'rankId', 'UNKNOWN')
+            ranks = [rank] if rank else ['UNKNOWN']
+        for rank in ranks:
+            slot_rank_counts[rank] += 1
     
     print(f"[C11] Rank/Product Type Match Constraint (HARD)")
     print(f"     Total employees: {len(employees)}")
     print(f"     Employee ranks: {dict(rank_counts)}")
     print(f"     Total slots: {len(slots)}")
     print(f"     Slot product types: {dict(product_counts)}")
-    print(f"     Slot ranks: {dict(slot_rank_counts)}")
+    print(f"     Slot rankIds (OR logic): {dict(slot_rank_counts)}")
     print(f"     ✓ Added {rank_match_constraints} rank mismatch constraints (HARD)\n")

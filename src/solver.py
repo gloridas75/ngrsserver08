@@ -69,21 +69,52 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     employees = input_data.get('employees', [])
     employees_with_patterns = sum(1 for e in employees if e.get('workPattern'))
     
+    # Check rosteringBasis to determine if ICPMP should run
+    rostering_basis = input_data.get('rosteringBasis', 'demandBased')
+    
     # Determine if ICPMP preprocessing is needed
-    needs_icpmp = (employees_with_patterns == 0 and len(employees) > 0)
+    # - ICPMP runs ONLY for demandBased mode
+    # - outcomeBased mode skips ICPMP entirely
+    needs_icpmp = (
+        rostering_basis == 'demandBased' and 
+        employees_with_patterns == 0 and 
+        len(employees) > 0
+    )
     
     icpmp_metadata = None
     preprocessing_time = 0
     
-    if needs_icpmp:
-        # SCENARIO A: No patterns → Run ICPMP
+    if rostering_basis == 'outcomeBased':
+        # OUTCOME-BASED MODE: Skip ICPMP, use OU offsets directly
+        print(f"{log_prefix} ======================================================================")
+        print(f"{log_prefix} OUTCOME-BASED ROSTERING MODE")
+        print(f"{log_prefix} ======================================================================")
+        print(f"{log_prefix} Skipping ICPMP preprocessing (outcomeBased mode)")
+        print(f"{log_prefix} Using all {len(employees)} employees with OU-based offset assignment")
+        print()
+        
+        # Apply OU offsets (required for outcomeBased mode)
+        fixed_rotation_offset_mode = input_data.get('fixedRotationOffset', 'auto')
+        if fixed_rotation_offset_mode == 'ouOffsets':
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} APPLYING OU-BASED OFFSETS")
+            print(f"{log_prefix} ======================================================================")
+            input_data = ensure_staggered_offsets(input_data)
+            print(f"{log_prefix} ✓ OU offsets applied to {len(employees)} employees")
+            print()
+        else:
+            print(f"{log_prefix} ⚠️  WARNING: outcomeBased mode should use fixedRotationOffset='ouOffsets'")
+            print()
+    
+    elif needs_icpmp:
+        # SCENARIO A: DEMAND-BASED MODE with no patterns → Run ICPMP
         # - ICPMP filters employees (e.g., 171 → 14)
         # - ICPMP assigns rotation offsets (0, 1, 2, 3...)
         # - ICPMP assigns rotated work patterns
         # - NO need for ensure_staggered_offsets() afterward
         
         print(f"{log_prefix} ======================================================================")
-        print(f"{log_prefix} ICPMP v3.0 PREPROCESSING")
+        print(f"{log_prefix} ICPMP v3.0 PREPROCESSING (demandBased mode)")
         print(f"{log_prefix} ======================================================================")
         print(f"{log_prefix} Input: {len(employees)} employees, {employees_with_patterns} have patterns")
         
@@ -126,11 +157,19 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                 'warnings': [f"Preprocessing failed: {str(preprocessing_error)}"]
             }
         
-        # IMPORTANT: If using ouOffsets mode, apply OU-based offsets after ICPMP
-        # ICPMP assigns sequential offsets (0, 1, 2...), but ouOffsets mode needs
-        # to override these with OU-specific offsets
+        # Apply offset management after ICPMP based on mode
         fixed_rotation_offset_mode = input_data.get('fixedRotationOffset', 'auto')
-        if fixed_rotation_offset_mode == 'ouOffsets':
+        
+        if fixed_rotation_offset_mode == 'auto':
+            # AUTO MODE: Redistribute filtered employees across all offsets
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} APPLYING AUTO OFFSETS (after ICPMP)")
+            print(f"{log_prefix} ======================================================================")
+            input_data = ensure_staggered_offsets(input_data)
+            print(f"{log_prefix} ✓ Auto offsets applied to {len(input_data.get('employees', []))} employees")
+            print()
+        elif fixed_rotation_offset_mode == 'ouOffsets':
+            # OU OFFSETS MODE: Override ICPMP offsets with OU-specific offsets
             print(f"{log_prefix} ======================================================================")
             print(f"{log_prefix} APPLYING OU-BASED OFFSETS (after ICPMP)")
             print(f"{log_prefix} ======================================================================")
@@ -139,13 +178,13 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             print()
     
     elif employees_with_patterns > 0:
-        # SCENARIO B: Patterns exist → Check if offsets need staggering
+        # SCENARIO B: DEMAND-BASED MODE with patterns → Check if offsets need staggering
         # - Employees already have work patterns
         # - May need to stagger offsets if all are 0
         # - NO ICPMP needed
         
         print(f"{log_prefix} ======================================================================")
-        print(f"{log_prefix} OFFSET STAGGERING")
+        print(f"{log_prefix} OFFSET STAGGERING (demandBased mode)")
         print(f"{log_prefix} ======================================================================")
         print(f"{log_prefix} Employees have patterns, ensuring staggered offsets...")
         

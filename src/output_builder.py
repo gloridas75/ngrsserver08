@@ -173,6 +173,10 @@ def build_employee_roster(input_data, ctx, assignments):
         
         roster.append({
             "employeeId": emp_id,
+            "rankId": emp.get('rankId'),  # FIX: Include employee rank
+            "productTypeId": emp.get('productTypeId'),  # FIX: Include product type
+            "ouId": emp.get('ouId'),  # FIX: Include OU
+            "scheme": emp.get('scheme'),  # FIX: Include scheme
             "rotationOffset": emp_offset,
             "workPattern": emp_pattern,
             "totalDays": len(daily_status),

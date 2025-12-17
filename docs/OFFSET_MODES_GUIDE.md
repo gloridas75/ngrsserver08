@@ -2,11 +2,90 @@
 
 ## Overview
 
-The `fixedRotationOffset` field now supports **string-based modes** for flexible offset management. This change provides better control over how employee rotation offsets are assigned.
+The solver supports two **rostering philosophies** controlled by the `rosteringBasis` field, each with different offset management approaches.
+
+## Rostering Basis
+
+### `"demandBased"` (Default)
+**Philosophy**: "Start with demand, find optimal employees"
+
+```json
+{
+  "rosteringBasis": "demandBased",
+  "fixedRotationOffset": "auto"
+}
+```
+
+**Workflow**:
+1. Start with demand requirements
+2. Run ICPMP preprocessing (filters 303 → 16 employees)
+3. Auto-distribute offsets across filtered employees
+4. Solve to minimize employee count
+
+**Use when**:
+- ✅ You want the solver to find minimum employees needed
+- ✅ ICPMP optimization is desired
+- ✅ Standard workforce planning scenarios
+
+**Valid offset modes**: `"auto"`, `"solverOptimized"`
+
+---
+
+### `"outcomeBased"` 
+**Philosophy**: "I already know which teams/OUs work, assign them optimally"
+
+```json
+{
+  "rosteringBasis": "outcomeBased",
+  "fixedRotationOffset": "ouOffsets",
+  "ouOffsets": [
+    {"ouId": "ATSU OPS OFFICE", "rotationOffset": 0},
+    {"ouId": "ATSU T1 LSU A1", "rotationOffset": 1}
+  ]
+}
+```
+
+**Workflow**:
+1. Start with pre-determined OUs
+2. **Skip ICPMP preprocessing** (use all employees)
+3. Apply OU-based offsets
+4. Solve to distribute work optimally
+
+**Use when**:
+- ✅ OUs are pre-assigned to work
+- ✅ Manual control over which teams work
+- ✅ OU-level rotation synchronization required
+
+**Valid offset modes**: `"ouOffsets"` only
+
+**Key Differences from demandBased**:
+- ❌ No ICPMP filtering (uses all employees matching rank/product/scheme)
+- ❌ No employee count optimization
+- ❌ No `enableOtAwareIcpmp` support
+- ✅ Full control over offset distribution via OUs
+
+---
+
+## Offset Modes
+
+### Validation Rules
+
+**Valid Combinations**:
+| rosteringBasis | Valid fixedRotationOffset | ICPMP Runs? |
+|----------------|---------------------------|-------------|
+| `demandBased` | `auto`, `solverOptimized` | ✅ Yes |
+| `outcomeBased` | `ouOffsets` | ❌ No |
+
+**Invalid Combinations** (will raise error):
+- ❌ `demandBased` + `ouOffsets`
+- ❌ `outcomeBased` + `auto`
+- ❌ `outcomeBased` + `solverOptimized`
+
+---
 
 ## Supported Modes
 
-### 1. `"auto"` (Recommended for Production)
+### 1. `"auto"` (Recommended for demandBased)
 **Sequential staggering** - Distributes employees evenly across offset values (0, 1, 2, ...).
 
 ```json

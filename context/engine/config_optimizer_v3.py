@@ -21,6 +21,7 @@ from datetime import datetime, timedelta
 from math import ceil
 from typing import List, Dict, Any, Tuple, Optional
 from collections import defaultdict
+import math
 
 logger = logging.getLogger(__name__)
 
@@ -309,6 +310,12 @@ def calculate_optimal_with_u_slots(
     # Take the maximum (most constrained)
     lower_bound = max(headcount, buffered_minimum)
     
+    # STRICT PATTERN ENFORCEMENT BUFFER (NEW)
+    # With strict patterns (no U-slots), offset distribution constraints may require
+    # more employees than the mathematical minimum suggests. Add 100% buffer.
+    strict_pattern_buffer = 2.0
+    lower_bound = math.ceil(lower_bound * strict_pattern_buffer)
+    
     logger.info(f"[{requirement_id}] Starting optimal calculation:")
     logger.info(f"  Scheme: {scheme} (max {scheme_max_days_per_week} days/week)")
     logger.info(f"  Pattern: {pattern} (cycle={cycle_length}, work_days={work_days_per_cycle})")
@@ -320,20 +327,21 @@ def calculate_optimal_with_u_slots(
     logger.info(f"  Base minimum: {pattern_based_minimum} employees")
     logger.info(f"  Distribution: {pattern_based_minimum / cycle_length:.2f} employees/position")
     logger.info(f"  Buffered minimum: {buffered_minimum} ({buffer_reason})")
-    logger.info(f"  Lower bound: {lower_bound} employees (capacity={capacity_minimum})")
+    logger.info(f"  Strict pattern buffer: ×{strict_pattern_buffer} (no U-slot flexibility)")
+    logger.info(f"  Lower bound: {lower_bound} employees (with strict pattern buffer)")
     
     # Try increasing employee counts from lower bound
     upper_bound = lower_bound + max_attempts
     
     for num_employees in range(lower_bound, upper_bound + 1):
-        logger.debug(f"[{requirement_id}] Trying {num_employees} employees...")
         
         result = try_placement_with_n_employees(
             num_employees, pattern, headcount, calendar, anchor_date, cycle_length,
             scheme=scheme, enable_ot_aware=enable_ot_aware_icpmp
         )
         
-        if result['is_feasible']:
+        if result["is_feasible"]:
+            print(f"  ✓ {num_employees} employees: FEASIBLE!")
             logger.info(f"[{requirement_id}] ✓ Found optimal: {num_employees} employees")
             logger.info(f"  Attempts required: {num_employees - lower_bound + 1}")
             logger.info(f"  Total U-slots: {result['total_u_slots']}")
@@ -364,11 +372,46 @@ def calculate_optimal_with_u_slots(
                 }
             }
     
-    # Should never reach here with reasonable max_attempts
-    raise RuntimeError(
-        f"[{requirement_id}] Failed to find feasible solution within {max_attempts} attempts. "
-        f"Tried up to {upper_bound} employees. This indicates a bug or invalid input."
+    # Failed to find feasible solution - return best estimate with warning
+    # Use the buffered lower bound as a reasonable starting point for CP-SAT
+    estimated_employees = lower_bound
+    logger.warning(
+        f"[{requirement_id}] ⚠️  ICPMP could not find exact feasible solution after {max_attempts} attempts."
     )
+    logger.warning(f"  Returning estimated {estimated_employees} employees (buffered lower bound)")
+    logger.warning(f"  CP-SAT will determine actual feasibility with constraint enforcement")
+    
+    # Generate offset distribution as dict {offset: count}
+    offset_list = distribute_offsets_evenly(estimated_employees, cycle_length)
+    offset_dist_dict = {}
+    for offset in offset_list:
+        offset_dist_dict[offset] = offset_dist_dict.get(offset, 0) + 1
+    
+    return {
+        'requirementId': requirement_id,
+        'configuration': {
+            'employeesRequired': estimated_employees,
+            'rotationPattern': pattern,
+            'offsetDistribution': offset_dist_dict,  # Dict format {offset: count}
+            'estimated': True,  # Flag that this is an estimate
+            'optimality': 'ESTIMATED',  # Not proven optimal
+        },
+        'employeePatterns': [],  # Unknown for estimates
+        'coverage': {
+            'totalUSlots': 0,  # Unknown for estimates
+            'achievedRate': 0.0,  # Unknown for estimates
+            'totalWorkDays': 0,
+            'dailyCoverageDetails': {}
+        },
+        'metadata': {
+            'patternCycleLength': cycle_length,
+            'workDaysPerCycle': work_days_per_cycle,
+            'planningHorizonDays': len(calendar),
+            'totalCoverageNeeded': total_coverage_needed,
+            'icpmpStatus': 'estimated',
+            'warning': 'ICPMP estimation only - exact employee count to be determined by CP-SAT'
+        }
+    }
 
 
 def try_placement_with_n_employees(
@@ -414,18 +457,18 @@ def try_placement_with_n_employees(
     daily_coverage = {date: 0 for date in calendar}
     employees = []
     
-    # Distribute employees evenly across offsets
+    anchor_dt = datetime.fromisoformat(anchor_date)
+    
+    # Simple even distribution across offsets (let CP-SAT figure out optimal assignment)
     offset_distribution_list = distribute_offsets_evenly(num_employees, cycle_length)
     offset_counts = defaultdict(int)
     for offset in offset_distribution_list:
         offset_counts[offset] += 1
     
-    anchor_dt = datetime.fromisoformat(anchor_date)
-    
+    # Simulate each employee with their assigned offset
     for employee_num, offset in enumerate(offset_distribution_list):
         employee_pattern = []
         work_days = 0
-        u_slots = 0
         
         for calendar_date in calendar:
             date_dt = datetime.fromisoformat(calendar_date)
@@ -433,52 +476,36 @@ def try_placement_with_n_employees(
             shift_code = pattern[pattern_day]
             
             if shift_code == 'O':
-                # Rest day - always 'O'
                 employee_pattern.append('O')
             else:
-                # Work shift in pattern - check if we need this coverage
-                if daily_coverage[calendar_date] >= headcount:
-                    # Already have enough coverage - mark as U slot
-                    employee_pattern.append('U')
-                    u_slots += 1
-                else:
-                    # Need coverage - assign work shift
-                    employee_pattern.append(shift_code)
-                    daily_coverage[calendar_date] += 1
-                    work_days += 1
-        
-        # Calculate utilization (work days / total possible work days)
-        total_slots = len(calendar)
-        rest_days = employee_pattern.count('O')
-        possible_work_days = total_slots - rest_days
-        utilization = (work_days / possible_work_days * 100) if possible_work_days > 0 else 0.0
+                # Mark as potential work day (CP-SAT will decide actual assignment)
+                employee_pattern.append(shift_code)
+                work_days += 1
         
         employees.append({
             'employeeNumber': employee_num + 1,
             'rotationOffset': offset,
             'pattern': employee_pattern,
             'workDays': work_days,
-            'uSlots': u_slots,
-            'restDays': rest_days,
-            'utilization': round(utilization, 1)
+            'restDays': employee_pattern.count('O'),
         })
     
-    # Check feasibility - all days must have exactly headcount coverage
-    coverage_achieved = [daily_coverage[date] for date in calendar]
-    is_feasible = all(count == headcount for count in coverage_achieved)
-    coverage_rate = (sum(1 for c in coverage_achieved if c == headcount) / len(calendar) * 100)
-    
-    total_work_days = sum(emp['workDays'] for emp in employees)
-    total_u_slots = sum(emp['uSlots'] for emp in employees)
-    
+
+    # Check feasibility - potential work days must cover required coverage
+    total_potential_work_days = sum(emp["workDays"] for emp in employees)
+    total_required = len(calendar) * headcount
+    is_feasible = (total_potential_work_days >= total_required)
+    coverage_rate = (total_potential_work_days / total_required * 100) if total_required > 0 else 0.0
+    total_u_slots = 0  # No U-slots with strict patterns
+
     return {
-        'is_feasible': is_feasible,
-        'employees': employees,
-        'daily_coverage': daily_coverage,
-        'offset_distribution': dict(offset_counts),
-        'coverage_rate': coverage_rate,
-        'total_work_days': total_work_days,
-        'total_u_slots': total_u_slots
+        "is_feasible": is_feasible,
+        "employees": employees,
+        "daily_coverage": {},  # Not simulated - CP-SAT will decide
+        "offset_distribution": dict(offset_counts),
+        "coverage_rate": coverage_rate,
+        "total_work_days": total_potential_work_days,
+        "total_u_slots": total_u_slots
     }
 
 
@@ -491,9 +518,9 @@ def distribute_offsets_evenly(num_employees: int, cycle_length: int) -> List[int
     - If N > cycle_length: Some offsets get multiple employees
     
     Examples:
-    - 5 employees, 6-day cycle → [0, 1, 2, 3, 4]
-    - 14 employees, 5-day cycle → [0,0,0, 1,1,1, 2,2,2, 3,3, 4,4]
-    - 6 employees, 12-day cycle → [0, 1, 2, 3, 4, 5]
+    - 5 employees, 6-day cycle: [0, 1, 2, 3, 4]
+    - 14 employees, 5-day cycle: [0,0,0, 1,1,1, 2,2,2, 3,3, 4,4]
+    - 6 employees, 12-day cycle: [0, 1, 2, 3, 4, 5]
     
     Args:
         num_employees: Total number of employees to distribute
