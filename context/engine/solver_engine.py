@@ -493,8 +493,8 @@ def build_model(ctx):
         for emp in employees:
             emp_id = emp.get('employeeId')
             
-            # INCREMENTAL MODE: Only optimize new joiners if mode is "auto" or "teamOffsets"
-            if fixed_rotation_offset in ["auto", "teamOffsets"] and emp_id not in new_joiner_ids:
+            # INCREMENTAL MODE: Only optimize new joiners if mode is "auto" or "ouOffsets"
+            if fixed_rotation_offset in ["auto", "ouOffsets"] and emp_id not in new_joiner_ids:
                 continue  # Skip existing employees, they keep fixed offsets
             
             # Try to get actual pattern length from slots this employee can work

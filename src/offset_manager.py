@@ -4,7 +4,7 @@ Rotation Offset Manager
 Automatically manages employee rotation offsets for pattern-based scheduling.
 Supports multiple offset assignment modes:
 - "auto": Sequential staggering (0, 1, 2, ...)
-- "teamOffsets": Team-level offset assignment
+- "ouOffsets": OU-level offset assignment (each OU has its own rotation offset)
 - "solverOptimized": Solver decides offsets
 
 Usage:
@@ -34,13 +34,13 @@ def normalize_fixed_rotation_offset(value: Union[bool, str]) -> str:
         value: Boolean or string value
     
     Returns:
-        Normalized string: "auto", "teamOffsets", or "solverOptimized"
+        Normalized string: "auto", "ouOffsets", or "solverOptimized"
     """
     if isinstance(value, bool):
         return "auto" if value else "solverOptimized"
     
     if isinstance(value, str):
-        valid_values = ["auto", "teamOffsets", "solverOptimized"]
+        valid_values = ["auto", "ouOffsets", "solverOptimized"]
         if value in valid_values:
             return value
         else:
@@ -80,9 +80,9 @@ def has_off_days(work_pattern: List[str]) -> bool:
     return 'O' in work_pattern
 
 
-def validate_team_offsets(input_data: Dict[str, Any], cycle_length: int) -> tuple[bool, List[str]]:
+def validate_ou_offsets(input_data: Dict[str, Any], cycle_length: int) -> tuple[bool, List[str]]:
     """
-    Validate teamOffsets configuration.
+    Validate ouOffsets configuration.
     
     Args:
         input_data: Full input JSON data
@@ -93,56 +93,54 @@ def validate_team_offsets(input_data: Dict[str, Any], cycle_length: int) -> tupl
     """
     errors = []
     
-    team_offsets_list = input_data.get('teamOffsets', [])
-    if not team_offsets_list:
-        errors.append("fixedRotationOffset='teamOffsets' requires 'teamOffsets' array in input")
+    ou_offsets_list = input_data.get('ouOffsets', [])
+    if not ou_offsets_list:
+        errors.append("fixedRotationOffset='ouOffsets' requires 'ouOffsets' array in input")
         return False, errors
     
-    # Build team offset map
-    team_offset_map = {}
-    for entry in team_offsets_list:
-        team_id = entry.get('teamId')
+    # Build OU offset map
+    ou_offset_map = {}
+    for entry in ou_offsets_list:
+        ou_id = entry.get('ouId')
         offset = entry.get('rotationOffset')
         
-        if not team_id:
-            errors.append(f"teamOffsets entry missing 'teamId': {entry}")
+        if not ou_id:
+            errors.append(f"ouOffsets entry missing 'ouId': {entry}")
             continue
         
         if offset is None:
-            errors.append(f"teamOffsets entry for team '{team_id}' missing 'rotationOffset'")
+            errors.append(f"ouOffsets entry for OU '{ou_id}' missing 'rotationOffset'")
             continue
         
         # Validate offset within cycle length
         if not isinstance(offset, int):
-            errors.append(f"Team '{team_id}' has non-integer offset: {offset}")
+            errors.append(f"OU '{ou_id}' has non-integer offset: {offset}")
             continue
         
         if offset < 0 or offset >= cycle_length:
-            errors.append(f"Team '{team_id}' offset {offset} out of range [0, {cycle_length-1}] for cycle length {cycle_length}")
+            errors.append(f"OU '{ou_id}' offset {offset} out of range [0, {cycle_length-1}] for cycle length {cycle_length}")
             continue
         
-        team_offset_map[team_id] = offset
+        ou_offset_map[ou_id] = offset
     
-    # Check all employees have teams in the map
+    # Warn (don't error) if employees have OUs not in the map
     employees = input_data.get('employees', [])
     for emp in employees:
         emp_id = emp.get('employeeId')
-        team_id = emp.get('teamId')
+        ou_id = emp.get('ouId')
         
-        if not team_id:
-            errors.append(f"Employee '{emp_id}' missing 'teamId' (required for teamOffsets mode)")
-            continue
-        
-        if team_id not in team_offset_map:
-            errors.append(f"Employee '{emp_id}' has team '{team_id}' not found in teamOffsets array")
+        if ou_id and ou_id not in ou_offset_map:
+            logger.warning(f"Employee '{emp_id}' has OU '{ou_id}' not found in ouOffsets array - will use rotationOffset=0")
     
     is_valid = len(errors) == 0
     return is_valid, errors
 
 
-def apply_team_offsets(input_data: Dict[str, Any]) -> int:
+def apply_ou_offsets(input_data: Dict[str, Any]) -> int:
     """
-    Apply team-level offsets to employees.
+    Apply OU-level offsets to employees.
+    
+    Each employee inherits the rotationOffset from their OU.
     
     Args:
         input_data: Full input JSON data (modified in place)
@@ -150,23 +148,23 @@ def apply_team_offsets(input_data: Dict[str, Any]) -> int:
     Returns:
         Number of employees updated
     """
-    team_offsets_list = input_data.get('teamOffsets', [])
+    ou_offsets_list = input_data.get('ouOffsets', [])
     
-    # Build team offset map
-    team_offset_map = {}
-    for entry in team_offsets_list:
-        team_id = entry.get('teamId')
+    # Build OU offset map
+    ou_offset_map = {}
+    for entry in ou_offsets_list:
+        ou_id = entry.get('ouId')
         offset = entry.get('rotationOffset')
-        if team_id and offset is not None:
-            team_offset_map[team_id] = offset
+        if ou_id and offset is not None:
+            ou_offset_map[ou_id] = offset
     
-    # Apply to employees
+    # Apply to employees based on their ouId
     updated_count = 0
     employees = input_data.get('employees', [])
     for emp in employees:
-        team_id = emp.get('teamId')
-        if team_id and team_id in team_offset_map:
-            new_offset = team_offset_map[team_id]
+        ou_id = emp.get('ouId')
+        if ou_id and ou_id in ou_offset_map:
+            new_offset = ou_offset_map[ou_id]
             old_offset = emp.get('rotationOffset', 0)
             
             if old_offset != new_offset:
@@ -181,7 +179,7 @@ def should_stagger_offsets(mode: str, input_data: Dict[str, Any]) -> bool:
     Determine if offsets should be automatically processed.
     
     Args:
-        mode: Normalized mode ("auto", "teamOffsets", "solverOptimized")
+        mode: Normalized mode ("auto", "ouOffsets", "solverOptimized")
         input_data: Full input JSON data
     
     Returns:
@@ -191,7 +189,7 @@ def should_stagger_offsets(mode: str, input_data: Dict[str, Any]) -> bool:
         logger.info("Mode 'solverOptimized' - no preprocessing needed (solver will optimize)")
         return False
     
-    if mode in ["auto", "teamOffsets"]:
+    if mode in ["auto", "ouOffsets"]:
         # Check if there are employees
         employees = input_data.get('employees', [])
         if not employees:
@@ -247,7 +245,7 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
     
     Supported modes:
     - "auto": Sequential staggering (0, 1, 2, ...)
-    - "teamOffsets": Apply team-level offsets
+    - "ouOffsets": Apply OU-level offsets
     - "solverOptimized": Skip processing (solver decides)
     - true (legacy): Converts to "auto"
     - false (legacy): Converts to "solverOptimized"
@@ -260,7 +258,7 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
         Modified input_data with offsets applied
     
     Raises:
-        ValueError: If validation fails (invalid team offsets, etc.)
+        ValueError: If validation fails (invalid OU offsets, etc.)
     """
     logger.info("=" * 80)
     logger.info("OFFSET MANAGER: Processing rotation offsets")
@@ -312,18 +310,18 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
             updated_count = stagger_offsets(employees, cycle_length)
             logger.info(f"✓ Updated {updated_count} employees")
     
-    elif mode == "teamOffsets":
-        # Validate team offsets first
-        is_valid, errors = validate_team_offsets(input_data, cycle_length)
+    elif mode == "ouOffsets":
+        # Validate OU offsets first
+        is_valid, errors = validate_ou_offsets(input_data, cycle_length)
         if not is_valid:
-            error_msg = "Team offset validation failed:\n  - " + "\n  - ".join(errors)
+            error_msg = "OU offset validation failed:\n  - " + "\n  - ".join(errors)
             logger.error(error_msg)
             raise ValueError(error_msg)
         
-        # Apply team offsets
-        logger.info("Applying team-level offsets...")
-        updated_count = apply_team_offsets(input_data)
-        logger.info(f"✓ Updated {updated_count} employees from team offsets")
+        # Apply OU offsets
+        logger.info("Applying OU-level offsets...")
+        updated_count = apply_ou_offsets(input_data)
+        logger.info(f"✓ Updated {updated_count} employees from OU offsets")
     
     # Report final state
     after_dist = get_current_offset_distribution(employees)
@@ -372,8 +370,8 @@ def validate_offset_configuration(input_data: Dict[str, Any]) -> tuple[bool, Lis
         issues.append(f"No O-patterns found but fixedRotationOffset is '{mode}' - consider 'solverOptimized'")
     
     # Validate based on mode
-    if mode == "teamOffsets":
-        is_valid, errors = validate_team_offsets(input_data, cycle_length)
+    if mode == "ouOffsets":
+        is_valid, errors = validate_ou_offsets(input_data, cycle_length)
         if not is_valid:
             issues.extend(errors)
     

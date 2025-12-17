@@ -33,16 +33,16 @@ The `fixedRotationOffset` field now supports **string-based modes** for flexible
 
 ---
 
-### 2. `"teamOffsets"` (New!)
-**Team-level offsets** - All members of a team share the same rotation offset.
+### 2. `"ouOffsets"` 
+**OU-level offsets** - All members of an Organizational Unit (OU) share the same rotation offset.
 
 ```json
 {
-  "fixedRotationOffset": "teamOffsets",
-  "teamOffsets": [
-    {"teamId": "TM-Alpha", "rotationOffset": 0},
-    {"teamId": "TM-Bravo", "rotationOffset": 3},
-    {"teamId": "TM-Charlie", "rotationOffset": 6}
+  "fixedRotationOffset": "ouOffsets",
+  "ouOffsets": [
+    {"ouId": "ATSU OPS OFFICE", "rotationOffset": 0},
+    {"ouId": "ATSU T1 LSU A1", "rotationOffset": 3},
+    {"ouId": "ATSU T1 LSU A2", "rotationOffset": 6}
   ],
   "demandItems": [{
     "requirements": [{
@@ -50,26 +50,26 @@ The `fixedRotationOffset` field now supports **string-based modes** for flexible
     }]
   }],
   "employees": [
-    {"employeeId": "E001", "teamId": "TM-Alpha"},
-    {"employeeId": "E002", "teamId": "TM-Alpha"},
-    {"employeeId": "E003", "teamId": "TM-Bravo"}
+    {"employeeId": "E001", "ouId": "ATSU OPS OFFICE"},
+    {"employeeId": "E002", "ouId": "ATSU OPS OFFICE"},
+    {"employeeId": "E003", "ouId": "ATSU T1 LSU A1"}
   ]
 }
 ```
 
 **Result**:
-- All TM-Alpha members → offset 0
-- All TM-Bravo members → offset 3
-- All TM-Charlie members → offset 6
+- All ATSU OPS OFFICE members → offset 0
+- All ATSU T1 LSU A1 members → offset 3
+- All ATSU T1 LSU A2 members → offset 6
 
 **Use when**:
-- ✅ Teams need synchronized schedules
-- ✅ Team-based rotation alignment is required
-- ✅ Operational requirements dictate team-level planning
+- ✅ OUs need synchronized schedules
+- ✅ OU-based rotation alignment is required
+- ✅ Operational requirements dictate OU-level planning
 
 **Validation Rules**:
-- ❌ ERROR if `teamOffsets` array missing
-- ❌ ERROR if employee's team not in `teamOffsets`
+- ❌ ERROR if `ouOffsets` array missing
+- ⚠️ WARNING if employee's OU not in `ouOffsets` (uses rotationOffset=0)
 - ❌ ERROR if offset outside range [0, cycle_length-1]
 
 ---
@@ -122,41 +122,41 @@ Old boolean format automatically converts:
 
 ## Validation & Error Handling
 
-### Team Offsets Validation
+### OU Offsets Validation
 
-**Error 1: Missing teamOffsets array**
+**Error 1: Missing ouOffsets array**
 ```json
 {
-  "fixedRotationOffset": "teamOffsets"
-  // Missing teamOffsets array!
+  "fixedRotationOffset": "ouOffsets"
+  // Missing ouOffsets array!
 }
 ```
-**Error**: `"fixedRotationOffset='teamOffsets' requires 'teamOffsets' array in input"`
+**Error**: `"fixedRotationOffset='ouOffsets' requires 'ouOffsets' array in input"`
 
 ---
 
-**Error 2: Employee team not in array**
+**Error 2: Employee OU not in array (Warning only)**
 ```json
 {
-  "fixedRotationOffset": "teamOffsets",
-  "teamOffsets": [
-    {"teamId": "TM-A", "rotationOffset": 0}
+  "fixedRotationOffset": "ouOffsets",
+  "ouOffsets": [
+    {"ouId": "ATSU OPS OFFICE", "rotationOffset": 0}
   ],
   "employees": [
-    {"employeeId": "E001", "teamId": "TM-B"}  // TM-B not in teamOffsets!
+    {"employeeId": "E001", "ouId": "ATSU T1 LSU A1"}  // Not in ouOffsets!
   ]
 }
 ```
-**Error**: `"Employee 'E001' has team 'TM-B' not found in teamOffsets array"`
+**Warning**: `"Employee 'E001' has OU 'ATSU T1 LSU A1' not found in ouOffsets array - will use rotationOffset=0"`
 
 ---
 
 **Error 3: Offset out of range**
 ```json
 {
-  "fixedRotationOffset": "teamOffsets",
-  "teamOffsets": [
-    {"teamId": "TM-A", "rotationOffset": 10}  // Pattern has 9-day cycle!
+  "fixedRotationOffset": "ouOffsets",
+  "ouOffsets": [
+    {"ouId": "ATSU OPS OFFICE", "rotationOffset": 10}  // Pattern has 9-day cycle!
   ],
   "demandItems": [{
     "requirements": [{
@@ -165,20 +165,20 @@ Old boolean format automatically converts:
   }]
 }
 ```
-**Error**: `"Team 'TM-A' offset 10 out of range [0, 8] for cycle length 9"`
+**Error**: `"OU 'ATSU OPS OFFICE' offset 10 out of range [0, 8] for cycle length 9"`
 
 ---
 
 ## Comparison Table
 
-| Feature | auto | teamOffsets | solverOptimized |
-|---------|------|-------------|-----------------|
+| Feature | auto | ouOffsets | solverOptimized |
+|---------|------|-----------|-----------------|
 | **Speed** | ⚡ Fast | ⚡ Fast | 🐌 Slow |
-| **Setup** | ✅ Zero config | 📋 Define teams | ✅ Zero config |
-| **Team Sync** | ❌ No | ✅ Yes | ❌ No |
+| **Setup** | ✅ Zero config | 📋 Define OUs | ✅ Zero config |
+| **OU Sync** | ❌ No | ✅ Yes | ❌ No |
 | **Flexibility** | ⚖️ Medium | ⚖️ Low (fixed) | 🔄 High |
 | **Deterministic** | ✅ Yes | ✅ Yes | ❌ No |
-| **Use Case** | Production | Team-based ops | Research |
+| **Use Case** | Production | OU-based ops | Research |
 
 ---
 
@@ -202,31 +202,31 @@ Old boolean format automatically converts:
 
 ---
 
-### Enabling Team-Based Offsets
+### Enabling OU-Based Offsets
 
 **Step 1**: Change mode
 ```json
 {
-  "fixedRotationOffset": "teamOffsets"
+  "fixedRotationOffset": "ouOffsets"
 }
 ```
 
-**Step 2**: Add `teamOffsets` array
+**Step 2**: Add `ouOffsets` array
 ```json
 {
-  "teamOffsets": [
-    {"teamId": "TM-Alpha", "rotationOffset": 0},
-    {"teamId": "TM-Bravo", "rotationOffset": 3}
+  "ouOffsets": [
+    {"ouId": "ATSU OPS OFFICE", "rotationOffset": 0},
+    {"ouId": "ATSU T1 LSU A1", "rotationOffset": 3}
   ]
 }
 ```
 
-**Step 3**: Ensure all employees have `teamId`
+**Step 3**: Ensure all employees have `ouId`
 ```json
 {
   "employees": [
-    {"employeeId": "E001", "teamId": "TM-Alpha"},
-    {"employeeId": "E002", "teamId": "TM-Bravo"}
+    {"employeeId": "E001", "ouId": "ATSU OPS OFFICE"},
+    {"employeeId": "E002", "ouId": "ATSU T1 LSU A1"}
   ]
 }
 ```
@@ -244,9 +244,9 @@ Expected output:
 ```
 ✅ PASS: Normalize Values
 ✅ PASS: Auto Mode  
-✅ PASS: Team Offsets (Valid)
-✅ PASS: Team Offsets (Missing Team)
-✅ PASS: Team Offsets (Invalid Range)
+✅ PASS: OU Offsets (Valid)
+✅ PASS: OU Offsets (Missing OU)
+✅ PASS: OU Offsets (Invalid Range)
 ✅ PASS: Backward Compatibility
 
 ✅ ALL TESTS PASSED!
@@ -263,8 +263,8 @@ All three endpoints support the new format:
 curl -X POST http://localhost:8080/solve \
   -H "Content-Type: application/json" \
   -d '{
-    "fixedRotationOffset": "teamOffsets",
-    "teamOffsets": [...]
+    "fixedRotationOffset": "ouOffsets",
+    "ouOffsets": [...]
   }'
 ```
 
