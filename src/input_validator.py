@@ -223,7 +223,6 @@ def _validate_requirement(req: dict, path: str, result: ValidationResult,
     required_fields = {
         'requirementId': str,
         'productTypeId': str,
-        'rankId': str,
         'workPattern': list
     }
     
@@ -234,6 +233,20 @@ def _validate_requirement(req: dict, path: str, result: ValidationResult,
         elif not isinstance(req[field], expected_type):
             result.add_error(f"{path}.{field}", "INVALID_TYPE", 
                            f"Field '{field}' must be of type {expected_type.__name__}")
+    
+    # Validate rank field (support both rankId singular and rankIds plural)
+    has_rank_id = 'rankId' in req
+    has_rank_ids = 'rankIds' in req
+    
+    if not has_rank_id and not has_rank_ids:
+        result.add_error(f"{path}.rankId", "MISSING_FIELD", 
+                       "Required field 'rankId' or 'rankIds' is missing")
+    elif has_rank_id and not isinstance(req['rankId'], str):
+        result.add_error(f"{path}.rankId", "INVALID_TYPE", 
+                       "Field 'rankId' must be a string")
+    elif has_rank_ids and not isinstance(req['rankIds'], list):
+        result.add_error(f"{path}.rankIds", "INVALID_TYPE", 
+                       "Field 'rankIds' must be a list")
     
     # Validate headcount - support both formats: int (legacy) or dict (new)
     if 'headcount' not in req:
@@ -536,7 +549,14 @@ def _validate_feasibility(data: dict, result: ValidationResult):
             req_path = f"demandItems[{di_idx}].requirements[{req_idx}]"
             
             req_product = requirement.get('productTypeId', '')
-            req_rank = requirement.get('rankId', '')
+            
+            # Support both rankId (singular) and rankIds (plural)
+            req_ranks = requirement.get('rankIds', [])
+            if not req_ranks:
+                # Fallback to singular rankId
+                req_rank = requirement.get('rankId', '')
+                req_ranks = [req_rank] if req_rank else []
+            
             req_scheme_raw = requirement.get('Scheme', 'Global')
             
             # Normalize headcount to handle both formats
@@ -569,9 +589,9 @@ def _validate_feasibility(data: dict, result: ValidationResult):
                 emp_rank = emp.get('rankId', '')
                 emp_scheme = emp.get('normalized_scheme', '')
                 
-                # Check match
+                # Check match (with OR logic for ranks)
                 product_match = (emp_product == req_product)
-                rank_match = (emp_rank == req_rank)
+                rank_match = (emp_rank in req_ranks) if req_ranks else True
                 scheme_match = (req_scheme == 'Global' or emp_scheme == req_scheme)
                 
                 if product_match and rank_match and scheme_match:
@@ -579,9 +599,11 @@ def _validate_feasibility(data: dict, result: ValidationResult):
             
             # Check if sufficient employees
             if matching_count == 0:
+                # Format ranks for error message
+                ranks_str = '/'.join(req_ranks) if req_ranks else ''
                 result.add_error(f"{req_path}", "NO_MATCHING_EMPLOYEES", 
                                f"No employees match requirement {requirement.get('requirementId', '?')}: "
-                               f"{req_product}/{req_rank}/{req_scheme_raw}")
+                               f"{req_product}/{ranks_str}/{req_scheme_raw}")
             elif matching_count < req_headcount:
                 result.add_warning(f"{req_path}", "INSUFFICIENT_EMPLOYEES", 
                                  f"Only {matching_count} employees match requirement "
