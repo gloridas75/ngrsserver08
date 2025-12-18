@@ -84,11 +84,16 @@ python -c "from src.resource_limiter import apply_solver_resource_limits; apply_
 
 **Recommended Settings** (16GB RAM, 8 CPU system):
 ```ini
-MemoryMax=12G      # 75% of 16GB RAM
+MemoryMax=11G      # 70% of 16GB RAM
 MemoryHigh=10G     # 62% of 16GB RAM
-CPUQuota=600%      # 6 cores (75% of 8 cores)
+CPUQuota=600%      # 6 cores (75% of 8 cores) - NEVER use 800% (leaves no CPU for OS!)
 TasksMax=1024      # Thread limit
 ```
+
+**⚠️ IMPORTANT**: CPUQuota format is `100% = 1 core`. Never use 100% of cores - always leave 15-25% for OS, SSH, and monitoring:
+- 4 cores × 75% = 300% (not 400%)
+- 8 cores × 75% = 600% (not 800%)
+- 16 cores × 75% = 1200% (not 1600%)
 
 **Benefits**:
 - System-level enforcement (can't be bypassed)
@@ -177,6 +182,17 @@ htop  # or top
 
 ## Configuration Recommendations by System Size
 
+### AWS t3.xlarge (16GB RAM, 4 vCPUs) - **Recommended for Production**
+```ini
+MemoryMax=11G      # 70% of 16GB
+MemoryHigh=10G     # 62% of 16GB
+CPUQuota=300%      # 3 cores (75% of 4)
+```
+**Safe Problem Size**: Up to 1M decision variables
+**Use Case**: Production workloads, 100-200 employee rosters
+
+---
+
 ### Small Server (4GB RAM, 2 CPUs)
 ```ini
 MemoryMax=3G       # 75% of 4GB
@@ -184,26 +200,48 @@ MemoryHigh=2.5G    # 62% of 4GB
 CPUQuota=150%      # 1.5 cores (75% of 2)
 ```
 **Safe Problem Size**: Up to 300K decision variables
+**Use Case**: Development/testing only
 
 ---
 
-### Medium Server (16GB RAM, 8 CPUs)
+### AWS c5.2xlarge (16GB RAM, 8 vCPUs)
 ```ini
-MemoryMax=12G      # 75% of 16GB
+MemoryMax=11G      # 70% of 16GB
 MemoryHigh=10G     # 62% of 16GB
 CPUQuota=600%      # 6 cores (75% of 8)
 ```
 **Safe Problem Size**: Up to 2M decision variables
+**Use Case**: High-performance workloads, 200-400 employee rosters
 
 ---
 
-### Large Server (32GB RAM, 16 CPUs)
+### AWS c5.4xlarge (32GB RAM, 16 vCPUs)
 ```ini
-MemoryMax=24G      # 75% of 32GB
+MemoryMax=22G      # 70% of 32GB
 MemoryHigh=20G     # 62% of 32GB
 CPUQuota=1200%     # 12 cores (75% of 16)
 ```
 **Safe Problem Size**: Up to 5M decision variables
+**Use Case**: Enterprise workloads, 400+ employee rosters, complex constraints
+
+---
+
+## Quick Reference: AWS EC2 Instance Types
+
+| Instance Type | vCPUs | RAM (GB) | MemoryMax | CPUQuota | Max Variables | Monthly Cost* |
+|--------------|-------|----------|-----------|----------|---------------|---------------|
+| t3.medium    | 2     | 4        | 3G        | 150%     | 300K          | ~$30          |
+| t3.large     | 2     | 8        | 6G        | 150%     | 500K          | ~$60          |
+| **t3.xlarge** | **4** | **16** | **11G**   | **300%** | **1M**        | **~$120** ⭐ |
+| t3.2xlarge   | 8     | 32       | 22G       | 600%     | 2M            | ~$240         |
+| c5.2xlarge   | 8     | 16       | 11G       | 600%     | 2M            | ~$245         |
+| c5.4xlarge   | 16    | 32       | 22G       | 1200%    | 5M            | ~$490         |
+
+*Approximate monthly cost for Linux, us-east-1, on-demand pricing  
+⭐ **Recommended**: t3.xlarge offers best price/performance for typical production workloads
+
+**CPUQuota Formula**: `(vCPUs × 0.75) × 100%`  
+**MemoryMax Formula**: `RAM × 0.70` (rounds to nearest GB)
 
 ---
 
