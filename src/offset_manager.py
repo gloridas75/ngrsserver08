@@ -17,6 +17,7 @@ Usage:
 import logging
 from typing import Dict, List, Any, Union
 from collections import Counter
+from context.engine.data_loader import extract_rostering_basis
 
 logger = logging.getLogger(__name__)
 
@@ -344,8 +345,8 @@ def ensure_staggered_offsets(input_data: Dict[str, Any], force: bool = False) ->
         logger.warning("No employees to process")
         return input_data
     
-    # Normalize rosteringBasis
-    rostering_basis_raw = input_data.get('rosteringBasis')
+    # Extract rosteringBasis (checks demandItems[0] first, then root - backward compatible)
+    rostering_basis_raw = extract_rostering_basis(input_data)
     rostering_basis = normalize_rostering_basis(rostering_basis_raw)
     
     # Update input_data to use normalized value
