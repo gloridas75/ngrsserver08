@@ -176,6 +176,38 @@ def build_model(ctx):
     if selected_employee_ids:
         print(f"  outcomeBased mode: Using pre-selected {len(selected_employee_ids)} employees")
     
+    # ⚠️ SAFETY CHECK: Estimate complexity and abort if too high to prevent system crash
+    estimated_employee_count = len(selected_employee_ids) if selected_employee_ids else len(employees)
+    max_possible_variables = len(slots) * estimated_employee_count
+    
+    # Define safety thresholds
+    WARNING_THRESHOLD = 1_000_000  # 1M variables
+    DANGER_THRESHOLD = 2_000_000   # 2M variables (system crash risk)
+    
+    if max_possible_variables > DANGER_THRESHOLD:
+        error_msg = (
+            f"❌ COMPLEXITY LIMIT EXCEEDED - Aborting to prevent system crash\n"
+            f"   Estimated decision variables: {max_possible_variables:,}\n"
+            f"   Maximum safe limit: {DANGER_THRESHOLD:,}\n"
+            f"   Problem size: {len(slots)} slots × {estimated_employee_count} employees\n"
+            f"\n"
+            f"   Solutions:\n"
+            f"   1. For outcomeBased mode: Increase 'minStaffThresholdPercentage' to reduce employee pool\n"
+            f"   2. For demandBased mode: Reduce planning period or employee count\n"
+            f"   3. Split problem into smaller time periods (e.g., 2 weeks instead of 1 month)\n"
+            f"\n"
+            f"   Current settings:\n"
+            f"   - Rostering basis: {ctx.get('_rosteringBasis', 'demandBased')}\n"
+            f"   - minStaffThresholdPercentage: {ctx.get('demandItems', [{}])[0].get('minStaffThresholdPercentage', 'N/A')}%\n"
+        )
+        print(error_msg)
+        raise RuntimeError(error_msg)
+    
+    elif max_possible_variables > WARNING_THRESHOLD:
+        print(f"  ⚠️  WARNING: High complexity problem ({max_possible_variables:,} variables)")
+        print(f"     This may take 10-20 minutes and use significant memory")
+        print(f"     Consider reducing problem size for faster results")
+    
     # v0.70: Rotation info is now stored per requirement in slot.rotationSequence
     # No need for separate demand_rotations dictionary
     

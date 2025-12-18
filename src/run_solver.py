@@ -14,6 +14,7 @@ from context.engine.time_utils import (
 )
 from src.ratio_cache import RatioCache
 from src.solver import solve_problem
+from src.resource_limiter import apply_solver_resource_limits
 
 def compute_input_hash(input_data):
     """Compute SHA256 hash of input JSON (excluding non-serializable runtime data)."""
@@ -483,4 +484,11 @@ def main():
     print(f"  Overall score: {score.get('overall', 0)}")
 
 if __name__ == "__main__":
+    # Apply resource limits before starting solver (prevent system crashes)
+    # Default: Use 75% of system RAM, leaving 25% for OS and other processes
+    import os
+    memory_limit_pct = int(os.getenv('SOLVER_MEMORY_LIMIT_PCT', '75'))
+    print(f"[CLI] Applying resource limits ({memory_limit_pct}% system RAM)...")
+    apply_solver_resource_limits(memory_percentage=memory_limit_pct)
+    
     main()
