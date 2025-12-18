@@ -565,9 +565,16 @@ def build_model(ctx):
         
         if not base_date:
             continue
-            
-        # Calculate which day in the cycle this slot represents
-        days_from_base = (slot.date - base_date).days
+        
+        # WEEK-ALIGNED PATTERN: Find Monday of the week containing coverageAnchor
+        # This ensures pattern cycles align with calendar weeks (Mon-Sun)
+        # Formula: base_date - (base_date.weekday() days) = Monday of that week
+        # Example: If coverageAnchor = 2026-01-01 (Thu, weekday=3), 
+        #          week_anchor = 2026-01-01 - 3 days = 2025-12-29 (Mon)
+        week_anchor = base_date - timedelta(days=base_date.weekday())
+        
+        # Calculate which day in the cycle this slot represents (from Monday anchor)
+        days_from_base = (slot.date - week_anchor).days
         
         for emp in employees:
             emp_id = emp.get('employeeId')
