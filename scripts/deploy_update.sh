@@ -238,6 +238,111 @@ pull_code() {
     echo ""
 }
 
+# Function to configure resource limits
+configure_resource_limits() {
+    print_status "Configuring resource limits for $SERVICE_NAME..."
+    
+    # Detect system resources
+    TOTAL_RAM_GB=$(free -g | awk '/^Mem:/{print $2}')
+    TOTAL_CPUS=$(nproc)
+    
+    print_status "System Resources Detected:"
+    print_status "  RAM: ${TOTAL_RAM_GB}GB"
+    print_status "  CPUs: $TOTAL_CPUS cores"
+    echo ""
+    
+    # Calculate recommended limits (70% RAM, 75% CPU)
+    RECOMMENDED_MEM_MAX=$((TOTAL_RAM_GB * 70 / 100))
+    RECOMMENDED_MEM_HIGH=$((TOTAL_RAM_GB * 60 / 100))
+    RECOMMENDED_CPU_QUOTA=$((TOTAL_CPUS * 75))
+    
+    print_status "Recommended Resource Limits:"
+    print_status "  MemoryMax: ${RECOMMENDED_MEM_MAX}G (70% of RAM)"
+    print_status "  MemoryHigh: ${RECOMMENDED_MEM_HIGH}G (60% of RAM)"
+    print_status "  CPUQuota: ${RECOMMENDED_CPU_QUOTA}% (75% of $TOTAL_CPUS cores)"
+    echo ""
+    
+    # Check if systemd service file exists
+    SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+    
+    if [ ! -f "$SERVICE_FILE" ]; then
+        print_warning "Service file not found at $SERVICE_FILE"
+        print_warning "Skipping resource limits configuration"
+        echo ""
+        return 0
+    fi
+    
+    # Check if resource limits already exist in service file
+    if grep -q "MemoryMax=" "$SERVICE_FILE" 2>/dev/null; then
+        print_status "Resource limits already configured in service file"
+        
+        # Show current limits
+        CURRENT_MEM_MAX=$(grep "MemoryMax=" "$SERVICE_FILE" | cut -d'=' -f2)
+        CURRENT_CPU_QUOTA=$(grep "CPUQuota=" "$SERVICE_FILE" | cut -d'=' -f2)
+        print_status "  Current MemoryMax: $CURRENT_MEM_MAX"
+        print_status "  Current CPUQuota: $CURRENT_CPU_QUOTA"
+        echo ""
+        
+        # Ask if user wants to update
+        read -p "Update resource limits? (y/N): " -n 1 -r
+        echo ""
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_status "Keeping existing resource limits"
+            echo ""
+            return 0
+        fi
+    fi
+    
+    # Add or update resource limits in service file
+    print_status "Updating systemd service file with resource limits..."
+    
+    # Create temporary file with updated service configuration
+    TEMP_SERVICE=$(mktemp)
+    
+    # Copy existing service file and add/update resource limits
+    if grep -q "^\[Service\]" "$SERVICE_FILE"; then
+        # Service section exists, add limits after [Service]
+        awk -v mem_max="${RECOMMENDED_MEM_MAX}G" \
+            -v mem_high="${RECOMMENDED_MEM_HIGH}G" \
+            -v cpu_quota="${RECOMMENDED_CPU_QUOTA}%" \
+            '
+            /^\[Service\]/ {
+                print $0
+                print ""
+                print "# Resource Limits (added by deploy_update.sh)"
+                print "MemoryMax=" mem_max
+                print "MemoryHigh=" mem_high
+                print "CPUQuota=" cpu_quota
+                print "TasksMax=1024"
+                next
+            }
+            !/^MemoryMax=/ && !/^MemoryHigh=/ && !/^CPUQuota=/ && !/^TasksMax=/ && !/^# Resource Limits/ {
+                print $0
+            }
+            ' "$SERVICE_FILE" > "$TEMP_SERVICE"
+        
+        # Replace service file
+        sudo cp "$TEMP_SERVICE" "$SERVICE_FILE"
+        rm "$TEMP_SERVICE"
+        
+        print_success "Resource limits configured:"
+        print_success "  MemoryMax=${RECOMMENDED_MEM_MAX}G"
+        print_success "  MemoryHigh=${RECOMMENDED_MEM_HIGH}G"
+        print_success "  CPUQuota=${RECOMMENDED_CPU_QUOTA}%"
+        print_success "  TasksMax=1024"
+    else
+        print_warning "Could not find [Service] section in service file"
+        print_warning "Skipping automatic configuration"
+    fi
+    
+    # Reload systemd daemon to pick up changes
+    print_status "Reloading systemd daemon..."
+    sudo systemctl daemon-reload
+    print_success "Systemd daemon reloaded"
+    
+    echo ""
+}
+
 # Function to clear all caches
 clear_cache() {
     print_status "Clearing all Python caches..."
@@ -398,6 +503,46 @@ show_logs() {
     echo ""
 }
 
+# Function to show resource limits and usage
+show_resource_info() {
+    print_status "Resource limits and current usage:"
+    
+    # Show configured limits
+    if systemctl show $SERVICE_NAME | grep -q "MemoryMax="; then
+        MEM_MAX=$(systemctl show $SERVICE_NAME | grep "MemoryMax=" | cut -d'=' -f2)
+        MEM_HIGH=$(systemctl show $SERVICE_NAME | grep "MemoryHigh=" | cut -d'=' -f2)
+        CPU_QUOTA=$(systemctl show $SERVICE_NAME | grep "CPUQuota=" | cut -d'=' -f2)
+        
+        echo -e "${BLUE}Configured Limits:${NC}"
+        echo "  MemoryMax: $MEM_MAX"
+        echo "  MemoryHigh: $MEM_HIGH"
+        echo "  CPUQuota: $CPU_QUOTA"
+        echo ""
+    else
+        print_warning "No resource limits configured"
+        echo ""
+        return 0
+    fi
+    
+    # Show current usage
+    if systemctl show $SERVICE_NAME | grep -q "MemoryCurrent="; then
+        MEM_CURRENT=$(systemctl show $SERVICE_NAME | grep "MemoryCurrent=" | cut -d'=' -f2)
+        # Convert bytes to MB
+        MEM_CURRENT_MB=$((MEM_CURRENT / 1024 / 1024))
+        
+        echo -e "${BLUE}Current Usage:${NC}"
+        echo "  Memory: ${MEM_CURRENT_MB}MB"
+        
+        # Show CPU usage if available
+        if command -v systemd-cgtop &> /dev/null; then
+            CPU_USAGE=$(timeout 2 systemd-cgtop -n 1 -b 2>/dev/null | grep "$SERVICE_NAME" | awk '{print $4}' || echo "N/A")
+            echo "  CPU: $CPU_USAGE"
+        fi
+    fi
+    
+    echo ""
+}
+
 # Main execution
 main() {
     echo "Starting deployment process..."
@@ -424,6 +569,9 @@ main() {
     # Pull latest code
     pull_code
     
+    # Configure resource limits (if not already configured)
+    configure_resource_limits
+    
     # Clear all caches (critical for Python module reloading)
     clear_cache
     
@@ -442,6 +590,9 @@ main() {
     # Show status
     show_status
     
+    # Show resource limits and usage
+    show_resource_info
+    
     # Show recent logs
     show_logs
     
@@ -458,6 +609,11 @@ main() {
     echo "  - View logs: tail -f $LOG_FILE"
     echo "  - Restart: sudo systemctl restart $SERVICE_NAME"
     echo "  - Stop: sudo systemctl stop $SERVICE_NAME"
+    echo ""
+    echo "Resource monitoring:"
+    echo "  - Check limits: systemctl show $SERVICE_NAME | grep -E 'Memory|CPU'"
+    echo "  - Monitor usage: systemd-cgtop"
+    echo "  - View current memory: systemctl status $SERVICE_NAME | grep Memory"
     echo ""
 }
 
