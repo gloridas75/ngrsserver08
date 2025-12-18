@@ -296,44 +296,82 @@ configure_resource_limits() {
     # Add or update resource limits in service file
     print_status "Updating systemd service file with resource limits..."
     
-    # Create temporary file with updated service configuration
-    TEMP_SERVICE=$(mktemp)
+    # Create backup of service file
+    sudo cp "$SERVICE_FILE" "${SERVICE_FILE}.backup.$(date +%Y%m%d_%H%M%S)"
     
-    # Copy existing service file and add/update resource limits
-    if grep -q "^\[Service\]" "$SERVICE_FILE"; then
-        # Service section exists, add limits after [Service]
+    # Check if limits already exist
+    HAS_LIMITS=$(grep -c "^MemoryMax=" "$SERVICE_FILE" 2>/dev/null || echo "0")
+    
+    if [ "$HAS_LIMITS" -gt 0 ]; then
+        # Update existing limits
+        print_status "Updating existing resource limits..."
+        sudo sed -i.tmp "s/^MemoryMax=.*/MemoryMax=${RECOMMENDED_MEM_MAX}G/" "$SERVICE_FILE"
+        sudo sed -i.tmp "s/^MemoryHigh=.*/MemoryHigh=${RECOMMENDED_MEM_HIGH}G/" "$SERVICE_FILE"
+        sudo sed -i.tmp "s/^CPUQuota=.*/CPUQuota=${RECOMMENDED_CPU_QUOTA}%/" "$SERVICE_FILE"
+        sudo rm -f "${SERVICE_FILE}.tmp"
+    else
+        # Add new limits after [Service] section
+        print_status "Adding resource limits to service file..."
+        TEMP_SERVICE=$(mktemp)
         awk -v mem_max="${RECOMMENDED_MEM_MAX}G" \
             -v mem_high="${RECOMMENDED_MEM_HIGH}G" \
             -v cpu_quota="${RECOMMENDED_CPU_QUOTA}%" \
-            '
-            /^\[Service\]/ {
+            'BEGIN { in_service=0; added=0 }
+            /^\[Service\]/ { 
                 print $0
+                in_service=1
+                next
+            }
+            /^\[/ && in_service==1 && added==0 {
                 print ""
-                print "# Resource Limits (added by deploy_update.sh)"
+                print "# Resource Limits"
                 print "MemoryMax=" mem_max
                 print "MemoryHigh=" mem_high
                 print "CPUQuota=" cpu_quota
                 print "TasksMax=1024"
-                next
+                print ""
+                added=1
+                in_service=0
             }
-            !/^MemoryMax=/ && !/^MemoryHigh=/ && !/^CPUQuota=/ && !/^TasksMax=/ && !/^# Resource Limits/ {
-                print $0
-            }
-            ' "$SERVICE_FILE" > "$TEMP_SERVICE"
+            { print $0 }
+            END {
+                if (added==0 && in_service==1) {
+                    print ""
+                    print "# Resource Limits"
+                    print "MemoryMax=" mem_max
+                    print "MemoryHigh=" mem_high
+                    print "CPUQuota=" cpu_quota
+                    print "TasksMax=1024"
+                }
+            }' "$SERVICE_FILE" > "$TEMP_SERVICE"
         
-        # Replace service file
-        sudo cp "$TEMP_SERVICE" "$SERVICE_FILE"
-        rm "$TEMP_SERVICE"
-        
-        print_success "Resource limits configured:"
-        print_success "  MemoryMax=${RECOMMENDED_MEM_MAX}G"
-        print_success "  MemoryHigh=${RECOMMENDED_MEM_HIGH}G"
-        print_success "  CPUQuota=${RECOMMENDED_CPU_QUOTA}%"
-        print_success "  TasksMax=1024"
-    else
-        print_warning "Could not find [Service] section in service file"
-        print_warning "Skipping automatic configuration"
+        # Verify temp file has content
+        if [ -s "$TEMP_SERVICE" ]; then
+            sudo cp "$TEMP_SERVICE" "$SERVICE_FILE"
+            rm "$TEMP_SERVICE"
+        else
+            print_error "Failed to create updated service file"
+            rm "$TEMP_SERVICE"
+            return 1
+        fi
     fi
+    
+    # Verify service file is valid
+    if ! grep -q "^\[Service\]" "$SERVICE_FILE"; then
+        print_error "Service file corrupted! Restoring backup..."
+        LATEST_BACKUP=$(ls -t ${SERVICE_FILE}.backup.* 2>/dev/null | head -1)
+        if [ -n "$LATEST_BACKUP" ]; then
+            sudo cp "$LATEST_BACKUP" "$SERVICE_FILE"
+            print_error "Service file restored from backup"
+        fi
+        return 1
+    fi
+    
+    print_success "Resource limits configured:"
+    print_success "  MemoryMax=${RECOMMENDED_MEM_MAX}G"
+    print_success "  MemoryHigh=${RECOMMENDED_MEM_HIGH}G"
+    print_success "  CPUQuota=${RECOMMENDED_CPU_QUOTA}%"
+    print_success "  TasksMax=1024"
     
     # Reload systemd daemon to pick up changes
     print_status "Reloading systemd daemon..."
@@ -428,6 +466,12 @@ clear_logs() {
 start_service() {
     print_status "Starting $SERVICE_NAME service..."
     
+    # Validate service file first
+    print_status "Validating service file..."
+    if ! sudo systemd-analyze verify "$SERVICE_NAME.service" 2>&1 | grep -v "Failed to load"; then
+        print_warning "Service file validation warnings (non-critical)"
+    fi
+    
     sudo systemctl start $SERVICE_NAME
     
     # Wait for service to start
@@ -438,7 +482,16 @@ start_service() {
         print_success "Service started successfully"
     else
         print_error "Service failed to start"
-        print_error "Check logs: tail -50 $LOG_FILE"
+        print_error "Checking service status..."
+        sudo systemctl status $SERVICE_NAME --no-pager -l || true
+        echo ""
+        print_error "Last 30 lines of log:"
+        tail -30 "$LOG_FILE" 2>/dev/null || echo "No log file found"
+        echo ""
+        print_error "To restore service file from backup:"
+        print_error "  sudo cp /etc/systemd/system/${SERVICE_NAME}.service.backup.* /etc/systemd/system/${SERVICE_NAME}.service"
+        print_error "  sudo systemctl daemon-reload"
+        print_error "  sudo systemctl start ${SERVICE_NAME}"
         exit 1
     fi
     echo ""
