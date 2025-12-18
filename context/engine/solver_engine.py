@@ -171,6 +171,11 @@ def build_model(ctx):
     print(f"  Employees: {len(employees)}")
     print(f"  Cached: {len(ctx['employee_lookup'])} employees, {len(ctx['slots_by_date'])} dates")
     
+    # v0.98: Check if outcomeBased mode has pre-selected employees
+    selected_employee_ids = ctx.get('_selectedEmployeeIds', None)
+    if selected_employee_ids:
+        print(f"  outcomeBased mode: Using pre-selected {len(selected_employee_ids)} employees")
+    
     # v0.70: Rotation info is now stored per requirement in slot.rotationSequence
     # No need for separate demand_rotations dictionary
     
@@ -181,10 +186,16 @@ def build_model(ctx):
     product_filtered = 0
     rank_filtered = 0
     blacklist_filtered = 0
+    ou_selection_filtered = 0  # v0.98: Track OU-based filtering
     
     for slot in slots:
         for emp in employees:
             emp_id = emp.get('employeeId')
+            
+            # v0.98: outcomeBased OU-based selection filter
+            if selected_employee_ids and emp_id not in selected_employee_ids:
+                ou_selection_filtered += 1
+                continue
             
             # v0.70: Check product type requirement
             slot_product = slot.productTypeId
@@ -216,9 +227,7 @@ def build_model(ctx):
             # Mix constraint will be handled separately to ensure at least 1M + 1F
             
             if not gender_allowed:
-                continue
-            
-            # v0.70: Check scheme requirement
+                continue            # v0.70: Check scheme requirement
             # Note: slot.schemeRequirement is already normalized to short code (A/B/P/Global) by slot_builder
             scheme_req = slot.schemeRequirement
             emp_scheme_raw = emp.get('scheme', '')
@@ -312,6 +321,8 @@ def build_model(ctx):
             x[(slot.slot_id, emp_id)] = model.NewBoolVar(var_name)
     
     print(f"[build_model] ✓ Created {len(x)} decision variables")
+    if ou_selection_filtered > 0:
+        print(f"  ℹ️  Filtered {ou_selection_filtered} employee-slot pairs by outcomeBased OU selection")
     if product_filtered > 0:
         print(f"  ℹ️  Filtered {product_filtered} employee-slot pairs based on product type requirement")
     if rank_filtered > 0:

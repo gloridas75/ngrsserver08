@@ -12,6 +12,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 from datetime import datetime, date, timedelta
+from collections import defaultdict
+import math
 import uuid
 
 
@@ -299,21 +301,49 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 # OUTCOME-BASED MODE OVERRIDE: Ignore requirement headcount, use employee count instead
                 rostering_basis = inputs.get('_rosteringBasis', 'demandBased')
                 if rostering_basis == 'outcomeBased':
-                    # For outcomeBased, create one position per matching employee
-                    # This ensures all employees can be assigned slots based on their pattern
+                    # For outcomeBased, select minStaffThresholdPercentage from each OU
+                    # This dramatically reduces decision variables while maintaining OU balance
                     employees = inputs.get('employees', [])
                     
                     # Filter employees by rank to match this requirement
                     # Note: employees use 'rankId' (singular), requirements use 'rankIds' (plural array)
                     matching_employees = [emp for emp in employees if emp.get('rankId') in rank_ids]
-                    employee_based_headcount = len(matching_employees)
                     
-                    print(f"      Requirement {requirement_id}: outcomeBased mode - overriding headcount")
-                    print(f"        Original headcount: {headcount_raw}")
-                    print(f"        Matching employees (rank={rank_ids}): {employee_based_headcount}")
-                    print(f"        Using employee count as headcount")
+                    # Get minStaffThresholdPercentage from parent demand item
+                    min_threshold = dmd.get('minStaffThresholdPercentage', 100)
                     
-                    # Override headcount with employee count
+                    # Group matching employees by OU
+                    employees_by_ou = defaultdict(list)
+                    for emp in matching_employees:
+                        ou_id = emp.get('ouId', 'DEFAULT')
+                        employees_by_ou[ou_id].append(emp)
+                    
+                    # Select minStaffThresholdPercentage from each OU (rounded up)
+                    selected_employees = []
+                    ou_selection_log = []
+                    for ou_id, ou_emps in sorted(employees_by_ou.items()):
+                        target_count = math.ceil(len(ou_emps) * min_threshold / 100)
+                        selected = ou_emps[:target_count]  # Take first N employees from OU
+                        selected_employees.extend(selected)
+                        ou_selection_log.append((ou_id, len(selected), len(ou_emps)))
+                    
+                    employee_based_headcount = len(selected_employees)
+                    
+                    print(f"      Requirement {requirement_id}: outcomeBased mode - OU-based selection")
+                    print(f"        minStaffThresholdPercentage: {min_threshold}%")
+                    print(f"        Total matching employees: {len(matching_employees)}")
+                    print(f"        Per-OU selection:")
+                    for ou_id, selected_count, total_count in ou_selection_log:
+                        print(f"          {ou_id}: {selected_count}/{total_count} employees")
+                    print(f"        Total selected: {employee_based_headcount} employees")
+                    print(f"        Decision variables: {employee_based_headcount} × {len(inputs.get('planningHorizon', {}).get('startDate', ''))} days = reduced complexity")
+                    
+                    # Update the employees list in context to only include selected employees
+                    # This ensures solver only creates variables for selected employees
+                    selected_emp_ids = {emp['employeeId'] for emp in selected_employees}
+                    inputs['_selectedEmployeeIds'] = selected_emp_ids
+                    
+                    # Override headcount with selected employee count
                     headcount_raw = employee_based_headcount
                 
                 if isinstance(headcount_raw, dict):
