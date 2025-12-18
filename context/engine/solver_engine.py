@@ -332,6 +332,45 @@ def build_model(ctx):
     
     print(f"  ✓ Created {len(unassigned)} unassigned slot variables")
     
+    # ========== NEW: EMPLOYEE USAGE TRACKING (OUTCOME-BASED MODE) ==========
+    # For outcomeBased mode, track which employees are used and enforce minimum threshold
+    rostering_basis = ctx.get('_rosteringBasis', 'demandBased')
+    if rostering_basis == 'outcomeBased':
+        print(f"\n[build_model] Setting up employee usage tracking (outcomeBased mode)...")
+        
+        # Create binary variables: emp_used[emp_id] = 1 if employee assigned to any slot
+        emp_used = {}
+        for emp in employees:
+            emp_id = emp.get('employeeId')
+            emp_used[emp_id] = model.NewBoolVar(f"emp_used_{emp_id}")
+        
+        # Link emp_used to assignments: emp_used = 1 if sum(x[slot, emp_id]) > 0
+        for emp in employees:
+            emp_id = emp.get('employeeId')
+            # Get all slots this employee could be assigned to
+            emp_assignments = [x[(s.slot_id, emp_id)] for s in slots if (s.slot_id, emp_id) in x]
+            
+            if emp_assignments:
+                # emp_used[emp_id] == 1 iff sum(assignments) > 0
+                # We use: sum(assignments) >= emp_used (if used, must have >= 1 assignment)
+                #         sum(assignments) <= BigM * emp_used (if not used, no assignments)
+                # Simpler: max_assignments * emp_used >= sum(assignments) >= emp_used
+                max_possible = len(emp_assignments)
+                model.Add(sum(emp_assignments) >= emp_used[emp_id])
+                model.Add(sum(emp_assignments) <= max_possible * emp_used[emp_id])
+            else:
+                # No valid slots for this employee - cannot be used
+                model.Add(emp_used[emp_id] == 0)
+        
+        ctx['emp_used'] = emp_used
+        print(f"  ✓ Created {len(emp_used)} employee usage tracking variables")
+        
+        # Add constraint: At least target_employee_count must be used
+        target_employee_count = ctx.get('_targetEmployeeCount', len(employees))
+        model.Add(sum(emp_used.values()) >= target_employee_count)
+        print(f"  ✓ Added constraint: At least {target_employee_count} employees must be used")
+        print()
+    
     # ========== CONSTRAINT 1: HEADCOUNT SATISFACTION (MODIFIED) ==========
     print(f"\n[build_model] Adding headcount constraints (with unassigned option)...")
     headcount_constraints = 0

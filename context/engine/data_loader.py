@@ -1,5 +1,5 @@
 import json, pathlib
-from typing import Union, Dict, Any
+from typing import Union, Dict, Any, List
 from .rotation_preprocessor import preprocess_rotation_offsets
 
 
@@ -38,6 +38,139 @@ def normalize_requirements_rankIds(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 
+def extract_rostering_basis(data: Dict[str, Any]) -> str:
+    """
+    Extract rosteringBasis from data with backward compatibility.
+    
+    Priority:
+    1. demandItems[0].rosteringBasis (new location)
+    2. root.rosteringBasis (old location)
+    3. Default: 'demandBased'
+    
+    Args:
+        data: Input data dict
+        
+    Returns:
+        str: 'demandBased' or 'outcomeBased'
+    """
+    # Try demandItems first (new location)
+    demand_items = data.get('demandItems', [])
+    if demand_items and len(demand_items) > 0:
+        rostering_basis = demand_items[0].get('rosteringBasis')
+        if rostering_basis:
+            return rostering_basis
+    
+    # Fall back to root level (old location for backward compatibility)
+    rostering_basis = data.get('rosteringBasis')
+    if rostering_basis:
+        return rostering_basis
+    
+    # Default
+    return 'demandBased'
+
+
+def build_ou_offset_mapping(data: Dict[str, Any]) -> Dict[str, int]:
+    """
+    Build mapping from ouId to rotationOffset.
+    
+    Reads from root-level 'ouOffsets' array:
+    [
+        {"ouId": "ATSU T1 LSU A1", "rotationOffset": 0},
+        {"ouId": "ATSU T2 LSU B1", "rotationOffset": 1}
+    ]
+    
+    Args:
+        data: Input data dict
+        
+    Returns:
+        dict: {ouId: rotationOffset} mapping
+    """
+    ou_offsets = data.get('ouOffsets', [])
+    return {ou['ouId']: ou['rotationOffset'] for ou in ou_offsets if 'ouId' in ou}
+
+
+def copy_work_pattern_to_employees(data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    For outcomeBased mode, copy workPattern from requirements to all employees.
+    
+    Since UI enforces same pattern for all requirements in outcomeBased mode,
+    we copy the first requirement's workPattern to all employees.
+    
+    Args:
+        data: Input data dict
+        
+    Returns:
+        dict: Updated data with employees having workPattern
+    """
+    rostering_basis = extract_rostering_basis(data)
+    
+    if rostering_basis != 'outcomeBased':
+        return data  # Only apply for outcomeBased mode
+    
+    # Get work pattern from first requirement
+    demand_items = data.get('demandItems', [])
+    if not demand_items or len(demand_items) == 0:
+        return data
+    
+    requirements = demand_items[0].get('requirements', [])
+    if not requirements or len(requirements) == 0:
+        return data
+    
+    work_pattern = requirements[0].get('workPattern', [])
+    if not work_pattern:
+        return data
+    
+    # Copy pattern to all employees
+    for employee in data.get('employees', []):
+        if 'workPattern' not in employee or not employee['workPattern']:
+            employee['workPattern'] = work_pattern.copy()
+    
+    return data
+
+
+def filter_employees_by_rank(data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Filter employees to keep only those whose rank matches at least one requirement.
+    
+    For outcomeBased mode, this reduces the employee pool before CP-SAT solving
+    to improve performance.
+    
+    Args:
+        data: Input data dict
+        
+    Returns:
+        dict: Updated data with filtered employees
+    """
+    rostering_basis = extract_rostering_basis(data)
+    
+    if rostering_basis != 'outcomeBased':
+        return data  # Only filter for outcomeBased mode
+    
+    # Collect all required ranks from all requirements
+    required_ranks = set()
+    demand_items = data.get('demandItems', [])
+    for demand in demand_items:
+        for req in demand.get('requirements', []):
+            rank_ids = req.get('rankIds', [])
+            required_ranks.update(rank_ids)
+    
+    if not required_ranks:
+        return data  # No rank filtering if no ranks specified
+    
+    # Filter employees
+    original_count = len(data.get('employees', []))
+    filtered_employees = [
+        emp for emp in data.get('employees', [])
+        if emp.get('rankId') in required_ranks
+    ]
+    
+    data['employees'] = filtered_employees
+    
+    print(f"[data_loader] Rank filtering: {original_count} → {len(filtered_employees)} employees")
+    
+    return data
+
+
 def load_input(path: Union[str, Dict[str, Any]]):
     """
     Load input data from file path or dict.
@@ -58,11 +191,32 @@ def load_input(path: Union[str, Dict[str, Any]]):
     
     # TODO: validate against schemas/input.schema.json
     
-    # CRITICAL: Preprocess rotation offsets before solving
-    # Handles synchronized rest days (all offset=0) scenario
-    data = preprocess_rotation_offsets(data)
+    # Extract rosteringBasis early to determine preprocessing path
+    rostering_basis_temp = None
+    demand_items_temp = data.get('demandItems', [])
+    if demand_items_temp and len(demand_items_temp) > 0:
+        rostering_basis_temp = demand_items_temp[0].get('rosteringBasis')
+    if not rostering_basis_temp:
+        rostering_basis_temp = data.get('rosteringBasis', 'demandBased')
+    
+    # CRITICAL: Preprocess rotation offsets ONLY for demandBased mode
+    # outcomeBased mode uses OU offsets directly, no pattern preprocessing needed
+    if rostering_basis_temp == 'demandBased':
+        data = preprocess_rotation_offsets(data)
     
     # Normalize requirements to use rankIds (plural) internally
     data = normalize_requirements_rankIds(data)
+    
+    # Extract and store rosteringBasis in root for easy access
+    data['_rosteringBasis'] = extract_rostering_basis(data)
+    
+    # Build OU offset mapping and store in root
+    data['_ouOffsetMap'] = build_ou_offset_mapping(data)
+    
+    # For outcomeBased mode: copy work pattern to employees
+    data = copy_work_pattern_to_employees(data)
+    
+    # For outcomeBased mode: filter employees by rank
+    data = filter_employees_by_rank(data)
     
     return data

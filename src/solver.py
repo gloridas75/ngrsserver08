@@ -69,8 +69,14 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     employees = input_data.get('employees', [])
     employees_with_patterns = sum(1 for e in employees if e.get('workPattern'))
     
-    # Check rosteringBasis to determine if ICPMP should run
-    rostering_basis = input_data.get('rosteringBasis', 'demandBased')
+    # Check rosteringBasis from demandItems (new location) or root (backward compatibility)
+    # IMPORTANT: Extract from RAW input_data before load_input() processing
+    rostering_basis = None
+    demand_items = input_data.get('demandItems', [])
+    if demand_items and len(demand_items) > 0:
+        rostering_basis = demand_items[0].get('rosteringBasis')
+    if not rostering_basis:
+        rostering_basis = input_data.get('rosteringBasis', 'demandBased')
     
     # Determine if ICPMP preprocessing is needed
     # - ICPMP runs ONLY for demandBased mode
@@ -85,26 +91,22 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     preprocessing_time = 0
     
     if rostering_basis == 'outcomeBased':
-        # OUTCOME-BASED MODE: Skip ICPMP, use OU offsets directly
+        # OUTCOME-BASED MODE: Skip ICPMP
         print(f"{log_prefix} ======================================================================")
         print(f"{log_prefix} OUTCOME-BASED ROSTERING MODE")
         print(f"{log_prefix} ======================================================================")
         print(f"{log_prefix} Skipping ICPMP preprocessing (outcomeBased mode)")
-        print(f"{log_prefix} Using all {len(employees)} employees with OU-based offset assignment")
-        print()
+        print(f"{log_prefix} Using all {len(employees)} employees with OU-based rotation offsets")
         
-        # Apply OU offsets (required for outcomeBased mode)
-        fixed_rotation_offset_mode = input_data.get('fixedRotationOffset', 'auto')
-        if fixed_rotation_offset_mode == 'ouOffsets':
-            print(f"{log_prefix} ======================================================================")
-            print(f"{log_prefix} APPLYING OU-BASED OFFSETS")
-            print(f"{log_prefix} ======================================================================")
-            input_data = ensure_staggered_offsets(input_data)
-            print(f"{log_prefix} ✓ OU offsets applied to {len(employees)} employees")
-            print()
-        else:
-            print(f"{log_prefix} ⚠️  WARNING: outcomeBased mode should use fixedRotationOffset='ouOffsets'")
-            print()
+        # Calculate target employee count from minStaffThresholdPercentage
+        demand_items = input_data.get('demandItems', [])
+        if demand_items and len(demand_items) > 0:
+            min_threshold = demand_items[0].get('minStaffThresholdPercentage', 100)
+            target_employee_count = int(len(employees) * min_threshold / 100)
+            input_data['_targetEmployeeCount'] = target_employee_count
+            print(f"{log_prefix} Target staffing: {min_threshold}% of {len(employees)} = {target_employee_count} employees minimum")
+        
+        print()
     
     elif needs_icpmp:
         # SCENARIO A: DEMAND-BASED MODE with no patterns → Run ICPMP
@@ -203,6 +205,27 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     print(f"{log_prefix} Loading input into solver context...")
     ctx = load_input(input_data)
     ctx['timeLimit'] = input_data.get('solverRunTime', {}).get('maxSeconds', 15)
+    
+    # Apply OU offsets for outcomeBased mode (after load_input creates _ouOffsetMap)
+    if rostering_basis == 'outcomeBased':
+        employees = ctx.get('employees', [])
+        ou_offset_map = ctx.get('_ouOffsetMap', {})
+        if ou_offset_map:
+            print(f"{log_prefix} Applying OU rotation offsets from {len(ou_offset_map)} organizational units")
+            assigned_count = 0
+            for emp in employees:
+                ou_id = emp.get('ouId')
+                if ou_id and ou_id in ou_offset_map:
+                    emp['rotationOffset'] = ou_offset_map[ou_id]
+                    assigned_count += 1
+                elif 'rotationOffset' not in emp:
+                    emp['rotationOffset'] = 0  # Default offset
+            print(f"{log_prefix} ✓ Assigned rotation offsets to {assigned_count}/{len(employees)} employees")
+        else:
+            print(f"{log_prefix} ⚠️  WARNING: No ouOffsets found, defaulting all employees to offset=0")
+            for emp in employees:
+                if 'rotationOffset' not in emp:
+                    emp['rotationOffset'] = 0
     
     # Attach ICPMP metadata to context (build_output will include it)
     if icpmp_metadata:

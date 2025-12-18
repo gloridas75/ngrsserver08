@@ -67,10 +67,12 @@ def validate_input(data: dict) -> ValidationResult:
     
     # Level 2: Business Logic
     _validate_planning_horizon(data, result)
+    _validate_rostering_basis(data, result)
     _validate_demand_items(data, result)
     _validate_employees(data, result)
     _validate_scheme_consistency(data, result)
     _validate_constraints(data, result)
+    _validate_ou_employee_mapping(data, result)
     
     # Level 3: Feasibility Pre-Checks
     _validate_feasibility(data, result)
@@ -608,6 +610,133 @@ def _validate_feasibility(data: dict, result: ValidationResult):
                 result.add_warning(f"{req_path}", "INSUFFICIENT_EMPLOYEES", 
                                  f"Only {matching_count} employees match requirement "
                                  f"{requirement.get('requirementId', '?')} but headcount is {req_headcount}")
+
+
+def _validate_rostering_basis(data: dict, result: ValidationResult):
+    """
+    Validate rosteringBasis field and related outcomeBased-specific fields.
+    
+    Checks both new location (demandItems[0]) and old location (root) for backward compatibility.
+    """
+    # Extract rosteringBasis from either location
+    rostering_basis = None
+    
+    # Try new location first (demandItems[0])
+    demand_items = data.get('demandItems', [])
+    if demand_items and len(demand_items) > 0:
+        rostering_basis = demand_items[0].get('rosteringBasis')
+    
+    # Fall back to old location (root level)
+    if not rostering_basis:
+        rostering_basis = data.get('rosteringBasis')
+    
+    # Validate value if present
+    if rostering_basis:
+        valid_values = ['demandBased', 'outcomeBased']
+        if rostering_basis not in valid_values:
+            result.add_error('rosteringBasis', 'INVALID_VALUE',
+                           f"rosteringBasis must be one of: {', '.join(valid_values)}")
+            return
+        
+        # Validate outcomeBased-specific fields
+        if rostering_basis == 'outcomeBased':
+            # Check minStaffThresholdPercentage
+            if demand_items and len(demand_items) > 0:
+                min_threshold = demand_items[0].get('minStaffThresholdPercentage')
+                if min_threshold is None:
+                    result.add_warning('demandItems[0].minStaffThresholdPercentage', 
+                                     'MISSING_FIELD',
+                                     'minStaffThresholdPercentage not specified, defaulting to 100%')
+                elif not isinstance(min_threshold, (int, float)):
+                    result.add_error('demandItems[0].minStaffThresholdPercentage',
+                                   'INVALID_TYPE',
+                                   'minStaffThresholdPercentage must be a number')
+                elif min_threshold < 1 or min_threshold > 100:
+                    result.add_error('demandItems[0].minStaffThresholdPercentage',
+                                   'OUT_OF_RANGE',
+                                   f'minStaffThresholdPercentage must be between 1 and 100 (got {min_threshold})')
+            
+            # Check ouOffsets array
+            ou_offsets = data.get('ouOffsets', [])
+            if not ou_offsets:
+                result.add_warning('ouOffsets', 'MISSING_FIELD',
+                                 'outcomeBased mode requires ouOffsets array at root level')
+            elif not isinstance(ou_offsets, list):
+                result.add_error('ouOffsets', 'INVALID_TYPE',
+                               'ouOffsets must be an array')
+            else:
+                # Validate each OU offset entry
+                for idx, ou in enumerate(ou_offsets):
+                    if not isinstance(ou, dict):
+                        result.add_error(f'ouOffsets[{idx}]', 'INVALID_TYPE',
+                                       'Each OU offset entry must be an object')
+                        continue
+                    
+                    if 'ouId' not in ou:
+                        result.add_error(f'ouOffsets[{idx}].ouId', 'MISSING_FIELD',
+                                       'ouId is required')
+                    
+                    if 'rotationOffset' not in ou:
+                        result.add_error(f'ouOffsets[{idx}].rotationOffset', 'MISSING_FIELD',
+                                       'rotationOffset is required')
+                    elif not isinstance(ou['rotationOffset'], int):
+                        result.add_error(f'ouOffsets[{idx}].rotationOffset', 'INVALID_TYPE',
+                                       'rotationOffset must be an integer')
+                    elif ou['rotationOffset'] < 0:
+                        result.add_error(f'ouOffsets[{idx}].rotationOffset', 'OUT_OF_RANGE',
+                                       f"rotationOffset cannot be negative (got {ou['rotationOffset']})")
+            
+            # Check fixedRotationOffset mode
+            fixed_rotation_mode = data.get('fixedRotationOffset')
+            if fixed_rotation_mode and fixed_rotation_mode != 'ouOffsets':
+                result.add_warning('fixedRotationOffset', 'INCONSISTENT_CONFIG',
+                                 f"outcomeBased mode should use fixedRotationOffset='ouOffsets' (got '{fixed_rotation_mode}')")
+
+
+def _validate_ou_employee_mapping(data: dict, result: ValidationResult):
+    """
+    Validate that employees have ouId and that ouIds exist in ouOffsets.
+    
+    Only applies to outcomeBased mode.
+    """
+    # Check if outcomeBased mode
+    rostering_basis = None
+    demand_items = data.get('demandItems', [])
+    if demand_items and len(demand_items) > 0:
+        rostering_basis = demand_items[0].get('rosteringBasis')
+    if not rostering_basis:
+        rostering_basis = data.get('rosteringBasis', 'demandBased')
+    
+    if rostering_basis != 'outcomeBased':
+        return  # Only validate for outcomeBased mode
+    
+    # Build set of valid OU IDs
+    ou_offsets = data.get('ouOffsets', [])
+    valid_ou_ids = {ou.get('ouId') for ou in ou_offsets if isinstance(ou, dict) and 'ouId' in ou}
+    
+    # Check each employee
+    employees = data.get('employees', [])
+    employees_without_ou = 0
+    employees_with_invalid_ou = 0
+    
+    for emp_idx, emp in enumerate(employees):
+        ou_id = emp.get('ouId')
+        
+        if not ou_id:
+            employees_without_ou += 1
+        elif valid_ou_ids and ou_id not in valid_ou_ids:
+            employees_with_invalid_ou += 1
+            if employees_with_invalid_ou <= 5:  # Limit error messages
+                result.add_error(f'employees[{emp_idx}].ouId', 'INVALID_VALUE',
+                               f"Employee {emp.get('employeeId', '?')} has ouId '{ou_id}' which is not defined in ouOffsets")
+    
+    if employees_without_ou > 0:
+        result.add_warning('employees', 'MISSING_OU_ID',
+                         f"{employees_without_ou} employees missing ouId field (will default to offset=0)")
+    
+    if employees_with_invalid_ou > 5:
+        result.add_error('employees', 'INVALID_OU_IDS',
+                       f"{employees_with_invalid_ou} employees have ouIds not defined in ouOffsets")
 
 
 def validate_input_quick(data: dict) -> Tuple[bool, str]:

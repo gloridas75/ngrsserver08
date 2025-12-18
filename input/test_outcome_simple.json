@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": {
+    "planId": "TEST-OUTCOME-002",
+    "description": "Outcome-Based Mode Test",
+    "createdBy": "test",
+    "createdAt": "2025-12-18T10:00:00Z"
+  },
+  "planningHorizon": {
+    "startDate": "2026-02-01",
+    "endDate": "2026-02-28"
+  },
+  "fixedRotationOffset": "ouOffsets",
+  "ouOffsets": [
+    {
+      "ouId": "OU_TEAM_A",
+      "rotationOffset": 0
+    },
+    {
+      "ouId": "OU_TEAM_B",
+      "rotationOffset": 1
+    },
+    {
+      "ouId": "OU_TEAM_C",
+      "rotationOffset": 2
+    }
+  ],
+  "demandItems": [
+    {
+      "rosteringBasis": "outcomeBased",
+      "minStaffThresholdPercentage": 70,
+      "demandId": "DI-001",
+      "shiftStartDate": "2026-02-01",
+      "shifts": [
+        {
+          "shiftCode": "D",
+          "shiftName": "Day Shift",
+          "startTime": "08:00:00",
+          "endTime": "20:00:00",
+          "lunchDuration": 1.0,
+          "shiftDetails": [
+            {
+              "date": "2026-02-01",
+              "shiftCode": "D",
+              "start": "08:00:00",
+              "end": "20:00:00",
+              "nextDay": false
+            }
+          ]
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "122_1",
+          "productTypeId": "APO",
+          "rankIds": ["CON", "COR"],
+          "workPattern": ["D", "D", "D", "D", "D", "O", "O"],
+          "headcount": 10,
+          "schemeRequirement": "Global",
+          "genderRequirement": "Mix",
+          "coverageDays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {"employeeId": "E001", "ouId": "OU_TEAM_A", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E002", "ouId": "OU_TEAM_A", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E003", "ouId": "OU_TEAM_A", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E004", "ouId": "OU_TEAM_A", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E005", "ouId": "OU_TEAM_A", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E006", "ouId": "OU_TEAM_B", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E007", "ouId": "OU_TEAM_B", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E008", "ouId": "OU_TEAM_B", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E009", "ouId": "OU_TEAM_B", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E010", "ouId": "OU_TEAM_B", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E011", "ouId": "OU_TEAM_C", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E012", "ouId": "OU_TEAM_C", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E013", "ouId": "OU_TEAM_C", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E014", "ouId": "OU_TEAM_C", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E015", "ouId": "OU_TEAM_C", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E016", "ouId": "OU_TEAM_A", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E017", "ouId": "OU_TEAM_B", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E018", "ouId": "OU_TEAM_C", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"},
+    {"employeeId": "E019", "ouId": "OU_TEAM_A", "rankId": "COR", "productTypeId": "APO", "scheme": "A", "gender": "M"},
+    {"employeeId": "E020", "ouId": "OU_TEAM_B", "rankId": "CON", "productTypeId": "APO", "scheme": "A", "gender": "F"}
+  ],
+  "constraintList": [],
+  "solverScoreConfig": {
+    "softViolationWeights": {}
+  }
+}
