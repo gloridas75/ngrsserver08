@@ -242,6 +242,29 @@ pull_code() {
 configure_resource_limits() {
     print_status "Configuring resource limits for $SERVICE_NAME..."
     
+    # Check if systemd service file exists
+    SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+    
+    if [ ! -f "$SERVICE_FILE" ]; then
+        print_warning "Service file not found at $SERVICE_FILE"
+        print_warning "Checking alternate locations..."
+        
+        # Try alternate service file locations
+        if [ -f "/lib/systemd/system/${SERVICE_NAME}.service" ]; then
+            SERVICE_FILE="/lib/systemd/system/${SERVICE_NAME}.service"
+            print_status "Found service file at $SERVICE_FILE"
+        elif [ -f "/etc/systemd/system/ngrs.service" ]; then
+            SERVICE_FILE="/etc/systemd/system/ngrs.service"
+            SERVICE_NAME="ngrs"
+            print_status "Found service file at $SERVICE_FILE"
+        else
+            print_warning "Could not find service file, skipping resource limits configuration"
+            print_status "You can configure manually later if needed"
+            echo ""
+            return 0
+        fi
+    fi
+    
     # Detect system resources
     TOTAL_RAM_GB=$(free -g | awk '/^Mem:/{print $2}')
     TOTAL_CPUS=$(nproc)
@@ -262,16 +285,6 @@ configure_resource_limits() {
     print_status "  CPUQuota: ${RECOMMENDED_CPU_QUOTA}% (75% of $TOTAL_CPUS cores)"
     echo ""
     
-    # Check if systemd service file exists
-    SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-    
-    if [ ! -f "$SERVICE_FILE" ]; then
-        print_warning "Service file not found at $SERVICE_FILE"
-        print_warning "Skipping resource limits configuration"
-        echo ""
-        return 0
-    fi
-    
     # Check if resource limits already exist in service file
     if grep -q "MemoryMax=" "$SERVICE_FILE" 2>/dev/null; then
         print_status "Resource limits already configured in service file"
@@ -288,6 +301,20 @@ configure_resource_limits() {
         echo ""
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             print_status "Keeping existing resource limits"
+            echo ""
+            return 0
+        fi
+    else
+        # No limits configured yet - ask if user wants to add them
+        print_warning "Resource limits not yet configured"
+        print_status "This will add MemoryMax, CPUQuota, and other limits to prevent system crashes"
+        echo ""
+        read -p "Configure resource limits now? (Y/n): " -n 1 -r
+        echo ""
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            print_status "Skipping resource limits configuration"
+            print_status "You can configure manually later using:"
+            print_status "  sudo nano /etc/systemd/system/${SERVICE_NAME}.service"
             echo ""
             return 0
         fi
@@ -362,9 +389,14 @@ configure_resource_limits() {
         LATEST_BACKUP=$(ls -t ${SERVICE_FILE}.backup.* 2>/dev/null | head -1)
         if [ -n "$LATEST_BACKUP" ]; then
             sudo cp "$LATEST_BACKUP" "$SERVICE_FILE"
-            print_error "Service file restored from backup"
+            print_warning "Service file restored from backup"
+            print_warning "Resource limits NOT configured - will use system defaults"
+        else
+            print_error "No backup found! Service file may be corrupted."
+            print_error "Resource limits NOT configured - continuing anyway..."
         fi
-        return 1
+        echo ""
+        return 0  # Don't fail deployment
     fi
     
     print_success "Resource limits configured:"
