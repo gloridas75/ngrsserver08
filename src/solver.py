@@ -97,15 +97,6 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         print(f"{log_prefix} ======================================================================")
         print(f"{log_prefix} Skipping ICPMP preprocessing (outcomeBased mode)")
         print(f"{log_prefix} Using all {len(employees)} employees with OU-based rotation offsets")
-        
-        # Calculate target employee count from minStaffThresholdPercentage
-        demand_items = input_data.get('demandItems', [])
-        if demand_items and len(demand_items) > 0:
-            min_threshold = demand_items[0].get('minStaffThresholdPercentage', 100)
-            target_employee_count = int(len(employees) * min_threshold / 100)
-            input_data['_targetEmployeeCount'] = target_employee_count
-            print(f"{log_prefix} Target staffing: {min_threshold}% of {len(employees)} = {target_employee_count} employees minimum")
-        
         print()
     
     elif needs_icpmp:
@@ -226,6 +217,15 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             for emp in employees:
                 if 'rotationOffset' not in emp:
                     emp['rotationOffset'] = 0
+        
+        # Calculate target employee count AFTER rank filtering (uses filtered count)
+        demand_items = input_data.get('demandItems', [])
+        if demand_items and len(demand_items) > 0:
+            min_threshold = demand_items[0].get('minStaffThresholdPercentage', 100)
+            # Use FILTERED employee count (after rank filtering in load_input)
+            target_employee_count = int(len(employees) * min_threshold / 100)
+            ctx['_targetEmployeeCount'] = target_employee_count
+            print(f"{log_prefix} ✓ Target staffing: {min_threshold}% of {len(employees)} filtered employees = {target_employee_count} minimum")
     
     # Attach ICPMP metadata to context (build_output will include it)
     if icpmp_metadata:
