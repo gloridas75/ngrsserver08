@@ -295,6 +295,27 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 # Legacy: "headcount": 10 (single value for all shifts)
                 # New: "headcount": {"D": 10, "N": 10} (per-shift headcount)
                 headcount_raw = req.get("headcount", 1)
+                
+                # OUTCOME-BASED MODE OVERRIDE: Ignore requirement headcount, use employee count instead
+                rostering_basis = inputs.get('_rosteringBasis', 'demandBased')
+                if rostering_basis == 'outcomeBased':
+                    # For outcomeBased, create one position per matching employee
+                    # This ensures all employees can be assigned slots based on their pattern
+                    employees = inputs.get('employees', [])
+                    
+                    # Filter employees by rank to match this requirement
+                    # Note: employees use 'rankId' (singular), requirements use 'rankIds' (plural array)
+                    matching_employees = [emp for emp in employees if emp.get('rankId') in rank_ids]
+                    employee_based_headcount = len(matching_employees)
+                    
+                    print(f"      Requirement {requirement_id}: outcomeBased mode - overriding headcount")
+                    print(f"        Original headcount: {headcount_raw}")
+                    print(f"        Matching employees (rank={rank_ids}): {employee_based_headcount}")
+                    print(f"        Using employee count as headcount")
+                    
+                    # Override headcount with employee count
+                    headcount_raw = employee_based_headcount
+                
                 if isinstance(headcount_raw, dict):
                     # New format: per-shift headcount
                     headcount_by_shift = headcount_raw
