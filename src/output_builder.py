@@ -481,54 +481,61 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             # Get date object for MOM calculations
             date_obj = datetime.fromisoformat(assignment_date).date()
             
-            # Get employee scheme for scheme-aware hour calculations
-            employee = employee_dict.get(emp_id, {})
-            emp_scheme_raw = employee.get('scheme', 'A')  # Default to Scheme A if not found
-            # Normalize scheme to handle both 'P' and 'Scheme P' formats
-            from context.engine.time_utils import normalize_scheme
-            emp_scheme = normalize_scheme(emp_scheme_raw)
-            
-            # Check if employee is APGD-D10 (requires matching requirement)
-            is_apgd = False
-            product = employee.get('productTypeId', '')
-            for demand in input_data.get('demandItems', []):
-                for req in demand.get('requirements', []):
-                    if req.get('productTypeId', '') == product:
-                        if is_apgd_d10_employee(employee, req):
-                            is_apgd = True
-                            break
-                if is_apgd:
-                    break
-            
-            # Calculate hour breakdown (APGD-D10 or standard)
-            if is_apgd:
-                hours_dict = calculate_apgd_d10_hours(
-                    start_dt=start_dt,
-                    end_dt=end_dt,
-                    employee_id=emp_id,
-                    assignment_date_obj=date_obj,
-                    all_assignments=assignments,
-                    employee_dict=employee
-                )
+            # Check if assignment already has hours (template-based roster)
+            # Skip recalculation if hours already exist with valid normal hours
+            if 'hours' in assignment and isinstance(assignment['hours'], dict) and assignment['hours'].get('normal') is not None:
+                # Use pre-calculated hours from template roster
+                hours_dict = assignment['hours']
             else:
-                # For Scheme P, need to pass pattern work days count
-                pattern_work_days = None
-                if emp_scheme == 'P':
-                    # Get employee's work pattern and count work days
-                    emp_pattern = employee.get('workPattern', [])
-                    if emp_pattern:
-                        # Count non-'O' days in pattern
-                        pattern_work_days = len([d for d in emp_pattern if d != 'O'])
+                # Calculate hours using MOM compliance logic
+                # Get employee scheme for scheme-aware hour calculations
+                employee = employee_dict.get(emp_id, {})
+                emp_scheme_raw = employee.get('scheme', 'A')  # Default to Scheme A if not found
+                # Normalize scheme to handle both 'P' and 'Scheme P' formats
+                from context.engine.time_utils import normalize_scheme
+                emp_scheme = normalize_scheme(emp_scheme_raw)
                 
-                hours_dict = calculate_mom_compliant_hours(
-                    start_dt=start_dt,
-                    end_dt=end_dt,
-                    employee_id=emp_id,
-                    assignment_date_obj=date_obj,
-                    all_assignments=assignments,
-                    employee_scheme=emp_scheme,
-                    pattern_work_days=pattern_work_days
-                )
+                # Check if employee is APGD-D10 (requires matching requirement)
+                is_apgd = False
+                product = employee.get('productTypeId', '')
+                for demand in input_data.get('demandItems', []):
+                    for req in demand.get('requirements', []):
+                        if req.get('productTypeId', '') == product:
+                            if is_apgd_d10_employee(employee, req):
+                                is_apgd = True
+                                break
+                    if is_apgd:
+                        break
+                
+                # Calculate hour breakdown (APGD-D10 or standard)
+                if is_apgd:
+                    hours_dict = calculate_apgd_d10_hours(
+                        start_dt=start_dt,
+                        end_dt=end_dt,
+                        employee_id=emp_id,
+                        assignment_date_obj=date_obj,
+                        all_assignments=assignments,
+                        employee_dict=employee
+                    )
+                else:
+                    # For Scheme P, need to pass pattern work days count
+                    pattern_work_days = None
+                    if emp_scheme == 'P':
+                        # Get employee's work pattern and count work days
+                        emp_pattern = employee.get('workPattern', [])
+                        if emp_pattern:
+                            # Count non-'O' days in pattern
+                            pattern_work_days = len([d for d in emp_pattern if d != 'O'])
+                    
+                    hours_dict = calculate_mom_compliant_hours(
+                        start_dt=start_dt,
+                        end_dt=end_dt,
+                        employee_id=emp_id,
+                        assignment_date_obj=date_obj,
+                        all_assignments=assignments,
+                        employee_scheme=emp_scheme,
+                        pattern_work_days=pattern_work_days
+                    )
             
             # Add hour breakdown to assignment (including restDayPay)
             assignment['hours'] = {

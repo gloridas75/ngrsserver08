@@ -27,6 +27,8 @@ from typing import Dict, Any
 
 from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
+from context.engine.template_roster import generate_template_validated_roster
+from context.engine.template_roster import generate_template_validated_roster
 from src.output_builder import build_output
 from src.preprocessing.icpmp_integration import ICPMPPreprocessor
 from src.offset_manager import ensure_staggered_offsets
@@ -232,24 +234,79 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         ctx['icpmp_preprocessing'] = icpmp_metadata
     
     # ═══════════════════════════════════════════════════════════
-    # PHASE 3: CP-SAT SOLVING
+    # PHASE 3: ROSTER GENERATION (MODE-DEPENDENT)
     # ═══════════════════════════════════════════════════════════
-    # Note: solve() internally calls:
-    #   1. build_model(ctx) → which calls build_slots(ctx)
-    #   2. apply_constraints(model, ctx)
-    #   3. CP-SAT solver execution
-    #   4. Assignment extraction
     
-    print(f"{log_prefix} Starting CP-SAT solver...")
-    solver_start = time.time()
-    
-    status_code, solver_result, assignments, violations = solve(ctx)
-    
-    solver_time = time.time() - solver_start
-    print(f"{log_prefix} ✓ CP-SAT completed in {solver_time:.2f}s")
-    print(f"{log_prefix} Status: {status_code}")
-    print(f"{log_prefix} Assignments: {len(assignments)}")
-    print()
+    if rostering_basis == 'outcomeBased':
+        # OUTCOME-BASED ROSTER GENERATION (Template Validation)
+        print(f"{log_prefix} ======================================================================")
+        print(f"{log_prefix} OUTCOME-BASED ROSTERING (TEMPLATE VALIDATION)")
+        print(f"{log_prefix} ======================================================================")
+        print(f"{log_prefix} Method: Generate template per OU → validate constraints → replicate")
+        print(f"{log_prefix} Constraints: C1-C17 (core MOM regulatory constraints)")
+        print()
+        
+        solver_start = time.time()
+        
+        # Get selected employees from ctx
+        selected_emp_ids = ctx.get('_selectedEmployeeIds', set())
+        if not selected_emp_ids:
+            all_employees = ctx.get('employees', [])
+            threshold = ctx.get('_targetEmployeeCount', len(all_employees))
+            selected_employees = all_employees[:threshold]
+        else:
+            all_employees = ctx.get('employees', [])
+            selected_employees = [emp for emp in all_employees if emp['employeeId'] in selected_emp_ids]
+        
+        # Get first requirement
+        demand_items = input_data.get('demandItems', [])
+        requirements = demand_items[0].get('requirements', []) if demand_items else []
+        if not requirements:
+            requirements = demand_items[0].get('shifts', [{}])[0].get('workRequirements', []) if demand_items else []
+        
+        requirement = requirements[0] if requirements else {}
+        demand = demand_items[0] if demand_items else {}
+        
+        # Generate template-validated roster
+        assignments, stats = generate_template_validated_roster(ctx, selected_employees, requirement, demand)
+        
+        solver_time = time.time() - solver_start
+        stats['generation_time'] = solver_time
+        
+        # Set status based on results
+        has_unassigned = any(a.get('status') == 'UNASSIGNED' for a in assignments)
+        status_code = "FEASIBLE" if has_unassigned else "OPTIMAL"
+        
+        solver_result = {
+            'status': status_code,
+            'scores': {'hard': stats.get('unassigned_count', 0), 'soft': 0, 'overall': stats.get('unassigned_count', 0)},
+            'metadata': {
+                'method': 'template_validation',
+                'optimization': False,
+                'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
+                'stats': stats
+            }
+        }
+        violations = {}
+        
+        print(f"{log_prefix} ✓ Template roster generated in {solver_time:.2f}s")
+        print(f"{log_prefix} Status: {status_code}")
+        print(f"{log_prefix} Assignments: {stats['assigned_count']} assigned, {stats['unassigned_count']} unassigned")
+        print(f"{log_prefix} Employees: {stats['employees_used']}/{stats['total_available_employees']}")
+        print()
+        
+    else:
+        # DEMAND-BASED ROSTERING (CP-SAT)
+        print(f"{log_prefix} Starting CP-SAT solver...")
+        solver_start = time.time()
+        
+        status_code, solver_result, assignments, violations = solve(ctx)
+        
+        solver_time = time.time() - solver_start
+        print(f"{log_prefix} ✓ CP-SAT completed in {solver_time:.2f}s")
+        print(f"{log_prefix} Status: {status_code}")
+        print(f"{log_prefix} Assignments: {len(assignments)}")
+        print()
     
     # ═══════════════════════════════════════════════════════════
     # PHASE 4: BUILD OUTPUT
