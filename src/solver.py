@@ -23,11 +23,11 @@ Architecture:
 
 import time
 import logging
+from datetime import datetime
 from typing import Dict, Any
 
 from context.engine.data_loader import load_input
 from context.engine.solver_engine import solve
-from context.engine.template_roster import generate_template_validated_roster
 from context.engine.template_roster import generate_template_validated_roster
 from src.output_builder import build_output
 from src.preprocessing.icpmp_integration import ICPMPPreprocessor
@@ -247,6 +247,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         print()
         
         solver_start = time.time()
+        start_timestamp = datetime.now().isoformat()
         
         # Get selected employees from ctx
         selected_emp_ids = ctx.get('_selectedEmployeeIds', set())
@@ -271,6 +272,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         assignments, stats = generate_template_validated_roster(ctx, selected_employees, requirement, demand)
         
         solver_time = time.time() - solver_start
+        end_timestamp = datetime.now().isoformat()
         stats['generation_time'] = solver_time
         
         # Set status based on results
@@ -279,6 +281,9 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         
         solver_result = {
             'status': status_code,
+            'start_timestamp': start_timestamp,
+            'end_timestamp': end_timestamp,
+            'duration_seconds': solver_time,
             'scores': {'hard': stats.get('unassigned_count', 0), 'soft': 0, 'overall': stats.get('unassigned_count', 0)},
             'metadata': {
                 'method': 'template_validation',
