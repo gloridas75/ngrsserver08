@@ -99,7 +99,7 @@ def _validate_schema_structure(data: dict, result: ValidationResult):
     # Schema version check
     if 'schemaVersion' in data:
         version = data['schemaVersion']
-        if version not in ['0.70', '0.95']:
+        if version not in ['0.70', '0.95', '0.98']:
             result.add_warning('schemaVersion', 'UNKNOWN_VERSION', 
                              f"Schema version '{version}' may not be fully supported")
     
