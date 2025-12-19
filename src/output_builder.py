@@ -434,6 +434,144 @@ def check_continuous_adherence(employee_counts, avg_shifts):
     return avg_shifts >= 18  # Allow some tolerance
 
 
+def insert_off_day_assignments(assignments, input_data, ctx):
+    """
+    Insert explicit OFF day assignments for employees based on their work patterns.
+    
+    For demandBased rosters, employees have rotation patterns (e.g., DDNNOO).
+    This function adds assignment records with shiftCode="O" for days when
+    employees are on their scheduled rest days.
+    
+    Args:
+        assignments: List of actual shift assignments (D, N shifts)
+        input_data: Original input JSON
+        ctx: Context dict with employees and their patterns
+    
+    Returns:
+        Expanded assignments list including both work shifts and OFF days
+    """
+    from datetime import datetime, timedelta
+    import uuid
+    
+    # Get date range from existing assignments
+    if not assignments:
+        return assignments
+    
+    dates = sorted(set(a.get('date') for a in assignments if a.get('date')))
+    if not dates:
+        return assignments
+    
+    start_date_str = dates[0]
+    end_date_str = dates[-1]
+    start_date = datetime.fromisoformat(start_date_str.split('T')[0]).date()
+    end_date = datetime.fromisoformat(end_date_str.split('T')[0]).date()
+    
+    # Build lookup: emp_id -> date -> assignment
+    assignments_by_emp_date = defaultdict(dict)
+    for assignment in assignments:
+        emp_id = assignment.get('employeeId')
+        assign_date = assignment.get('date')
+        if emp_id and assign_date:
+            assignments_by_emp_date[emp_id][assign_date] = assignment
+    
+    # Get employees with work patterns
+    employees = ctx.get('employees', [])
+    optimized_offsets = ctx.get('optimized_offsets', {})
+    
+    # Get base rotation pattern and start date from first requirement
+    base_pattern = None
+    pattern_start_date = None
+    demands = input_data.get('demandItems', [])
+    if demands and len(demands) > 0:
+        reqs = demands[0].get('requirements', [])
+        if reqs and len(reqs) > 0:
+            base_pattern = reqs[0].get('workPattern', [])
+        pattern_start_date = demands[0].get('shiftStartDate')
+    
+    if not base_pattern or not pattern_start_date:
+        # No pattern info - can't insert OFF days
+        return assignments
+    
+    pattern_start_date_obj = datetime.fromisoformat(pattern_start_date).date()
+    pattern_length = len(base_pattern)
+    
+    # Generate OFF day assignments for each employee
+    off_day_assignments = []
+    
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
+        
+        # Check if employee has any assignments (skip completely unused employees)
+        if emp_id not in assignments_by_emp_date:
+            continue
+        
+        # Calculate employee's rotated pattern
+        from context.engine.solver_engine import calculate_employee_work_pattern
+        emp_pattern = calculate_employee_work_pattern(base_pattern, emp_offset)
+        
+        # Iterate through date range and add OFF days
+        current_date = start_date
+        while current_date <= end_date:
+            date_str = current_date.isoformat()
+            
+            # Skip if employee already has assignment on this date
+            if date_str in assignments_by_emp_date[emp_id]:
+                current_date += timedelta(days=1)
+                continue
+            
+            # Calculate what shift code employee should have based on pattern
+            from context.engine.solver_engine import calculate_pattern_day
+            pattern_day = calculate_pattern_day(
+                assignment_date=current_date,
+                pattern_start_date=pattern_start_date_obj,
+                employee_offset=emp_offset,
+                pattern_length=pattern_length
+            )
+            
+            expected_shift = emp_pattern[pattern_day]
+            
+            # Only add OFF day assignment if pattern says "O"
+            if expected_shift == 'O':
+                # Get demand/requirement info from one of employee's actual assignments
+                sample_assignment = next(iter(assignments_by_emp_date[emp_id].values()), None)
+                if sample_assignment:
+                    off_assignment = {
+                        "assignmentId": f"OFF-{emp_id}-{date_str}-{uuid.uuid4().hex[:6]}",
+                        "demandId": sample_assignment.get('demandId', 'N/A'),
+                        "requirementId": sample_assignment.get('requirementId', 'N/A'),
+                        "slotId": f"OFF-{emp_id}-{date_str}",
+                        "employeeId": emp_id,
+                        "date": date_str,
+                        "startDateTime": f"{date_str}T00:00:00",
+                        "endDateTime": f"{date_str}T00:00:00",
+                        "shiftCode": "O",
+                        "patternDay": pattern_day,
+                        "newRotationOffset": emp_offset,
+                        "status": "OFF_DAY",
+                        "hours": {
+                            "gross": 0,
+                            "lunch": 0,
+                            "normal": 0,
+                            "ot": 0,
+                            "restDayPay": 0,
+                            "paid": 0
+                        }
+                    }
+                    off_day_assignments.append(off_assignment)
+            
+            current_date += timedelta(days=1)
+    
+    # Merge and sort by date, then employee
+    all_assignments = assignments + off_day_assignments
+    all_assignments_sorted = sorted(
+        all_assignments,
+        key=lambda a: (a.get('date', ''), a.get('employeeId', ''))
+    )
+    
+    return all_assignments_sorted
+
+
 def build_output(input_data, ctx, status, solver_result, assignments, violations):
     """
     Build output in expected schema format (v0.43+).
@@ -455,6 +593,12 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     
     # Compute input hash for reproducibility tracking (use input_data, not ctx which has IntVars)
     input_hash = compute_input_hash(input_data)
+    
+    # ========== INSERT OFF DAY ASSIGNMENTS (for demandBased rosters) ==========
+    # Add explicit OFF day entries for employees on their rest days
+    rostering_basis = input_data.get('demandItems', [{}])[0].get('rosteringBasis', 'demandBased')
+    if rostering_basis == 'demandBased':
+        assignments = insert_off_day_assignments(assignments, input_data, ctx)
     
     # Extract scores from solver_result
     scores = solver_result.get('scores', {'hard': 0, 'soft': 0, 'overall': 0})
