@@ -43,9 +43,15 @@ def build_employee_roster(input_data, ctx, assignments):
     if not dates:
         return []
     
-    from datetime import date as date_cls
-    start_date = date_cls.fromisoformat(dates[0])
-    end_date = date_cls.fromisoformat(dates[-1])
+    from datetime import date as date_cls, datetime
+    # Handle both ISO date strings and datetime strings
+    def parse_date_string(date_str):
+        if 'T' in date_str:
+            return datetime.fromisoformat(date_str).date()
+        return date_cls.fromisoformat(date_str)
+    
+    start_date = parse_date_string(dates[0])
+    end_date = parse_date_string(dates[-1])
     
     # Build assignment lookup: emp_id -> date -> assignment
     assignment_by_emp_date = defaultdict(dict)

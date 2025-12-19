@@ -617,7 +617,9 @@ def build_model(ctx):
         week_anchor = base_date - timedelta(days=base_date.weekday())
         
         # Calculate which day in the cycle this slot represents (from Monday anchor)
-        days_from_base = (slot.date - week_anchor).days
+        # Convert slot.date to date object if it's datetime
+        slot_date_obj = slot.date.date() if isinstance(slot.date, datetime) else slot.date
+        days_from_base = (slot_date_obj - week_anchor).days
         
         for emp in employees:
             emp_id = emp.get('employeeId')
@@ -993,11 +995,15 @@ def calculate_pattern_day(assignment_date: date, pattern_start_date: date, emplo
         pattern_day = (days_since_start + employee_offset) % pattern_length
         return pattern_day
     
+    # Convert dates to date objects if they're datetime
+    pattern_start_obj = pattern_start_date.date() if isinstance(pattern_start_date, datetime) else pattern_start_date
+    assignment_date_obj = assignment_date.date() if isinstance(assignment_date, datetime) else assignment_date
+    
     # Count coverage days between pattern_start_date and assignment_date
     coverage_day_count = 0
-    current_date = pattern_start_date
+    current_date = pattern_start_obj
     
-    while current_date < assignment_date:
+    while current_date < assignment_date_obj:
         if current_date.weekday() in allowed_weekdays:
             coverage_day_count += 1
         current_date += timedelta(days=1)

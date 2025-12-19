@@ -298,11 +298,14 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 # New: "headcount": {"D": 10, "N": 10} (per-shift headcount)
                 headcount_raw = req.get("headcount", 1)
                 
-                # OUTCOME-BASED MODE OVERRIDE: Ignore requirement headcount, use employee count instead
+                # OUTCOME-BASED MODE OVERRIDE: Calculate feasible headcount based on work pattern
                 rostering_basis = inputs.get('_rosteringBasis', 'demandBased')
                 if rostering_basis == 'outcomeBased':
-                    # For outcomeBased, select minStaffThresholdPercentage from each OU
-                    # This dramatically reduces decision variables while maintaining OU balance
+                    # For outcomeBased, calculate positions per day based on:
+                    # - Total matching employees
+                    # - minStaffThresholdPercentage (employee pool filter)
+                    # - Work pattern (workable days ratio)
+                    # This ensures slots are always fillable (no circular dependency)
                     employees = inputs.get('employees', [])
                     
                     # Filter employees by rank to match this requirement
@@ -312,7 +315,21 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     # Get minStaffThresholdPercentage from parent demand item
                     min_threshold = dmd.get('minStaffThresholdPercentage', 100)
                     
-                    # Group matching employees by OU
+                    # Calculate workable days ratio from work pattern
+                    work_pattern = req.get('workPattern', [])
+                    if work_pattern:
+                        work_days_in_pattern = sum(1 for day in work_pattern if day != 'O')
+                        pattern_length = len(work_pattern)
+                        workable_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
+                    else:
+                        workable_ratio = 1.0  # No pattern means all days workable
+                    
+                    # Calculate positions per day using Option C formula:
+                    # positions_per_day = matching_employees × threshold × workable_ratio
+                    positions_per_day = len(matching_employees) * (min_threshold / 100) * workable_ratio
+                    positions_per_day_int = int(math.ceil(positions_per_day))
+                    
+                    # Group matching employees by OU for employee selection
                     employees_by_ou = defaultdict(list)
                     for emp in matching_employees:
                         ou_id = emp.get('ouId', 'DEFAULT')
@@ -327,23 +344,40 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                         selected_employees.extend(selected)
                         ou_selection_log.append((ou_id, len(selected), len(ou_emps)))
                     
-                    employee_based_headcount = len(selected_employees)
+                    employee_based_headcount = positions_per_day_int
                     
-                    print(f"      Requirement {requirement_id}: outcomeBased mode - OU-based selection")
-                    print(f"        minStaffThresholdPercentage: {min_threshold}%")
+                    print(f"      Requirement {requirement_id}: outcomeBased mode - Feasibility-aware calculation")
                     print(f"        Total matching employees: {len(matching_employees)}")
-                    print(f"        Per-OU selection:")
+                    print(f"        minStaffThresholdPercentage: {min_threshold}%")
+                    print(f"        Work pattern: {'-'.join(work_pattern)} (workable ratio: {workable_ratio:.2%})")
+                    print(f"        Calculated positions per day: {len(matching_employees)} × {min_threshold}% × {workable_ratio:.2%} = {positions_per_day:.1f} ≈ {positions_per_day_int}")
+                    print(f"        Per-OU employee selection:")
                     for ou_id, selected_count, total_count in ou_selection_log:
                         print(f"          {ou_id}: {selected_count}/{total_count} employees")
-                    print(f"        Total selected: {employee_based_headcount} employees")
-                    print(f"        Decision variables: {employee_based_headcount} × {len(inputs.get('planningHorizon', {}).get('startDate', ''))} days = reduced complexity")
+                    print(f"        Total selected employees: {len(selected_employees)}")
+                    
+                    # Calculate capacity to verify feasibility
+                    planning_horizon = inputs.get('planningHorizon', {})
+                    start_date_str = planning_horizon.get('startDate', '')
+                    end_date_str = planning_horizon.get('endDate', '')
+                    if start_date_str and end_date_str:
+                        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+                        end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+                        num_days = (end_date - start_date).days + 1
+                        total_slots = positions_per_day_int * num_days
+                        workable_days_per_employee = (num_days / pattern_length) * work_days_in_pattern if pattern_length > 0 else num_days
+                        max_capacity = int(len(selected_employees) * workable_days_per_employee)
+                        print(f"        Total slots: {positions_per_day_int} × {num_days} days = {total_slots}")
+                        print(f"        Employee capacity: {len(selected_employees)} × {workable_days_per_employee:.1f} workable days = {max_capacity} assignments")
+                        coverage_pct = (max_capacity / total_slots * 100) if total_slots > 0 else 0
+                        print(f"        Feasibility: {max_capacity}/{total_slots} = {coverage_pct:.1f}% {'✅ FEASIBLE' if coverage_pct >= 100 else '⚠️ MAY BE TIGHT'}")
                     
                     # Update the employees list in context to only include selected employees
                     # This ensures solver only creates variables for selected employees
                     selected_emp_ids = {emp['employeeId'] for emp in selected_employees}
                     inputs['_selectedEmployeeIds'] = selected_emp_ids
                     
-                    # Override headcount with selected employee count
+                    # Override headcount with calculated positions per day
                     headcount_raw = employee_based_headcount
                 
                 if isinstance(headcount_raw, dict):

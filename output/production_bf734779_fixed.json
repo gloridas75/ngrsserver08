@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "RST-20251218-BF734779",
+  "publicHolidays": [
+    "2026-01-01"
+  ],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2025-12-18T15:31:37.245336",
+    "ended": "2025-12-18T15:36:37.415307",
+    "durationSeconds": 300.17,
+    "status": "UNKNOWN"
+  },
+  "score": {
+    "overall": 0,
+    "hard": 0,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "unassignedSlots": 31
+    },
+    "soft": {}
+  },
+  "assignments": [],
+  "employeeRoster": [],
+  "rosterSummary": {
+    "totalDailyStatuses": 0,
+    "byStatus": {
+      "ASSIGNED": 0,
+      "OFF_DAY": 0,
+      "UNASSIGNED": 0,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "UNKNOWN",
+    "solverStatus": "UNKNOWN",
+    "solverStatusExplanation": "Solver status could not be determined. This is unexpected and may indicate a solver error.",
+    "qualityExplanation": "Solver status: UNKNOWN",
+    "coverageMetrics": {
+      "totalSlots": 31,
+      "assignedSlots": 0,
+      "unassignedSlots": 31,
+      "coverageRate": 0.0,
+      "coverageQuality": "PARTIAL"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 56,
+      "employeesUsed": 0,
+      "employeesUnused": 56,
+      "utilizationRate": 0.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 0,
+      "maxShiftsPerEmployee": 0,
+      "avgShiftsPerEmployee": 0,
+      "shiftVariance": 0,
+      "balanceQuality": 0,
+      "balanceGrade": "N/A"
+    },
+    "optimizationContext": {
+      "optimizationMode": "minimizeEmployeeCount",
+      "fixedRotationOffset": "ouOffsets",
+      "patternBased": true,
+      "continuousAdherence": false
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:b0ed56ecd0bf258d0af84e6bf76ed3cdf237782c8d82d48d7072cac3b74a92ef",
+    "generatedAt": "2025-12-18T15:36:37.422781",
+    "employeeHours": {}
+  }
+}

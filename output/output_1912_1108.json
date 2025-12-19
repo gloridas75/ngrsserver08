@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "RST-20251218-EF45D129",
+  "publicHolidays": [
+    "2026-01-01"
+  ],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2025-12-19T11:08:59.670561",
+    "ended": "2025-12-19T11:09:14.075181",
+    "durationSeconds": 14.405,
+    "status": "UNKNOWN"
+  },
+  "score": {
+    "overall": 0,
+    "hard": 0,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "unassignedSlots": 2108
+    },
+    "soft": {}
+  },
+  "assignments": [],
+  "employeeRoster": [],
+  "rosterSummary": {
+    "totalDailyStatuses": 0,
+    "byStatus": {
+      "ASSIGNED": 0,
+      "OFF_DAY": 0,
+      "UNASSIGNED": 0,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "UNKNOWN",
+    "solverStatus": "UNKNOWN",
+    "solverStatusExplanation": "Solver status could not be determined. This is unexpected and may indicate a solver error.",
+    "qualityExplanation": "Solver status: UNKNOWN",
+    "coverageMetrics": {
+      "totalSlots": 2108,
+      "assignedSlots": 0,
+      "unassignedSlots": 2108,
+      "coverageRate": 0.0,
+      "coverageQuality": "PARTIAL"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 223,
+      "employeesUsed": 0,
+      "employeesUnused": 223,
+      "utilizationRate": 0.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 0,
+      "maxShiftsPerEmployee": 0,
+      "avgShiftsPerEmployee": 0,
+      "shiftVariance": 0,
+      "balanceQuality": 0,
+      "balanceGrade": "N/A"
+    },
+    "optimizationContext": {
+      "optimizationMode": "minimizeEmployeeCount",
+      "fixedRotationOffset": "ouOffsets",
+      "patternBased": true,
+      "continuousAdherence": false
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:74514c48804aba2d0876ec772051208427e4abeb3cd42739e7343f5fb5375815",
+    "generatedAt": "2025-12-19T11:09:14.455218",
+    "employeeHours": {}
+  }
+}
