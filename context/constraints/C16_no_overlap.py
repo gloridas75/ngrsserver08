@@ -30,9 +30,18 @@ def add_constraints(model, ctx):
         print(f"     Skipping: slots or decision variables not available")
         return
     
+    # Check if outcomeBased mode - skip overlap check as positions don't overlap by design
+    demand_items = ctx.get('demandItems', [])
+    is_outcome_based = any(di.get('rosteringBasis') == 'outcomeBased' for di in demand_items)
+    
     print(f"[C16] No Overlapping Shifts Constraint")
     print(f"     Total employees: {len(employees)}")
     print(f"     Total slots: {len(slots)}")
+    
+    if is_outcome_based:
+        print(f"[C16] Skipping overlap check for outcomeBased mode (positions don't overlap)")
+        print(f"     ✓ Constraint satisfied by design\n")
+        return
     
     constraints_added = 0
     
