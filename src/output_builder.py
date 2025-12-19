@@ -177,6 +177,18 @@ def build_employee_roster(input_data, ctx, assignments):
         total_off_days = len([d for d in daily_status if d['status'] == 'OFF_DAY'])
         total_unassigned = len([d for d in daily_status if d['status'] == 'UNASSIGNED'])
         
+        # Calculate hour totals from actual assignments
+        total_normal_hours = 0.0
+        total_ot_hours = 0.0
+        total_hours = 0.0
+        
+        for date_str, assignment in assignment_by_emp_date.get(emp_id, {}).items():
+            if assignment.get('status') == 'ASSIGNED':
+                hours = assignment.get('hours', {})
+                total_normal_hours += hours.get('normal', 0.0)
+                total_ot_hours += hours.get('ot', 0.0)
+                total_hours += hours.get('paid', 0.0)
+        
         roster.append({
             "employeeId": emp_id,
             "rankId": emp.get('rankId'),  # FIX: Include employee rank
@@ -186,8 +198,12 @@ def build_employee_roster(input_data, ctx, assignments):
             "rotationOffset": emp_offset,
             "workPattern": emp_pattern,
             "totalDays": len(daily_status),
-            "assignedDays": total_assignments,
+            "workDays": total_assignments,  # FIX: Add workDays (same as assignedDays)
             "offDays": total_off_days,
+            "normalHours": round(total_normal_hours, 1),  # FIX: Add hour totals
+            "otHours": round(total_ot_hours, 1),
+            "totalHours": round(total_hours, 1),
+            "assignedDays": total_assignments,
             "unassignedDays": total_unassigned,
             "dailyStatus": daily_status
         })

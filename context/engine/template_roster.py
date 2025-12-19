@@ -450,21 +450,21 @@ def _replicate_template_to_employee(
     requirement: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
     """Replicate validated template pattern to an employee."""
+    import copy
     assignments = []
     
     for date_str, day_info in sorted(template_pattern.items()):
         if day_info['is_work_day'] and day_info['assigned']:
-            # Copy template assignment with employee-specific details
+            # Deep copy template assignment to avoid shared references
             template_assignment = day_info['assignment']
             
-            assignment = {
-                **template_assignment,
-                'assignmentId': template_assignment['assignmentId'].replace(
-                    template_assignment['employeeId'],
-                    employee['employeeId']
-                ),
-                'employeeId': employee['employeeId']
-            }
+            assignment = copy.deepcopy(template_assignment)
+            # Update employee-specific fields
+            assignment['assignmentId'] = template_assignment['assignmentId'].replace(
+                template_assignment['employeeId'],
+                employee['employeeId']
+            )
+            assignment['employeeId'] = employee['employeeId']
             
             assignments.append(assignment)
         elif day_info['is_work_day'] and not day_info['assigned']:
