@@ -9,12 +9,51 @@ import pathlib
 from typing import List
 from multiprocessing import Process, Event
 import signal
+from functools import wraps
+import errno
+import os
 
 # Setup path for imports
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
 from src.redis_job_manager import RedisJobManager, JobStatus
 from src.solver import solve_problem
+
+
+class TimeoutError(Exception):
+    """Raised when a function call exceeds its timeout"""
+    pass
+
+
+def timeout_handler(signum, frame):
+    """Signal handler for timeout"""
+    raise TimeoutError("Function call timed out")
+
+
+def with_timeout(timeout_seconds):
+    """
+    Decorator to add timeout to a function using SIGALRM
+    
+    Args:
+        timeout_seconds: Maximum seconds to allow function to run
+        
+    Raises:
+        TimeoutError: If function exceeds timeout
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            # Set the timeout alarm
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(timeout_seconds)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                # Cancel the alarm
+                signal.alarm(0)
+            return result
+        return wrapper
+    return decorator
 
 
 def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
@@ -71,6 +110,21 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
             
             input_data = job_info.input_data
             
+            # Extract timeout from input (with safety buffer)
+            solver_timeout = 300  # Default 5 minutes
+            try:
+                if 'solverRunTime' in input_data and 'maxSeconds' in input_data['solverRunTime']:
+                    solver_timeout = int(input_data['solverRunTime']['maxSeconds'])
+                    # Add 60 second buffer for processing overhead
+                    worker_timeout = solver_timeout + 60
+                else:
+                    worker_timeout = solver_timeout + 60
+            except Exception as e:
+                print(f"[WORKER-{worker_id}] Could not extract timeout from input, using default: {e}")
+                worker_timeout = solver_timeout + 60
+            
+            print(f"[WORKER-{worker_id}] Job {job_id} timeout: {solver_timeout}s (worker timeout: {worker_timeout}s)")
+            
             # Run solver (unified solver handles everything)
             start_time = time.time()
             
@@ -84,7 +138,14 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                 # - Input loading
                 # - CP-SAT solving
                 # - Output building
-                result = solve_problem(input_data, log_prefix=f"[WORKER-{worker_id}]")
+                #
+                # TIMEOUT PROTECTION: Wrap with external timeout
+                # ============================================================
+                @with_timeout(worker_timeout)
+                def solve_with_timeout():
+                    return solve_problem(input_data, log_prefix=f"[WORKER-{worker_id}]")
+                
+                result = solve_with_timeout()
                 
                 elapsed_time = time.time() - start_time
                 
@@ -120,6 +181,28 @@ def solver_worker(worker_id: int, stop_event: Event, ttl_seconds: int = 3600):
                         print(f"[WORKER-{worker_id}] Webhook notification sent for job {job_id}")
                 except Exception as webhook_error:
                     # Don't fail the job if webhook fails
+                    print(f"[WORKER-{worker_id}] Webhook notification failed for job {job_id}: {webhook_error}")
+                
+            except TimeoutError as timeout_error:
+                # Handle job timeout - separate from other solver errors
+                elapsed_time = time.time() - start_time
+                error_msg = f"Job exceeded timeout limit of {worker_timeout}s (elapsed: {elapsed_time:.1f}s). Solver may have hung or problem is too complex."
+                
+                print(f"[WORKER-{worker_id}] Job {job_id} TIMEOUT: {error_msg}")
+                
+                job_manager.update_status(
+                    job_id,
+                    JobStatus.FAILED,
+                    error_message=error_msg
+                )
+                
+                # Send webhook notification for timeout
+                try:
+                    base_url = __import__('os').getenv('API_BASE_URL')
+                    webhook_sent = job_manager.send_webhook_notification(job_id, base_url)
+                    if webhook_sent:
+                        print(f"[WORKER-{worker_id}] Webhook notification sent for timed-out job {job_id}")
+                except Exception as webhook_error:
                     print(f"[WORKER-{worker_id}] Webhook notification failed for job {job_id}: {webhook_error}")
                 
             except Exception as solve_error:
