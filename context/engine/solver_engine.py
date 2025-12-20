@@ -599,29 +599,30 @@ def build_model(ctx):
     
     # For each employee-slot pair, enforce pattern matching
     for slot in slots:
-        rotation_seq = slot.rotationSequence
-        if not rotation_seq:
+        # Use slot's base pattern as fallback
+        slot_base_pattern = slot.rotationSequence
+        if not slot_base_pattern:
             continue
             
-        cycle_days = len(rotation_seq)
+        cycle_days = len(slot_base_pattern)
         base_date = slot.coverageAnchor
         
         if not base_date:
             continue
         
-        # WEEK-ALIGNED PATTERN: Find Monday of the week containing coverageAnchor
-        # This ensures pattern cycles align with calendar weeks (Mon-Sun)
-        # Formula: base_date - (base_date.weekday() days) = Monday of that week
-        # Example: If coverageAnchor = 2026-01-01 (Thu, weekday=3), 
-        #          week_anchor = 2026-01-01 - 3 days = 2025-12-29 (Mon)
-        week_anchor = base_date - timedelta(days=base_date.weekday())
-        
-        # Calculate which day in the cycle this slot represents (from Monday anchor)
-        # Convert slot.date to date object if it's datetime
+        # Pattern calculation: days since coverage anchor
+        # CRITICAL: For ICPMP patterns, use coverageAnchor directly (NO week alignment)
+        # Week alignment breaks rotation when pattern start date isn't Monday
         slot_date_obj = slot.date.date() if isinstance(slot.date, datetime) else slot.date
-        days_from_base = (slot_date_obj - week_anchor).days
+        days_from_base = (slot_date_obj - base_date).days
         
         for emp in employees:
+            # CRITICAL: Use employee's ROTATED workPattern if available (set by ICPMP)
+            # If employee has custom pattern, use it; otherwise use slot's base pattern
+            emp_pattern = emp.get('workPattern', slot_base_pattern)
+            rotation_seq = emp_pattern if emp_pattern else slot_base_pattern
+            cycle_days_for_emp = len(rotation_seq)
+            
             emp_id = emp.get('employeeId')
             
             # Skip if no decision variable exists for this pair
@@ -636,9 +637,9 @@ def build_model(ctx):
                 offset_var = offset_vars[emp_id]
                 
                 # For each possible offset value (0 to cycle_days-1)
-                for possible_offset in range(cycle_days):
+                for possible_offset in range(cycle_days_for_emp):
                     # Calculate cycle day for this offset (offset = starting position in cycle)
-                    emp_cycle_day = (days_from_base + possible_offset) % cycle_days
+                    emp_cycle_day = (days_from_base + possible_offset) % cycle_days_for_emp
                     expected_shift = rotation_seq[emp_cycle_day]
                     
                     # Block assignment if shift doesn't match expected pattern
@@ -664,7 +665,11 @@ def build_model(ctx):
                     # They can be assigned to any shift
                     continue
                 
-                emp_cycle_day = (days_from_base + emp_offset) % cycle_days
+                # CRITICAL FIX: If employee has custom workPattern (from ICPMP), it's already rotated!
+                # Use offset=0 to avoid double-rotation. Otherwise use employee's offset normally.
+                effective_offset = 0 if emp.get('workPattern') else emp_offset
+                
+                emp_cycle_day = (days_from_base + effective_offset) % cycle_days_for_emp
                 expected_shift = rotation_seq[emp_cycle_day]
                 
                 # HARD CONSTRAINT: Employee can only work shifts matching their pattern position
