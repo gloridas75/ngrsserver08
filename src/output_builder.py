@@ -115,8 +115,19 @@ def build_employee_roster(input_data, ctx, assignments):
             # Check if employee has assignment on this date
             assignment = assignment_by_emp_date.get(emp_id, {}).get(date_str)
             
-            if assignment:
-                # Employee is ASSIGNED
+            if assignment and assignment.get('status') == 'OFF_DAY':
+                # Employee has OFF_DAY assignment
+                daily_status.append({
+                    "date": date_str,
+                    "status": "OFF_DAY",
+                    "shiftCode": "O",
+                    "patternDay": assignment.get('patternDay', pattern_day),
+                    "assignmentId": assignment.get('assignmentId'),
+                    "startDateTime": assignment.get('startDateTime'),
+                    "endDateTime": assignment.get('endDateTime')
+                })
+            elif assignment:
+                # Employee is ASSIGNED to work shift
                 daily_status.append({
                     "date": date_str,
                     "status": "ASSIGNED",
@@ -136,11 +147,10 @@ def build_employee_roster(input_data, ctx, assignments):
                         "shiftCode": None,
                         "reason": "Employee not used in this roster"
                     })
-                elif emp_pattern:
+                elif emp_pattern and pattern_day is not None:
                     # Check what employee's pattern says for this date
-                    pattern_length = len(emp_pattern)
-                    cycle_position = day_index % pattern_length
-                    expected_shift = emp_pattern[cycle_position]
+                    # Use the pre-calculated pattern_day which accounts for pattern start date and employee offset
+                    expected_shift = emp_pattern[pattern_day]
                     
                     if expected_shift == 'O':
                         # Pattern says off-day (legitimate rest)
