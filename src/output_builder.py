@@ -76,11 +76,13 @@ def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None
     # Get base rotation pattern from first demand (assuming single pattern for now)
     base_pattern = None
     pattern_start_date = None
+    coverage_days = None
     demands = input_data.get('demandItems', [])
     if demands and len(demands) > 0:
         reqs = demands[0].get('requirements', [])
         if reqs and len(reqs) > 0:
             base_pattern = reqs[0].get('workPattern', [])
+            coverage_days = reqs[0].get('coverageDays', None)
         # Get pattern start date from shiftStartDate
         pattern_start_date = demands[0].get('shiftStartDate')
     
@@ -117,11 +119,14 @@ def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None
             pattern_day = None
             if base_pattern and pattern_start_date_obj:
                 from context.engine.solver_engine import calculate_pattern_day
+                # NOTE: We pass employee_offset=0 because emp_pattern is already rotated
+                # calculate_pattern_day returns the index into the pattern
                 pattern_day = calculate_pattern_day(
                     assignment_date=current_date,
                     pattern_start_date=pattern_start_date_obj,
-                    employee_offset=emp_offset,
-                    pattern_length=len(base_pattern)
+                    employee_offset=0,  # Pattern is already rotated by emp_offset
+                    pattern_length=len(base_pattern),
+                    coverage_days=coverage_days
                 )
             
             # Check if employee has assignment on this date
@@ -533,11 +538,13 @@ def insert_off_day_assignments(assignments, input_data, ctx):
     # Get base rotation pattern and start date from first requirement
     base_pattern = None
     pattern_start_date = None
+    coverage_days = None
     demands = input_data.get('demandItems', [])
     if demands and len(demands) > 0:
         reqs = demands[0].get('requirements', [])
         if reqs and len(reqs) > 0:
             base_pattern = reqs[0].get('workPattern', [])
+            coverage_days = reqs[0].get('coverageDays', None)
         pattern_start_date = demands[0].get('shiftStartDate')
     
     if not base_pattern or not pattern_start_date:
@@ -573,11 +580,13 @@ def insert_off_day_assignments(assignments, input_data, ctx):
             
             # Calculate what shift code employee should have based on pattern
             from context.engine.solver_engine import calculate_pattern_day
+            # NOTE: We pass employee_offset=0 because emp_pattern is already rotated
             pattern_day = calculate_pattern_day(
                 assignment_date=current_date,
                 pattern_start_date=pattern_start_date_obj,
-                employee_offset=emp_offset,
-                pattern_length=pattern_length
+                employee_offset=0,  # Pattern is already rotated by emp_offset
+                pattern_length=pattern_length,
+                coverage_days=coverage_days
             )
             
             expected_shift = emp_pattern[pattern_day]
