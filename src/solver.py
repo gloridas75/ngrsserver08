@@ -156,17 +156,25 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         fixed_rotation_offset_mode = input_data.get('fixedRotationOffset', 'auto')
         
         if fixed_rotation_offset_mode == 'auto':
-            # AUTO MODE: Redistribute filtered employees across all offsets
+            # AUTO MODE: Use ICPMP-assigned offsets if ICPMP ran, otherwise apply staggering
             print(f"{log_prefix} ======================================================================")
-            print(f"{log_prefix} APPLYING AUTO OFFSETS (after ICPMP)")
-            print(f"{log_prefix} ======================================================================")
-            input_data = ensure_staggered_offsets(input_data)
-            print(f"{log_prefix} ✓ Auto offsets applied to {len(input_data.get('employees', []))} employees")
+            if needs_icpmp:
+                # ICPMP already assigned optimal offsets - preserve them!
+                print(f"{log_prefix} USING ICPMP-ASSIGNED OFFSETS")
+                print(f"{log_prefix} ======================================================================")
+                print(f"{log_prefix} ✓ ICPMP assigned rotation offsets to {len(input_data.get('employees', []))} employees")
+                print(f"{log_prefix} ℹ️  Skipping auto-staggering to preserve ICPMP's optimal offset distribution")
+            else:
+                # No ICPMP - apply auto-staggering
+                print(f"{log_prefix} APPLYING AUTO OFFSETS")
+                print(f"{log_prefix} ======================================================================")
+                input_data = ensure_staggered_offsets(input_data)
+                print(f"{log_prefix} ✓ Auto offsets applied to {len(input_data.get('employees', []))} employees")
             print()
         elif fixed_rotation_offset_mode == 'ouOffsets':
             # OU OFFSETS MODE: Override ICPMP offsets with OU-specific offsets
             print(f"{log_prefix} ======================================================================")
-            print(f"{log_prefix} APPLYING OU-BASED OFFSETS (after ICPMP)")
+            print(f"{log_prefix} APPLYING OU-BASED OFFSETS (overriding ICPMP)")
             print(f"{log_prefix} ======================================================================")
             input_data = ensure_staggered_offsets(input_data)
             print(f"{log_prefix} ✓ OU offsets applied")
