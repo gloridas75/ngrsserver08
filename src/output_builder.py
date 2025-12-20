@@ -16,9 +16,15 @@ from context.engine.time_utils import (
 )
 
 
-def build_employee_roster(input_data, ctx, assignments):
+def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None):
     """
     Build a comprehensive employee roster showing daily status for ALL employees.
+    
+    Args:
+        input_data: Original input JSON
+        ctx: Context dict with employees and patterns
+        assignments: Work assignments ONLY (D, N shifts)
+        off_day_assignments: Optional list of OFF day records (shiftCode='O', status='OFF_DAY')
     
     Returns list with:
     - employeeRoster: List of all employees with their daily schedules
@@ -38,8 +44,14 @@ def build_employee_roster(input_data, ctx, assignments):
     if not assignments:
         return []
     
+    # Merge work assignments and OFF days for complete roster view
+    # But remember: only work assignments go in output's assignments array
+    all_assignments_for_roster = assignments.copy()
+    if off_day_assignments:
+        all_assignments_for_roster.extend(off_day_assignments)
+    
     # Get date range from assignments
-    dates = sorted(set(a.get('date') for a in assignments if a.get('date')))
+    dates = sorted(set(a.get('date') for a in all_assignments_for_roster if a.get('date')))
     if not dates:
         return []
     
@@ -55,7 +67,7 @@ def build_employee_roster(input_data, ctx, assignments):
     
     # Build assignment lookup: emp_id -> date -> assignment
     assignment_by_emp_date = defaultdict(dict)
-    for assignment in assignments:
+    for assignment in all_assignments_for_roster:
         emp_id = assignment.get('employeeId')
         assign_date = assignment.get('date')
         if emp_id and assign_date:
@@ -657,11 +669,19 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     # Compute input hash for reproducibility tracking (use input_data, not ctx which has IntVars)
     input_hash = compute_input_hash(input_data)
     
-    # ========== INSERT OFF DAY ASSIGNMENTS (for demandBased rosters) ==========
-    # Add explicit OFF day entries for employees on their rest days
+    # ========== HANDLE OFF DAY ASSIGNMENTS (for demandBased rosters) ==========
+    # Generate OFF day records but keep them separate from assignments array
+    # OFF days should ONLY appear in employeeRoster.dailyStatus, NOT in assignments
     rostering_basis = input_data.get('demandItems', [{}])[0].get('rosteringBasis', 'demandBased')
+    
+    # Store OFF day assignments separately for employeeRoster only (not in assignments array)
+    off_day_assignments_for_roster = []
     if rostering_basis == 'demandBased':
-        assignments = insert_off_day_assignments(assignments, input_data, ctx)
+        all_with_off = insert_off_day_assignments(assignments, input_data, ctx)
+        # Separate actual work assignments from OFF days
+        off_day_assignments_for_roster = [a for a in all_with_off if a.get('status') == 'OFF_DAY']
+        # Keep only work assignments in main assignments array
+        assignments = [a for a in all_with_off if a.get('status') != 'OFF_DAY']
     
     # Extract scores from solver_result
     scores = solver_result.get('scores', {'hard': 0, 'soft': 0, 'overall': 0})
@@ -800,7 +820,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     
     # ========== BUILD OUTPUT ==========
     # Build employee roster with daily status for ALL employees
-    employee_roster = build_employee_roster(input_data, ctx, annotated_assignments)
+    # Pass OFF day assignments separately - they appear in employeeRoster but NOT in assignments array
+    employee_roster = build_employee_roster(input_data, ctx, annotated_assignments, off_day_assignments_for_roster)
     
     # ========== CALCULATE ROSTER SUMMARY ==========
     roster_summary = {
