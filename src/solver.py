@@ -141,6 +141,15 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                 'warnings': preprocessing_result.get('warnings', [])
             }
             
+            # Store ICPMP-assigned offsets for output builder to use
+            # This ensures pattern detection works correctly in employeeRoster
+            icpmp_assigned_offsets = {}
+            for emp in preprocessing_result['filtered_employees']:
+                emp_id = emp.get('employeeId')
+                emp_offset = emp.get('rotationOffset', 0)
+                if emp_id:
+                    icpmp_assigned_offsets[emp_id] = emp_offset
+            
         except Exception as preprocessing_error:
             # If preprocessing fails, log error and continue with original employee list
             print(f"{log_prefix} ❌ ICPMP preprocessing failed: {preprocessing_error}")
@@ -240,6 +249,12 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     # Attach ICPMP metadata to context (build_output will include it)
     if icpmp_metadata:
         ctx['icpmp_preprocessing'] = icpmp_metadata
+    
+    # Attach ICPMP-assigned offsets to context for output builder
+    # This ensures employeeRoster uses correct offsets for pattern detection
+    if needs_icpmp and 'icpmp_assigned_offsets' in locals():
+        ctx['optimized_offsets'] = icpmp_assigned_offsets
+        print(f"{log_prefix} ℹ️  Stored {len(icpmp_assigned_offsets)} ICPMP offsets in context for output builder")
     
     # ═══════════════════════════════════════════════════════════
     # PHASE 3: ROSTER GENERATION (MODE-DEPENDENT)
