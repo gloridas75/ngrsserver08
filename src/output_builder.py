@@ -552,6 +552,43 @@ def insert_off_day_assignments(assignments, input_data, ctx):
                 # Get demand/requirement info from one of employee's actual assignments
                 sample_assignment = next(iter(assignments_by_emp_date[emp_id].values()), None)
                 if sample_assignment:
+                    # Determine typical shift times for this employee
+                    # Use the employee's most common shift time pattern
+                    emp_assignments = list(assignments_by_emp_date[emp_id].values())
+                    
+                    # Find most common shift type (D or N) for this employee
+                    shift_types = [a.get('shiftCode') for a in emp_assignments if a.get('shiftCode') in ['D', 'N']]
+                    if shift_types:
+                        from collections import Counter
+                        most_common_shift = Counter(shift_types).most_common(1)[0][0]
+                        
+                        # Get a sample assignment of that shift type
+                        sample_shift = next((a for a in emp_assignments if a.get('shiftCode') == most_common_shift), None)
+                        if sample_shift:
+                            # Extract time portion from sample shift
+                            sample_start = sample_shift.get('startDateTime', f"{date_str}T00:00:00")
+                            sample_end = sample_shift.get('endDateTime', f"{date_str}T00:00:00")
+                            
+                            # Use the same time pattern but for the OFF day date
+                            start_time = sample_start[11:] if len(sample_start) > 10 else "00:00:00"
+                            end_time = sample_end[11:] if len(sample_end) > 10 else "00:00:00"
+                            
+                            # For OFF days, use the day's date + typical shift start time
+                            off_start = f"{date_str}T{start_time}"
+                            # Handle next-day end times (e.g., night shifts)
+                            if end_time < start_time:  # Cross-midnight shift
+                                next_date = (current_date + timedelta(days=1)).isoformat()
+                                off_end = f"{next_date}T{end_time}"
+                            else:
+                                off_end = f"{date_str}T{end_time}"
+                        else:
+                            off_start = f"{date_str}T08:00:00"
+                            off_end = f"{date_str}T20:00:00"
+                    else:
+                        # Default to day shift times if no pattern found
+                        off_start = f"{date_str}T08:00:00"
+                        off_end = f"{date_str}T20:00:00"
+                    
                     off_assignment = {
                         "assignmentId": f"OFF-{emp_id}-{date_str}-{uuid.uuid4().hex[:6]}",
                         "demandId": sample_assignment.get('demandId', 'N/A'),
@@ -559,8 +596,8 @@ def insert_off_day_assignments(assignments, input_data, ctx):
                         "slotId": f"OFF-{emp_id}-{date_str}",
                         "employeeId": emp_id,
                         "date": date_str,
-                        "startDateTime": f"{date_str}T00:00:00",
-                        "endDateTime": f"{date_str}T00:00:00",
+                        "startDateTime": off_start,
+                        "endDateTime": off_end,
                         "shiftCode": "O",
                         "patternDay": pattern_day,
                         "newRotationOffset": emp_offset,
