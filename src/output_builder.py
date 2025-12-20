@@ -127,24 +127,52 @@ def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None
             # Check if employee has assignment on this date
             assignment = assignment_by_emp_date.get(emp_id, {}).get(date_str)
             
-            if assignment and assignment.get('status') == 'OFF_DAY':
-                # Employee has OFF_DAY assignment
-                daily_status.append({
-                    "date": date_str,
-                    "status": "OFF_DAY",
-                    "shiftCode": "O",
-                    "patternDay": assignment.get('patternDay', pattern_day),
-                    "assignmentId": assignment.get('assignmentId'),
-                    "startDateTime": assignment.get('startDateTime'),
-                    "endDateTime": assignment.get('endDateTime')
-                })
-            elif assignment:
-                # Employee is ASSIGNED to work shift
+            # PRIORITY 1: Check pattern first to determine if this is an OFF day
+            # This ensures OFF days are marked correctly even if solver assigned work due to flexibility
+            expected_shift_from_pattern = None
+            if emp_pattern and pattern_day is not None:
+                expected_shift_from_pattern = emp_pattern[pattern_day]
+            
+            if expected_shift_from_pattern == 'O' and not (assignment and assignment.get('shiftCode') in ['D', 'N']):
+                # Pattern says OFF day and no actual work assignment - mark as OFF_DAY
+                # Use OFF_DAY assignment data if it exists, otherwise create minimal entry
+                if assignment and assignment.get('status') == 'OFF_DAY':
+                    daily_status.append({
+                        "date": date_str,
+                        "status": "OFF_DAY",
+                        "shiftCode": "O",
+                        "patternDay": assignment.get('patternDay', pattern_day),
+                        "assignmentId": assignment.get('assignmentId'),
+                        "startDateTime": assignment.get('startDateTime'),
+                        "endDateTime": assignment.get('endDateTime')
+                    })
+                else:
+                    # Pattern says OFF but no OFF assignment generated - create default entry
+                    daily_status.append({
+                        "date": date_str,
+                        "status": "OFF_DAY",
+                        "shiftCode": "O",
+                        "patternDay": pattern_day,
+                        "reason": "Scheduled off-day per work pattern"
+                    })
+            elif assignment and assignment.get('shiftCode') in ['D', 'N']:
+                # Employee has actual work assignment (D or N shift)
                 daily_status.append({
                     "date": date_str,
                     "status": "ASSIGNED",
                     "shiftCode": assignment.get('shiftCode'),
                     "patternDay": pattern_day,
+                    "assignmentId": assignment.get('assignmentId'),
+                    "startDateTime": assignment.get('startDateTime'),
+                    "endDateTime": assignment.get('endDateTime')
+                })
+            elif assignment and assignment.get('status') == 'OFF_DAY':
+                # Has OFF_DAY assignment (backup case if pattern check didn't catch it)
+                daily_status.append({
+                    "date": date_str,
+                    "status": "OFF_DAY",
+                    "shiftCode": "O",
+                    "patternDay": assignment.get('patternDay', pattern_day),
                     "assignmentId": assignment.get('assignmentId'),
                     "startDateTime": assignment.get('startDateTime'),
                     "endDateTime": assignment.get('endDateTime')
@@ -160,28 +188,14 @@ def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None
                         "reason": "Employee not used in this roster"
                     })
                 elif emp_pattern and pattern_day is not None:
-                    # Check what employee's pattern says for this date
-                    # Use the pre-calculated pattern_day which accounts for pattern start date and employee offset
-                    expected_shift = emp_pattern[pattern_day]
-                    
-                    if expected_shift == 'O':
-                        # Pattern says off-day (legitimate rest)
-                        daily_status.append({
-                            "date": date_str,
-                            "status": "OFF_DAY",
-                            "shiftCode": "O",
-                            "patternDay": pattern_day,
-                            "reason": "Scheduled off-day per work pattern"
-                        })
-                    else:
-                        # Pattern says work (D or N) but not assigned
-                        daily_status.append({
-                            "date": date_str,
-                            "status": "UNASSIGNED",
-                            "shiftCode": None,
-                            "expectedShift": expected_shift,
-                            "reason": f"Pattern indicates {expected_shift} shift but not assigned"
-                        })
+                    # Pattern says work (D or N) but not assigned
+                    daily_status.append({
+                        "date": date_str,
+                        "status": "UNASSIGNED",
+                        "shiftCode": None,
+                        "expectedShift": expected_shift_from_pattern,
+                        "reason": f"Pattern indicates {expected_shift_from_pattern} shift but not assigned"
+                    })
                 else:
                     # Has some assignments but no pattern (edge case)
                     daily_status.append({
@@ -540,9 +554,8 @@ def insert_off_day_assignments(assignments, input_data, ctx):
         emp_id = emp.get('employeeId')
         emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
         
-        # Check if employee has any assignments (skip completely unused employees)
-        if emp_id not in assignments_by_emp_date:
-            continue
+        # Generate OFF days for ALL employees (even if they have no work assignments)
+        # This ensures pattern-based OFF days are always shown in employeeRoster
         
         # Calculate employee's rotated pattern
         from context.engine.solver_engine import calculate_employee_work_pattern
@@ -571,8 +584,11 @@ def insert_off_day_assignments(assignments, input_data, ctx):
             
             # Only add OFF day assignment if pattern says "O"
             if expected_shift == 'O':
-                # Get demand/requirement info from one of employee's actual assignments
-                sample_assignment = next(iter(assignments_by_emp_date[emp_id].values()), None)
+                # Get demand/requirement info from one of employee's actual assignments (if any)
+                emp_assignments_dict = assignments_by_emp_date.get(emp_id, {})
+                sample_assignment = next(iter(emp_assignments_dict.values()), None) if emp_assignments_dict else None
+                
+                # Determine shift times for OFF day
                 if sample_assignment:
                     # Determine typical shift times for this employee
                     # Use the employee's most common shift time pattern
@@ -610,30 +626,35 @@ def insert_off_day_assignments(assignments, input_data, ctx):
                         # Default to day shift times if no pattern found
                         off_start = f"{date_str}T08:00:00"
                         off_end = f"{date_str}T20:00:00"
-                    
-                    off_assignment = {
-                        "assignmentId": f"OFF-{emp_id}-{date_str}-{uuid.uuid4().hex[:6]}",
-                        "demandId": sample_assignment.get('demandId', 'N/A'),
-                        "requirementId": sample_assignment.get('requirementId', 'N/A'),
-                        "slotId": f"OFF-{emp_id}-{date_str}",
-                        "employeeId": emp_id,
-                        "date": date_str,
-                        "startDateTime": off_start,
-                        "endDateTime": off_end,
-                        "shiftCode": "O",
-                        "patternDay": pattern_day,
-                        "newRotationOffset": emp_offset,
-                        "status": "OFF_DAY",
-                        "hours": {
-                            "gross": 0,
-                            "lunch": 0,
-                            "normal": 0,
-                            "ot": 0,
-                            "restDayPay": 0,
-                            "paid": 0
-                        }
+                else:
+                    # Employee has no assignments - use default times and demand info
+                    off_start = f"{date_str}T08:00:00"
+                    off_end = f"{date_str}T20:00:00"
+                
+                # Create OFF_DAY assignment (with sample assignment data if available)
+                off_assignment = {
+                    "assignmentId": f"OFF-{emp_id}-{date_str}-{uuid.uuid4().hex[:6]}",
+                    "demandId": sample_assignment.get('demandId', 'N/A') if sample_assignment else 'N/A',
+                    "requirementId": sample_assignment.get('requirementId', 'N/A') if sample_assignment else 'N/A',
+                    "slotId": f"OFF-{emp_id}-{date_str}",
+                    "employeeId": emp_id,
+                    "date": date_str,
+                    "startDateTime": off_start,
+                    "endDateTime": off_end,
+                    "shiftCode": "O",
+                    "patternDay": pattern_day,
+                    "newRotationOffset": emp_offset,
+                    "status": "OFF_DAY",
+                    "hours": {
+                        "gross": 0,
+                        "lunch": 0,
+                        "normal": 0,
+                        "ot": 0,
+                        "restDayPay": 0,
+                        "paid": 0
                     }
-                    off_day_assignments.append(off_assignment)
+                }
+                off_day_assignments.append(off_assignment)
             
             current_date += timedelta(days=1)
     
