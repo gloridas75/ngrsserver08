@@ -297,12 +297,16 @@ def _assign_employees_to_slots_balanced(slots: List[Dict[str, Any]],
     Strategy:
     1. Sort slots by date
     2. For each slot, find eligible employees who can work that day
-    3. Pick employee with lowest current workload
-    4. Respect constraints via template validation
+    3. Exclude employees already assigned on that date (one position per day)
+    4. Pick employee with lowest current workload
+    5. Respect constraints via template validation
     """
     assignments = []
     employee_workload = {emp['employeeId']: 0 for emp in eligible_employees}
     employee_assignments = {emp['employeeId']: [] for emp in eligible_employees}
+    
+    # Track which employees are assigned on each date (prevent double-booking)
+    employees_assigned_by_date = defaultdict(set)
     
     # Sort slots by date for chronological assignment
     sorted_slots = sorted(slots, key=lambda s: s['date'])
@@ -315,6 +319,11 @@ def _assign_employees_to_slots_balanced(slots: List[Dict[str, Any]],
         eligible_for_slot = []
         for emp in eligible_employees:
             emp_id = emp['employeeId']
+            
+            # CRITICAL: Check if employee is already assigned on this date
+            if emp_id in employees_assigned_by_date[slot_date]:
+                continue  # Skip - already assigned to another position today
+            
             template = employee_templates.get(emp_id, {})
             valid_days = template.get('valid_work_days', set())
             
@@ -352,6 +361,10 @@ def _assign_employees_to_slots_balanced(slots: List[Dict[str, Any]],
             assignments.append(assignment)
             employee_workload[emp_id] += 1
             employee_assignments[emp_id].append(slot_date)
+            
+            # Track that this employee is now assigned on this date
+            employees_assigned_by_date[slot_date].add(emp_id)
+            
             slot['assigned'] = True
             slot['employeeId'] = emp_id
         else:
