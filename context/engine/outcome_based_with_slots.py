@@ -41,9 +41,13 @@ def should_use_slot_based_outcome(demand: Dict[str, Any], requirement: Dict[str,
     """
     headcount = requirement.get('headcount', 0)
     
+    # Check rosteringBasis - can be at demand or requirement level
+    rostering_basis = requirement.get('rosteringBasis') or demand.get('rosteringBasis')
+    min_threshold = requirement.get('minStaffThresholdPercentage') or demand.get('minStaffThresholdPercentage', 0)
+    
     return (
-        demand.get('rosteringBasis') == 'outcomeBased' and
-        demand.get('minStaffThresholdPercentage') == 100 and
+        rostering_basis == 'outcomeBased' and
+        min_threshold == 100 and
         headcount > 0 and
         available_employees < headcount
     )
@@ -275,10 +279,16 @@ def _generate_employee_template_with_constraints(ctx: Dict[str, Any], employee: 
         coverage_days=coverage_days
     )
     
-    # Extract valid work days
+    # Extract valid work days (exclude off days)
     valid_work_days = set()
     for date_str, day_info in template_result.items():
-        if day_info.get('assigned', False):
+        # Only include days where:
+        # 1. assigned == True (passed validation)
+        # 2. is_work_day == True (not an off day)
+        # 3. OR has an actual assignment dict
+        if day_info.get('assigned', False) and (
+            day_info.get('is_work_day', False) or day_info.get('assignment') is not None
+        ):
             valid_work_days.add(date_str)
     
     return {
