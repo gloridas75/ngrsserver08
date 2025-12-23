@@ -91,7 +91,7 @@ def solve_outcome_based_with_slots(ctx: Dict[str, Any], demand: Dict[str, Any],
     logger.info(f"  Coverage Days: {coverage_days}")
     
     # Step 1: Build slots based on headcount (pattern-based like demandBased)
-    slots = _build_headcount_slots(
+    slot_result = _build_headcount_slots(
         ctx=ctx,
         demand=demand,
         requirement=requirement,
@@ -101,7 +101,10 @@ def solve_outcome_based_with_slots(ctx: Dict[str, Any], demand: Dict[str, Any],
         shift_config=shift_config
     )
     
-    logger.info(f"  Created {len(slots)} slots for {headcount} positions")
+    slots = slot_result['slots']
+    positions_created = slot_result['positions_created']
+    
+    logger.info(f"  Created {len(slots)} slots across {positions_created} positions (target: {headcount} daily coverage)")
     
     # Step 2: Generate templates for each employee with constraint validation
     employee_templates = {}
@@ -134,7 +137,8 @@ def solve_outcome_based_with_slots(ctx: Dict[str, Any], demand: Dict[str, Any],
         'assignments': assignments,
         'metadata': {
             'mode': 'slot_based_outcome',
-            'required_positions': headcount,
+            'target_daily_coverage': headcount,  # What customer specified
+            'positions_created': positions_created,  # Actual positions to achieve target
             'available_employees': len(eligible_employees),
             'total_slots': len(slots),
             'assigned_slots': assigned_count,
@@ -150,10 +154,19 @@ def _build_headcount_slots(ctx: Dict[str, Any], demand: Dict[str, Any], requirem
     """
     Build slots using pattern-based rotation offsets (similar to demandBased).
     
-    Each position gets a rotation offset and follows the work pattern.
+    CRITICAL CHANGE: Headcount now represents DAILY COVERAGE NEEDS, not total positions.
+    The system calculates the actual number of positions required to achieve daily coverage.
+    
+    Formula: positions_needed = ceil(headcount × pattern_length / work_days_in_pattern)
+    
+    Example: headcount=40, pattern=[D,D,D,D,D,O,O]
+      - Work days in pattern: 5
+      - positions_needed = ceil(40 × 7 / 5) = ceil(56) = 56
+      - Result: ~40 slots per day (56 positions, each working 5/7 days)
     """
     from context.engine.slot_builder import build_slots
     from datetime import datetime
+    import math
     
     slots = []
     planning_ref = ctx.get('planningReference', {})
@@ -169,11 +182,23 @@ def _build_headcount_slots(ctx: Dict[str, Any], demand: Dict[str, Any], requirem
     end_date = datetime.strptime(planning_horizon['endDate'], '%Y-%m-%d').date()
     
     pattern_length = len(work_pattern)
+    work_days_in_pattern = sum(1 for code in work_pattern if code != 'O')
+    
+    # CALCULATE ACTUAL POSITIONS NEEDED for desired daily coverage
+    if work_days_in_pattern > 0:
+        positions_needed = math.ceil(headcount * pattern_length / work_days_in_pattern)
+    else:
+        positions_needed = headcount  # Fallback if pattern has no work days
+    
+    logger.info(f"[SLOT-BASED] Headcount {headcount} interpreted as DAILY COVERAGE target")
+    logger.info(f"[SLOT-BASED] Work pattern: {work_pattern} ({work_days_in_pattern}/{pattern_length} work days)")
+    logger.info(f"[SLOT-BASED] Calculated positions needed: {positions_needed} (to achieve ~{headcount} daily slots)")
+    
     demand_id = demand.get('demandId', 'UNKNOWN')
     req_id = requirement.get('requirementId', 'UNKNOWN')
     
     # Create slots for each position (rotation offset)
-    for position in range(headcount):
+    for position in range(positions_needed):
         offset = position % pattern_length  # Pattern-based offset
         
         current_date = start_date
@@ -218,7 +243,10 @@ def _build_headcount_slots(ctx: Dict[str, Any], demand: Dict[str, Any], requirem
             current_date += timedelta(days=1)
             pattern_index = (pattern_index + 1) % pattern_length
     
-    return slots
+    return {
+        'slots': slots,
+        'positions_created': positions_needed
+    }
 
 
 def _get_shift_detail(shift_config: Dict[str, Any], shift_code: str) -> Optional[Dict[str, Any]]:

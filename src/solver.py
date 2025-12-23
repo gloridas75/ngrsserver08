@@ -377,8 +377,9 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             print(f"{log_prefix} ======================================================================")
             print(f"{log_prefix} SLOT-BASED OUTCOME ROSTERING")
             print(f"{log_prefix} ======================================================================")
-            print(f"{log_prefix} Mode: Headcount-driven slot creation with load-balanced assignment")
-            print(f"{log_prefix} Headcount: {requirement.get('headcount', 0)}")
+            print(f"{log_prefix} Mode: Daily coverage target with auto-calculated positions")
+            print(f"{log_prefix} Target daily coverage: {requirement.get('headcount', 0)}")
+            print(f"{log_prefix} Work pattern: {requirement.get('workPattern', [])}")
             print(f"{log_prefix} Available employees: {len(eligible_employees)}")
             print(f"{log_prefix} Method: Pattern-based slots → constraint validation → balanced assignment")
             print(f"{log_prefix} Constraints: C1-C17 (core MOM regulatory constraints)")
@@ -418,7 +419,8 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                     'method': 'slot_based_outcome',
                     'optimization': False,
                     'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
-                    'required_positions': metadata['required_positions'],
+                    'target_daily_coverage': metadata.get('target_daily_coverage', 0),
+                    'positions_created': metadata.get('positions_created', 0),
                     'available_employees': metadata['available_employees'],
                     'total_slots': metadata['total_slots'],
                     'assigned_slots': metadata['assigned_slots'],
@@ -427,12 +429,12 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                 }
             }
             violations = {}
-            
             print(f"{log_prefix} ✓ Slot-based roster generated in {solver_time:.2f}s")
             print(f"{log_prefix} Status: {status_code}")
             print(f"{log_prefix} Slots: {metadata['assigned_slots']} assigned, {metadata['unassigned_slots']} unassigned")
             print(f"{log_prefix} Coverage: {metadata['coverage_percentage']:.1f}%")
-            print(f"{log_prefix} Positions: {metadata['required_positions']} required, {metadata['available_employees']} employees available")
+            print(f"{log_prefix} Positions created: {metadata['positions_created']} (to achieve ~{metadata['target_daily_coverage']} daily coverage)")
+            print(f"{log_prefix} Available employees: {metadata['available_employees']}")
             print()
             
         else:
