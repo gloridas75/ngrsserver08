@@ -2532,10 +2532,12 @@
                         if (!assignment.employeeId || assignment.employeeId === '' || assignment.employeeId === 'UNASSIGNED') {
                             // Unfilled slot - red background with warning
                             const reqId = assignment.requirementId || 'N/A';
+                            const position = assignment.position !== undefined ? `P${assignment.position}` : 'N/A';
+                            const reason = assignment.reason || 'No eligible employees';
                             cellHtml += `<div style="background: #d32f2f; color: white; padding: 6px; margin-bottom: 4px; border-radius: 4px; font-size: 0.85em; box-shadow: 0 2px 4px rgba(211,47,47,0.3);">
-                                <div style="font-weight: bold;">❌ Req:${reqId}, ${assignment.shiftCode || 'N/A'}</div>
+                                <div style="font-weight: bold;">❌ Pos ${position} - ${assignment.shiftCode || 'N/A'}</div>
                                 <div style="margin-top: 2px; opacity: 0.95;">UNFILLED</div>
-                                <div style="font-size: 0.8em; opacity: 0.85; margin-top: 2px;">Slot: ${(assignment.slotId || 'N/A').substring(0, 20)}...</div>
+                                <div style="font-size: 0.75em; opacity: 0.9; margin-top: 2px;">${reason.substring(0, 50)}${reason.length > 50 ? '...' : ''}</div>
                             </div>`;
                         } else {
                             // Normal filled assignment
@@ -2546,6 +2548,7 @@
                             const normal = (assignment.hours?.normal || 0).toFixed(1);
                             const ot = (assignment.hours?.ot || 0).toFixed(1);
                             const reqId = assignment.requirementId || 'N/A';
+                            const position = assignment.position !== undefined ? `P${assignment.position}` : '';
                             
                             // Determine shift type for color coding
                             let cellStyle = 'background: #c8e6c9; border-left: 4px solid #4caf50;'; // Green for filled
@@ -2557,7 +2560,7 @@
                             }
                             
                             cellHtml += `<div style="${cellStyle} padding: 6px; margin-bottom: 4px; border-radius: 4px; font-size: 0.85em;">
-                                <div style="font-weight: bold; color: #2e7d32;">✓ Req:${reqId}, ${assignment.shiftCode}</div>
+                                <div style="font-weight: bold; color: #2e7d32;">✓ ${position ? position + ' - ' : ''}${assignment.shiftCode}</div>
                                 <div style="color: #1565c0; font-weight: 600; margin-top: 2px;">${assignment.employeeId}</div>
                                 <div style="color: #555; margin-top: 2px;">${startTime}–${endTime}</div>
                                 <div style="color: #666; font-size: 0.9em;">${normal}h N / ${ot}h OT</div>

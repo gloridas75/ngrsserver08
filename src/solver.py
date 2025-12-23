@@ -387,8 +387,14 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             solver_start = time.time()
             start_timestamp = datetime.now().isoformat()
             
-            # Get shift configuration
+            # Get shift configuration (from input or demand)
             shift_config = input_data.get('shiftConfig', {})
+            
+            # If no shiftConfig at root, try to get shift details from demand
+            if not shift_config.get('shiftDefinitions') and not shift_config.get('shiftDetails'):
+                shifts = demand.get('shifts', [])
+                if shifts and 'shiftDetails' in shifts[0]:
+                    shift_config = {'shiftDetails': shifts[0]['shiftDetails']}
             
             # Use slot-based outcome solver
             result = solve_outcome_based_with_slots(ctx, demand, requirement, eligible_employees, shift_config)

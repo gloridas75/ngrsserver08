@@ -67,8 +67,18 @@ def solve_outcome_based_with_slots(ctx: Dict[str, Any], demand: Dict[str, Any],
     """
     headcount = requirement.get('headcount', 0)
     work_pattern = requirement.get('workPattern', [])
-    # Coverage days from requirement (daysOfWeek)
-    coverage_days = requirement.get('daysOfWeek', ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'])
+    
+    # Coverage days - try multiple locations
+    # 1. From requirement (daysOfWeek)
+    # 2. From demand shifts (coverageDays)
+    # 3. Default to all days
+    coverage_days = requirement.get('daysOfWeek')
+    if not coverage_days:
+        shifts = demand.get('shifts', [])
+        if shifts:
+            coverage_days = shifts[0].get('coverageDays', ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'])
+        else:
+            coverage_days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
     
     logger.info(f"[SLOT-BASED OUTCOME] Starting slot-based outcome rostering")
     logger.info(f"  Headcount: {headcount}")
@@ -143,7 +153,14 @@ def _build_headcount_slots(ctx: Dict[str, Any], demand: Dict[str, Any], requirem
     
     slots = []
     planning_ref = ctx.get('planningReference', {})
-    planning_horizon = planning_ref.get('planningHorizon', {})
+    
+    # Handle both dict and string planningReference
+    if isinstance(planning_ref, str):
+        # planningReference is sometimes stored as string, get from ctx directly
+        planning_horizon = ctx.get('planningHorizon', {})
+    else:
+        planning_horizon = planning_ref.get('planningHorizon', {})
+    
     start_date = datetime.strptime(planning_horizon['startDate'], '%Y-%m-%d').date()
     end_date = datetime.strptime(planning_horizon['endDate'], '%Y-%m-%d').date()
     
@@ -207,8 +224,8 @@ def _get_shift_detail(shift_config: Dict[str, Any], shift_code: str) -> Optional
     for detail in shift_definitions:
         if detail.get('shiftCode') == shift_code:
             return {
-                'start': detail.get('startTime', '08:00:00'),
-                'end': detail.get('endTime', '20:00:00'),
+                'start': detail.get('startTime') or detail.get('start', '08:00:00'),
+                'end': detail.get('endTime') or detail.get('end', '20:00:00'),
                 'nextDay': detail.get('nextDay', False)
             }
     
@@ -230,7 +247,13 @@ def _generate_employee_template_with_constraints(ctx: Dict[str, Any], employee: 
     
     # Get planning horizon
     planning_ref = ctx.get('planningReference', {})
-    planning_horizon = planning_ref.get('planningHorizon', {})
+    
+    # Handle both dict and string planningReference
+    if isinstance(planning_ref, str):
+        planning_horizon = ctx.get('planningHorizon', {})
+    else:
+        planning_horizon = planning_ref.get('planningHorizon', {})
+    
     start_date = datetime.strptime(planning_horizon['startDate'], '%Y-%m-%d').date()
     end_date = datetime.strptime(planning_horizon['endDate'], '%Y-%m-%d').date()
     
