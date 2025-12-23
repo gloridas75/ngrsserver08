@@ -13,6 +13,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
 from collections import defaultdict
+
+from context.engine.time_utils import normalize_scheme, normalize_schemes, is_scheme_compatible
 from math import ceil
 
 # ICPMP v2.0: Use sophisticated coverage simulation
@@ -192,10 +194,8 @@ def _analyze_requirement(
     product_type = requirement.get('productTypeId', '')
     rank_id = requirement.get('rankId', '')
     gender_req = requirement.get('gender', 'Any')
-    # Normalize scheme: "Scheme P" → "P", "Scheme A" → "A", etc.
-    scheme_req_raw = requirement.get('Scheme', 'Global')
-    scheme_map = data.get('schemeMap', {})
-    scheme_req = _normalize_scheme(scheme_req_raw, scheme_map)
+    # v0.96: Support multiple schemes
+    scheme_list = normalize_schemes(requirement)
     coverage_days = requirement.get('coverageDays', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
     
     issues = []
@@ -206,7 +206,7 @@ def _analyze_requirement(
         product_type, 
         rank_id, 
         gender_req, 
-        scheme_req
+        scheme_list  # Pass list instead of single value
     )
     
     matching_count = len(matching_employees)
@@ -353,12 +353,10 @@ def _filter_matching_employees(
             if emp_gender != req_gender:
                 continue
         
-        # Check scheme (if not Global)
-        # Note: scheme_req is already normalized to short code (A/B/P) by caller
-        if scheme_req != 'Global':
-            emp_scheme = emp.get('scheme', '')  # Employee scheme is already in short format
-            if emp_scheme != scheme_req:
-                continue
+        # v0.96: Check scheme compatibility (supports multiple schemes)
+        emp_scheme = normalize_scheme(emp.get('scheme', 'A'))
+        if not is_scheme_compatible(emp_scheme, scheme_req):
+            continue
         
         matching.append(emp)
     

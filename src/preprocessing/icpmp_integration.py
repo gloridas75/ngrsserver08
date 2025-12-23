@@ -26,6 +26,7 @@ from math import ceil
 import logging
 
 from context.engine.config_optimizer_v3 import calculate_optimal_with_u_slots
+from context.engine.time_utils import normalize_scheme, normalize_schemes, is_scheme_compatible
 
 logger = logging.getLogger(__name__)
 
@@ -420,7 +421,7 @@ class ICPMPPreprocessor:
         ou_id = demand_item.get('ouId')
         required_quals = set(requirement.get('requiredQualifications', []))
         gender_req = requirement.get('gender', 'Any')
-        scheme_req = requirement.get('scheme', 'Global')
+        scheme_list = normalize_schemes(requirement)  # v0.96: Support multiple schemes
         
         # Calculate maximum shift duration for scheme compatibility check
         max_shift_hours = self._calculate_max_shift_duration(demand_item)
@@ -466,17 +467,20 @@ class ICPMPPreprocessor:
             
             # Check shift duration compatibility (MOM hour limits)
             # Filter out employees whose scheme limit is less than shift duration
-            emp_scheme = emp.get('scheme', 'Unknown')
+            emp_scheme_raw = emp.get('scheme', 'Unknown')
+            emp_scheme = normalize_scheme(emp_scheme_raw)
             scheme_limit = SCHEME_HOUR_LIMITS.get(emp_scheme, 14)  # Default to Scheme A limit
             
             if max_shift_hours > scheme_limit:
-                logger.debug(f"      Employee {emp['employeeId']} (Scheme {emp_scheme}, {scheme_limit}h limit) "
+                logger.debug(f"      Employee {emp['employeeId']} (Scheme {emp_scheme_raw}, {scheme_limit}h limit) "
                            f"filtered: shift {max_shift_hours:.1f}h exceeds limit")
                 filtered_count += 1
                 continue
             
-            # Check scheme (if not Global)
-            if scheme_req != 'Global' and emp.get('scheme') != scheme_req:
+            # v0.96: Check scheme compatibility (supports multiple schemes)
+            if not is_scheme_compatible(emp_scheme, scheme_list):
+                logger.debug(f"      Employee {emp['employeeId']} (Scheme {emp_scheme}) "
+                           f"filtered: not compatible with requirement schemes {scheme_list}")
                 continue
             
             # Check qualifications
@@ -521,14 +525,14 @@ class ICPMPPreprocessor:
             )
         )
         
-        # Step 2: Handle scheme-based selection
-        scheme_req = requirement.get('scheme', 'Global')
+        # Step 2: Handle scheme-based selection (v0.96: Support multiple schemes)
+        scheme_list = normalize_schemes(requirement)
         
-        if scheme_req == 'Global':
-            # Distribute proportionally across schemes
+        if 'Any' in scheme_list or len(scheme_list) > 1:
+            # Multiple schemes or 'Any': Distribute proportionally across available schemes
             selected = self._select_across_schemes(available_sorted, optimal_count)
         else:
-            # Simple selection (already filtered by scheme)
+            # Single scheme: Simple selection (already filtered by scheme)
             selected = available_sorted[:optimal_count]
         
         return selected

@@ -7,6 +7,7 @@ APGD-D10: EXEMPT from weekly rest day requirement (can work 7 days/week).
 """
 from collections import defaultdict
 from datetime import datetime, timedelta
+from context.engine.constraint_config import get_constraint_param
 
 
 def add_constraints(model, ctx):
@@ -75,7 +76,12 @@ def add_constraints(model, ctx):
         return
     
     constraints_added = 0
-    min_off_days = 1  # At least 1 off-day per 7-day window
+    
+    # Read minimum off-days from JSON with fallback to 1
+    # This applies globally, but could be made employee-specific if needed
+    min_off_days = get_constraint_param(
+        ctx, 'minimumOffDaysPerWeek', default=1
+    )
     
     # For each employee, create day-worked indicator variables and add constraints
     for emp in employees:

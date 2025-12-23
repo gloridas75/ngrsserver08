@@ -21,6 +21,12 @@ Examples:
 from datetime import datetime, time
 from typing import Optional, Dict, List, Tuple
 
+try:
+    from context.engine.constraint_config import get_constraint_param
+    _has_constraint_config = True
+except ImportError:
+    _has_constraint_config = False
+
 
 def normalize_scheme(scheme_value: str) -> str:
     """
@@ -52,6 +58,92 @@ def normalize_scheme(scheme_value: str) -> str:
     return 'A'
 
 
+def normalize_schemes(requirement: dict) -> list:
+    """
+    Normalize scheme specification to list format (v0.96+).
+    Handles both singular 'scheme' and plural 'schemes' fields with backward compatibility.
+    
+    Priority:
+        1. schemes (plural) - if present
+        2. scheme (singular) - backward compatible
+        3. default: ['Any']
+    
+    Args:
+        requirement: Requirement dict with 'scheme' or 'schemes' field
+    
+    Returns:
+        List of normalized scheme codes: ['A', 'B', 'P'] or ['Any']
+    
+    Examples:
+        {'schemes': ['Scheme A', 'Scheme B']} → ['A', 'B']
+        {'schemes': ['Any']} → ['Any']
+        {'schemes': []} → ['Any']  # Empty = accept all
+        {'scheme': 'Scheme A'} → ['A']  # Backward compatible
+        {'scheme': 'Global'} → ['Any']  # Backward compatible
+        {} → ['Any']  # Default
+    """
+    # Priority 1: Check plural 'schemes' first (v0.96+)
+    if 'schemes' in requirement:
+        schemes_raw = requirement['schemes']
+        
+        # Empty list means accept all schemes
+        if not schemes_raw or not isinstance(schemes_raw, list):
+            return ['Any']
+        
+        normalized = []
+        for s in schemes_raw:
+            # 'Any' overrides all other schemes
+            if str(s).lower() in ['any', 'global']:
+                return ['Any']
+            
+            # Normalize each scheme value
+            norm = normalize_scheme(s)
+            if norm in ['A', 'B', 'P'] and norm not in normalized:
+                normalized.append(norm)
+        
+        return normalized if normalized else ['Any']
+    
+    # Priority 2: Check singular 'scheme' (backward compatible)
+    if 'scheme' in requirement:
+        scheme_raw = requirement['scheme']
+        
+        # 'Global' maps to 'Any' (accept all schemes)
+        if str(scheme_raw).lower() in ['global', 'any']:
+            return ['Any']
+        
+        # Normalize single scheme value
+        norm = normalize_scheme(scheme_raw)
+        return [norm] if norm in ['A', 'B', 'P'] else ['Any']
+    
+    # Default: Accept all schemes
+    return ['Any']
+
+
+def is_scheme_compatible(employee_scheme: str, requirement_schemes: list) -> bool:
+    """
+    Check if employee scheme is compatible with requirement scheme(s) (v0.96+).
+    
+    Args:
+        employee_scheme: Employee's normalized scheme code ('A', 'B', or 'P')
+        requirement_schemes: List of acceptable schemes from normalize_schemes()
+    
+    Returns:
+        True if employee matches any requirement scheme, False otherwise
+    
+    Examples:
+        is_scheme_compatible('A', ['A', 'B']) → True
+        is_scheme_compatible('P', ['A', 'B']) → False
+        is_scheme_compatible('A', ['Any']) → True
+        is_scheme_compatible('P', ['Any']) → True
+    """
+    # 'Any' accepts all schemes
+    if 'Any' in requirement_schemes:
+        return True
+    
+    # Check if employee scheme in requirement list
+    return employee_scheme in requirement_schemes
+
+
 def normalize_rank(rank_str: str) -> str:
     """
     Normalize rank value to uppercase.
@@ -70,49 +162,47 @@ def normalize_rank(rank_str: str) -> str:
 
 def is_apgd_d10_employee(employee: dict, requirement: dict = None) -> bool:
     """
-    Check if employee qualifies for APGD-D10 special group treatment.
+    Check if employee qualifies for APGD-D10 special group treatment (v0.96+).
     
     APGD-D10 allows Scheme A + APO employees to work 6-7 days/week with monthly hour caps
-    instead of standard weekly limits. Requires MOM special approval (APGD - D10).
+    instead of standard weekly limits. Requires MOM special approval (APGD-D10).
+    
+    AUTOMATIC DETECTION (v0.96+):
+    - APGD-D10 is AUTOMATICALLY ENABLED for all Scheme A + APO employees
+    - No 'enableAPGD-D10' flag needed in input JSON
+    - Aligns with business logic (all APO Scheme A have APGD-D10 approval)
     
     Detection Criteria:
     - Scheme: A (normalized)
     - Product: APO (employee.productTypeId)
-    - Flag: requirement.enableAPGD-D10 = true
     
     Args:
         employee: Employee dict with 'scheme' and 'productTypeId'
-        requirement: Requirement dict (optional, contains 'enableAPGD-D10' flag)
+        requirement: Requirement dict (IGNORED - kept for backward compatibility)
     
     Returns:
         True if employee is APGD-D10 eligible, False otherwise
     
     Examples:
-        employee = {'scheme': 'Scheme A', 'productTypeId': 'APO'}
-        requirement = {'enableAPGD-D10': True}
-        → True
-        
-        employee = {'scheme': 'Scheme B', 'productTypeId': 'APO'}
-        requirement = {'enableAPGD-D10': True}
-        → False (Scheme B not eligible)
+        {'scheme': 'Scheme A', 'productTypeId': 'APO'} → True (APGD-D10)
+        {'scheme': 'Scheme A', 'productTypeId': 'CVSO'} → False (not APO)
+        {'scheme': 'Scheme B', 'productTypeId': 'APO'} → False (not Scheme A)
+        {'scheme': 'Scheme P', 'productTypeId': 'APO'} → False (not Scheme A)
+    
+    Note: The 'requirement' parameter is kept for backward compatibility but
+          is no longer used. APGD-D10 is now automatic for Scheme A + APO.
     """
-    # Check scheme
+    # Must be Scheme A
     scheme = normalize_scheme(employee.get('scheme', ''))
     if scheme != 'A':
         return False
     
-    # Check product type
+    # Must be APO product
     product = employee.get('productTypeId', '').upper()
     if product != 'APO':
         return False
     
-    # Check flag (defaults to True if requirement not provided or flag not set)
-    # If explicitly set to false, APGD-D10 will be disabled
-    if requirement:
-        apgd_enabled = requirement.get('enableAPGD-D10', True)
-        return apgd_enabled
-    
-    # No requirement provided - default to True for Scheme A + APO
+    # APGD-D10 automatically enabled for all Scheme A + APO employees
     return True
 
 
@@ -278,16 +368,21 @@ def span_hours(start_dt: datetime, end_dt: datetime) -> float:
     return round(gross, 2)  # Round to 2 decimal places
 
 
-def lunch_hours(gross: float) -> float:
+def lunch_hours(gross: float, ctx: Optional[dict] = None) -> float:
     """Calculate lunch break duration based on shift length.
     
     MOM Guidelines (ALL SCHEMES):
-    - Shift > 8h: 1.0h lunch
+    - Shift > 8h: 1.0h lunch (60 minutes)
     - Shift > 6h but ≤ 8h: 0.75h lunch (45 minutes)
     - Shift ≤ 6h: 0.0h lunch
     
+    Can optionally read from JSON config if ctx provided:
+    - momLunchBreak.defaultValue: lunch duration in minutes
+    - momLunchBreak.params.deductIfShiftAtLeastMinutes: minimum shift length for lunch
+    
     Args:
         gross: Gross hours worked
+        ctx: Optional context dict with constraintList for JSON config
     
     Returns:
         Lunch hours: 1.0, 0.75, or 0.0 based on shift duration
@@ -300,6 +395,34 @@ def lunch_hours(gross: float) -> float:
         gross=9.0  → 1.0 (9h shift gets 1h lunch)
         gross=12.0 → 1.0 (12h shift gets 1h lunch)
     """
+    # Try to read from JSON config if ctx provided
+    if ctx and _has_constraint_config:
+        try:
+            # Get lunch duration in minutes (default: 60)
+            lunch_minutes = get_constraint_param(ctx, 'momLunchBreak', default=60)
+            
+            # Get minimum shift length for lunch deduction (default: 480 minutes = 8 hours)
+            constraint = next((c for c in ctx.get('constraintList', []) if c.get('id') == 'momLunchBreak'), None)
+            if constraint and 'params' in constraint:
+                min_shift_minutes = constraint['params'].get('deductIfShiftAtLeastMinutes', 480)
+            else:
+                min_shift_minutes = 480  # Default: 8 hours
+            
+            # Convert to hours
+            lunch_hours_from_json = lunch_minutes / 60.0
+            min_shift_hours = min_shift_minutes / 60.0
+            
+            # Apply logic: if shift >= min_shift_hours, deduct lunch
+            if gross >= min_shift_hours:
+                return lunch_hours_from_json
+            elif gross > 6.0:  # For compatibility: 6-8h shifts get 0.75h
+                return 0.75
+            else:
+                return 0.0
+        except Exception:
+            pass  # Fall back to hardcoded logic
+    
+    # Hardcoded fallback logic (backward compatible)
     if gross > 8.0:
         return 1.0
     elif gross > 6.0:

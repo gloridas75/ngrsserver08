@@ -347,67 +347,131 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     # ═══════════════════════════════════════════════════════════
     
     if rostering_basis == 'outcomeBased':
-        # OUTCOME-BASED ROSTER GENERATION (Template Validation)
-        print(f"{log_prefix} ======================================================================")
-        print(f"{log_prefix} OUTCOME-BASED ROSTERING (TEMPLATE VALIDATION)")
-        print(f"{log_prefix} ======================================================================")
-        print(f"{log_prefix} Method: Generate template per OU → validate constraints → replicate")
-        print(f"{log_prefix} Constraints: C1-C17 (core MOM regulatory constraints)")
-        print()
+        # Check if slot-based outcome mode should be used
+        from context.engine.outcome_based_with_slots import (
+            should_use_slot_based_outcome,
+            solve_outcome_based_with_slots
+        )
         
-        solver_start = time.time()
-        start_timestamp = datetime.now().isoformat()
+        demand_items = input_data.get('demandItems', [])
+        demand = demand_items[0] if demand_items else {}
+        requirements = demand.get('requirements', [])
+        if not requirements:
+            requirements = demand.get('shifts', [{}])[0].get('workRequirements', []) if demand else []
+        requirement = requirements[0] if requirements else {}
         
-        # Get selected employees from ctx
+        # Get eligible employees
+        all_employees = ctx.get('employees', [])
         selected_emp_ids = ctx.get('_selectedEmployeeIds', set())
         if not selected_emp_ids:
-            all_employees = ctx.get('employees', [])
             threshold = ctx.get('_targetEmployeeCount', len(all_employees))
-            selected_employees = all_employees[:threshold]
+            eligible_employees = all_employees[:threshold]
         else:
-            all_employees = ctx.get('employees', [])
-            selected_employees = [emp for emp in all_employees if emp['employeeId'] in selected_emp_ids]
+            eligible_employees = [emp for emp in all_employees if emp['employeeId'] in selected_emp_ids]
         
-        # Get first requirement
-        demand_items = input_data.get('demandItems', [])
-        requirements = demand_items[0].get('requirements', []) if demand_items else []
-        if not requirements:
-            requirements = demand_items[0].get('shifts', [{}])[0].get('workRequirements', []) if demand_items else []
+        # Check if slot-based mode should activate
+        use_slot_based = should_use_slot_based_outcome(demand, requirement, len(eligible_employees))
         
-        requirement = requirements[0] if requirements else {}
-        demand = demand_items[0] if demand_items else {}
-        
-        # Generate template-validated roster
-        assignments, stats = generate_template_validated_roster(ctx, selected_employees, requirement, demand)
-        
-        solver_time = time.time() - solver_start
-        end_timestamp = datetime.now().isoformat()
-        stats['generation_time'] = solver_time
-        
-        # Set status based on results
-        has_unassigned = any(a.get('status') == 'UNASSIGNED' for a in assignments)
-        status_code = "FEASIBLE" if has_unassigned else "OPTIMAL"
-        
-        solver_result = {
-            'status': status_code,
-            'start_timestamp': start_timestamp,
-            'end_timestamp': end_timestamp,
-            'duration_seconds': solver_time,
-            'scores': {'hard': stats.get('unassigned_count', 0), 'soft': 0, 'overall': stats.get('unassigned_count', 0)},
-            'metadata': {
-                'method': 'template_validation',
-                'optimization': False,
-                'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
-                'stats': stats
+        if use_slot_based:
+            # SLOT-BASED OUTCOME ROSTERING (Headcount-driven with load balancing)
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} SLOT-BASED OUTCOME ROSTERING")
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} Mode: Headcount-driven slot creation with load-balanced assignment")
+            print(f"{log_prefix} Headcount: {requirement.get('headcount', 0)}")
+            print(f"{log_prefix} Available employees: {len(eligible_employees)}")
+            print(f"{log_prefix} Method: Pattern-based slots → constraint validation → balanced assignment")
+            print(f"{log_prefix} Constraints: C1-C17 (core MOM regulatory constraints)")
+            print()
+            
+            solver_start = time.time()
+            start_timestamp = datetime.now().isoformat()
+            
+            # Get shift configuration
+            shift_config = input_data.get('shiftConfig', {})
+            
+            # Use slot-based outcome solver
+            result = solve_outcome_based_with_slots(ctx, demand, requirement, eligible_employees, shift_config)
+            assignments = result['assignments']
+            metadata = result['metadata']
+            
+            solver_time = time.time() - solver_start
+            end_timestamp = datetime.now().isoformat()
+            
+            # Set status based on results
+            has_unassigned = any(a.get('status') == 'UNASSIGNED' for a in assignments)
+            status_code = "FEASIBLE" if has_unassigned else "OPTIMAL"
+            
+            solver_result = {
+                'status': status_code,
+                'start_timestamp': start_timestamp,
+                'end_timestamp': end_timestamp,
+                'duration_seconds': solver_time,
+                'scores': {'hard': metadata.get('unassigned_slots', 0), 'soft': 0, 'overall': metadata.get('unassigned_slots', 0)},
+                'metadata': {
+                    'method': 'slot_based_outcome',
+                    'optimization': False,
+                    'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
+                    'required_positions': metadata['required_positions'],
+                    'available_employees': metadata['available_employees'],
+                    'total_slots': metadata['total_slots'],
+                    'assigned_slots': metadata['assigned_slots'],
+                    'unassigned_slots': metadata['unassigned_slots'],
+                    'coverage_percentage': metadata['coverage_percentage']
+                }
             }
-        }
-        violations = {}
-        
-        print(f"{log_prefix} ✓ Template roster generated in {solver_time:.2f}s")
-        print(f"{log_prefix} Status: {status_code}")
-        print(f"{log_prefix} Assignments: {stats['assigned_count']} assigned, {stats['unassigned_count']} unassigned")
-        print(f"{log_prefix} Employees: {stats['employees_used']}/{stats['total_available_employees']}")
-        print()
+            violations = {}
+            
+            print(f"{log_prefix} ✓ Slot-based roster generated in {solver_time:.2f}s")
+            print(f"{log_prefix} Status: {status_code}")
+            print(f"{log_prefix} Slots: {metadata['assigned_slots']} assigned, {metadata['unassigned_slots']} unassigned")
+            print(f"{log_prefix} Coverage: {metadata['coverage_percentage']:.1f}%")
+            print(f"{log_prefix} Positions: {metadata['required_positions']} required, {metadata['available_employees']} employees available")
+            print()
+            
+        else:
+            # OUTCOME-BASED ROSTER GENERATION (Template Validation)
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} OUTCOME-BASED ROSTERING (TEMPLATE VALIDATION)")
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} Method: Generate template per OU → validate constraints → replicate")
+            print(f"{log_prefix} Constraints: C1-C17 (core MOM regulatory constraints)")
+            print()
+            
+            solver_start = time.time()
+            start_timestamp = datetime.now().isoformat()
+            
+            # Generate template-validated roster
+            assignments, stats = generate_template_validated_roster(ctx, eligible_employees, requirement, demand)
+            
+            solver_time = time.time() - solver_start
+            end_timestamp = datetime.now().isoformat()
+            stats['generation_time'] = solver_time
+            
+            # Set status based on results
+            has_unassigned = any(a.get('status') == 'UNASSIGNED' for a in assignments)
+            status_code = "FEASIBLE" if has_unassigned else "OPTIMAL"
+            
+            solver_result = {
+                'status': status_code,
+                'start_timestamp': start_timestamp,
+                'end_timestamp': end_timestamp,
+                'duration_seconds': solver_time,
+                'scores': {'hard': stats.get('unassigned_count', 0), 'soft': 0, 'overall': stats.get('unassigned_count', 0)},
+                'metadata': {
+                    'method': 'template_validation',
+                    'optimization': False,
+                    'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
+                    'stats': stats
+                }
+            }
+            violations = {}
+            
+            print(f"{log_prefix} ✓ Template roster generated in {solver_time:.2f}s")
+            print(f"{log_prefix} Status: {status_code}")
+            print(f"{log_prefix} Assignments: {stats['assigned_count']} assigned, {stats['unassigned_count']} unassigned")
+            print(f"{log_prefix} Employees: {stats['employees_used']}/{stats['total_available_employees']}")
+            print()
         
     else:
         # DEMAND-BASED ROSTERING (CP-SAT)

@@ -18,6 +18,12 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Tuple, Any
 import logging
 
+try:
+    from context.engine.constraint_config import get_constraint_param
+    _has_constraint_config = True
+except ImportError:
+    _has_constraint_config = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -63,11 +69,15 @@ def generate_template_validated_roster(
     start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
     end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
     
-    # Get shift details
+    # Get shift details and coverage days
     shift_details = _extract_shift_details(demand)
     if not shift_details:
         logger.error("No shift details found")
         return [], {'error': 'No shift details'}
+    
+    # Extract coverage days (e.g., ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
+    coverage_days = _extract_coverage_days(demand)
+    logger.info(f"Coverage days: {coverage_days}")
     
     # Group employees by OU
     employees_by_ou = _group_employees_by_ou(selected_employees)
@@ -95,7 +105,8 @@ def generate_template_validated_roster(
             shift_details,
             ctx,
             demand,
-            requirement
+            requirement,
+            coverage_days
         )
         
         ou_templates[ou_id] = template_pattern
@@ -157,6 +168,19 @@ def _extract_shift_details(demand: Dict[str, Any]) -> Dict[str, Any]:
     return shift_details_list[0] if shift_details_list else {}
 
 
+def _extract_coverage_days(demand: Dict[str, Any]) -> List[str]:
+    """Extract coverage days from demand (e.g., ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])."""
+    shifts = demand.get('shifts', [])
+    if not shifts:
+        return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']  # Default: all days
+    
+    coverage_days = shifts[0].get('coverageDays', [])
+    if not coverage_days:
+        return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']  # Default: all days
+    
+    return coverage_days
+
+
 def _group_employees_by_ou(employees: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
     """Group employees by their OU."""
     ou_groups = {}
@@ -176,10 +200,14 @@ def _generate_validated_template(
     shift_details: Dict[str, Any],
     ctx: Dict[str, Any],
     demand: Dict[str, Any],
-    requirement: Dict[str, Any]
+    requirement: Dict[str, Any],
+    coverage_days: List[str]
 ) -> Dict[str, Dict[str, Any]]:
     """
     Generate and validate template pattern for one employee.
+    
+    Args:
+        coverage_days: List of day names when shifts should be assigned (e.g., ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
     
     Returns a dict mapping date -> {assigned: bool, reason: str, assignment: dict}
     """
@@ -202,6 +230,20 @@ def _generate_validated_template(
     
     while current_date <= end_date:
         date_str = current_date.strftime('%Y-%m-%d')
+        day_name = current_date.strftime('%a')  # Mon, Tue, Wed, etc.
+        
+        # Check if this day is in coverage days
+        if day_name not in coverage_days:
+            # Outside coverage window - skip this day entirely
+            template_pattern[date_str] = {
+                'assigned': False,
+                'reason': f'Outside coverage days (only {coverage_days})',
+                'assignment': None,
+                'is_work_day': False
+            }
+            current_date += timedelta(days=1)
+            day_index += 1
+            continue
         
         # Clean up old weekly hours BEFORE validation (keep only last 7 days)
         weekly_hours = [(d, h) for d, h in weekly_hours if (current_date - d).days < 7]
@@ -229,7 +271,8 @@ def _generate_validated_template(
                 weekly_hours,
                 monthly_ot_minutes,
                 last_shift_end,
-                ctx
+                ctx,
+                coverage_days
             )
             
             if validation_result['valid']:
@@ -288,10 +331,14 @@ def _validate_assignment(
     weekly_hours: List[Tuple[Any, float]],
     monthly_ot_minutes: float,
     last_shift_end,
-    ctx: Dict[str, Any]
+    ctx: Dict[str, Any],
+    coverage_days: List[str]
 ) -> Dict[str, Any]:
     """
     Validate if assignment satisfies all hard constraints.
+    
+    Args:
+        coverage_days: List of day names when shifts can be assigned (e.g., ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
     
     Returns: {'valid': bool, 'reason': str}
     """
@@ -301,13 +348,22 @@ def _validate_assignment(
     scheme = employee.get('scheme', 'Scheme A')
     shift_duration_hours = _calculate_shift_duration(shift_details)
     
-    max_daily_hours = 12  # Default
+    # Determine default based on scheme
     if 'Scheme A' in scheme:
-        max_daily_hours = 14
+        default_daily_cap = 14.0
     elif 'Scheme B' in scheme:
-        max_daily_hours = 13
+        default_daily_cap = 13.0
     elif 'Scheme P' in scheme:
-        max_daily_hours = 9
+        default_daily_cap = 9.0
+    else:
+        default_daily_cap = 12.0
+    
+    # Read from JSON config if available
+    employee_dict = {'employeeId': employee.get('employeeId'), 'scheme': scheme}
+    if _has_constraint_config:
+        max_daily_hours = get_constraint_param(ctx, 'momDailyHoursCap', employee_dict, default=default_daily_cap)
+    else:
+        max_daily_hours = default_daily_cap
     
     if shift_duration_hours > max_daily_hours:
         return {'valid': False, 'reason': f'C1: Shift {shift_duration_hours}h exceeds {max_daily_hours}h daily cap'}
@@ -319,20 +375,39 @@ def _validate_assignment(
     net_hours = gross_hours - lunch_hours
     shift_normal_hours = min(net_hours, 8.8)  # Cap at 8.8h normal
     
+    # Read weekly cap from JSON config if available
+    if _has_constraint_config:
+        weekly_cap = get_constraint_param(ctx, 'momWeeklyHoursCap44h', employee_dict, default=44.0)
+    else:
+        weekly_cap = 44.0
+    
     current_week_normal_hours = sum(h for d, h in weekly_hours)
-    if current_week_normal_hours + shift_normal_hours > 44:
-        return {'valid': False, 'reason': f'C2: Weekly normal hours {current_week_normal_hours + shift_normal_hours:.1f}h would exceed 44h cap'}
+    if current_week_normal_hours + shift_normal_hours > weekly_cap:
+        return {'valid': False, 'reason': f'C2: Weekly normal hours {current_week_normal_hours + shift_normal_hours:.1f}h would exceed {weekly_cap}h cap'}
     
     # C3: Maximum consecutive days
     is_apgd_d10 = is_apgd_d10_employee(employee, ctx)
-    max_consecutive = 8 if is_apgd_d10 else 12
+    default_consecutive = 8 if is_apgd_d10 else 12
+    
+    # Read from JSON config if available
+    if _has_constraint_config:
+        max_consecutive = get_constraint_param(ctx, 'maxConsecutiveWorkingDays', employee_dict, default=default_consecutive)
+    else:
+        max_consecutive = default_consecutive
     
     if consecutive_days >= max_consecutive:
         return {'valid': False, 'reason': f'C3: Consecutive days {consecutive_days} exceeds {max_consecutive} limit'}
     
     # C4: Minimum rest period
     if last_shift_end:
-        min_rest_hours = 8 if is_apgd_d10 else 11
+        default_rest = 8.0 if is_apgd_d10 else 11.0
+        
+        # Read from JSON config if available
+        if _has_constraint_config:
+            min_rest_hours = get_constraint_param(ctx, 'apgdMinRestBetweenShifts', employee_dict, default=default_rest)
+        else:
+            min_rest_hours = default_rest
+        
         shift_start_time = shift_details.get('start', '08:00:00')
         shift_start_dt = datetime.combine(date, datetime.strptime(shift_start_time, '%H:%M:%S').time())
         
@@ -343,14 +418,46 @@ def _validate_assignment(
     # C5: Weekly rest day (check if had at least one off day in last 7 days)
     # Skip for APGD-D10 employees (exempted)
     if not is_apgd_d10:
-        days_since_rest = len([d for d, h in weekly_hours if h > 0])
-        if days_since_rest >= 7:
-            return {'valid': False, 'reason': 'C5: No rest day in last 7 days'}
+        # Read from JSON config if available (minimum off days per week)
+        if _has_constraint_config:
+            min_off_days = get_constraint_param(ctx, 'minimumOffDaysPerWeek', employee_dict, default=1)
+        else:
+            min_off_days = 1
+        
+        # Count work days in rolling 7-day window
+        work_days_in_window = len([d for d, h in weekly_hours if h > 0])
+        
+        # Count coverage-skipped days (e.g., weekends) in rolling 7-day window
+        # These automatically count as off days
+        coverage_skipped_count = 0
+        for i in range(1, 8):  # Check previous 7 days
+            check_date = date - timedelta(days=i)
+            day_name = check_date.strftime('%a')
+            if day_name not in coverage_days:
+                coverage_skipped_count += 1
+        
+        # Calculate off days:
+        # - Coverage-skipped days are always OFF (e.g., weekends when coverage is Mon-Fri)
+        # - Remaining days in window = 7 - coverage_skipped_count
+        # - Work days in remaining days = work_days_in_window
+        # - Off days in remaining days = (7 - coverage_skipped_count) - work_days_in_window
+        # - Total off days = coverage_skipped_count + off_days_in_remaining
+        off_days_in_remaining = max(0, (7 - coverage_skipped_count) - work_days_in_window)
+        total_off_days = coverage_skipped_count + off_days_in_remaining
+        
+        if total_off_days < min_off_days:
+            return {'valid': False, 'reason': f'C5: Only {total_off_days} off day(s) in last 7 days (minimum {min_off_days} required)'}
     
     # C17: Monthly OT cap (72 hours)
-    max_monthly_ot_minutes = 72 * 60
+    # Read from JSON config if available
+    if _has_constraint_config:
+        max_monthly_ot_hours = get_constraint_param(ctx, 'momMonthlyOTcap72h', employee_dict, default=72.0)
+    else:
+        max_monthly_ot_hours = 72.0
+    
+    max_monthly_ot_minutes = max_monthly_ot_hours * 60
     if monthly_ot_minutes >= max_monthly_ot_minutes:
-        return {'valid': False, 'reason': f'C17: Monthly OT {monthly_ot_minutes/60:.1f}h exceeds 72h cap'}
+        return {'valid': False, 'reason': f'C17: Monthly OT {monthly_ot_minutes/60:.1f}h exceeds {max_monthly_ot_hours}h cap'}
     
     return {'valid': True, 'reason': 'All constraints satisfied'}
 

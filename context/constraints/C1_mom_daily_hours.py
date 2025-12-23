@@ -48,19 +48,35 @@ def add_constraints(model, ctx):
         print(f"[C1] Warning: Slots or decision variables not available")
         return
     
-    # Build employee scheme map
+    # Import constraint config helper
+    from context.engine.constraint_config import get_constraint_param
+    
+    # Build employee scheme map and max hours per employee
     employee_scheme = {}
+    max_gross_by_employee = {}  # emp_id -> max_gross_hours
+    
     for emp in employees:
         emp_id = emp.get('employeeId')
         scheme = emp.get('scheme', 'A')
         employee_scheme[emp_id] = scheme
+        
+        # Read max daily hours from constraintList (scheme-specific)
+        # Supports both NEW format (defaultValue + schemeOverrides) and OLD format (params)
+        max_gross = get_constraint_param(
+            ctx, 
+            'momDailyHoursCap', 
+            employee=emp, 
+            param_name='maxDailyHours',  # For OLD format compatibility
+            default=14.0 if scheme == 'A' else 13.0 if scheme == 'B' else 9.0
+        )
+        max_gross_by_employee[emp_id] = float(max_gross)
     
-    # Define max gross hours per scheme
-    max_gross_by_scheme = {
-        'A': 14.0,  # Scheme A: max 14 hours per day
-        'B': 13.0,  # Scheme B: max 13 hours per day
-        'P': 9.0    # Scheme P: max 9 hours per day
-    }
+    # Build scheme-wise summary for logging
+    max_gross_by_scheme = {}
+    for scheme in ['A', 'B', 'P']:
+        emp_of_scheme = [e for e in employees if e.get('scheme') == scheme]
+        if emp_of_scheme:
+            max_gross_by_scheme[scheme] = max_gross_by_employee.get(emp_of_scheme[0]['employeeId'], 14.0)
     
     # Build shift hour map from slots
     shift_hours = {}  # (demandId, shiftCode) -> gross_hours
@@ -84,9 +100,9 @@ def add_constraints(model, ctx):
                 continue
             
             scheme = employee_scheme.get(emp_id, 'A')
-            max_gross = max_gross_by_scheme.get(scheme, 14.0)
+            max_gross = max_gross_by_employee.get(emp_id, 14.0)
             
-            # If shift exceeds scheme limit, block assignment
+            # If shift exceeds employee's daily limit, block assignment
             if gross_hours > max_gross:
                 var = x[(slot.slot_id, emp_id)]
                 model.Add(var == 0)

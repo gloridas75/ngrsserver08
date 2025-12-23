@@ -9,6 +9,7 @@ This constraint enforces monthly OT doesn't exceed 72 hours (HARD).
 Integrated with C2 for consistency: both use same hour calculation.
 """
 from collections import defaultdict
+from context.engine.constraint_config import get_constraint_param
 
 
 def add_constraints(model, ctx):
@@ -68,8 +69,15 @@ def add_constraints(model, ctx):
                     terms.append(var * int_hours)
         
         if terms:
-            # Constraint: sum(var * scaled_ot) <= 72 * 10 = 720
-            model.Add(sum(terms) <= 720)
+            # Read monthly OT cap from JSON with fallback to 72h
+            employee_dict = {'employeeId': emp_id}
+            monthly_ot_cap = get_constraint_param(
+                ctx, 'momMonthlyOTcap72h', employee_dict, default=72.0
+            )
+            monthly_ot_cap_int = int(round(monthly_ot_cap * 10))  # Convert to tenths
+            
+            # Constraint: sum(var * scaled_ot) <= monthly_ot_cap
+            model.Add(sum(terms) <= monthly_ot_cap_int)
             monthly_constraints += 1
     
     print(f"[C17] Monthly OT Cap Constraint (HARD)")

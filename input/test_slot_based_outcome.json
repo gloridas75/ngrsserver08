@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": {
+    "planningHorizon": {
+      "startDate": "2026-01-06",
+      "endDate": "2026-02-02"
+    },
+    "publicHolidays": []
+  },
+  "demandItems": [
+    {
+      "demandItemId": "DI-TEST-SLOT-BASED",
+      "rosteringBasis": "outcomeBased",
+      "minStaffThresholdPercentage": 100,
+      "requirements": [
+        {
+          "requirementId": "REQ-TEST-001",
+          "headcount": 3,
+          "workPattern": ["D", "D", "D", "D", "O"],
+          "daysOfWeek": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          "shiftCode": "D"
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "EMP001",
+      "name": "Employee One",
+      "scheme": "Scheme A",
+      "averagePayableOperations": "APO",
+      "calendar": "COR",
+      "rankOrder": 1,
+      "unavailableDates": []
+    }
+  ],
+  "shiftConfig": {
+    "shiftDefinitions": [
+      {
+        "shiftCode": "D",
+        "shiftName": "Day Shift",
+        "startTime": "08:00:00",
+        "endTime": "20:00:00",
+        "nextDay": false,
+        "grossHours": 12.0,
+        "netHours": 11.0,
+        "breakMinutes": 60,
+        "breakIsPaid": false
+      }
+    ]
+  },
+  "constraintList": [
+    {
+      "id": "C1",
+      "name": "Daily Hours Cap",
+      "enabled": true,
+      "maxDailyHours": 14
+    },
+    {
+      "id": "C2",
+      "name": "Weekly Hours Cap",
+      "enabled": true,
+      "maxWeeklyHours": 44
+    },
+    {
+      "id": "C3",
+      "name": "Monthly OT Cap",
+      "enabled": true,
+      "maxMonthlyOT": 72
+    },
+    {
+      "id": "C4",
+      "name": "Consecutive Days Cap",
+      "enabled": true,
+      "maxConsecutiveDays": 6
+    },
+    {
+      "id": "C5",
+      "name": "Weekly Rest Day",
+      "enabled": true
+    },
+    {
+      "id": "C17",
+      "name": "Rest Period",
+      "enabled": true,
+      "minRestHours": 12
+    }
+  ],
+  "solverScoreConfig": {}
+}

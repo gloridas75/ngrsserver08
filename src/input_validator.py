@@ -419,7 +419,7 @@ def _validate_employees(data: dict, result: ValidationResult):
 
 
 def _validate_scheme_consistency(data: dict, result: ValidationResult):
-    """Validate scheme consistency across requirements and employees"""
+    """Validate scheme consistency across requirements and employees (v0.96: Support multiple schemes)"""
     
     scheme_map = data.get('schemeMap', {})
     
@@ -443,12 +443,28 @@ def _validate_scheme_consistency(data: dict, result: ValidationResult):
                         result.add_error(f"employees[].scheme", "INVALID_SCHEME", 
                                        f"Employee scheme '{scheme}' not found in schemeMap")
     
-    # Collect all requirement schemes
+    # Collect all requirement schemes (v0.96: Support both 'scheme' and 'schemes')
     requirement_schemes = set()
     if 'demandItems' in data:
         for di in data['demandItems']:
             if 'requirements' in di:
                 for req in di['requirements']:
+                    # v0.96: Check plural 'schemes' first (recommended)
+                    if 'schemes' in req:
+                        schemes = req['schemes']
+                        if isinstance(schemes, list):
+                            for scheme in schemes:
+                                requirement_schemes.add(scheme)
+                                # Check scheme validity
+                                if scheme not in ['Any', 'Global', 'global']:
+                                    if scheme not in scheme_map and scheme not in scheme_map.values():
+                                        result.add_error(f"requirements[].schemes", "INVALID_SCHEME", 
+                                                       f"Requirement scheme '{scheme}' not found in schemeMap")
+                        else:
+                            result.add_error(f"requirements[].schemes", "INVALID_TYPE",
+                                           "'schemes' must be an array of scheme values")
+                    
+                    # Backward compatible: Check singular 'Scheme' (deprecated but supported)
                     if 'Scheme' in req:
                         scheme = req['Scheme']
                         requirement_schemes.add(scheme)
@@ -458,6 +474,13 @@ def _validate_scheme_consistency(data: dict, result: ValidationResult):
                             if scheme not in scheme_map and scheme not in scheme_map.values():
                                 result.add_error(f"requirements[].Scheme", "INVALID_SCHEME", 
                                                f"Requirement scheme '{scheme}' not found in schemeMap")
+                    
+                    # v0.96: Add deprecation warning for enableAPGD-D10 flag
+                    if 'enableAPGD-D10' in req:
+                        result.add_warning('requirements[].enableAPGD-D10', 'DEPRECATED_FIELD',
+                                         "enableAPGD-D10 flag is no longer needed. "
+                                         "APGD-D10 is now automatically enabled for all Scheme A + APO employees. "
+                                         "This field will be ignored.")
 
 
 def _validate_constraints(data: dict, result: ValidationResult):

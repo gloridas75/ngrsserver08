@@ -16,6 +16,7 @@ Example: 8h shift (9h gross - 1h lunch)
 from collections import defaultdict
 from datetime import datetime
 from context.engine.time_utils import normalize_scheme
+from context.engine.constraint_config import get_constraint_param
 
 
 def add_constraints(model, ctx):
@@ -123,15 +124,20 @@ def add_constraints(model, ctx):
         if not normal_hour_terms:
             continue
         
-        # PATTERN-AWARE WEEKLY NORMAL CAP (Scheme P)
-        # ≤4 work days: 34.98h/week normal cap
-        # 5+ work days: 29.98h/week normal cap
+        # PATTERN-AWARE WEEKLY NORMAL CAP (Scheme P) - read from JSON with fallback
+        # ≤4 work days: 34.98h/week normal cap (default)
+        # 5+ work days: 29.98h/week normal cap (default)
+        employee_dict = {'employeeId': emp_id, 'scheme': 'P'}
         work_days_count = count_work_days(pattern)
         
         if work_days_count <= 4:
-            max_normal_hours_per_week = 34.98
+            max_normal_hours_per_week = get_constraint_param(
+                ctx, 'partTimerWeeklyHours', employee_dict, default=34.98
+            )
         else:  # 5, 6, or 7 days
-            max_normal_hours_per_week = 29.98
+            max_normal_hours_per_week = get_constraint_param(
+                ctx, 'partTimerWeeklyHours', employee_dict, default=29.98
+            )
         
         total_normal_hours_var = sum(normal_hour_terms)
         

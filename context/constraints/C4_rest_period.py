@@ -49,17 +49,45 @@ def add_constraints(model, ctx):
                     apgd_employees.add(emp_id)
                     break
     
+    # Import constraint config helper
+    from context.engine.constraint_config import get_constraint_param
+    
     if apgd_employees:
-        print(f"[C4] APGD-D10 detected: {len(apgd_employees)} employees with 8-hour minimum rest")
+        print(f"[C4] APGD-D10 detected: {len(apgd_employees)} employees with configured minimum rest")
     
-    # Extract min rest requirement from constraint config
-    default_min_rest_minutes = 660  # Default: 11 hours (standard MOM)
-    apgd_min_rest_minutes = 480  # APGD-D10: 8 hours
+    # Read min rest hours from constraintList (per employee, scheme-specific)
+    # NEW format: defaultValue + schemeOverrides (e.g., P: 1 hour)
+    # OLD format: params.minRestMinutes (backward compatible)
+    min_rest_by_employee = {}  # emp_id -> min_rest_minutes
     
-    for constraint in constraint_list:
-        if constraint.get('id') == 'apgdMinRestBetweenShifts':
-            default_min_rest_minutes = constraint.get('params', {}).get('minRestMinutes', 660)
-            break
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        
+        # Read from constraintList (returns HOURS)
+        min_rest_hours = get_constraint_param(
+            ctx,
+            'apgdMinRestBetweenShifts',
+            employee=emp,
+            param_name='minRestHours',  # NEW format uses hours
+            default=8
+        )
+        
+        # Try OLD format if NEW format returns default (backward compatibility)
+        if min_rest_hours == 8:  # Default value, might be from OLD format
+            # Check OLD format with minRestMinutes
+            for constraint in constraint_list:
+                if constraint.get('id') == 'apgdMinRestBetweenShifts':
+                    params = constraint.get('params', {})
+                    if 'minRestMinutes' in params:
+                        # OLD format uses minutes directly
+                        min_rest_by_employee[emp_id] = params['minRestMinutes']
+                        break
+            else:
+                # No OLD format found, use NEW format hours → minutes
+                min_rest_by_employee[emp_id] = int(min_rest_hours * 60)
+        else:
+            # NEW format: convert hours to minutes
+            min_rest_by_employee[emp_id] = int(min_rest_hours * 60)
     
     # Check for incremental mode
     incremental_ctx = ctx.get('_incremental')
@@ -95,8 +123,8 @@ def add_constraints(model, ctx):
     for emp in employees:
         emp_id = emp.get('employeeId')
         
-        # Determine minimum rest for this employee
-        emp_min_rest_minutes = apgd_min_rest_minutes if emp_id in apgd_employees else default_min_rest_minutes
+        # Get employee-specific minimum rest from configuration
+        emp_min_rest_minutes = min_rest_by_employee.get(emp_id, 480)
         min_rest_delta = timedelta(minutes=emp_min_rest_minutes)
         
         # Get all slots this employee could be assigned to
@@ -157,8 +185,12 @@ def add_constraints(model, ctx):
                 # NOTE: Removed early break - must check ALL pairs because different shift types
                 # on the same day can have different rest periods (e.g., D->D vs D->N)
     
+    # Calculate summary statistics for logging
+    unique_rest_values = set(min_rest_by_employee.values())
+    min_rest_summary = f"{min(unique_rest_values)//60}h-{max(unique_rest_values)//60}h" if unique_rest_values else "8h"
+    
     print(f"[C4] Minimum Rest Between Shifts Constraint (HARD)")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")
-    print(f"     Standard rest: {default_min_rest_minutes} minutes ({default_min_rest_minutes/60:.1f}h)")
-    print(f"     APGD-D10 rest: {apgd_min_rest_minutes} minutes ({apgd_min_rest_minutes/60:.1f}h)")
+    print(f"     Rest requirements: {min_rest_summary} (scheme-specific)")
+    print(f"     Unique rest values: {sorted([v//60 for v in unique_rest_values])}h")
     print(f"     ✓ Added {constraints_added} rest period disjunctive constraints\n")

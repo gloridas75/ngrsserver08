@@ -51,11 +51,28 @@ def add_constraints(model, ctx):
                     apgd_employees.add(emp_id)
                     break
     
-    if apgd_employees:
-        print(f"[C3] APGD-D10 detected: {len(apgd_employees)} employees with 8-day consecutive limit")
+    # Import constraint config helper
+    from context.engine.constraint_config import get_constraint_param
     
-    max_consecutive = 12  # Default: at most 12 consecutive working days
-    apgd_max_consecutive = 8  # APGD-D10: at most 8 consecutive working days
+    if apgd_employees:
+        print(f"[C3] APGD-D10 detected: {len(apgd_employees)} employees with configurable consecutive limit")
+    
+    # Read max consecutive days from constraintList (per employee, scheme-specific)
+    # NEW format supports: defaultValue + schemeOverrides with productTypes filter
+    max_consecutive_by_employee = {}  # emp_id -> max_consecutive_days
+    
+    for emp in employees:
+        emp_id = emp.get('employeeId')
+        
+        # Read from constraintList with scheme + productType support
+        max_consecutive = get_constraint_param(
+            ctx,
+            'maxConsecutiveWorkingDays',
+            employee=emp,
+            param_name='maxConsecutiveDays',  # For OLD format compatibility
+            default=8 if emp_id in apgd_employees else 12
+        )
+        max_consecutive_by_employee[emp_id] = int(max_consecutive)
     
     # Check for incremental mode
     incremental_ctx = ctx.get('_incremental')
@@ -64,6 +81,9 @@ def add_constraints(model, ctx):
         locked_consecutive_days = incremental_ctx.get('lockedConsecutiveDays', {})
         if locked_consecutive_days:
             print(f"[C3] INCREMENTAL MODE: Using locked consecutive days for {len(locked_consecutive_days)} employees")
+    
+    # Get max value across all employees for optimization check
+    max_consecutive_overall = max(max_consecutive_by_employee.values()) if max_consecutive_by_employee else 12
     
     # Group slots by employee and date
     emp_slots_by_date = defaultdict(lambda: defaultdict(list))  # emp_id -> date_str -> [slot_ids]
@@ -81,7 +101,7 @@ def add_constraints(model, ctx):
     sorted_dates = sorted(list(all_dates))
     
     # OPTIMIZATION: For incremental solving, check solve window size
-    # If solve window < 13 days, constraint is mathematically impossible to violate
+    # If solve window < max_consecutive + 1 days, constraint is mathematically impossible to violate
     if incremental_ctx:
         temporal_window = incremental_ctx.get('temporalWindow', {})
         if temporal_window:
@@ -90,18 +110,18 @@ def add_constraints(model, ctx):
             solve_to = dt.fromisoformat(temporal_window.get('solveToDate')).date()
             solve_window_days = (solve_to - solve_from).days + 1
             
-            if solve_window_days < max_consecutive + 1:
+            if solve_window_days < max_consecutive_overall + 1:
                 print(f"[C3] Maximum Consecutive Working Days Constraint (HARD)")
                 print(f"     Employees: {len(employees)}, Planning horizon: {len(sorted_dates)} days")
-                print(f"     INCREMENTAL MODE: Solve window is {solve_window_days} days (< 13)")
-                print(f"     ✓ OPTIMIZATION: Skipping constraint (impossible to violate in <13 day window)\n")
+                print(f"     INCREMENTAL MODE: Solve window is {solve_window_days} days (< {max_consecutive_overall + 1})")
+                print(f"     ✓ OPTIMIZATION: Skipping constraint (impossible to violate in <{max_consecutive_overall + 1} day window)\n")
                 return
     
     # Regular check for full solve mode
-    if len(sorted_dates) < max_consecutive + 1:
+    if len(sorted_dates) < max_consecutive_overall + 1:
         print(f"[C3] Maximum Consecutive Working Days Constraint (HARD)")
         print(f"     Employees: {len(employees)}, Planning horizon: {len(sorted_dates)} days")
-        print(f"     No constraints needed (horizon < 13 days)\n")
+        print(f"     No constraints needed (horizon < {max_consecutive_overall + 1} days)\n")
         return
     
     constraints_added = 0
@@ -113,8 +133,8 @@ def add_constraints(model, ctx):
         if emp_id not in emp_slots_by_date:
             continue  # No slots for this employee
         
-        # Determine max consecutive days for this employee
-        emp_max_consecutive = apgd_max_consecutive if emp_id in apgd_employees else max_consecutive
+        # Get employee-specific limit from configuration
+        emp_max_consecutive = max_consecutive_by_employee.get(emp_id, 12)
         
         # Create indicator variables: day_worked[(emp_id, date)] = 1 if employee works on date
         day_worked = {}

@@ -25,6 +25,7 @@ Input Schema (v0.70):
 """
 from datetime import datetime, timedelta
 from context.engine.time_utils import split_shift_hours, normalize_scheme
+from context.engine.constraint_config import get_constraint_param
 from collections import defaultdict
 
 
@@ -313,17 +314,25 @@ def add_constraints(model, ctx):
                     week_tuple = (iso_year, iso_week)
                     locked_hours = locked_weekly_hours[emp_id].get(week_tuple, 0.0)
                 
-                # SCHEME-AWARE WEEKLY NORMAL CAP
-                # Scheme A/B: 44h/week
+                # SCHEME-AWARE WEEKLY NORMAL CAP (read from JSON with fallback)
+                # Scheme A/B: 44h/week (default)
                 # Scheme P: 34.98h (≤4 days) or 29.98h (5+ days)
+                employee_dict = {'employeeId': emp_id, 'scheme': emp_scheme}
+                
                 if emp_scheme == 'P':
                     work_days_count = count_work_days_in_pattern(work_pattern)
                     if work_days_count <= 4:
-                        weekly_normal_cap = 34.98
+                        weekly_normal_cap = get_constraint_param(
+                            ctx, 'partTimerWeeklyHours', employee_dict, default=34.98
+                        )
                     else:
-                        weekly_normal_cap = 29.98
+                        weekly_normal_cap = get_constraint_param(
+                            ctx, 'partTimerWeeklyHours', employee_dict, default=29.98
+                        )
                 else:
-                    weekly_normal_cap = 44.0
+                    weekly_normal_cap = get_constraint_param(
+                        ctx, 'momWeeklyHoursCap44h', employee_dict, default=44.0
+                    )
                 
                 # Calculate remaining capacity
                 remaining_capacity = weekly_normal_cap - locked_hours
@@ -375,9 +384,16 @@ def add_constraints(model, ctx):
                         weighted_assignments.append((var, int_hours))
             
             if weighted_assignments:
-                # Create constraint: sum(var_i * ot_hours_i) <= 72 * 10 = 720 (in tenths)
+                # Read monthly OT cap from JSON with fallback to 72h
+                employee_dict = {'employeeId': emp_id, 'scheme': emp_schemes.get(emp_id, 'A')}
+                monthly_ot_cap = get_constraint_param(
+                    ctx, 'momMonthlyOTcap72h', employee_dict, default=72.0
+                )
+                monthly_ot_cap_int = int(round(monthly_ot_cap * 10))  # Convert to tenths
+                
+                # Create constraint: sum(var_i * ot_hours_i) <= monthly_ot_cap
                 constraint_expr = sum(var * hours for var, hours in weighted_assignments)
-                model.Add(constraint_expr <= 720)  # 72 hours = 720 tenths
+                model.Add(constraint_expr <= monthly_ot_cap_int)
                 monthly_constraints += 1
     
     # Count employees with 6-day patterns and Scheme P

@@ -1,0 +1,634 @@
+{
+  "schemaVersion": "1.00",
+  "planningReference": "RST-20251222-EC4334AC",
+  "timezone": "Asia/Singapore",
+  "planningHorizon": {
+    "startDate": "2026-01-01",
+    "endDate": "2026-01-31"
+  },
+  "publicHolidays": [
+    "2026-01-01"
+  ],
+  "solverConfig": {
+    "optimizationMode": "minimizeEmployeeCount",
+    "maxEmployeesToUse": 17
+  },
+  "solverRunTime": {
+    "maxSeconds": 300
+  },
+  "schemeMap": {
+    "A": "Scheme A",
+    "B": "Scheme B",
+    "P": "Scheme P"
+  },
+  "fixedRotationOffset": "ouOffsets",
+  "ouOffsets": [
+    {
+      "ouId": "ATSU T1 LSU A1",
+      "rotationOffset": 4
+    }
+  ],
+  "demandItems": [
+    {
+      "demandId": "DI-2512220228-60368560",
+      "locationId": "LOC-AT1-6531",
+      "shiftStartDate": "2026-01-01",
+      "rosteringBasis": "outcomeBased",
+      "minStaffThresholdPercentage": 100,
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "08:30:00",
+              "end": "20:30:00",
+              "nextDay": false
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": true,
+          "shiftSetId": "Set_DI_2512220228_60368560",
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "coverageAnchor": "2026-01-01",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": []
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "154_1",
+          "productTypeId": "APO",
+          "rankIds": [
+            "COR"
+          ],
+          "headcount": 1,
+          "workPattern": [
+            "D",
+            "D",
+            "D",
+            "D",
+            "O",
+            "O"
+          ],
+          "requiredQualifications": [],
+          "gender": "Any",
+          "scheme": "Scheme A",
+          "enableOtAwareIcpmp": true,
+          "enableAPGD-D10": true
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "00017813",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00023713",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00026767",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00027898",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00028276",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00037511",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00045844",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00053077",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00058111",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00066299",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00120417",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00137674",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00143002",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00148929",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00167938",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00168606",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00170319",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    }
+  ],
+  "constraintList": [
+    {
+      "id": "maxConsecutiveWorkingDays",
+      "enforcement": "hard",
+      "description": "Maximum consecutive working days",
+      "frequency": "Continuous",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 12,
+      "schemeOverrides": {
+        "A": {
+          "productTypes": ["APO"],
+          "value": 8,
+          "description": "APGD-D10 (Scheme A + APO product type) can work 8 consecutive days including off-day"
+        }
+      }
+    },
+    {
+      "id": "momDailyHoursCap",
+      "enforcement": "hard",
+      "description": "Maximum daily working hours by scheme",
+      "frequency": "Daily",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 9,
+      "schemeOverrides": {
+        "A": 14,
+        "B": 13,
+        "P": 9
+      }
+    },
+    {
+      "id": "momWeeklyHoursCap44h",
+      "enforcement": "hard",
+      "description": "Weekly normal hours cap (same for all schemes)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 44
+    },
+    {
+      "id": "minimumOffDaysPerWeek",
+      "enforcement": "hard",
+      "description": "Minimum off-days per week",
+      "frequency": "Weekly",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "All schemes require 1 off-day per week. Scheme A with APO can work on off-day for up to 8 consecutive days."
+    },
+    {
+      "id": "momMonthlyOTcap72h",
+      "enforcement": "hard",
+      "description": "Monthly overtime hours cap",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 72
+    },
+    {
+      "id": "momLunchBreak",
+      "enforcement": "hard",
+      "description": "Meal break deduction",
+      "frequency": "Per Shift",
+      "uom": "Minutes",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 60,
+      "params": {
+        "deductIfShiftAtLeastMinutes": 480
+      }
+    },
+    {
+      "id": "apgdMinRestBetweenShifts",
+      "enforcement": "hard",
+      "description": "Minimum rest between shifts",
+      "frequency": "Between Shifts",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 8,
+      "schemeOverrides": {
+        "P": 1
+      },
+      "notes": "Scheme P requires only 1 hour rest, enabling split-shift patterns. All other schemes require 8 hours."
+    },
+    {
+      "id": "oneShiftPerDay",
+      "enforcement": "hard",
+      "description": "Maximum shifts per day",
+      "frequency": "Per Day",
+      "uom": "Number",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "Currently all schemes limited to 1 shift per day. Scheme P = 2 shifts deferred for future implementation."
+    },
+    {
+      "id": "partTimerWeeklyHours",
+      "enforcement": "hard",
+      "description": "Part-timer weekly hour limits (Scheme P only)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "applicableToSchemes": ["P"],
+      "params": {
+        "maxHours4Days": 34.98,
+        "maxHoursMoreDays": 29.98
+      },
+      "notes": "≤4 working days per week: max 34.98h, >4 days per week: max 29.98h"
+    }
+  ],
+  "monthlyHourLimits": [
+    {
+      "id": "standardMonthlyHours",
+      "description": "Standard monthly working hours based on 44h/week",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": "All",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "normalHours": 176,
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288,
+          "calculation": "176 = 44h/week × 4 weeks, 112 = OT limit, 288 = 176 + 112"
+        },
+        "29": {
+          "normalHours": 182,
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298,
+          "calculation": "182 = 44h/week × 29/7 days"
+        },
+        "30": {
+          "normalHours": 189,
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309,
+          "calculation": "189 = 44h/week × 30/7 days"
+        },
+        "31": {
+          "normalHours": 195,
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319,
+          "calculation": "195 = 44h/week × 31/7 days"
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHours",
+      "description": "APGD-D10 minimum monthly contractual hours (Local or Foreigner, excluding CPL & SGT for Foreigner)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": ["Local", "Foreigner"],
+        "schemes": ["A"],
+        "productTypes": ["APO"],
+        "ranksExcluded": {
+          "Foreigner": ["CPL", "SGT"]
+        }
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 224,
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288,
+          "notes": "224h minimum = 48h MORE than standard 176h"
+        },
+        "29": {
+          "minimumContractualHours": 231,
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298,
+          "notes": "231h minimum = 49h MORE than standard 182h"
+        },
+        "30": {
+          "minimumContractualHours": 238,
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309,
+          "notes": "238h minimum = 49h MORE than standard 189h"
+        },
+        "31": {
+          "minimumContractualHours": 246,
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319,
+          "notes": "246h minimum = 51h MORE than standard 195h"
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHoursCplSgt",
+      "description": "APGD-D10 minimum monthly contractual hours (Foreigner CPL & SGT only)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": ["Foreigner"],
+        "schemes": ["A"],
+        "productTypes": ["APO"],
+        "ranks": ["CPL", "SGT"]
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 244,
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288,
+          "notes": "244h minimum = 68h MORE than standard 176h"
+        },
+        "29": {
+          "minimumContractualHours": 252,
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298,
+          "notes": "252h minimum = 70h MORE than standard 182h"
+        },
+        "30": {
+          "minimumContractualHours": 260,
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309,
+          "notes": "260h minimum = 71h MORE than standard 189h"
+        },
+        "31": {
+          "minimumContractualHours": 268,
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319,
+          "notes": "268h minimum = 73h MORE than standard 195h"
+        }
+      }
+    },
+    {
+      "id": "apgdMaximumOvertimeHours",
+      "description": "APGD-D10 maximum overtime hours (same as standard)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": ["A"],
+        "productTypes": ["APO"],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288
+        },
+        "29": {
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298
+        },
+        "30": {
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309
+        },
+        "31": {
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319
+        }
+      },
+      "notes": "Total max hours (Row 6 in Excel) should remain same as Item 3 - 288/298/309/319h"
+    }
+  ],
+    "softConstraintWeights": {
+    "rotationPatternCompliance": 10,
+    "employeePreferences": 5,
+    "consistentShiftStart": 3,
+    "minimizeShortRestGaps": 8,
+    "officerContinuity": 4,
+    "minimizeTeamChanges": 2,
+    "zonePreference": 3,
+    "teamSizeFeasibility": 2,
+    "travelSlackBuffer": 1,
+    "fairOvertimeDistribution": 6,
+    "publicHolidayCoverage": 4,
+    "allowanceOptimization": 2,
+    "substituteLogic": 1,
+    "midMonthInsert": 1,
+    "demandCoverageScore": 5,
+    "travelSlackTime": 1
+  },
+  "solverScoreConfig": {}
+}
