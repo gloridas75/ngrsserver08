@@ -202,6 +202,9 @@ def _validate_demand_items(data: dict, result: ValidationResult):
                            "requirements array cannot be empty")
             continue
         
+        # Get rosteringBasis for this demand item (used in requirement validation)
+        rostering_basis = demand_item.get('rosteringBasis', 'demandBased')
+        
         # Collect all shift codes from requirements
         all_shift_codes = set()
         
@@ -209,7 +212,7 @@ def _validate_demand_items(data: dict, result: ValidationResult):
             req_path = f"{di_path}.requirements[{req_idx}]"
             
             # Validate requirement structure
-            _validate_requirement(requirement, req_path, result, all_shift_codes)
+            _validate_requirement(requirement, req_path, result, all_shift_codes, rostering_basis)
         
         # Validate shift details against required shift codes
         for shift_idx, shift in enumerate(demand_item['shifts']):
@@ -218,7 +221,7 @@ def _validate_demand_items(data: dict, result: ValidationResult):
 
 
 def _validate_requirement(req: dict, path: str, result: ValidationResult, 
-                         all_shift_codes: set):
+                         all_shift_codes: set, rostering_basis: str = 'demandBased'):
     """Validate individual requirement"""
     
     # Required fields (headcount removed from here, validated separately)
@@ -251,14 +254,19 @@ def _validate_requirement(req: dict, path: str, result: ValidationResult,
                        "Field 'rankIds' must be a list")
     
     # Validate headcount - support both formats: int (legacy) or dict (new)
+    # Special case: Allow headcount=0 for outcomeBased mode (template-based rostering)
     if 'headcount' not in req:
         result.add_error(f"{path}.headcount", "MISSING_FIELD", 
                        "Required field 'headcount' is missing")
     elif isinstance(req['headcount'], int):
         # Legacy format: single integer
-        if req['headcount'] <= 0:
+        # Allow 0 for outcomeBased mode (template-based rostering ignores headcount)
+        if req['headcount'] < 0:
             result.add_error(f"{path}.headcount", "INVALID_VALUE", 
-                           "headcount must be greater than 0")
+                           "headcount cannot be negative")
+        elif req['headcount'] == 0 and rostering_basis != 'outcomeBased':
+            result.add_error(f"{path}.headcount", "INVALID_VALUE", 
+                           "headcount must be greater than 0 (or use rosteringBasis='outcomeBased' for template mode)")
         elif req['headcount'] > 100:
             result.add_warning(f"{path}.headcount", "HIGH_HEADCOUNT", 
                              f"headcount of {req['headcount']} is very high")
