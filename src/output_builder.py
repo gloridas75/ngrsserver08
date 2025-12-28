@@ -50,8 +50,9 @@ def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None
     if off_day_assignments:
         all_assignments_for_roster.extend(off_day_assignments)
     
-    # Get date range from assignments
-    dates = sorted(set(a.get('date') for a in all_assignments_for_roster if a.get('date')))
+    # Get date range from assignments (filter out None values explicitly)
+    date_values = set(a.get('date') for a in all_assignments_for_roster if a.get('date') is not None)
+    dates = sorted(date_values)
     if not dates:
         return []
     
@@ -510,11 +511,9 @@ def insert_off_day_assignments(assignments, input_data, ctx):
     from datetime import datetime, timedelta
     import uuid
     
-    # Get date range from existing assignments
-    if not assignments:
-        return assignments
-    
-    dates = sorted(set(a.get('date') for a in assignments if a.get('date')))
+    # Get date range from existing assignments (filter out None values explicitly)
+    date_values = set(a.get('date') for a in assignments if a.get('date') is not None)
+    dates = sorted(date_values)
     if not dates:
         return assignments
     
@@ -667,11 +666,11 @@ def insert_off_day_assignments(assignments, input_data, ctx):
             
             current_date += timedelta(days=1)
     
-    # Merge and sort by date, then employee
+    # Merge and sort by date, then employee (handle None values safely)
     all_assignments = assignments + off_day_assignments
     all_assignments_sorted = sorted(
         all_assignments,
-        key=lambda a: (a.get('date', ''), a.get('employeeId', ''))
+        key=lambda a: (a.get('date') or '', a.get('employeeId') or '')
     )
     
     return all_assignments_sorted
@@ -1085,9 +1084,9 @@ def build_incremental_output(
             # If hour calc fails, include assignment without hours
             annotated_new.append(assignment)
     
-    # Merge locked + new assignments (sort by date)
+    # Merge locked + new assignments (sort by date, handling None values safely)
     all_assignments = annotated_locked + annotated_new
-    all_assignments_sorted = sorted(all_assignments, key=lambda a: a.get('date', ''))
+    all_assignments_sorted = sorted(all_assignments, key=lambda a: a.get('date') or '')
     
     # Build employee hours summary
     employee_hours_summary = {}
