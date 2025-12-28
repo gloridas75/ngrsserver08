@@ -26,6 +26,46 @@ def parse_date(date_str: str) -> date:
     return datetime.strptime(date_str, "%Y-%m-%d").date()
 
 
+def _validate_incremental_request(request_data: Dict[str, Any]) -> None:
+    """
+    Validate incremental solve request structure.
+    
+    Raises:
+        IncrementalSolverError: If validation fails
+    """
+    required = ["temporalWindow", "previousOutput", "employeeChanges", 
+                "demandItems", "planningHorizon", "planningReference"]
+    
+    missing = [f for f in required if f not in request_data]
+    if missing:
+        raise IncrementalSolverError(f"Missing required fields: {', '.join(missing)}")
+    
+    # Validate previousOutput has assignments
+    if "assignments" not in request_data["previousOutput"]:
+        raise IncrementalSolverError("previousOutput must contain 'assignments' array")
+    
+    logger.info("✓ Incremental request structure validated")
+
+
+def _detect_rostering_basis(demand_items: List[Dict[str, Any]]) -> str:
+    """
+    Detect rostering basis from demand items.
+    
+    Priority:
+    1. demandItems[0].rosteringBasis
+    2. Default: 'demandBased'
+    
+    Returns:
+        str: 'demandBased' or 'outcomeBased'
+    """
+    if demand_items and len(demand_items) > 0:
+        rostering_basis = demand_items[0].get('rosteringBasis')
+        if rostering_basis:
+            return rostering_basis
+    
+    return 'demandBased'
+
+
 def validate_temporal_window(temporal_window: Dict[str, str]) -> None:
     """
     Validate temporal window constraints.
@@ -342,6 +382,9 @@ def solve_incremental(
     logger.info("[INCREMENTAL SOLVER STARTING]")
     logger.info("=" * 80)
     
+    # Validate incremental request structure
+    _validate_incremental_request(request_data)
+    
     # Extract components
     temporal_window = request_data["temporalWindow"]
     previous_output = request_data["previousOutput"]
@@ -349,8 +392,29 @@ def solve_incremental(
     demand_items = request_data["demandItems"]
     planning_horizon = request_data["planningHorizon"]
     
+    # Detect rostering basis (demandBased vs outcomeBased)
+    rostering_basis = _detect_rostering_basis(demand_items)
+    logger.info(f"Detected rostering basis: {rostering_basis}")
+    
     # Step 1: Validate temporal window
     validate_temporal_window(temporal_window)
+    
+    # Step 1.5: Validate demand items structure (catches headcount=0 errors, etc.)
+    from src.input_validator import validate_input
+    
+    test_input = {
+        "schemaVersion": request_data.get("schemaVersion", "0.95"),
+        "demandItems": demand_items,
+        "employees": [],  # Minimal for validation
+        "planningHorizon": planning_horizon
+    }
+    
+    validation_result = validate_input(test_input)
+    if not validation_result.is_valid:
+        error_msgs = [f"{e.field}: {e.message}" for e in validation_result.errors]
+        raise IncrementalSolverError(f"Input validation failed: {'; '.join(error_msgs)}")
+    
+    logger.info(f"✓ Incremental input validated (rosteringBasis={rostering_basis})")
     
     # Step 2: Classify slots
     locked_assignments, solvable_slots, departed_employee_ids = classify_slots(
@@ -380,9 +444,20 @@ def solve_incremental(
         temporal_window=temporal_window
     )
     
-    # Step 4: Calculate locked context for constraints
-    locked_weekly_hours = calculate_locked_weekly_hours(locked_assignments, temporal_window)
-    locked_consecutive_days = calculate_locked_consecutive_days(locked_assignments, temporal_window)
+    # Step 4: Calculate locked context for constraints (MODE-DEPENDENT)
+    if rostering_basis == 'demandBased':
+        # Pattern-based: Calculate locked hours/days for constraint continuity
+        locked_weekly_hours = calculate_locked_weekly_hours(locked_assignments, temporal_window)
+        locked_consecutive_days = calculate_locked_consecutive_days(locked_assignments, temporal_window)
+        logger.info(f"✓ Calculated locked context for demandBased mode")
+        logger.info(f"   - Locked weekly hours tracked for {len(locked_weekly_hours)} employees")
+        logger.info(f"   - Locked consecutive days tracked for {len(locked_consecutive_days)} employees")
+    else:
+        # outcomeBased: Template-based rostering, no pattern continuity needed
+        locked_weekly_hours = {}
+        locked_consecutive_days = {}
+        logger.info(f"✓ Skipped pattern continuity for outcomeBased mode (template-based)")
+        logger.info(f"   Note: outcomeBased uses template validation without rotation patterns")
     
     # Step 5: Build modified input for solver
     # Only solve for solvable slots

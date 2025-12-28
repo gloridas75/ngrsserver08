@@ -386,11 +386,16 @@ class AssignmentAuditInfo(BaseModel):
 
 
 class IncrementalSolveRequest(BaseModel):
-    """Request payload for POST /solve/incremental endpoint."""
+    """
+    Request payload for POST /solve/incremental endpoint.
+    
+    Supports schema versions: 0.95, 0.98
+    (Legacy 0.80 compatibility maintained)
+    """
     
     schemaVersion: str = Field(
-        "0.80", 
-        description="Schema version for incremental solve"
+        "0.95", 
+        description="Schema version for incremental solve (0.95, 0.98, legacy 0.80)"
     )
     planningReference: str = Field(
         ..., 
