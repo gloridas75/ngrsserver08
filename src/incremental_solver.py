@@ -399,22 +399,20 @@ def solve_incremental(
     # Step 1: Validate temporal window
     validate_temporal_window(temporal_window)
     
-    # Step 1.5: Validate demand items structure (catches headcount=0 errors, etc.)
-    from src.input_validator import validate_input
+    # Step 1.5: Validate demand items structure only (skip full input validation)
+    # Note: Full validation will happen later when we build complete input for solver
+    # Here we just want to catch obvious errors in demandItems (e.g., missing shifts)
+    from src.input_validator import _validate_demand_items, _validate_planning_horizon, ValidationResult
     
-    test_input = {
-        "schemaVersion": request_data.get("schemaVersion", "0.95"),
-        "demandItems": demand_items,
-        "employees": [],  # Minimal for validation
-        "planningHorizon": planning_horizon
-    }
+    validation_result = ValidationResult()
+    _validate_demand_items({"demandItems": demand_items}, validation_result)
+    _validate_planning_horizon({"planningHorizon": planning_horizon}, validation_result)
     
-    validation_result = validate_input(test_input)
     if not validation_result.is_valid:
         error_msgs = [f"{e.field}: {e.message}" for e in validation_result.errors]
-        raise IncrementalSolverError(f"Input validation failed: {'; '.join(error_msgs)}")
+        raise IncrementalSolverError(f"Demand validation failed: {'; '.join(error_msgs)}")
     
-    logger.info(f"✓ Incremental input validated (rosteringBasis={rostering_basis})")
+    logger.info(f"✓ Incremental demand items validated (rosteringBasis={rostering_basis})")
     
     # Step 2: Classify slots
     locked_assignments, solvable_slots, departed_employee_ids = classify_slots(
