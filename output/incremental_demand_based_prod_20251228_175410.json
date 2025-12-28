@@ -1,0 +1,69 @@
+{
+  "assignments": [
+    {
+      "assignmentId": "A001",
+      "employeeId": "EMP001",
+      "date": "2026-01-06",
+      "startDateTime": "2026-01-06T08:00:00",
+      "endDateTime": "2026-01-06T20:00:00",
+      "shiftCode": "D",
+      "status": "ASSIGNED",
+      "hours": {
+        "normal": 8.0,
+        "overtime": 0.0,
+        "publicHoliday": 0.0,
+        "restDayPay": 0.0
+      },
+      "source": "locked",
+      "lockedReason": "before_cutoff"
+    },
+    {
+      "assignmentId": "A002",
+      "employeeId": "EMP001",
+      "date": "2026-01-07",
+      "startDateTime": "2026-01-07T08:00:00",
+      "endDateTime": "2026-01-07T20:00:00",
+      "shiftCode": "D",
+      "status": "ASSIGNED",
+      "hours": {
+        "normal": 8.0,
+        "overtime": 0.0,
+        "publicHoliday": 0.0,
+        "restDayPay": 0.0
+      },
+      "source": "locked",
+      "lockedReason": "before_cutoff"
+    },
+    {
+      "assignmentId": "A003",
+      "employeeId": "EMP002",
+      "date": "2026-01-08",
+      "startDateTime": "2026-01-08T08:00:00",
+      "endDateTime": "2026-01-08T20:00:00",
+      "shiftCode": "D",
+      "status": "ASSIGNED",
+      "hours": {
+        "normal": 8.0,
+        "overtime": 0.0,
+        "publicHoliday": 0.0,
+        "restDayPay": 0.0
+      },
+      "source": "locked",
+      "lockedReason": "before_cutoff"
+    }
+  ],
+  "solverRun": {
+    "status": "OPTIMAL",
+    "solveTime": 5.2
+  },
+  "incrementalSolve": {
+    "status": "no_slots_to_solve",
+    "message": "All slots are locked. No incremental solving required."
+  },
+  "meta": {
+    "requestId": "036c9766-12b1-422b-a7e3-8b83b4996595",
+    "runId": "incr-1766915650-036c9766",
+    "timestamp": "2025-12-28T09:54:10.697311",
+    "schemaVersion": "0.95"
+  }
+}

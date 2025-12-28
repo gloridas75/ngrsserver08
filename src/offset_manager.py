@@ -287,7 +287,9 @@ def get_current_offset_distribution(employees: List[Dict[str, Any]]) -> Counter:
     Returns:
         Counter with offset distribution
     """
-    offsets = [emp.get('rotationOffset', 0) for emp in employees]
+    # Ensure rotationOffset is always an integer, defaulting None to 0
+    offsets = [emp.get('rotationOffset') if emp.get('rotationOffset') is not None else 0 
+               for emp in employees]
     return Counter(offsets)
 
 

@@ -154,7 +154,8 @@ def calculate_optimal_with_u_slots(
     requirement_id: str = "unknown",
     max_attempts: int = 50,
     scheme: str = "A",
-    enable_ot_aware_icpmp: bool = False
+    enable_ot_aware_icpmp: bool = False,
+    monthly_ot_cap: float = 72.0
 ) -> Dict[str, Any]:
     """
     Calculate optimal employee count with U-slot injection.
@@ -170,7 +171,8 @@ def calculate_optimal_with_u_slots(
         requirement_id: Identifier for tracking
         max_attempts: Maximum employee counts to try beyond lower bound
         scheme: Employment scheme ('A', 'B', 'P', or 'Global') for capacity constraints
-        enable_ot_aware_icpmp: If True, consider OT capacity when injecting U-slots (Scheme P only)
+        enable_ot_aware_icpmp: If True, consider OT capacity when calculating employee requirements
+        monthly_ot_cap: Monthly OT hours cap for this scheme+product combination (default: 72h)
         
     Returns:
         Dictionary with:
@@ -222,19 +224,19 @@ def calculate_optimal_with_u_slots(
         # NEW: OT-AWARE CAPACITY ADJUSTMENT
         # If enabled, add OT capacity to effective capacity
         if enable_ot_aware_icpmp:
-            # Scheme P can work up to 72h OT per month
-            max_ot_per_month = 72.0
+            # Use scheme-specific monthly OT cap (e.g., 72h for standard, 124h for Scheme A + APO)
+            max_ot_per_month = monthly_ot_cap
             planning_horizon_days = len(calendar)
             planning_horizon_months = planning_horizon_days / 30.5  # Average month length
             
             # Calculate OT capacity in days per week
-            # 72h/month ÷ 4.33 weeks/month ÷ 8h/shift ≈ 2.08 shifts/week
+            # e.g., 124h/month ÷ 4.33 weeks/month ÷ 8h/shift ≈ 3.58 shifts/week
             ot_shifts_per_week = (max_ot_per_month / 4.33) / 8.0
             
             # Add OT capacity to effective capacity
             effective_days_per_week_with_ot = effective_days_per_week + ot_shifts_per_week
             
-            logger.info(f"  Scheme P OT-aware capacity adjustment:")
+            logger.info(f"  OT-aware capacity adjustment (monthly cap: {max_ot_per_month}h):")
             logger.info(f"    Normal capacity: {effective_days_per_week:.2f} days/week")
             logger.info(f"    OT capacity: {ot_shifts_per_week:.2f} shifts/week")
             logger.info(f"    Total capacity: {effective_days_per_week_with_ot:.2f} days/week")
@@ -250,8 +252,27 @@ def calculate_optimal_with_u_slots(
         logger.info(f"    Normal hour limit: {max_normal_hours_per_week}h/week")
         logger.info(f"    Effective capacity: {effective_work_capacity:.2f} days/cycle (pattern: {work_days_per_cycle})")
     else:
-        # Scheme A/B: Use pattern work days as-is
+        # Scheme A/B: Use pattern work days as-is, but add OT capacity if enabled
         effective_work_capacity = work_days_per_cycle
+        
+        # OT-AWARE CAPACITY for Scheme A/B (NEW: supports Scheme A + APO with 124h OT)
+        if enable_ot_aware_icpmp:
+            max_ot_per_month = monthly_ot_cap
+            planning_horizon_days = len(calendar)
+            planning_horizon_months = planning_horizon_days / 30.5
+            
+            # Calculate additional work days from OT capacity
+            # e.g., 124h/month ÷ 4.33 weeks/month ÷ 8h/shift ≈ 3.58 shifts/week
+            ot_shifts_per_week = (max_ot_per_month / 4.33) / 8.0
+            weeks_per_cycle = cycle_length / 7.0
+            ot_shifts_per_cycle = ot_shifts_per_week * weeks_per_cycle
+            
+            effective_work_capacity += ot_shifts_per_cycle
+            
+            logger.info(f"  OT-aware capacity adjustment for {scheme} (monthly cap: {max_ot_per_month}h):")
+            logger.info(f"    Base pattern capacity: {work_days_per_cycle} days/cycle")
+            logger.info(f"    OT capacity: {ot_shifts_per_cycle:.2f} days/cycle")
+            logger.info(f"    Total capacity: {effective_work_capacity:.2f} days/cycle")
     
     # Calculate mathematical lower bound
     # The lower bound is the maximum of:

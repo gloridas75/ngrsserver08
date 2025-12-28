@@ -65,6 +65,7 @@ class ICPMPPreprocessor:
         self.all_employees = input_json.get('employees', [])
         self.public_holidays = input_json.get('publicHolidays', [])
         self.planning_horizon = input_json.get('planningHorizon', {})
+        self.monthly_hour_limits = input_json.get('monthlyHourLimits', [])
         
         logger.info(f"ICPMPPreprocessor initialized with {len(self.all_employees)} employees")
     
@@ -233,21 +234,29 @@ class ICPMPPreprocessor:
         scheme = req.get('scheme', 'A')
         logger.info(f"    Requirement scheme: {scheme}")
         
-        # Extract OT-aware ICPMP flag (default TRUE for optimal Scheme P staffing)
+        # Extract product type for scheme-specific OT capacity calculation
+        product_type = req.get('productTypeId', '')
+        
+        # Extract OT-aware ICPMP flag (default TRUE for optimal staffing)
         enable_ot_aware_icpmp = req.get('enableOtAwareIcpmp', True)
         if enable_ot_aware_icpmp:
-            logger.info(f"    OT-aware ICPMP: ENABLED (will consider OT capacity for Scheme P)")
+            logger.info(f"    OT-aware ICPMP: ENABLED (will consider OT capacity)")
         else:
             logger.info(f"    OT-aware ICPMP: DISABLED (using conservative capacity)")
         
-        # Call ICPMP v3.0 with scheme parameter and OT-aware flag
+        # Get scheme-specific monthly OT cap from input configuration
+        monthly_ot_cap = self._get_monthly_ot_cap(scheme, product_type)
+        logger.info(f"    Monthly OT cap for {scheme} + {product_type}: {monthly_ot_cap}h\")")
+        
+        # Call ICPMP v3.0 with scheme parameter, OT-aware flag, and scheme-specific OT cap
         icpmp_result = calculate_optimal_with_u_slots(
             pattern=work_pattern,
             headcount=headcount,
             calendar=calendar,
             anchor_date=coverage_anchor,
             scheme=scheme,  # Pass scheme for capacity calculation
-            enable_ot_aware_icpmp=enable_ot_aware_icpmp  # NEW: Pass OT-aware flag
+            enable_ot_aware_icpmp=enable_ot_aware_icpmp,  # Pass OT-aware flag
+            monthly_ot_cap=monthly_ot_cap  # Pass scheme-specific monthly OT cap
         )
         
         # POST-ICPMP VALIDATION: Check if all required offsets are covered
@@ -314,6 +323,71 @@ class ICPMPPreprocessor:
             logger.info(f"    ✓ Offset validation passed: All {pattern_length} offsets covered")
         
         return icpmp_result
+    
+    def _get_monthly_ot_cap(self, scheme: str, product_type: str) -> float:
+        """
+        Get monthly OT cap for specific scheme + product type combination.
+        
+        Args:
+            scheme: Employee scheme ('A', 'B', 'P', 'Scheme A', etc.)
+            product_type: Product type ID (e.g., 'APO')
+            
+        Returns:
+            Monthly OT cap in hours (default: 72h for standard, 124h for Scheme A + APO)
+        """
+        from context.engine.time_utils import normalize_scheme
+        from datetime import datetime
+        
+        # Normalize scheme format
+        scheme_normalized = normalize_scheme(scheme)
+        
+        # Get planning horizon to determine month length
+        horizon = self.planning_horizon
+        start_date = datetime.fromisoformat(horizon.get('startDate', '2026-01-01'))
+        end_date = datetime.fromisoformat(horizon.get('endDate', '2026-01-31'))
+        days_in_month = (end_date - start_date).days + 1
+        
+        # Search monthlyHourLimits for matching scheme + product combination
+        for limit in self.monthly_hour_limits:
+            limit_id = limit.get('id', '')
+            
+            # Check if this limit applies to the scheme + product
+            applies_to = limit.get('applicableTo', {})
+            schemes = applies_to.get('schemes', [])
+            products = applies_to.get('productTypes', [])
+            
+            # Match scheme
+            scheme_match = (
+                scheme_normalized in schemes or
+                scheme in schemes or
+                schemes == 'All' or
+                'Any' in schemes
+            )
+            
+            # Match product type
+            product_match = (
+                product_type in products or
+                products == 'All' or
+                not products  # Empty list means all products
+            )
+            
+            if scheme_match and product_match:
+                # Check if this is an OT-related limit
+                if 'OT' in limit_id or 'overtime' in limit.get('description', '').lower():
+                    values_by_month = limit.get('valuesByMonthLength', {})
+                    
+                    # Get value for current month length (28, 29, 30, or 31)
+                    month_key = str(days_in_month)
+                    month_values = values_by_month.get(month_key, {})
+                    
+                    if 'maxOvertimeHours' in month_values:
+                        ot_cap = month_values['maxOvertimeHours']
+                        logger.info(f"      Found OT limit '{limit_id}': {ot_cap}h for {days_in_month}-day month")
+                        return float(ot_cap)
+        
+        # Default: Standard MOM limit
+        logger.info(f"      No specific OT limit found, using standard MOM limit: 72h")
+        return 72.0
     
     def _select_and_assign_employees(self, requirement: Dict, demand_item: Dict, 
                                     icpmp_result: Dict) -> List[Dict]:
