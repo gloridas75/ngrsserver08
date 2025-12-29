@@ -403,17 +403,40 @@ class ICPMPPreprocessor:
             List of selected employee dicts with rotationOffset updated
         """
         req_id = requirement.get('requirementId', 'UNKNOWN')
-        optimal_count = icpmp_result['configuration']['employeesRequired']
+        optimal_count_raw = icpmp_result['configuration']['employeesRequired']
+        
+        # Apply buffer to increase employee count (default 20% buffer)
+        # This helps prevent understaffing and provides scheduling flexibility
+        buffer_percentage = requirement.get('icpmpBufferPercentage', 20)  # Default 20%
+        
+        if buffer_percentage > 0:
+            optimal_count = int(optimal_count_raw * (1 + buffer_percentage / 100))
+            logger.info(f"    Applying {buffer_percentage}% buffer: {optimal_count_raw} → {optimal_count} employees")
+        else:
+            optimal_count = optimal_count_raw
+            logger.info(f"    No buffer applied: using {optimal_count} employees")
+        
         offset_distribution_dict = icpmp_result['configuration']['offsetDistribution']
         
         # Convert offset distribution dict {offset: count} to list of offsets
         # Example: {0: 2, 1: 3} → [0, 0, 1, 1, 1]
+        # If buffer applied, extend offset list to match new employee count
         offset_list = []
         for offset, count in sorted(offset_distribution_dict.items()):
             offset_list.extend([offset] * count)
         
-        logger.info(f"    Offset distribution: {offset_distribution_dict}")
-        logger.info(f"    Offset list: {offset_list}")
+        # If buffer increased employee count, extend offset list cyclically
+        if len(offset_list) < optimal_count:
+            logger.info(f"    Extending offset list from {len(offset_list)} to {optimal_count} employees")
+            while len(offset_list) < optimal_count:
+                # Add offsets cyclically to maintain distribution balance
+                for offset in sorted(offset_distribution_dict.keys()):
+                    if len(offset_list) >= optimal_count:
+                        break
+                    offset_list.append(offset)
+        
+        logger.info(f"    Original offset distribution: {offset_distribution_dict}")
+        logger.info(f"    Final offset list ({len(offset_list)} employees): {offset_list}")
         
         # Step 1: Filter eligible employees
         eligible = self._filter_eligible_employees(requirement, demand_item)
