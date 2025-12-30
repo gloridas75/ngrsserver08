@@ -16,7 +16,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-SERVICE_NAME="ngrs-solver"
+SERVICE_NAME="ngrs"
 LOG_FILE="/var/log/ngrs-solver.log"
 BACKUP_DIR="/opt/ngrs-solver-backups"
 APP_DIR="/opt/ngrs-solver"
@@ -152,13 +152,14 @@ clear_redis_data() {
     # Get job statistics before clearing
     if command -v redis-cli &> /dev/null; then
         TOTAL_KEYS=$(redis-cli -h localhost -p 6379 --scan --pattern "ngrs:*" 2>/dev/null | wc -l || echo "0")
+        TOTAL_KEYS=$(echo "$TOTAL_KEYS" | tr -d ' ')  # Trim whitespace
         
-        if [ "$TOTAL_KEYS" -gt 0 ]; then
+        if [ "$TOTAL_KEYS" -gt 0 ] 2>/dev/null; then
             print_status "  Found $TOTAL_KEYS Redis keys with prefix 'ngrs:*'"
             
             # Delete all ngrs:* keys
             print_status "  → Deleting ngrs:* keys..."
-            redis-cli -h localhost -p 6379 --scan --pattern "ngrs:*" | xargs -r redis-cli -h localhost -p 6379 DEL >/dev/null 2>&1 || true
+            redis-cli -h localhost -p 6379 --scan --pattern "ngrs:*" 2>/dev/null | xargs -r redis-cli -h localhost -p 6379 DEL >/dev/null 2>&1 || true
             
             print_success "Cleared $TOTAL_KEYS Redis keys"
         else
@@ -222,8 +223,23 @@ pull_code() {
     CURRENT_COMMIT=$(git rev-parse --short HEAD)
     print_status "Current commit: $CURRENT_COMMIT"
     
+    # Check for uncommitted changes
+    if ! git diff-index --quiet HEAD --; then
+        print_warning "Found uncommitted changes, stashing..."
+        git stash save "Auto-stash before deployment $(date +%Y%m%d_%H%M%S)"
+        print_success "Changes stashed"
+    fi
+    
     # Pull latest code
-    git pull origin main
+    print_status "Pulling from origin/main..."
+    if git pull origin main; then
+        print_success "Code pulled successfully"
+    else
+        print_error "Git pull failed! Check for conflicts."
+        print_status "To view stashed changes: git stash list"
+        print_status "To restore: git stash pop"
+        exit 1
+    fi
     
     # Show new commit
     NEW_COMMIT=$(git rev-parse --short HEAD)
@@ -233,6 +249,7 @@ pull_code() {
         print_warning "No new changes pulled"
     else
         print_success "Code updated successfully"
+        print_status "Changes: $CURRENT_COMMIT → $NEW_COMMIT"
     fi
     
     echo ""
@@ -536,11 +553,21 @@ verify_service() {
     # Wait a bit for service to fully initialize
     sleep 5
     
-    # Check if port 8080 is listening
-    if sudo lsof -i :8080 | grep -q LISTEN; then
+    # Check if port 8080 is listening (retry up to 10 times)
+    PORT_READY=0
+    for i in {1..10}; do
+        if sudo lsof -i :8080 | grep -q LISTEN; then
+            PORT_READY=1
+            break
+        fi
+        print_status "  Waiting for port 8080... (attempt $i/10)"
+        sleep 1
+    done
+    
+    if [ $PORT_READY -eq 1 ]; then
         print_success "Port 8080 is listening"
     else
-        print_error "Port 8080 is NOT listening!"
+        print_error "Port 8080 is NOT listening after 10 seconds!"
         print_status "Checking logs for errors..."
         tail -30 "$LOG_FILE"
         exit 1
