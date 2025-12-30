@@ -535,16 +535,31 @@ def _generate_employee_template_with_constraints(ctx: Dict[str, Any], employee: 
         coverage_days=coverage_days
     )
     
-    # Extract valid work days (exclude off days)
+    # Extract valid work days (exclude off days AND unavailable dates)
     valid_work_days = set()
+    
+    # Get employee unavailability (handle both formats)
+    unavailability = employee.get('unavailability', [])
+    unavailable_dates_set = set()
+    for u in unavailability:
+        if isinstance(u, dict):
+            # Format: [{"date": "2026-01-05", ...}]
+            date_val = u.get('date') or u.get('startDate')
+            if date_val:
+                unavailable_dates_set.add(date_val)
+        elif isinstance(u, str):
+            # Format: ["2026-01-05", "2026-01-26"]
+            unavailable_dates_set.add(u)
+    
     for date_str, day_info in template_result.items():
         # Only include days where:
         # 1. assigned == True (passed validation)
         # 2. is_work_day == True (not an off day)
         # 3. OR has an actual assignment dict
-        if day_info.get('assigned', False) and (
+        # 4. NOT in unavailable dates
+        if (day_info.get('assigned', False) and (
             day_info.get('is_work_day', False) or day_info.get('assignment') is not None
-        ):
+        ) and date_str not in unavailable_dates_set):
             valid_work_days.add(date_str)
     
     return {
@@ -613,8 +628,19 @@ def _assign_employees_to_slots_balanced(slots: List[Dict[str, Any]],
             
             # Check if employee can work this date
             if slot_date in valid_days:
-                # Check unavailability
-                unavailable_dates = [u.get('date') for u in emp.get('unavailability', [])]
+                # Check unavailability (handle both formats: array of strings or array of dicts)
+                unavailability = emp.get('unavailability', [])
+                unavailable_dates = []
+                for u in unavailability:
+                    if isinstance(u, dict):
+                        # Format: [{"date": "2026-01-05", ...}]
+                        date_val = u.get('date') or u.get('startDate')
+                        if date_val:
+                            unavailable_dates.append(date_val)
+                    elif isinstance(u, str):
+                        # Format: ["2026-01-05", "2026-01-26"]
+                        unavailable_dates.append(u)
+                
                 if slot_date not in unavailable_dates:
                     eligible_for_slot.append(emp)
         
