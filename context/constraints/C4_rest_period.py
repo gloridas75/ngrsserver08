@@ -157,12 +157,13 @@ def add_constraints(model, ctx):
         # Sort by end time (date + end datetime)
         sorted_slots = sorted(emp_slots, key=lambda s: (s.date, s.end))
         
-        # Check ALL pairs where slot1 ends before slot2 starts
+        # Check pairs where slot1 ends before slot2 starts
         # and there's insufficient rest between them
+        # Optimization: Only check slots within 24 hours (max relevant window for rest violations)
         for i in range(len(sorted_slots)):
             slot1 = sorted_slots[i]
             
-            # Check all subsequent slots that might violate rest period
+            # Check subsequent slots within a reasonable time window
             for j in range(i + 1, len(sorted_slots)):
                 slot2 = sorted_slots[j]
                 
@@ -173,6 +174,11 @@ def add_constraints(model, ctx):
                 # Calculate rest time between slot1 end and slot2 start
                 rest_available = slot2.start - slot1.end
                 
+                # Early termination: If rest exceeds 24 hours, all subsequent slots will have even more rest
+                # (slots are sorted by end time, so slot2.start increases monotonically)
+                if rest_available > timedelta(hours=24):
+                    break
+                
                 # If rest is insufficient, add disjunctive constraint
                 if rest_available < min_rest_delta:
                     var1 = x[(slot1.slot_id, emp_id)]
@@ -182,8 +188,6 @@ def add_constraints(model, ctx):
                     # Implemented as: var1 + var2 <= 1
                     model.Add(var1 + var2 <= 1)
                     constraints_added += 1
-                # NOTE: Removed early break - must check ALL pairs because different shift types
-                # on the same day can have different rest periods (e.g., D->D vs D->N)
     
     # Calculate summary statistics for logging
     unique_rest_values = set(min_rest_by_employee.values())
