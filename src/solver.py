@@ -419,7 +419,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                     'method': 'slot_based_outcome',
                     'optimization': False,
                     'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
-                    'target_daily_coverage': metadata.get('target_daily_coverage', 0),
+                    'headcount': metadata.get('headcount', 0),
                     'positions_created': metadata.get('positions_created', 0),
                     'available_employees': metadata['available_employees'],
                     'total_slots': metadata['total_slots'],
@@ -433,7 +433,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             print(f"{log_prefix} Status: {status_code}")
             print(f"{log_prefix} Slots: {metadata['assigned_slots']} assigned, {metadata['unassigned_slots']} unassigned")
             print(f"{log_prefix} Coverage: {metadata['coverage_percentage']:.1f}%")
-            print(f"{log_prefix} Positions created: {metadata['positions_created']} (to achieve ~{metadata['target_daily_coverage']} daily coverage)")
+            print(f"{log_prefix} Headcount (positions): {metadata.get('headcount', metadata['positions_created'])}")
             print(f"{log_prefix} Available employees: {metadata['available_employees']}")
             print()
             

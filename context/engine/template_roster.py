@@ -272,7 +272,9 @@ def _generate_validated_template(
                 monthly_ot_minutes,
                 last_shift_end,
                 ctx,
-                coverage_days
+                coverage_days,
+                requirement,  # Pass requirement for qualification/rank checks
+                demand        # Pass demand
             )
             
             if validation_result['valid']:
@@ -332,17 +334,113 @@ def _validate_assignment(
     monthly_ot_minutes: float,
     last_shift_end,
     ctx: Dict[str, Any],
-    coverage_days: List[str]
+    coverage_days: List[str],
+    requirement: Dict[str, Any] = None,
+    demand: Dict[str, Any] = None
 ) -> Dict[str, Any]:
     """
     Validate if assignment satisfies all hard constraints.
     
     Args:
         coverage_days: List of day names when shifts can be assigned (e.g., ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
+        requirement: Requirement dict with qualification and rank requirements (optional)
+        demand: Demand dict (optional)
     
     Returns: {'valid': bool, 'reason': str}
     """
     from context.engine.time_utils import is_apgd_d10_employee
+    
+    # C7: Qualifications/Licenses (if requirement specified)
+    if requirement:
+        # Check rank/product type match (C11)
+        emp_rank = employee.get('rankId')
+        emp_product = employee.get('productTypeId')
+        
+        req_product = requirement.get('productTypeId')
+        if req_product and emp_product != req_product:
+            return {'valid': False, 'reason': f'C11: Product type {emp_product} does not match required {req_product}'}
+        
+        req_ranks = requirement.get('rankIds', [])
+        if not req_ranks:
+            req_ranks = [requirement.get('rankId')] if requirement.get('rankId') else []
+        
+        if req_ranks and emp_rank not in req_ranks:
+            return {'valid': False, 'reason': f'C11: Rank {emp_rank} not in required ranks {req_ranks}'}
+        
+        # Check qualifications (C7)
+        required_quals = requirement.get('requiredQualifications', [])
+        if required_quals:
+            # Build employee licenses map
+            emp_licenses = {}
+            for lic in employee.get('licenses', []):
+                if isinstance(lic, dict):
+                    code = lic.get('code')
+                    expiry = lic.get('expiryDate')
+                    if code:
+                        emp_licenses[str(code)] = expiry
+            
+            for qual in employee.get('qualifications', []):
+                if isinstance(qual, dict):
+                    code = qual.get('code')
+                    expiry = qual.get('expiryDate')
+                    if code:
+                        emp_licenses[str(code)] = expiry
+                elif isinstance(qual, (str, int)):
+                    # Simple format: just a code without expiry
+                    emp_licenses[str(qual)] = None
+            
+            # Normalize to group format if needed
+            if required_quals and isinstance(required_quals[0], dict) and 'qualifications' in required_quals[0]:
+                qual_groups = required_quals
+            elif required_quals and isinstance(required_quals[0], (str, int)):
+                qual_groups = [{
+                    'groupId': 'default',
+                    'matchType': 'ALL',
+                    'qualifications': required_quals
+                }]
+            else:
+                qual_groups = []
+            
+            # Check each qualification group
+            for group in qual_groups:
+                match_type = group.get('matchType', 'ALL')
+                group_quals = group.get('qualifications', [])
+                
+                if match_type == 'ALL':
+                    for qual_code in group_quals:
+                        qual_key = str(qual_code)
+                        if qual_key not in emp_licenses:
+                            return {'valid': False, 'reason': f'C7: Missing required qualification {qual_code}'}
+                        
+                        # Check expiry
+                        expiry_str = emp_licenses[qual_key]
+                        if expiry_str:
+                            try:
+                                expiry_date = datetime.strptime(expiry_str, '%Y-%m-%d').date()
+                                if date > expiry_date:
+                                    return {'valid': False, 'reason': f'C7: Qualification {qual_code} expired on {expiry_str}'}
+                            except:
+                                pass
+                
+                elif match_type == 'ANY':
+                    has_any = False
+                    for qual_code in group_quals:
+                        qual_key = str(qual_code)
+                        if qual_key in emp_licenses:
+                            expiry_str = emp_licenses[qual_key]
+                            if not expiry_str:  # No expiry
+                                has_any = True
+                                break
+                            try:
+                                expiry_date = datetime.strptime(expiry_str, '%Y-%m-%d').date()
+                                if date <= expiry_date:
+                                    has_any = True
+                                    break
+                            except:
+                                pass
+                    
+                    if not has_any:
+                        return {'valid': False, 'reason': f'C7: No valid qualification from group {group.get("groupId", "unknown")}'}
     
     # C1: Daily hours cap
     scheme = employee.get('scheme', 'Scheme A')
