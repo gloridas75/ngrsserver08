@@ -405,9 +405,28 @@ class ICPMPPreprocessor:
         req_id = requirement.get('requirementId', 'UNKNOWN')
         optimal_count_raw = icpmp_result['configuration']['employeesRequired']
         
+        # Step 1: Filter eligible employees first to check abundance
+        eligible = self._filter_eligible_employees(requirement, demand_item)
+        
+        logger.info(f"    Eligible employees: {len(eligible)} (before availability check)")
+        
+        # Step 2: Filter by availability (not already assigned)
+        available = [emp for emp in eligible 
+                    if emp['employeeId'] not in self.assigned_employee_ids]
+        
+        logger.info(f"    Available employees: {len(available)} (after availability check)")
+        
         # Apply buffer to increase employee count (default 20% buffer)
         # This helps prevent understaffing and provides scheduling flexibility
         buffer_percentage = requirement.get('icpmpBufferPercentage', 20)  # Default 20%
+        
+        # INTELLIGENT BUFFER: Skip buffer when employees are abundant
+        # Rationale: Buffer is for constraint flexibility, not needed when employees >> optimal
+        # Threshold: If available >= optimal × 1.5, skip buffer (50% surplus already exists)
+        if buffer_percentage > 0 and len(available) >= optimal_count_raw * 1.5:
+            logger.info(f"    🎯 BUFFER BYPASS: {len(available)} available >> {optimal_count_raw} needed (>50% surplus)")
+            logger.info(f"    Skipping {buffer_percentage}% buffer - sufficient scheduling flexibility already exists")
+            buffer_percentage = 0
         
         if buffer_percentage > 0:
             optimal_count = int(optimal_count_raw * (1 + buffer_percentage / 100))
@@ -437,17 +456,6 @@ class ICPMPPreprocessor:
         
         logger.info(f"    Original offset distribution: {offset_distribution_dict}")
         logger.info(f"    Final offset list ({len(offset_list)} employees): {offset_list}")
-        
-        # Step 1: Filter eligible employees
-        eligible = self._filter_eligible_employees(requirement, demand_item)
-        
-        logger.info(f"    Eligible employees: {len(eligible)} (before availability check)")
-        
-        # Step 2: Filter by availability (not already assigned)
-        available = [emp for emp in eligible 
-                    if emp['employeeId'] not in self.assigned_employee_ids]
-        
-        logger.info(f"    Available employees: {len(available)} (after availability check)")
         
         # Step 3: Check sufficiency
         if len(available) < optimal_count:
