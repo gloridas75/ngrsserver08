@@ -230,15 +230,42 @@ pull_code() {
         print_success "Changes stashed"
     fi
     
-    # Pull latest code
-    print_status "Pulling from origin/main..."
-    if git pull origin main; then
-        print_success "Code pulled successfully"
+    # Fetch latest changes from remote
+    print_status "Fetching from origin..."
+    git fetch origin
+    
+    # Check if local branch has diverged from remote
+    LOCAL=$(git rev-parse HEAD)
+    REMOTE=$(git rev-parse origin/main)
+    BASE=$(git merge-base HEAD origin/main 2>/dev/null || echo "none")
+    
+    if [ "$LOCAL" = "$REMOTE" ]; then
+        print_success "Already up to date"
+    elif [ "$LOCAL" = "$BASE" ]; then
+        # Local is behind remote (fast-forward possible)
+        print_status "Pulling from origin/main..."
+        if git pull origin main; then
+            print_success "Code pulled successfully"
+        else
+            print_error "Git pull failed! Check for conflicts."
+            print_status "To view stashed changes: git stash list"
+            print_status "To restore: git stash pop"
+            exit 1
+        fi
     else
-        print_error "Git pull failed! Check for conflicts."
-        print_status "To view stashed changes: git stash list"
-        print_status "To restore: git stash pop"
-        exit 1
+        # Local has diverged from remote (history rewrite detected)
+        print_warning "Divergent branches detected (likely due to force push)"
+        print_status "Resetting to match remote origin/main..."
+        print_status "Local:  $LOCAL"
+        print_status "Remote: $REMOTE"
+        
+        # Reset to match remote exactly
+        if git reset --hard origin/main; then
+            print_success "Reset to origin/main successfully"
+        else
+            print_error "Failed to reset to origin/main"
+            exit 1
+        fi
     fi
     
     # Show new commit
@@ -246,7 +273,7 @@ pull_code() {
     print_status "New commit: $NEW_COMMIT"
     
     if [ "$CURRENT_COMMIT" = "$NEW_COMMIT" ]; then
-        print_warning "No new changes pulled"
+        print_success "No changes"
     else
         print_success "Code updated successfully"
         print_status "Changes: $CURRENT_COMMIT → $NEW_COMMIT"
