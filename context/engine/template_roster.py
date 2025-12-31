@@ -219,9 +219,16 @@ def _generate_validated_template(
     emp_offset = template_emp.get('rotationOffset', 0)
     pattern_length = len(work_pattern)
     
+    # Detect if this is Scheme A + APO (eligible for 6-day week with rest day pay)
+    emp_scheme = template_emp.get('scheme', '')
+    emp_product = template_emp.get('productTypeId', '')
+    req_product = requirement.get('productTypeId', '')
+    is_scheme_a_apo = (emp_scheme == 'Scheme A' and emp_product == 'APO' and req_product == 'APO')
+    
     # Track state for constraint validation
     consecutive_days = 0
     weekly_hours = []  # List of (date, hours) tuples
+    work_days_this_week = []  # Track work days in current Monday-Sunday week
     monthly_ot_minutes = 0
     last_shift_end = None
     
@@ -245,8 +252,16 @@ def _generate_validated_template(
             day_index += 1
             continue
         
-        # Clean up old weekly hours BEFORE validation (keep only last 7 days)
-        weekly_hours = [(d, h) for d, h in weekly_hours if (current_date - d).days < 7]
+        # Calculate Monday-Sunday work week for MOM compliance
+        # MOM law defines work week as Monday-Sunday, NOT rolling 7-day window
+        monday_of_week = current_date - timedelta(days=current_date.weekday())  # weekday() returns 0 for Monday
+        sunday_of_week = monday_of_week + timedelta(days=6)
+        
+        # Clean up old weekly hours: keep only hours from current Monday-Sunday week
+        weekly_hours = [(d, h) for d, h in weekly_hours if monday_of_week <= d < current_date]
+        
+        # Clean up work days tracking for current week
+        work_days_this_week = [d for d in work_days_this_week if monday_of_week <= d < current_date]
         
         # Calculate pattern position with offset
         pattern_index = (emp_offset + day_index) % pattern_length
@@ -262,7 +277,11 @@ def _generate_validated_template(
             }
             consecutive_days = 0  # Reset consecutive days
         else:
-            # Work day - validate constraints
+            # Work day - check if this would be 6th day in week for Scheme A APO
+            work_day_position_in_week = len(work_days_this_week) + 1  # Current day would be Nth work day
+            is_6th_day_apo = is_scheme_a_apo and work_day_position_in_week == 6
+            
+            # Validate constraints
             validation_result = _validate_assignment(
                 template_emp,
                 current_date,
@@ -273,8 +292,10 @@ def _generate_validated_template(
                 last_shift_end,
                 ctx,
                 coverage_days,
-                requirement,  # Pass requirement for qualification/rank checks
-                demand        # Pass demand
+                requirement,
+                demand,
+                is_scheme_a_apo,
+                work_day_position_in_week
             )
             
             if validation_result['valid']:
@@ -286,7 +307,8 @@ def _generate_validated_template(
                     demand,
                     requirement,
                     pattern_index,
-                    emp_offset
+                    emp_offset,
+                    is_6th_day_apo
                 )
                 
                 template_pattern[date_str] = {
@@ -298,6 +320,8 @@ def _generate_validated_template(
                 
                 # Update tracking state
                 consecutive_days += 1
+                work_days_this_week.append(current_date)  # Track this work day
+                
                 # Track only normal hours for C2 weekly cap validation
                 normal_hours = assignment['hours']['normal']
                 weekly_hours.append((current_date, normal_hours))
@@ -336,7 +360,9 @@ def _validate_assignment(
     ctx: Dict[str, Any],
     coverage_days: List[str],
     requirement: Dict[str, Any] = None,
-    demand: Dict[str, Any] = None
+    demand: Dict[str, Any] = None,
+    is_scheme_a_apo: bool = False,
+    work_day_position_in_week: int = 1
 ) -> Dict[str, Any]:
     """
     Validate if assignment satisfies all hard constraints.
@@ -344,6 +370,8 @@ def _validate_assignment(
     Args:
         coverage_days: List of day names when shifts can be assigned (e.g., ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
         requirement: Requirement dict with qualification and rank requirements (optional)
+        is_scheme_a_apo: True if Scheme A + APO (eligible for 6-day week with rest day pay)
+        work_day_position_in_week: Position of this work day in current Monday-Sunday week (1-6)
         demand: Demand dict (optional)
     
     Returns: {'valid': bool, 'reason': str}
@@ -467,11 +495,17 @@ def _validate_assignment(
         return {'valid': False, 'reason': f'C1: Shift {shift_duration_hours}h exceeds {max_daily_hours}h daily cap'}
     
     # C2: Weekly 44h normal hours cap
+    # SPECIAL CASE: Scheme A APO employees can work 6th day with rest day pay (0h normal)
     # Calculate what normal hours would be for THIS shift
     gross_hours = _calculate_shift_duration(shift_details)
     lunch_hours = 1.0 if gross_hours >= 8 else 0.0
     net_hours = gross_hours - lunch_hours
-    shift_normal_hours = min(net_hours, 8.8)  # Cap at 8.8h normal
+    
+    # For Scheme A APO 6th work day in week: Use 0h normal (rest day pay applies)
+    if is_scheme_a_apo and work_day_position_in_week == 6:
+        shift_normal_hours = 0.0  # Rest day pay - doesn't count toward 44h cap
+    else:
+        shift_normal_hours = min(net_hours, 8.8)  # Standard: Cap at 8.8h normal
     
     # Read weekly cap from JSON config if available
     if _has_constraint_config:
@@ -583,9 +617,14 @@ def _create_validated_assignment(
     demand: Dict[str, Any],
     requirement: Dict[str, Any],
     pattern_day: int,
-    rotation_offset: int
+    rotation_offset: int,
+    is_6th_day_apo: bool = False
 ) -> Dict[str, Any]:
-    """Create assignment dictionary for validated work day."""
+    """Create assignment dictionary for validated work day.
+    
+    Args:
+        is_6th_day_apo: True if this is 6th work day in week for Scheme A APO (rest day pay applies)
+    """
     from context.engine.time_utils import calculate_mom_compliant_hours
     
     emp_id = employee['employeeId']
@@ -608,19 +647,25 @@ def _create_validated_assignment(
     else:
         end_datetime = f"{date_str}T{shift_end}"
     
-    # Calculate hours (simplified for template generation)
+    # Calculate hours
     gross_hours = _calculate_shift_duration(shift_details)
     lunch_hours = 1.0 if gross_hours >= 8 else 0.0
     net_hours = gross_hours - lunch_hours
     
-    # Normal hours: 8.8h/day (44h/week ÷ 5 days), rest is OT
-    # Always use 8.8h for normal (MOM compliance)
-    if net_hours <= 8.8:
-        normal_hours = net_hours
-        ot_hours = 0.0
+    # SCHEME A APO 6TH DAY: Apply rest day pay
+    if is_6th_day_apo:
+        normal_hours = 0.0
+        rest_day_pay = 8.0
+        ot_hours = max(0.0, net_hours - 8.0)  # OT is anything beyond 8h rest day pay
     else:
-        normal_hours = 8.8
-        ot_hours = net_hours - 8.8
+        # Standard pattern-aware calculation
+        from context.constraints.C2_mom_weekly_hours import calculate_pattern_aware_hours
+        work_pattern = employee.get('workPattern', [])
+        emp_scheme = employee.get('scheme', 'A')
+        normal_hours, ot_hours = calculate_pattern_aware_hours(
+            work_pattern, pattern_day, gross_hours, lunch_hours, emp_scheme
+        )
+        rest_day_pay = 0.0
     
     assignment = {
         'assignmentId': f"{demand_id}-{date_str}-D-{emp_id}",
@@ -640,7 +685,7 @@ def _create_validated_assignment(
             'lunch': round(lunch_hours, 1),
             'normal': round(normal_hours, 1),
             'ot': round(ot_hours, 1),
-            'restDayPay': 0.0,
+            'restDayPay': round(rest_day_pay, 1),
             'paid': round(gross_hours, 1)
         }
     }
