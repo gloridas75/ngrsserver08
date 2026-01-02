@@ -1,0 +1,564 @@
+{
+  "schemaVersion": "0.98",
+  "planningReference": "RST-20251230-E42D8E12",
+  "timezone": "Asia/Singapore",
+  "planningHorizon": {
+    "startDate": "2026-01-01",
+    "endDate": "2026-01-31"
+  },
+  "publicHolidays": [
+    "2026-01-01"
+  ],
+  "solverConfig": {
+    "optimizationMode": "minimizeEmployeeCount",
+    "maxEmployeesToUse": 3
+  },
+  "solverRunTime": {
+    "maxSeconds": 300
+  },
+  "schemeMap": {
+    "A": "Scheme A",
+    "B": "Scheme B",
+    "P": "Scheme P"
+  },
+  "fixedRotationOffset": "ouOffsets",
+  "fallbackToOutcomeBased": true,
+  "ouOffsets": [
+    {
+      "ouId": "MRU OFFICE HOURS",
+      "rotationOffset": 0
+    },
+    {
+      "ouId": "MRU TEAM 1",
+      "rotationOffset": 1
+    },
+    {
+      "ouId": "MRU TEAM 2",
+      "rotationOffset": 2
+    }
+  ],
+  "demandItems": [
+    {
+      "demandId": "DI-2512290630-26788026",
+      "locationId": "LOC-CTT-4031",
+      "shiftStartDate": "2026-01-01",
+      "rosteringBasis": "patternBased",
+      "minStaffThresholdPercentage": 100,
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "09:00:00",
+              "end": "21:00:00",
+              "nextDay": false
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": true,
+          "shiftSetId": "Set_DI_2512290630_26788026",
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "coverageAnchor": "2026-01-01",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": []
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "193_1",
+          "icpmpBufferPercentage": 30,
+          "productTypeId": "CIV",
+          "rankIds": [
+            "EXE",
+            "OFF"
+          ],
+          "headcount": 5,
+          "workPattern": [
+            "D",
+            "D",
+            "D",
+            "D",
+            "O",
+            "O"
+          ],
+          "requiredQualifications": [
+            {
+              "groupId": "G1",
+              "matchType": "ANY",
+              "qualifications": [
+                "13817_AT6_FUNCTION_TEST_-_X-RAY_MACHINE",
+                "13828_AT17_FUNCTION_TEST_-_L3_X-RAY_MACHINE"
+              ]
+            },
+            {
+              "groupId": "G2",
+              "matchType": "ANY",
+              "qualifications": [
+                "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL"
+              ]
+            }
+          ],
+          "gender": "Any",
+          "schemes": [
+            "Any"
+          ],
+          "enableOtAwareIcpmp": true
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "00143611",
+      "ouId": "MRU OFFICE HOURS",
+      "productTypeId": "CIV",
+      "rankId": "EXE",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "13817_AT6_FUNCTION_TEST_-_X-RAY_MACHINE",
+          "validFrom": "2025-12-30",
+          "expiryDate": "2026-05-31"
+        },
+        {
+          "code": "13828_AT17_FUNCTION_TEST_-_L3_X-RAY_MACHINE",
+          "validFrom": "2025-12-29",
+          "expiryDate": "2026-05-31"
+        },
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-12-29",
+          "expiryDate": "2026-05-31"
+        },
+        {
+          "code": "EMPSTAT_0",
+          "validFrom": "2024-06-02",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": ["2026-01-05", "2026-01-26"]
+    },
+    {
+      "employeeId": "00887611",
+      "ouId": "MRU OFFICE HOURS",
+      "productTypeId": "CIV",
+      "rankId": "EXE",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "13828_AT17_FUNCTION_TEST_-_L3_X-RAY_MACHINE",
+          "validFrom": "2025-12-01",
+          "expiryDate": "2026-02-28"
+        },
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-12-01",
+          "expiryDate": "2026-01-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00902721",
+      "ouId": "MRU OFFICE HOURS",
+      "productTypeId": "CIV",
+      "rankId": "EXE",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    }
+  ],
+  "constraintList": [
+    {
+      "id": "maxConsecutiveWorkingDays",
+      "enforcement": "hard",
+      "description": "Maximum consecutive working days",
+      "frequency": "Continuous",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 12,
+      "schemeOverrides": {
+        "A": {
+          "productTypes": [
+            "APO"
+          ],
+          "value": 8,
+          "description": "APGD-D10 (Scheme A + APO product type) can work 8 consecutive days including off-day"
+        }
+      }
+    },
+    {
+      "id": "momDailyHoursCap",
+      "enforcement": "hard",
+      "description": "Maximum daily working hours by scheme",
+      "frequency": "Daily",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 9,
+      "schemeOverrides": {
+        "A": 14,
+        "B": 13,
+        "P": 9
+      }
+    },
+    {
+      "id": "momWeeklyHoursCap44h",
+      "enforcement": "hard",
+      "description": "Weekly normal hours cap (same for all schemes)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 44
+    },
+    {
+      "id": "minimumOffDaysPerWeek",
+      "enforcement": "hard",
+      "description": "Minimum off-days per week",
+      "frequency": "Weekly",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "All schemes require 1 off-day per week. Scheme A with APO can work on off-day for up to 8 consecutive days."
+    },
+    {
+      "id": "momMonthlyOTcap72h",
+      "enforcement": "hard",
+      "description": "Monthly overtime hours cap",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 72
+    },
+    {
+      "id": "momLunchBreak",
+      "enforcement": "hard",
+      "description": "Meal break deduction",
+      "frequency": "Per Shift",
+      "uom": "Minutes",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 60,
+      "params": {
+        "deductIfShiftAtLeastMinutes": 480
+      }
+    },
+    {
+      "id": "apgdMinRestBetweenShifts",
+      "enforcement": "hard",
+      "description": "Minimum rest between shifts",
+      "frequency": "Between Shifts",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 8,
+      "schemeOverrides": {
+        "P": 1
+      },
+      "notes": "Scheme P requires only 1 hour rest, enabling split-shift patterns. All other schemes require 8 hours."
+    },
+    {
+      "id": "oneShiftPerDay",
+      "enforcement": "hard",
+      "description": "Maximum shifts per day",
+      "frequency": "Per Day",
+      "uom": "Number",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "Currently all schemes limited to 1 shift per day. Scheme P = 2 shifts deferred for future implementation."
+    },
+    {
+      "id": "partTimerWeeklyHours",
+      "enforcement": "hard",
+      "description": "Part-timer weekly hour limits (Scheme P only)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "params": {
+        "maxHours4Days": 34.98,
+        "maxHoursMoreDays": 29.98
+      },
+      "notes": "<=4 working days per week:max 34.98h, >4 days per week:max 29.98h",
+      "applicableToSchemes": [
+        "P"
+      ]
+    }
+  ],
+  "monthlyHourLimits": [
+    {
+      "id": "standardMonthlyHours",
+      "description": "Standard monthly working hours based on 44h/week",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": "All",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "normalHours": 176,
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288,
+          "notes": "28 days in month",
+          "calculation": "28 days × 44h/7 = 176h normal"
+        },
+        "29": {
+          "normalHours": 182,
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298,
+          "notes": "29 days in month (leap year Feb)",
+          "calculation": "29 days × 44h/7 = 182h normal"
+        },
+        "30": {
+          "normalHours": 189,
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309,
+          "notes": "30 days in month",
+          "calculation": "30 days × 44h/7 = 189h normal"
+        },
+        "31": {
+          "normalHours": 195,
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319,
+          "notes": "31 days in month",
+          "calculation": "31 days × 44h/7 = 195h normal"
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHours",
+      "description": "APGD-D10 minimum contractual hours for LOCAL SG/PR employees (excluding CPL and SGT who have different requirements)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "Local",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranksExcluded": []
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 224
+        },
+        "29": {
+          "minimumContractualHours": 231
+        },
+        "30": {
+          "minimumContractualHours": 238
+        },
+        "31": {
+          "minimumContractualHours": 246
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHoursCplSgt",
+      "description": "APGD-D10 minimum contractual hours for FOREIGNER CPL and SGT ranks with higher requirements",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "Foreigner",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": []
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 244
+        },
+        "29": {
+          "minimumContractualHours": 252
+        },
+        "30": {
+          "minimumContractualHours": 260
+        },
+        "31": {
+          "minimumContractualHours": 268
+        }
+      }
+    },
+    {
+      "id": "apgdMaximumOvertimeHours",
+      "description": "APGD-D10 maximum overtime hours per month (MOM limit: 72h/month)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "maxOvertimeHours": 112
+        },
+        "29": {
+          "maxOvertimeHours": 116
+        },
+        "30": {
+          "maxOvertimeHours": 120
+        },
+        "31": {
+          "maxOvertimeHours": 124
+        }
+      }
+    },
+    {
+      "id": "apgdTotalMaxHours",
+      "description": "APGD-D10 total maximum working hours per month (normal + OT)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "totalMaxHours": 288
+        },
+        "29": {
+          "totalMaxHours": 298
+        },
+        "30": {
+          "totalMaxHours": 309
+        },
+        "31": {
+          "totalMaxHours": 319
+        }
+      }
+    },
+    {
+      "id": "apgdAppreciationIncentive",
+      "description": "APGD-D10 minimum hours required to qualify for appreciation incentive",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "appreciationMinHours": 220
+        },
+        "29": {
+          "appreciationMinHours": 227
+        },
+        "30": {
+          "appreciationMinHours": 234
+        },
+        "31": {
+          "appreciationMinHours": 242
+        }
+      }
+    }
+  ],
+  "softConstraintWeights": {
+    "rotationPatternCompliance": 10,
+    "employeePreferences": 5,
+    "consistentShiftStart": 3,
+    "minimizeShortRestGaps": 8,
+    "officerContinuity": 4,
+    "minimizeTeamChanges": 2,
+    "zonePreference": 3,
+    "teamSizeFeasibility": 2,
+    "travelSlackBuffer": 1,
+    "fairOvertimeDistribution": 6,
+    "publicHolidayCoverage": 4,
+    "allowanceOptimization": 2,
+    "substituteLogic": 1,
+    "midMonthInsert": 1,
+    "demandCoverageScore": 5,
+    "travelSlackTime": 1
+  },
+  "solverScoreConfig": {}
+}

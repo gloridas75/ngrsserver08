@@ -1,0 +1,1657 @@
+{
+  "schemaVersion": "0.98",
+  "planningReference": "RST-20251230-CE17BA91",
+  "timezone": "Asia/Singapore",
+  "planningHorizon": {
+    "startDate": "2026-01-01",
+    "endDate": "2026-01-31"
+  },
+  "publicHolidays": [
+    "2026-01-01"
+  ],
+  "solverConfig": {
+    "optimizationMode": "minimizeEmployeeCount",
+    "maxEmployeesToUse": 91
+  },
+  "solverRunTime": {
+    "maxSeconds": 300
+  },
+  "schemeMap": {
+    "A": "Scheme A",
+    "B": "Scheme B",
+    "P": "Scheme P"
+  },
+  "fixedRotationOffset": "auto",
+  "fallbackToOutcomeBased": true,
+  "ouOffsets": [
+    {
+      "ouId": "SAO",
+      "rotationOffset": 0
+    }
+  ],
+  "demandItems": [
+    {
+      "demandId": "DI-2512010803-15160815",
+      "locationId": "LOC-SAA0-7129",
+      "shiftStartDate": "2026-01-01",
+      "rosteringBasis": "demandBased",
+      "minStaffThresholdPercentage": 100,
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "08:00:00",
+              "end": "20:00:00",
+              "nextDay": false
+            },
+            {
+              "shiftCode": "N",
+              "start": "20:00:00",
+              "end": "08:00:00",
+              "nextDay": true
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": true,
+          "shiftSetId": "Set_DI_2512010803_15160815",
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "coverageAnchor": "2026-01-01",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": []
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "25_1",
+          "icpmpBufferPercentage": 30,
+          "productTypeId": "APO",
+          "rankIds": [
+            "SGT"
+          ],
+          "headcount": 20,
+          "workPattern": [
+            "D",
+            "D",
+            "N",
+            "N",
+            "O",
+            "O"
+          ],
+          "requiredQualifications": [],
+          "gender": "Any",
+          "schemes": [
+            "Any"
+          ],
+          "enableOtAwareIcpmp": true
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "00011502",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00011954",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012000",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012006",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012058",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012498",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012615",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012638",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012669",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00012901",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00016346",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00016370",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00016665",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00017127",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00017362",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00017460",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00017799",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00018142",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00018171",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00018421",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00018896",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00019216",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00019262",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00019404",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00021293",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00023768",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00023844",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00024674",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00026375",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00026517",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00027743",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00027821",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00028118",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00029236",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00030494",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00032102",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00033426",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00033448",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00033644",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00034246",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00034249",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00036144",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00038476",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00039828",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00041243",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00045454",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00045522",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00045832",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00049464",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00056416",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00061130",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00064091",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00069723",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00071097",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00075521",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00075563",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00075987",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00080438",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00087597",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00097124",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00098795",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00103591",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00104262",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00108960",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00110166",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00110416",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00113324",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00113749",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00115209",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00121463",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00121533",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00121975",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00145287",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00148989",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00149168",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00153291",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00153741",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00154528",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00154877",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00155297",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00155454",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00155790",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00155915",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00156224",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00156775",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00157057",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00157722",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00158151",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00158722",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00167581",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00168855",
+      "ouId": "SAO",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": []
+    }
+  ],
+  "constraintList": [
+    {
+      "id": "maxConsecutiveWorkingDays",
+      "enforcement": "hard",
+      "description": "Maximum consecutive working days",
+      "frequency": "Continuous",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 12,
+      "schemeOverrides": {
+        "A": {
+          "productTypes": [
+            "APO"
+          ],
+          "value": 8,
+          "description": "APGD-D10 (Scheme A + APO product type) can work 8 consecutive days including off-day"
+        }
+      }
+    },
+    {
+      "id": "momDailyHoursCap",
+      "enforcement": "hard",
+      "description": "Maximum daily working hours by scheme",
+      "frequency": "Daily",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 9,
+      "schemeOverrides": {
+        "A": 14,
+        "B": 13,
+        "P": 9
+      }
+    },
+    {
+      "id": "momWeeklyHoursCap44h",
+      "enforcement": "hard",
+      "description": "Weekly normal hours cap (same for all schemes)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 44
+    },
+    {
+      "id": "minimumOffDaysPerWeek",
+      "enforcement": "hard",
+      "description": "Minimum off-days per week",
+      "frequency": "Weekly",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "All schemes require 1 off-day per week. Scheme A with APO can work on off-day for up to 8 consecutive days."
+    },
+    {
+      "id": "momMonthlyOTcap72h",
+      "enforcement": "hard",
+      "description": "Monthly overtime hours cap",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 72
+    },
+    {
+      "id": "momLunchBreak",
+      "enforcement": "hard",
+      "description": "Meal break deduction",
+      "frequency": "Per Shift",
+      "uom": "Minutes",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 60,
+      "params": {
+        "deductIfShiftAtLeastMinutes": 480
+      }
+    },
+    {
+      "id": "apgdMinRestBetweenShifts",
+      "enforcement": "hard",
+      "description": "Minimum rest between shifts",
+      "frequency": "Between Shifts",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 8,
+      "schemeOverrides": {
+        "P": 1
+      },
+      "notes": "Scheme P requires only 1 hour rest, enabling split-shift patterns. All other schemes require 8 hours."
+    },
+    {
+      "id": "oneShiftPerDay",
+      "enforcement": "hard",
+      "description": "Maximum shifts per day",
+      "frequency": "Per Day",
+      "uom": "Number",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "Currently all schemes limited to 1 shift per day. Scheme P = 2 shifts deferred for future implementation."
+    },
+    {
+      "id": "partTimerWeeklyHours",
+      "enforcement": "hard",
+      "description": "Part-timer weekly hour limits (Scheme P only)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "params": {
+        "maxHours4Days": 34.98,
+        "maxHoursMoreDays": 29.98
+      },
+      "notes": "<=4 working days per week:max 34.98h, >4 days per week:max 29.98h",
+      "applicableToSchemes": [
+        "P"
+      ]
+    }
+  ],
+  "monthlyHourLimits": [
+    {
+      "id": "standardMonthlyHours",
+      "description": "Standard monthly working hours based on 44h/week",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": "All",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "normalHours": 176,
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288,
+          "notes": "28 days in month",
+          "calculation": "28 days × 44h/7 = 176h normal"
+        },
+        "29": {
+          "normalHours": 182,
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298,
+          "notes": "29 days in month (leap year Feb)",
+          "calculation": "29 days × 44h/7 = 182h normal"
+        },
+        "30": {
+          "normalHours": 189,
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309,
+          "notes": "30 days in month",
+          "calculation": "30 days × 44h/7 = 189h normal"
+        },
+        "31": {
+          "normalHours": 195,
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319,
+          "notes": "31 days in month",
+          "calculation": "31 days × 44h/7 = 195h normal"
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHours",
+      "description": "APGD-D10 minimum contractual hours for LOCAL SG/PR employees (excluding CPL and SGT who have different requirements)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "Local",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranksExcluded": []
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 224
+        },
+        "29": {
+          "minimumContractualHours": 231
+        },
+        "30": {
+          "minimumContractualHours": 238
+        },
+        "31": {
+          "minimumContractualHours": 246
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHoursCplSgt",
+      "description": "APGD-D10 minimum contractual hours for FOREIGNER CPL and SGT ranks with higher requirements",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "Foreigner",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": []
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 244
+        },
+        "29": {
+          "minimumContractualHours": 252
+        },
+        "30": {
+          "minimumContractualHours": 260
+        },
+        "31": {
+          "minimumContractualHours": 268
+        }
+      }
+    },
+    {
+      "id": "apgdMaximumOvertimeHours",
+      "description": "APGD-D10 maximum overtime hours per month (MOM limit: 72h/month)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "maxOvertimeHours": 112
+        },
+        "29": {
+          "maxOvertimeHours": 116
+        },
+        "30": {
+          "maxOvertimeHours": 120
+        },
+        "31": {
+          "maxOvertimeHours": 124
+        }
+      }
+    },
+    {
+      "id": "apgdTotalMaxHours",
+      "description": "APGD-D10 total maximum working hours per month (normal + OT)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "totalMaxHours": 288
+        },
+        "29": {
+          "totalMaxHours": 298
+        },
+        "30": {
+          "totalMaxHours": 309
+        },
+        "31": {
+          "totalMaxHours": 319
+        }
+      }
+    },
+    {
+      "id": "apgdAppreciationIncentive",
+      "description": "APGD-D10 minimum hours required to qualify for appreciation incentive",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "appreciationMinHours": 220
+        },
+        "29": {
+          "appreciationMinHours": 227
+        },
+        "30": {
+          "appreciationMinHours": 234
+        },
+        "31": {
+          "appreciationMinHours": 242
+        }
+      }
+    }
+  ],
+  "softConstraintWeights": {
+    "rotationPatternCompliance": 10,
+    "employeePreferences": 5,
+    "consistentShiftStart": 3,
+    "minimizeShortRestGaps": 8,
+    "officerContinuity": 4,
+    "minimizeTeamChanges": 2,
+    "zonePreference": 3,
+    "teamSizeFeasibility": 2,
+    "travelSlackBuffer": 1,
+    "fairOvertimeDistribution": 6,
+    "publicHolidayCoverage": 4,
+    "allowanceOptimization": 2,
+    "substituteLogic": 1,
+    "midMonthInsert": 1,
+    "demandCoverageScore": 5,
+    "travelSlackTime": 1
+  },
+  "solverScoreConfig": {}
+}

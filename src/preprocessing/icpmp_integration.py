@@ -417,23 +417,15 @@ class ICPMPPreprocessor:
         logger.info(f"    Available employees: {len(available)} (after availability check)")
         
         # Apply buffer to increase employee count (default 20% buffer)
-        # This helps prevent understaffing and provides scheduling flexibility
+        # This provides scheduling flexibility and constraint safety margin
         buffer_percentage = requirement.get('icpmpBufferPercentage', 20)  # Default 20%
-        
-        # INTELLIGENT BUFFER: Skip buffer when employees are abundant
-        # Rationale: Buffer is for constraint flexibility, not needed when employees >> optimal
-        # Threshold: If available >= optimal × 1.5, skip buffer (50% surplus already exists)
-        if buffer_percentage > 0 and len(available) >= optimal_count_raw * 1.5:
-            logger.info(f"    🎯 BUFFER BYPASS: {len(available)} available >> {optimal_count_raw} needed (>50% surplus)")
-            logger.info(f"    Skipping {buffer_percentage}% buffer - sufficient scheduling flexibility already exists")
-            buffer_percentage = 0
         
         if buffer_percentage > 0:
             optimal_count = int(optimal_count_raw * (1 + buffer_percentage / 100))
-            logger.info(f"    Applying {buffer_percentage}% buffer: {optimal_count_raw} → {optimal_count} employees")
+            logger.info(f"    ✓ Applying {buffer_percentage}% buffer: {optimal_count_raw} → {optimal_count} employees")
         else:
             optimal_count = optimal_count_raw
-            logger.info(f"    No buffer applied: using {optimal_count} employees")
+            logger.info(f"    No buffer specified: using {optimal_count} employees")
         
         offset_distribution_dict = icpmp_result['configuration']['offsetDistribution']
         
