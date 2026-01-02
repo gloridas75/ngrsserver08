@@ -436,6 +436,157 @@ class IncrementalSolveRequest(BaseModel):
 
 
 # ============================================================================
+# Empty Slots Solving Models (v0.96)
+# ============================================================================
+
+class EmptySlot(BaseModel):
+    """
+    Slot that needs to be filled in empty slots solving mode.
+    
+    Represents a single unfilled slot with all necessary metadata
+    for the solver to assign an employee.
+    """
+    slotId: str = Field(..., description="Unique slot identifier")
+    date: str = Field(..., description="Date in YYYY-MM-DD format")
+    shiftCode: str = Field(..., description="Shift code (D, N, E, etc.)")
+    requirementId: str = Field(..., description="Links to demandItems requirement")
+    demandId: str = Field(..., description="Demand identifier")
+    locationId: str = Field(..., description="Location identifier")
+    productTypeId: str = Field(..., description="Product type identifier")
+    rankId: str = Field(..., description="Rank/position identifier")
+    startTime: str = Field(..., description="HH:MM:SS format")
+    endTime: str = Field(..., description="HH:MM:SS format")
+    reason: str = Field(
+        ...,
+        description="Why slot is empty",
+        json_schema_extra={
+            "enum": ["UNASSIGNED", "DEPARTED_EMPLOYEE", "LONG_LEAVE", "MANUAL_RELEASE"]
+        }
+    )
+
+
+class EmployeeLockedContext(BaseModel):
+    """
+    Pre-computed context for each employee from locked/historical assignments.
+    
+    This eliminates the need to send full assignment history - just the
+    computed state needed for constraint checking.
+    """
+    employeeId: str = Field(..., description="Employee identifier")
+    assignedDates: List[str] = Field(
+        default_factory=list,
+        description="Dates already worked (YYYY-MM-DD format)"
+    )
+    weeklyHours: Dict[str, float] = Field(
+        default_factory=dict,
+        description="Hours worked per week: {week_key: hours}. Week key format: YYYY-WNN (e.g., 2026-W01)"
+    )
+    monthlyHours: float = Field(
+        default=0.0,
+        description="Total hours worked this month"
+    )
+    consecutiveWorkingDays: int = Field(
+        default=0,
+        description="Current consecutive working days streak"
+    )
+    lastWorkDate: Optional[str] = Field(
+        None,
+        description="Last date worked in YYYY-MM-DD format (for rest period validation)"
+    )
+    rotationOffset: Optional[int] = Field(
+        None,
+        description="Current rotation offset for pattern-based scheduling"
+    )
+    workPatternId: Optional[str] = Field(
+        None,
+        description="Work pattern identifier (e.g., 4ON3OFF, ALPHA_PATTERN)"
+    )
+
+
+class LockedContext(BaseModel):
+    """
+    Context from locked/historical assignments before cutoff date.
+    
+    Contains pre-computed employee states to avoid sending full roster history.
+    """
+    cutoffDate: str = Field(
+        ...,
+        description="Date before which all assignments are locked (YYYY-MM-DD)"
+    )
+    employeeAssignments: List[EmployeeLockedContext] = Field(
+        default_factory=list,
+        description="Pre-computed context for each employee with locked assignments"
+    )
+
+
+class EmptySlotsRequest(BaseModel):
+    """
+    Request payload for POST /solve/empty-slots endpoint.
+    
+    Optimized solving mode that accepts only:
+    - Empty slots (what needs to be filled)
+    - Locked employee context (pre-computed hours, streaks, etc.)
+    - Available employees
+    
+    This eliminates the need to send full roster history (97% payload reduction).
+    
+    Schema Version: 0.96+
+    """
+    schemaVersion: str = Field(
+        "0.96",
+        description="Schema version (must be 0.96 or higher)"
+    )
+    planningReference: str = Field(
+        ...,
+        description="Planning reference identifier"
+    )
+    solveMode: str = Field(
+        default="emptySlots",
+        description="Solve mode - must be 'emptySlots'"
+    )
+    
+    # Core empty slots data
+    emptySlots: List[EmptySlot] = Field(
+        ...,
+        description="List of slots that need to be filled (min: 1)"
+    )
+    lockedContext: LockedContext = Field(
+        ...,
+        description="Pre-computed employee context from locked assignments"
+    )
+    
+    # Standard solver inputs
+    employees: List[Dict[str, Any]] = Field(
+        ...,
+        description="Available employees (same format as regular solve)"
+    )
+    demandItems: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="Demand requirements (auto-generated from emptySlots if omitted)"
+    )
+    planningHorizon: Dict[str, str] = Field(
+        ...,
+        description="Planning period with startDate and endDate"
+    )
+    
+    # Optional configurations
+    constraintList: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="Constraint configurations (C1-C17, S1-S16)"
+    )
+    solverScoreConfig: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Scoring weights for soft constraints"
+    )
+    solverConfig: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Solver engine configuration (timeLimit, etc.)"
+    )
+    
+    model_config = ConfigDict(extra='allow')
+
+
+# ============================================================================
 # Empty Slots Solver Models (v0.96)
 # ============================================================================
 

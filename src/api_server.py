@@ -37,7 +37,7 @@ from src.models import (
     SolveRequest, SolveResponse, HealthResponse, 
     Score, SolverRunMetadata, Meta, Violation,
     AsyncJobRequest, AsyncJobResponse, JobStatusResponse, AsyncStatsResponse,
-    IncrementalSolveRequest, FillSlotsWithAvailabilityRequest
+    IncrementalSolveRequest, FillSlotsWithAvailabilityRequest, EmptySlotsRequest
 )
 from src.output_builder import build_output
 from src.redis_job_manager import RedisJobManager
@@ -1566,6 +1566,163 @@ async def solve_fill_slots_endpoint(
             status_code=500,
             detail=f"Internal server error: {str(e)}"
         )
+
+
+# ============================================================================
+# EMPTY SLOTS SOLVE ENDPOINT (v0.96)
+# ============================================================================
+
+@app.post("/solve/empty-slots", response_class=ORJSONResponse)
+async def solve_empty_slots_endpoint(
+    request: Request,
+    payload: EmptySlotsRequest
+):
+    """
+    Empty slots solver - Optimized mode that accepts only unfilled slots + locked context.
+    
+    **Key Benefits:**
+    - **97% smaller payload**: Send only 50 empty slots vs 1,550 full assignments
+    - **Faster processing**: No classification needed, direct to solving
+    - **Clearer intent**: Explicit about what needs to be filled
+    - **All constraints**: Full C1-C17 and S1-S16 support
+    
+    **Use Cases:**
+    - Mid-month roster adjustments (only send unfilled slots)
+    - New employee onboarding (fill their slots without full roster history)
+    - Covering departures/leaves (fill freed slots)
+    - Manual roster edits (fill released/modified slots)
+    
+    **How it works:**
+    1. Client provides:
+       - Empty slots (what needs filling)
+       - Locked employee context (pre-computed hours, consecutive days, last work date)
+       - Available employees
+    2. Server:
+       - Validates input
+       - Builds demand items from empty slots (or uses provided)
+       - Parses locked context (weekly hours, consecutive days, rotation offsets)
+       - Invokes solver with all constraints (C1-C17, S1-S16)
+       - Returns only new assignments
+    
+    **Constraint Compatibility:**
+    - C1 MOM Daily Hours: ✓ Enforced
+    - C2 Pattern Hours: ✓ Uses workPatternId from lockedContext
+    - C3 Consecutive Days: ✓ Uses lockedConsecutiveDays
+    - C4 Rest Between Shifts: ✓ Uses lastWorkDate
+    - C5-C17: ✓ All enforced
+    - S1-S16: ✓ All scored
+    
+    **Input Example:**
+    ```json
+    {
+      "schemaVersion": "0.96",
+      "planningReference": "JAN2026_CHANGIT1",
+      "solveMode": "emptySlots",
+      "emptySlots": [
+        {
+          "slotId": "D001-2026-01-15-D-abc",
+          "date": "2026-01-15",
+          "shiftCode": "D",
+          "requirementId": "REQ_APO_DAY",
+          "demandId": "D001",
+          "locationId": "ChangiT1",
+          "productTypeId": "APO",
+          "rankId": "APO",
+          "startTime": "07:00:00",
+          "endTime": "19:00:00",
+          "reason": "UNASSIGNED"
+        }
+      ],
+      "lockedContext": {
+        "cutoffDate": "2026-01-10",
+        "employeeAssignments": [
+          {
+            "employeeId": "ALPHA_001",
+            "weeklyHours": {"2026-W02": 32.0},
+            "monthlyHours": 44.0,
+            "consecutiveWorkingDays": 3,
+            "lastWorkDate": "2026-01-10",
+            "rotationOffset": 0,
+            "workPatternId": "4ON3OFF"
+          }
+        ]
+      },
+      "employees": [...],
+      "planningHorizon": {
+        "startDate": "2026-01-11",
+        "endDate": "2026-01-31"
+      }
+    }
+    ```
+    
+    **Output:**
+    - assignments: List of new assignments (filled + unassigned)
+    - emptySlotsMetadata: Coverage stats, reason breakdown
+    - solverRun: Solver performance metadata
+    - score: Soft constraint violations
+    
+    **Returns:**
+    - 200: Solution completed (may have unassigned slots)
+    - 400: Invalid request (missing data, validation errors)
+    - 422: Schema validation error
+    - 500: Solver execution error
+    """
+    request_id = str(uuid.uuid4())
+    request.state.request_id = request_id
+    
+    logger.info(f"[{request_id}] Empty slots solve request received")
+    
+    try:
+        # Convert Pydantic model to dict
+        request_data = payload.model_dump()
+        
+        # Generate unique run ID
+        run_id = f"empty-{int(time.time())}-{request_id[:8]}"
+        
+        # Log request summary
+        empty_slots = request_data.get("emptySlots", [])
+        employees = request_data.get("employees", [])
+        locked_ctx = request_data.get("lockedContext", {})
+        
+        logger.info(f"[{request_id}] Empty slots: {len(empty_slots)}")
+        logger.info(f"[{request_id}] Employees: {len(employees)}")
+        logger.info(f"[{request_id}] Cutoff date: {locked_ctx.get('cutoffDate')}")
+        
+        # Call empty slots solver
+        from src.empty_slots_solver import solve_empty_slots
+        
+        result = solve_empty_slots(
+            request_data=request_data,
+            solver_engine=solve,  # Pass solver function
+            run_id=run_id
+        )
+        
+        logger.info(f"[{request_id}] Empty slots solve completed")
+        logger.info(f"[{request_id}] Filled: {result.get('emptySlotsMetadata', {}).get('filledSlotCount', 0)}/{len(empty_slots)}")
+        
+        # Enrich result with meta information
+        result.setdefault("meta", {})
+        result["meta"]["requestId"] = request_id
+        result["meta"]["runId"] = run_id
+        result["meta"]["timestamp"] = datetime.now().isoformat()
+        if "schemaVersion" not in result["meta"]:
+            result["meta"]["schemaVersion"] = request_data.get("schemaVersion", "0.96")
+        
+        return result
+        
+    except Exception as e:
+        logger.error(
+            f"[{request_id}] Empty slots solve error: {str(e)}",
+            exc_info=True
+        )
+        
+        # Determine error type for appropriate HTTP status
+        if "validation" in str(e).lower() or "missing" in str(e).lower():
+            status_code = 400
+        else:
+            status_code = 500
+        
+        raise HTTPException(status_code=status_code, detail=str(e))
 
 
 # ============================================================================
