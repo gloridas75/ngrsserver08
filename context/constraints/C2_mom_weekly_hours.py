@@ -192,21 +192,18 @@ def add_constraints(model, ctx):
         print(f"[C2] Warning: Slots or decision variables not available")
         return
     
-    # Build employee work pattern, scheme, and product type maps
+    # Build employee work pattern and scheme maps
     emp_patterns = {}  # emp_id -> work_pattern list
     emp_schemes = {}   # emp_id -> scheme ('A', 'B', or 'P')
-    emp_products = {}  # emp_id -> productTypeId
     
     for emp in employees:
         emp_id = emp.get('employeeId')
         pattern = emp.get('workPattern', [])
         scheme_raw = emp.get('scheme', 'A')
         scheme_normalized = normalize_scheme(scheme_raw)
-        product_type = emp.get('productTypeId', '')
         
         emp_patterns[emp_id] = pattern
         emp_schemes[emp_id] = scheme_normalized
-        emp_products[emp_id] = product_type
     
     # Extract shift information by demand and shift code
     shift_info = {}
@@ -268,33 +265,14 @@ def add_constraints(model, ctx):
             print(f"[C2] INCREMENTAL MODE: Using locked weekly hours for {len(locked_weekly_hours)} employees")
     
     for emp_id, weeks in emp_week_slots.items():
-        # Get employee's work pattern, scheme, and product type
+        # Get employee's work pattern and scheme
         work_pattern = emp_patterns.get(emp_id, [])
         emp_scheme = emp_schemes.get(emp_id, 'A')
-        emp_product = emp_products.get(emp_id, '')
-        
-        # Check if Scheme A + APO (eligible for 6th day in week rest pay)
-        is_scheme_a_apo = (emp_scheme == 'A' and emp_product == 'APO')
         
         for week_key, week_slots in weeks.items():
-            # Sort slots by date to determine work day sequence in week
-            sorted_week_slots = sorted(week_slots, key=lambda s: s.date)
-            
-            # If Scheme A APO and 6+ work days in week, identify 6th day
-            sixth_day_slot_id = None
-            if is_scheme_a_apo and len(sorted_week_slots) >= 6:
-                # Count work days (slots that would be assigned)
-                work_day_count = 0
-                for slot in sorted_week_slots:
-                    if (slot.slot_id, emp_id) in x:
-                        work_day_count += 1
-                        if work_day_count == 6:
-                            sixth_day_slot_id = slot.slot_id
-                            break
-            
             # For each slot in this week, calculate pattern-aware normal hours
             weighted_assignments = []
-            for slot in sorted_week_slots:
+            for slot in week_slots:
                 if (slot.slot_id, emp_id) not in x:
                     continue
                 
@@ -313,14 +291,10 @@ def add_constraints(model, ctx):
                     lunch = hours_data.get('lunch', 0)
                     pattern_day = getattr(slot, 'patternDay', 0)
                     
-                    # SCHEME A APO: 6th day in week gets rest day pay (0h normal)
-                    if is_scheme_a_apo and slot.slot_id == sixth_day_slot_id:
-                        normal_hours = 0.0  # Rest day pay - doesn't count toward 44h
-                    else:
-                        # Use pattern-aware calculation with employee scheme
-                        normal_hours, _ = calculate_pattern_aware_hours(
-                            work_pattern, pattern_day, gross, lunch, emp_scheme
-                        )
+                    # Use pattern-aware calculation with employee scheme
+                    normal_hours, _ = calculate_pattern_aware_hours(
+                        work_pattern, pattern_day, gross, lunch, emp_scheme
+                    )
                     
                     var = x[(slot.slot_id, emp_id)]
                     
