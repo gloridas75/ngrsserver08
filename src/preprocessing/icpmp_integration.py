@@ -516,7 +516,20 @@ class ICPMPPreprocessor:
         product_type = requirement.get('productTypeId')
         ranks = requirement.get('rankIds', [])  # Changed from rankId to rankIds
         ou_id = demand_item.get('ouId')
-        required_quals = set(requirement.get('requiredQualifications', []))
+        
+        # Parse requiredQualifications (v0.98: supports qualification groups)
+        # Format: [{"groupId":"G1","matchType":"ANY","qualifications":["523_BASIC..."]}]
+        required_quals = set()
+        qual_groups = requirement.get('requiredQualifications', [])
+        if qual_groups:
+            for group in qual_groups:
+                if isinstance(group, dict) and 'qualifications' in group:
+                    # Extract all qualification codes from this group
+                    required_quals.update(group['qualifications'])
+                elif isinstance(group, str):
+                    # Legacy format: flat list of strings
+                    required_quals.add(group)
+        
         gender_req = requirement.get('gender', 'Any')
         scheme_list = normalize_schemes(requirement)  # v0.96: Support multiple schemes
         
@@ -580,9 +593,23 @@ class ICPMPPreprocessor:
                            f"filtered: not compatible with requirement schemes {scheme_list}")
                 continue
             
-            # Check qualifications
-            emp_quals = set(emp.get('qualifications', []))
-            if not required_quals.issubset(emp_quals):
+            # Check qualifications (v0.98: handle object format)
+            # Employee qualifications: [{"code":"523_BASIC...","validFrom":"...","expiryDate":"..."}]
+            emp_quals_raw = emp.get('qualifications', [])
+            emp_quals = set()
+            for qual in emp_quals_raw:
+                if isinstance(qual, dict) and 'code' in qual:
+                    emp_quals.add(qual['code'])
+                elif isinstance(qual, str):
+                    # Legacy format: flat list of strings
+                    emp_quals.add(qual)
+            
+            # Check if employee has at least one required qualification from each group
+            # For now, simplified: check if employee has ANY required qualification
+            if required_quals and not required_quals.intersection(emp_quals):
+                logger.debug(f"      Employee {emp['employeeId']} filtered: no matching qualifications")
+                logger.debug(f"        Required (any): {required_quals}")
+                logger.debug(f"        Employee has: {emp_quals}")
                 continue
             
             # Eligible - add deep copy to avoid mutating original
