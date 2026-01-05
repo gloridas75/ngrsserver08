@@ -420,11 +420,40 @@ class ICPMPPreprocessor:
         # This provides scheduling flexibility and constraint safety margin
         buffer_percentage = requirement.get('icpmpBufferPercentage', 20)  # Default 20%
         
+        # INTELLIGENT BUFFER ADJUSTMENT:
+        # If requested buffer exceeds available employees, try fallback buffer (20%)
+        # This preserves demandBased mode when possible instead of forcing outcomeBased fallback
+        optimal_count = None
+        applied_buffer = buffer_percentage
+        fallback_buffer = 20
+        
         if buffer_percentage > 0:
             optimal_count = int(optimal_count_raw * (1 + buffer_percentage / 100))
-            logger.info(f"    ✓ Applying {buffer_percentage}% buffer: {optimal_count_raw} → {optimal_count} employees")
+            
+            # Check if buffered count exceeds available employees
+            if optimal_count > len(available) and buffer_percentage > fallback_buffer:
+                logger.warning(f"    ⚠️  {buffer_percentage}% buffer exceeds available employees: {optimal_count} > {len(available)}")
+                logger.info(f"    ℹ️  Attempting intelligent buffer reduction: {buffer_percentage}% → {fallback_buffer}%")
+                
+                # Try fallback buffer
+                optimal_count_fallback = int(optimal_count_raw * (1 + fallback_buffer / 100))
+                
+                if optimal_count_fallback <= len(available):
+                    # Fallback buffer works!
+                    optimal_count = optimal_count_fallback
+                    applied_buffer = fallback_buffer
+                    logger.info(f"    ✓ Intelligent buffer adjustment successful: {optimal_count_raw} → {optimal_count} employees ({fallback_buffer}% buffer)")
+                    logger.info(f"    ✓ Preserved demandBased mode (avoided fallback to outcomeBased)")
+                else:
+                    # Even fallback buffer insufficient - will trigger outcomeBased fallback
+                    logger.warning(f"    ⚠️  Even {fallback_buffer}% buffer insufficient: {optimal_count_fallback} > {len(available)}")
+                    logger.info(f"    ℹ️  Using original {buffer_percentage}% buffer: {optimal_count} employees (will trigger outcomeBased fallback)")
+                    # Keep original optimal_count to trigger proper error message below
+            else:
+                logger.info(f"    ✓ Applying {buffer_percentage}% buffer: {optimal_count_raw} → {optimal_count} employees")
         else:
             optimal_count = optimal_count_raw
+            applied_buffer = 0
             logger.info(f"    No buffer specified: using {optimal_count} employees")
         
         offset_distribution_dict = icpmp_result['configuration']['offsetDistribution']

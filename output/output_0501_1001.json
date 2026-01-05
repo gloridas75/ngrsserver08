@@ -1,0 +1,4191 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "RST-20260104-CC6BB22C",
+  "publicHolidays": [],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2026-01-05T10:01:54.534365",
+    "ended": "2026-01-05T10:01:54.561093",
+    "durationSeconds": 0.027,
+    "status": "INFEASIBLE"
+  },
+  "score": {
+    "overall": 120,
+    "hard": 120,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "violations": [
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-01-2773b7 on 2026-06-01 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-02-f4b845 on 2026-06-02 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-03-b17788 on 2026-06-03 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-04-bdaef4 on 2026-06-04 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-05-e444e2 on 2026-06-05 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-06-36c37a on 2026-06-06 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-07-7804f5 on 2026-06-07 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-08-4f589c on 2026-06-08 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-09-c89519 on 2026-06-09 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-10-4e9174 on 2026-06-10 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-11-b706e8 on 2026-06-11 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-12-0aa35d on 2026-06-12 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-13-cc3fbd on 2026-06-13 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-14-c578a1 on 2026-06-14 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-15-0bbc86 on 2026-06-15 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-16-de2bf6 on 2026-06-16 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-17-ba6919 on 2026-06-17 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-18-0f9cb2 on 2026-06-18 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-19-50d376 on 2026-06-19 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-20-b6e64c on 2026-06-20 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-21-5ff788 on 2026-06-21 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-22-158803 on 2026-06-22 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-23-b0ec80 on 2026-06-23 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-24-5f3f0d on 2026-06-24 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-25-372f3c on 2026-06-25 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-26-797b34 on 2026-06-26 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-27-20e8d8 on 2026-06-27 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-28-569bdd on 2026-06-28 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-29-09bb0b on 2026-06-29 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P0-2026-06-30-aecc99 on 2026-06-30 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-01-f1f24f on 2026-06-01 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-02-c35c4b on 2026-06-02 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-03-57f256 on 2026-06-03 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-04-1112d5 on 2026-06-04 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-05-24bfd3 on 2026-06-05 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-06-fc5ee8 on 2026-06-06 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-07-aa9269 on 2026-06-07 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-08-f0fc29 on 2026-06-08 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-09-3d6494 on 2026-06-09 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-10-65010e on 2026-06-10 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-11-da5d3e on 2026-06-11 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-12-10426c on 2026-06-12 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-13-abbe82 on 2026-06-13 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-14-359ead on 2026-06-14 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-15-906efb on 2026-06-15 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-16-9cdc12 on 2026-06-16 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-17-46ab33 on 2026-06-17 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-18-427cb5 on 2026-06-18 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-19-a48bb0 on 2026-06-19 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-20-994eb3 on 2026-06-20 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-21-ad2e36 on 2026-06-21 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-22-3058ac on 2026-06-22 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-23-f5f644 on 2026-06-23 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-24-55255b on 2026-06-24 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-25-e696bb on 2026-06-25 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-26-a98f82 on 2026-06-26 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-27-a824b4 on 2026-06-27 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-28-9d5cb3 on 2026-06-28 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-29-bd0a01 on 2026-06-29 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P1-2026-06-30-52a1eb on 2026-06-30 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-01-642113 on 2026-06-01 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-02-0332cb on 2026-06-02 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-03-ace598 on 2026-06-03 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-04-b1ea2a on 2026-06-04 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-05-86db5b on 2026-06-05 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-06-980ee9 on 2026-06-06 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-07-40e9f1 on 2026-06-07 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-08-313220 on 2026-06-08 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-09-dc45c7 on 2026-06-09 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-10-cbf199 on 2026-06-10 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-11-47d6e0 on 2026-06-11 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-12-9b9d2a on 2026-06-12 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-13-91816b on 2026-06-13 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-14-b3da0b on 2026-06-14 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-15-99731f on 2026-06-15 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-16-3a2789 on 2026-06-16 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-17-17fb20 on 2026-06-17 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-18-57f256 on 2026-06-18 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-19-3f779e on 2026-06-19 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-20-b1cb27 on 2026-06-20 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-21-dcaa90 on 2026-06-21 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-22-f569fc on 2026-06-22 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-23-492f99 on 2026-06-23 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-24-0add16 on 2026-06-24 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-25-00bd24 on 2026-06-25 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-26-4b2a55 on 2026-06-26 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-27-004381 on 2026-06-27 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-28-57d534 on 2026-06-28 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-29-6fd255 on 2026-06-29 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P2-2026-06-30-b5259f on 2026-06-30 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-01-91a726 on 2026-06-01 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-02-0ba049 on 2026-06-02 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-03-262546 on 2026-06-03 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-04-f44e3e on 2026-06-04 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-05-fb4da2 on 2026-06-05 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-06-61cdbf on 2026-06-06 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-07-628a3b on 2026-06-07 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-08-edca0f on 2026-06-08 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-09-ad0d1e on 2026-06-09 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-10-422aec on 2026-06-10 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-11-524064 on 2026-06-11 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-12-dcb5a7 on 2026-06-12 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-13-71ba4e on 2026-06-13 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-14-cd40f7 on 2026-06-14 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-15-70a4c0 on 2026-06-15 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-16-850cae on 2026-06-16 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-17-30abfb on 2026-06-17 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-18-776923 on 2026-06-18 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-19-900549 on 2026-06-19 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-20-289894 on 2026-06-20 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-21-93386c on 2026-06-21 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-22-eb9686 on 2026-06-22 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-23-5f8c3c on 2026-06-23 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-24-20e1c6 on 2026-06-24 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-25-9134a6 on 2026-06-25 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-26-d264e3 on 2026-06-26 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-27-2c654b on 2026-06-27 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-28-1a7acb on 2026-06-28 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-29-03a4f3 on 2026-06-29 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        },
+        {
+          "type": "hard",
+          "id": "hard_C11_rank_mismatch",
+          "note": "Slot DI-2601031507-75610560-232_1-D-P3-2026-06-30-dd30ee on 2026-06-30 unassigned - Required ranks ['ASO', 'AVSP', 'SASS'] not available in any employee; Shift 12.0h exceeds all scheme limits (P:9h, B:13h, A:14h)"
+        }
+      ]
+    },
+    "soft": {
+      "totalPenalty": 0,
+      "details": []
+    },
+    "unassignedSlots": {
+      "count": 120,
+      "total": 120,
+      "percentage": 100.0,
+      "slots": [
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-01-2773b7",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-01",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-02-f4b845",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-02",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-03-b17788",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-03",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-04-bdaef4",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-04",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-05-e444e2",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-05",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-06-36c37a",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-06",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-07-7804f5",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-07",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-08-4f589c",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-08",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-09-c89519",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-09",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-10-4e9174",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-10",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-11-b706e8",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-11",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-12-0aa35d",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-12",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-13-cc3fbd",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-13",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-14-c578a1",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-14",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-15-0bbc86",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-15",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-16-de2bf6",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-16",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-17-ba6919",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-17",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-18-0f9cb2",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-18",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-19-50d376",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-19",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-20-b6e64c",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-20",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-21-5ff788",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-21",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-22-158803",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-22",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-23-b0ec80",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-23",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-24-5f3f0d",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-24",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-25-372f3c",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-25",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-26-797b34",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-26",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-27-20e8d8",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-27",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-28-569bdd",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-28",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-29-09bb0b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-29",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-30-aecc99",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-30",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-01-f1f24f",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-01",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-02-c35c4b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-02",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-03-57f256",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-03",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-04-1112d5",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-04",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-05-24bfd3",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-05",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-06-fc5ee8",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-06",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-07-aa9269",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-07",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-08-f0fc29",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-08",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-09-3d6494",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-09",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-10-65010e",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-10",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-11-da5d3e",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-11",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-12-10426c",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-12",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-13-abbe82",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-13",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-14-359ead",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-14",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-15-906efb",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-15",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-16-9cdc12",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-16",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-17-46ab33",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-17",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-18-427cb5",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-18",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-19-a48bb0",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-19",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-20-994eb3",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-20",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-21-ad2e36",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-21",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-22-3058ac",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-22",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-23-f5f644",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-23",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-24-55255b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-24",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-25-e696bb",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-25",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-26-a98f82",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-26",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-27-a824b4",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-27",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-28-9d5cb3",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-28",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-29-bd0a01",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-29",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-30-52a1eb",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-30",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-01-642113",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-01",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-02-0332cb",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-02",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-03-ace598",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-03",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-04-b1ea2a",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-04",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-05-86db5b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-05",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-06-980ee9",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-06",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-07-40e9f1",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-07",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-08-313220",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-08",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-09-dc45c7",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-09",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-10-cbf199",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-10",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-11-47d6e0",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-11",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-12-9b9d2a",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-12",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-13-91816b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-13",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-14-b3da0b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-14",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-15-99731f",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-15",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-16-3a2789",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-16",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-17-17fb20",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-17",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-18-57f256",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-18",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-19-3f779e",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-19",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-20-b1cb27",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-20",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-21-dcaa90",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-21",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-22-f569fc",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-22",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-23-492f99",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-23",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-24-0add16",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-24",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-25-00bd24",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-25",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-26-4b2a55",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-26",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-27-004381",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-27",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-28-57d534",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-28",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-29-6fd255",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-29",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-30-b5259f",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-30",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-01-91a726",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-01",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-02-0ba049",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-02",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-03-262546",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-03",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-04-f44e3e",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-04",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-05-fb4da2",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-05",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-06-61cdbf",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-06",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-07-628a3b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-07",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-08-edca0f",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-08",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-09-ad0d1e",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-09",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-10-422aec",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-10",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-11-524064",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-11",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-12-dcb5a7",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-12",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-13-71ba4e",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-13",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-14-cd40f7",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-14",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-15-70a4c0",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-15",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-16-850cae",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-16",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-17-30abfb",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-17",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-18-776923",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-18",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-19-900549",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-19",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-20-289894",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-20",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-21-93386c",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-21",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-22-eb9686",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-22",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-23-5f8c3c",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-23",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-24-20e1c6",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-24",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-25-9134a6",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-25",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-26-d264e3",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-26",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-27-2c654b",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-27",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-28-1a7acb",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-28",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-29-03a4f3",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-29",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-30-dd30ee",
+          "demandId": "DI-2601031507-75610560",
+          "date": "2026-06-30",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        }
+      ]
+    }
+  },
+  "assignments": [
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-01-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-01",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-01-2773b7",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-01T08:00:00",
+      "endDateTime": "2026-06-01T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-01-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-01",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-01-f1f24f",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-01T08:00:00",
+      "endDateTime": "2026-06-01T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-01-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-01",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-01-642113",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-01T08:00:00",
+      "endDateTime": "2026-06-01T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-01-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-01",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-01-91a726",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-01T08:00:00",
+      "endDateTime": "2026-06-01T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-02-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-02",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-02-f4b845",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-02T08:00:00",
+      "endDateTime": "2026-06-02T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-02-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-02",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-02-c35c4b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-02T08:00:00",
+      "endDateTime": "2026-06-02T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-02-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-02",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-02-0332cb",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-02T08:00:00",
+      "endDateTime": "2026-06-02T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-02-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-02",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-02-0ba049",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-02T08:00:00",
+      "endDateTime": "2026-06-02T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-03-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-03",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-03-b17788",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-03T08:00:00",
+      "endDateTime": "2026-06-03T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-03-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-03",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-03-57f256",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-03T08:00:00",
+      "endDateTime": "2026-06-03T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-03-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-03",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-03-ace598",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-03T08:00:00",
+      "endDateTime": "2026-06-03T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-03-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-03",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-03-262546",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-03T08:00:00",
+      "endDateTime": "2026-06-03T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-04-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-04",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-04-bdaef4",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-04T08:00:00",
+      "endDateTime": "2026-06-04T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-04-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-04",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-04-1112d5",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-04T08:00:00",
+      "endDateTime": "2026-06-04T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-04-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-04",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-04-b1ea2a",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-04T08:00:00",
+      "endDateTime": "2026-06-04T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-04-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-04",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-04-f44e3e",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-04T08:00:00",
+      "endDateTime": "2026-06-04T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-05-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-05",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-05-e444e2",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-05T08:00:00",
+      "endDateTime": "2026-06-05T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-05-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-05",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-05-24bfd3",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-05T08:00:00",
+      "endDateTime": "2026-06-05T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-05-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-05",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-05-86db5b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-05T08:00:00",
+      "endDateTime": "2026-06-05T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-05-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-05",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-05-fb4da2",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-05T08:00:00",
+      "endDateTime": "2026-06-05T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-06-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-06",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-06-36c37a",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-06T08:00:00",
+      "endDateTime": "2026-06-06T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-06-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-06",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-06-fc5ee8",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-06T08:00:00",
+      "endDateTime": "2026-06-06T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-06-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-06",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-06-980ee9",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-06T08:00:00",
+      "endDateTime": "2026-06-06T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-06-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-06",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-06-61cdbf",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-06T08:00:00",
+      "endDateTime": "2026-06-06T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-07-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-07",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-07-7804f5",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-07T08:00:00",
+      "endDateTime": "2026-06-07T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-07-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-07",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-07-aa9269",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-07T08:00:00",
+      "endDateTime": "2026-06-07T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-07-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-07",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-07-40e9f1",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-07T08:00:00",
+      "endDateTime": "2026-06-07T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-07-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-07",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-07-628a3b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-07T08:00:00",
+      "endDateTime": "2026-06-07T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-08-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-08",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-08-4f589c",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-08T08:00:00",
+      "endDateTime": "2026-06-08T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-08-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-08",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-08-f0fc29",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-08T08:00:00",
+      "endDateTime": "2026-06-08T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-08-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-08",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-08-313220",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-08T08:00:00",
+      "endDateTime": "2026-06-08T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-08-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-08",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-08-edca0f",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-08T08:00:00",
+      "endDateTime": "2026-06-08T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-09-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-09",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-09-c89519",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-09T08:00:00",
+      "endDateTime": "2026-06-09T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-09-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-09",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-09-3d6494",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-09T08:00:00",
+      "endDateTime": "2026-06-09T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-09-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-09",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-09-dc45c7",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-09T08:00:00",
+      "endDateTime": "2026-06-09T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-09-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-09",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-09-ad0d1e",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-09T08:00:00",
+      "endDateTime": "2026-06-09T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-10-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-10",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-10-4e9174",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-10T08:00:00",
+      "endDateTime": "2026-06-10T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-10-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-10",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-10-65010e",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-10T08:00:00",
+      "endDateTime": "2026-06-10T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-10-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-10",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-10-cbf199",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-10T08:00:00",
+      "endDateTime": "2026-06-10T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-10-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-10",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-10-422aec",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-10T08:00:00",
+      "endDateTime": "2026-06-10T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-11-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-11",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-11-b706e8",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-11T08:00:00",
+      "endDateTime": "2026-06-11T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-11-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-11",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-11-da5d3e",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-11T08:00:00",
+      "endDateTime": "2026-06-11T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-11-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-11",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-11-47d6e0",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-11T08:00:00",
+      "endDateTime": "2026-06-11T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-11-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-11",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-11-524064",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-11T08:00:00",
+      "endDateTime": "2026-06-11T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-12-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-12",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-12-0aa35d",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-12T08:00:00",
+      "endDateTime": "2026-06-12T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-12-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-12",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-12-10426c",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-12T08:00:00",
+      "endDateTime": "2026-06-12T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-12-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-12",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-12-9b9d2a",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-12T08:00:00",
+      "endDateTime": "2026-06-12T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-12-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-12",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-12-dcb5a7",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-12T08:00:00",
+      "endDateTime": "2026-06-12T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-13-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-13",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-13-cc3fbd",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-13T08:00:00",
+      "endDateTime": "2026-06-13T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-13-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-13",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-13-abbe82",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-13T08:00:00",
+      "endDateTime": "2026-06-13T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-13-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-13",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-13-91816b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-13T08:00:00",
+      "endDateTime": "2026-06-13T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-13-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-13",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-13-71ba4e",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-13T08:00:00",
+      "endDateTime": "2026-06-13T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-14-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-14",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-14-c578a1",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-14T08:00:00",
+      "endDateTime": "2026-06-14T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-14-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-14",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-14-359ead",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-14T08:00:00",
+      "endDateTime": "2026-06-14T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-14-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-14",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-14-b3da0b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-14T08:00:00",
+      "endDateTime": "2026-06-14T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-14-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-14",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-14-cd40f7",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-14T08:00:00",
+      "endDateTime": "2026-06-14T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-15-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-15",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-15-0bbc86",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-15T08:00:00",
+      "endDateTime": "2026-06-15T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-15-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-15",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-15-906efb",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-15T08:00:00",
+      "endDateTime": "2026-06-15T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-15-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-15",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-15-99731f",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-15T08:00:00",
+      "endDateTime": "2026-06-15T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-15-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-15",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-15-70a4c0",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-15T08:00:00",
+      "endDateTime": "2026-06-15T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-16-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-16",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-16-de2bf6",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-16T08:00:00",
+      "endDateTime": "2026-06-16T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-16-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-16",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-16-9cdc12",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-16T08:00:00",
+      "endDateTime": "2026-06-16T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-16-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-16",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-16-3a2789",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-16T08:00:00",
+      "endDateTime": "2026-06-16T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-16-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-16",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-16-850cae",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-16T08:00:00",
+      "endDateTime": "2026-06-16T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-17-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-17",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-17-ba6919",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-17T08:00:00",
+      "endDateTime": "2026-06-17T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-17-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-17",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-17-46ab33",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-17T08:00:00",
+      "endDateTime": "2026-06-17T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-17-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-17",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-17-17fb20",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-17T08:00:00",
+      "endDateTime": "2026-06-17T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-17-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-17",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-17-30abfb",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-17T08:00:00",
+      "endDateTime": "2026-06-17T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-18-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-18",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-18-0f9cb2",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-18T08:00:00",
+      "endDateTime": "2026-06-18T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-18-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-18",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-18-427cb5",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-18T08:00:00",
+      "endDateTime": "2026-06-18T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-18-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-18",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-18-57f256",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-18T08:00:00",
+      "endDateTime": "2026-06-18T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-18-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-18",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-18-776923",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-18T08:00:00",
+      "endDateTime": "2026-06-18T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-19-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-19",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-19-50d376",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-19T08:00:00",
+      "endDateTime": "2026-06-19T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-19-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-19",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-19-a48bb0",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-19T08:00:00",
+      "endDateTime": "2026-06-19T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-19-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-19",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-19-3f779e",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-19T08:00:00",
+      "endDateTime": "2026-06-19T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-19-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-19",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-19-900549",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-19T08:00:00",
+      "endDateTime": "2026-06-19T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-20-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-20",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-20-b6e64c",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-20T08:00:00",
+      "endDateTime": "2026-06-20T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-20-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-20",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-20-994eb3",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-20T08:00:00",
+      "endDateTime": "2026-06-20T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-20-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-20",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-20-b1cb27",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-20T08:00:00",
+      "endDateTime": "2026-06-20T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-20-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-20",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-20-289894",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-20T08:00:00",
+      "endDateTime": "2026-06-20T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-21-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-21",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-21-5ff788",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-21T08:00:00",
+      "endDateTime": "2026-06-21T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-21-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-21",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-21-ad2e36",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-21T08:00:00",
+      "endDateTime": "2026-06-21T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-21-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-21",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-21-dcaa90",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-21T08:00:00",
+      "endDateTime": "2026-06-21T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-21-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-21",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-21-93386c",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-21T08:00:00",
+      "endDateTime": "2026-06-21T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-22-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-22",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-22-158803",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-22T08:00:00",
+      "endDateTime": "2026-06-22T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-22-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-22",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-22-3058ac",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-22T08:00:00",
+      "endDateTime": "2026-06-22T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-22-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-22",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-22-f569fc",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-22T08:00:00",
+      "endDateTime": "2026-06-22T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-22-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-22",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-22-eb9686",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-22T08:00:00",
+      "endDateTime": "2026-06-22T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-23-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-23",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-23-b0ec80",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-23T08:00:00",
+      "endDateTime": "2026-06-23T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-23-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-23",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-23-f5f644",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-23T08:00:00",
+      "endDateTime": "2026-06-23T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-23-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-23",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-23-492f99",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-23T08:00:00",
+      "endDateTime": "2026-06-23T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-23-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-23",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-23-5f8c3c",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-23T08:00:00",
+      "endDateTime": "2026-06-23T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-24-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-24",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-24-5f3f0d",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-24T08:00:00",
+      "endDateTime": "2026-06-24T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-24-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-24",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-24-55255b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-24T08:00:00",
+      "endDateTime": "2026-06-24T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-24-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-24",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-24-0add16",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-24T08:00:00",
+      "endDateTime": "2026-06-24T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-24-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-24",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-24-20e1c6",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-24T08:00:00",
+      "endDateTime": "2026-06-24T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-25-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-25",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-25-372f3c",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-25T08:00:00",
+      "endDateTime": "2026-06-25T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-25-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-25",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-25-e696bb",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-25T08:00:00",
+      "endDateTime": "2026-06-25T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-25-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-25",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-25-00bd24",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-25T08:00:00",
+      "endDateTime": "2026-06-25T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-25-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-25",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-25-9134a6",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-25T08:00:00",
+      "endDateTime": "2026-06-25T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-26-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-26",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-26-797b34",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-26T08:00:00",
+      "endDateTime": "2026-06-26T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-26-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-26",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-26-a98f82",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-26T08:00:00",
+      "endDateTime": "2026-06-26T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-26-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-26",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-26-4b2a55",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-26T08:00:00",
+      "endDateTime": "2026-06-26T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-26-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-26",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-26-d264e3",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-26T08:00:00",
+      "endDateTime": "2026-06-26T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-27-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-27",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-27-20e8d8",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-27T08:00:00",
+      "endDateTime": "2026-06-27T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-27-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-27",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-27-a824b4",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-27T08:00:00",
+      "endDateTime": "2026-06-27T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-27-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-27",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-27-004381",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-27T08:00:00",
+      "endDateTime": "2026-06-27T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-27-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-27",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-27-2c654b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-27T08:00:00",
+      "endDateTime": "2026-06-27T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-28-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-28",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-28-569bdd",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-28T08:00:00",
+      "endDateTime": "2026-06-28T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-28-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-28",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-28-9d5cb3",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-28T08:00:00",
+      "endDateTime": "2026-06-28T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-28-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-28",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-28-57d534",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-28T08:00:00",
+      "endDateTime": "2026-06-28T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-28-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-28",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-28-1a7acb",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-28T08:00:00",
+      "endDateTime": "2026-06-28T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 0.0,
+        "ot": 3.0,
+        "restDayPay": 8.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-29-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-29",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-29-09bb0b",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-29T08:00:00",
+      "endDateTime": "2026-06-29T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-29-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-29",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-29-bd0a01",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-29T08:00:00",
+      "endDateTime": "2026-06-29T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-29-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-29",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-29-6fd255",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-29T08:00:00",
+      "endDateTime": "2026-06-29T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-29-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-29",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-29-03a4f3",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-29T08:00:00",
+      "endDateTime": "2026-06-29T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-30-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-30",
+      "slotId": "DI-2601031507-75610560-232_1-D-P0-2026-06-30-aecc99",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-30T08:00:00",
+      "endDateTime": "2026-06-30T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-30-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-30",
+      "slotId": "DI-2601031507-75610560-232_1-D-P1-2026-06-30-52a1eb",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-30T08:00:00",
+      "endDateTime": "2026-06-30T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-30-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-30",
+      "slotId": "DI-2601031507-75610560-232_1-D-P2-2026-06-30-b5259f",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-30T08:00:00",
+      "endDateTime": "2026-06-30T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-75610560-2026-06-30-D-UNASSIGNED",
+      "demandId": "DI-2601031507-75610560",
+      "requirementId": "232_1",
+      "date": "2026-06-30",
+      "slotId": "DI-2601031507-75610560-232_1-D-P3-2026-06-30-dd30ee",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-06-30T08:00:00",
+      "endDateTime": "2026-06-30T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    }
+  ],
+  "employeeRoster": [],
+  "rosterSummary": {
+    "totalDailyStatuses": 0,
+    "byStatus": {
+      "ASSIGNED": 0,
+      "OFF_DAY": 0,
+      "UNASSIGNED": 0,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "INFEASIBLE",
+    "solverStatus": "INFEASIBLE",
+    "solverStatusExplanation": "No solution exists that satisfies all hard constraints. This means the problem is over-constrained (too many restrictions) or under-resourced (not enough employees/capacity).",
+    "qualityExplanation": "No valid solution exists that satisfies all hard constraints. Review constraints, employee availability, or demand requirements.",
+    "coverageMetrics": {
+      "totalSlots": 120,
+      "assignedSlots": 120,
+      "unassignedSlots": 0,
+      "coverageRate": 100.0,
+      "coverageQuality": "COMPLETE"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 0,
+      "employeesUsed": 1,
+      "employeesUnused": -1,
+      "utilizationRate": 0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 120,
+      "maxShiftsPerEmployee": 120,
+      "avgShiftsPerEmployee": 120.0,
+      "shiftVariance": 0,
+      "balanceQuality": 100.0,
+      "balanceGrade": "PERFECT"
+    },
+    "optimizationContext": {
+      "optimizationMode": "minimizeEmployeeCount",
+      "fixedRotationOffset": "auto",
+      "patternBased": true,
+      "continuousAdherence": true
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:d367da5e603214f7c5ff0438acf2ace45bed8e573e3afe85769f43a9daa130d9",
+    "generatedAt": "2026-01-05T10:01:54.584965",
+    "employeeHours": {
+      "None": {
+        "weekly_normal": {
+          "2026-W23": 70.4,
+          "2026-W24": 70.4,
+          "2026-W25": 70.4,
+          "2026-W26": 70.4,
+          "2026-W27": 70.4
+        },
+        "monthly_ot": {
+          "2026-06": 328.0
+        }
+      }
+    }
+  },
+  "icpmpPreprocessing": {
+    "enabled": true,
+    "preprocessing_time_seconds": 0.0011630058288574219,
+    "original_employee_count": 6,
+    "selected_employee_count": 0,
+    "utilization_percentage": 0.0,
+    "requirements": {},
+    "warnings": [
+      "Failed to process requirement 232_1: unhashable type: 'dict'"
+    ]
+  }
+}
