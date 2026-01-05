@@ -551,15 +551,67 @@ def _generate_employee_template_with_constraints(ctx: Dict[str, Any], employee: 
             # Format: ["2026-01-05", "2026-01-26"]
             unavailable_dates_set.add(u)
     
+    # Get blacklist dates with date ranges (v0.70+)
+    blacklisted_dates_set = set()
+    emp_id = employee.get('employeeId')
+    
+    logger.info(f"[BLACKLIST CHECK] Checking blacklist for employee {emp_id}")
+    
+    # Check each shift for blacklist
+    shifts = demand.get('shifts', [])
+    logger.info(f"[BLACKLIST CHECK] Found {len(shifts)} shifts in demand")
+    
+    for shift in shifts:
+        blacklist = shift.get('blacklist', {})
+        blacklist_entries = blacklist.get('employeeIds', [])
+        logger.info(f"[BLACKLIST CHECK] Found {len(blacklist_entries)} blacklist entries in shift")
+        
+        for bl_entry in blacklist_entries:
+            if isinstance(bl_entry, dict):
+                bl_emp_id = bl_entry.get('employeeId')
+                logger.info(f"[BLACKLIST CHECK] Checking entry for employee {bl_emp_id}")
+                if bl_emp_id == emp_id:
+                    bl_start = bl_entry.get('blacklistStartDate', '')
+                    bl_end = bl_entry.get('blacklistEndDate', '')
+                    
+                    if bl_start and bl_end:
+                        try:
+                            from datetime import datetime, timedelta
+                            start_dt = datetime.strptime(bl_start, '%Y-%m-%d').date()
+                            end_dt = datetime.strptime(bl_end, '%Y-%m-%d').date()
+                            
+                            logger.info(f"[BLACKLIST] Employee {emp_id} blacklisted {bl_start} to {bl_end}")
+                            
+                            # Generate all dates in blacklist range
+                            current_date = start_dt
+                            while current_date <= end_dt:
+                                blacklisted_dates_set.add(current_date.strftime('%Y-%m-%d'))
+                                current_date += timedelta(days=1)
+                            
+                            logger.info(f"[BLACKLIST] Blocked {len(blacklisted_dates_set)} dates for employee {emp_id}")
+                        except Exception as e:
+                            logger.warning(f"[BLACKLIST] Failed to parse dates for {emp_id}: {e}")
+                            pass  # If date parsing fails, skip this entry
+                        except:
+                            pass  # If date parsing fails, skip this entry
+            elif isinstance(bl_entry, str) and bl_entry == emp_id:
+                # Legacy format: unconditional blacklist (block all dates)
+                # Add all dates in planning horizon
+                current_date = start_date
+                while current_date <= end_date:
+                    blacklisted_dates_set.add(current_date.strftime('%Y-%m-%d'))
+                    current_date += timedelta(days=1)
+    
     for date_str, day_info in template_result.items():
         # Only include days where:
         # 1. assigned == True (passed validation)
         # 2. is_work_day == True (not an off day)
         # 3. OR has an actual assignment dict
         # 4. NOT in unavailable dates
+        # 5. NOT in blacklisted dates
         if (day_info.get('assigned', False) and (
             day_info.get('is_work_day', False) or day_info.get('assignment') is not None
-        ) and date_str not in unavailable_dates_set):
+        ) and date_str not in unavailable_dates_set and date_str not in blacklisted_dates_set):
             valid_work_days.add(date_str)
     
     return {

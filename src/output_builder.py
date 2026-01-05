@@ -306,8 +306,8 @@ def calculate_solution_quality(ctx, assignments, employee_roster, solver_status,
     slots = ctx.get('slots', [])
     employees = ctx.get('employees', [])
     
-    # Count employees used
-    employee_counts = Counter(a['employeeId'] for a in assignments)
+    # Count employees used (exclude None for UNASSIGNED slots)
+    employee_counts = Counter(a['employeeId'] for a in assignments if a.get('employeeId') is not None)
     employees_used = len(employee_counts)
     employees_available = len(employees)
     

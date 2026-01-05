@@ -701,10 +701,50 @@ def _replicate_template_to_employee(
 ) -> List[Dict[str, Any]]:
     """Replicate validated template pattern to an employee."""
     import copy
+    from datetime import datetime
+    
     assignments = []
+    
+    # Build blacklist date set for this employee (v0.70+)
+    blacklisted_dates = set()
+    emp_id = employee.get('employeeId')
+    
+    for shift in demand.get('shifts', []):
+        blacklist = shift.get('blacklist', {})
+        blacklist_entries = blacklist.get('employeeIds', [])
+        
+        for bl_entry in blacklist_entries:
+            if isinstance(bl_entry, dict):
+                bl_emp_id = bl_entry.get('employeeId')
+                if bl_emp_id == emp_id:
+                    bl_start = bl_entry.get('blacklistStartDate', '')
+                    bl_end = bl_entry.get('blacklistEndDate', '')
+                    
+                    if bl_start and bl_end:
+                        try:
+                            from datetime import timedelta
+                            start_dt = datetime.strptime(bl_start, '%Y-%m-%d').date()
+                            end_dt = datetime.strptime(bl_end, '%Y-%m-%d').date()
+                            
+                            # Generate all blacklisted dates
+                            current_date = start_dt
+                            while current_date <= end_dt:
+                                blacklisted_dates.add(current_date.strftime('%Y-%m-%d'))
+                                current_date += timedelta(days=1)
+                        except:
+                            pass
+            elif isinstance(bl_entry, str) and bl_entry == emp_id:
+                # Legacy format: unconditionally blacklist all dates
+                for date_str in template_pattern.keys():
+                    blacklisted_dates.add(date_str)
     
     for date_str, day_info in sorted(template_pattern.items()):
         if day_info['is_work_day'] and day_info['assigned']:
+            # Check if employee is blacklisted for this date
+            if date_str in blacklisted_dates:
+                # Skip this assignment - employee is blacklisted
+                continue
+            
             # Deep copy template assignment to avoid shared references
             template_assignment = day_info['assignment']
             
@@ -718,17 +758,17 @@ def _replicate_template_to_employee(
             
             assignments.append(assignment)
         elif day_info['is_work_day'] and not day_info['assigned']:
-            # Create unassigned slot
+            # Create unassigned slot (employeeId must be None for UNASSIGNED status)
             emp_id = employee['employeeId']
             demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
             requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
             
             assignment = {
-                'assignmentId': f"{demand_id}-{date_str}-D-{emp_id}-UNASSIGNED",
+                'assignmentId': f"{demand_id}-{date_str}-D-UNASSIGNED",
                 'demandId': demand_id,
                 'requirementId': requirement_id,
                 'slotId': f"{demand_id}-{requirement_id}-D-{date_str}",
-                'employeeId': emp_id,
+                'employeeId': None,  # UNASSIGNED slots must have null employeeId
                 'date': date_str,
                 'shiftCode': 'D',
                 'status': 'UNASSIGNED',

@@ -577,25 +577,78 @@ class ICPMPPreprocessor:
         # Extract whitelist/blacklist from first shift
         shifts = demand_item.get('shifts', [{}])
         first_shift = shifts[0] if shifts else {}
+        
+        # Parse whitelist (simple string array)
         whitelist_emp_ids = set(first_shift.get('whitelist', {}).get('employeeIds', []))
-        blacklist_emp_ids = set(first_shift.get('blacklist', {}).get('employeeIds', []))
         whitelist_team_ids = set(first_shift.get('whitelist', {}).get('teamIds', []))
         
+        # Parse blacklist with date ranges (v0.70+ format)
+        blacklist_entries = first_shift.get('blacklist', {}).get('employeeIds', [])
+        blacklist_emp_ids = set()
+        planning_start_date = self.planning_horizon.get('startDate', '')
+        planning_end_date = self.planning_horizon.get('endDate', '')
+        logger.info(f"Processing blacklist with {len(blacklist_entries)} entries for planning {planning_start_date} to {planning_end_date}")
+        for bl_entry in blacklist_entries:
+            if isinstance(bl_entry, dict):
+                # New format: {employeeId, blacklistStartDate, blacklistEndDate}
+                emp_id = bl_entry.get('employeeId')
+                if emp_id:
+                    # Check if any slot date falls within blacklist range
+                    bl_start = bl_entry.get('blacklistStartDate', '')
+                    bl_end = bl_entry.get('blacklistEndDate', '')
+                    
+                    if bl_start and bl_end:
+                        try:
+                            from datetime import datetime as dt
+                            start_date = dt.fromisoformat(bl_start).date()
+                            end_date = dt.fromisoformat(bl_end).date()
+                            planning_start = dt.fromisoformat(planning_start_date).date()
+                            planning_end = dt.fromisoformat(planning_end_date).date()
+                            
+                            # Check if blacklist period overlaps with planning horizon
+                            overlaps = not (end_date < planning_start or start_date > planning_end)
+                            if overlaps:
+                                blacklist_emp_ids.add(emp_id)
+                                logger.info(f"✗ Employee {emp_id} blacklisted: {bl_start} to {bl_end} overlaps with planning horizon {planning_start} to {planning_end}")
+                            else:
+                                logger.info(f"✓ Employee {emp_id} NOT blacklisted: {bl_start} to {bl_end} outside planning horizon {planning_start} to {planning_end}")
+                        except Exception as e:
+                            logger.warning(f"Could not parse blacklist dates for {emp_id}: {e}")
+                            # If date parsing fails, apply blacklist to be safe
+                            blacklist_emp_ids.add(emp_id)
+                    else:
+                        # No dates specified, apply unconditional blacklist
+                        blacklist_emp_ids.add(emp_id)
+                        logger.info(f"✗ Employee {emp_id} unconditionally blacklisted (no dates)")
+            elif isinstance(bl_entry, str):
+                # Legacy format: simple string employee ID
+                blacklist_emp_ids.add(bl_entry)
+                logger.info(f"✗ Employee {bl_entry} blacklisted (legacy format)")
+        
         for emp in self.all_employees:
+            emp_id = emp['employeeId']
+            logger.info(f"Evaluating employee {emp_id}...")
+            
             # Check blacklist first
-            if emp['employeeId'] in blacklist_emp_ids:
+            if emp_id in blacklist_emp_ids:
+                logger.info(f"  ✗ {emp_id} filtered: in blacklist")
                 continue
             
             # Check whitelist (if specified)
-            if whitelist_emp_ids and emp['employeeId'] not in whitelist_emp_ids:
+            if whitelist_emp_ids and emp_id not in whitelist_emp_ids:
                 if not whitelist_team_ids or emp.get('teamId') not in whitelist_team_ids:
+                    logger.info(f"  ✗ {emp_id} filtered: not in whitelist")
                     continue
             
             # Check basic criteria
             if product_type and emp.get('productTypeId') != product_type:
+                logger.info(f"  ✗ {emp_id} filtered: product type {emp.get('productTypeId')} != {product_type}")
                 continue
+            
             # v0.95: Support multiple ranks - employee must match ANY rank in the list
             if ranks and emp.get('rankId') not in ranks:
+                logger.info(f"  ✗ {emp_id} filtered: rank {emp.get('rankId')} not in {ranks}")
+                continue
                 continue
             if ou_id and emp.get('ouId') != ou_id:
                 continue
