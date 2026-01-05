@@ -34,9 +34,15 @@ def generate_template_validated_roster(
     demand: Dict[str, Any]
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """
-    Generate roster using template-based validation.
+    Generate roster using template-based approach.
     
-    Phase 1: Generate template pattern per OU (validate all constraints)
+    Supports two template generation modes:
+    - "incremental": Validate assignments incrementally (fast, simple)
+    - "cpsat": Use CP-SAT mini-solver for optimal template (slower, optimal)
+    
+    Mode selection: demandItems[].templateGenerationMode (default: "cpsat")
+    
+    Phase 1: Generate template pattern per OU
     Phase 2: Replicate validated pattern to all employees in OU
     
     Args:
@@ -48,8 +54,10 @@ def generate_template_validated_roster(
     Returns:
         Tuple of (assignments list, statistics dict)
     """
+    # Determine template generation mode
+    template_mode = demand.get('templateGenerationMode', 'cpsat')
     logger.info("=" * 80)
-    logger.info("TEMPLATE-BASED VALIDATION ROSTER")
+    logger.info(f"TEMPLATE-BASED ROSTER (Mode: {template_mode.upper()})")
     logger.info("=" * 80)
     
     work_pattern = requirement.get('workPattern', [])
@@ -78,6 +86,87 @@ def generate_template_validated_roster(
     # Extract coverage days (e.g., ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'])
     coverage_days = _extract_coverage_days(demand)
     logger.info(f"Coverage days: {coverage_days}")
+    
+    # ========== UPFRONT PATTERN VALIDATION ==========
+    # Validate work pattern against all constraints BEFORE template generation
+    from context.engine.pattern_validator import validate_pattern_for_requirement, log_pattern_validation_results
+    
+    logger.info("\n" + "=" * 80)
+    logger.info("WORK PATTERN VALIDATION")
+    logger.info("=" * 80)
+    logger.info(f"Pattern: {work_pattern}")
+    
+    is_valid, violations_by_scheme = validate_pattern_for_requirement(
+        requirement=requirement,
+        demand=demand,
+        employees=selected_employees,
+        ctx=ctx
+    )
+    
+    req_id = requirement.get('requirementId', 'unknown')
+    log_pattern_validation_results(is_valid, violations_by_scheme, req_id)
+    
+    if not is_valid:
+        # Pattern violates CRITICAL constraints - return error
+        error_msg = "Work pattern violates critical constraints:\n"
+        for scheme, violations in violations_by_scheme.items():
+            error_msg += f"\n{scheme}:\n"
+            for v in violations:
+                error_msg += f"  {v}\n"
+        
+        logger.error(f"\n❌ ABORTING: {error_msg}")
+        return [], {
+            'error': 'Invalid work pattern',
+            'violations': violations_by_scheme,
+            'pattern': work_pattern
+        }
+    
+    # ========== TEMPLATE GENERATION MODE SELECTION ==========
+    if template_mode == 'cpsat':
+        # Use CP-SAT mini-solver for optimal template generation
+        logger.info("\n" + "=" * 80)
+        logger.info("CP-SAT TEMPLATE GENERATION MODE")
+        logger.info("=" * 80)
+        
+        from context.engine.cpsat_template_generator import generate_template_with_cpsat
+        
+        # Get optimization mode from solver config
+        optimization_mode = ctx.get('solverConfig', {}).get('optimizationMode', 'minimizeEmployeeCount')
+        logger.info(f"Optimization Mode: {optimization_mode}")
+        
+        # Generate template using CP-SAT
+        date_range = (
+            datetime.strptime(start_date_str, '%Y-%m-%d'),
+            datetime.strptime(end_date_str, '%Y-%m-%d')
+        )
+        
+        all_assignments = generate_template_with_cpsat(
+            ctx=ctx,
+            requirement=requirement,
+            all_employees=selected_employees,
+            date_range=date_range,
+            optimization_mode=optimization_mode
+        )
+        
+        # Generate statistics
+        stats = _generate_statistics(all_assignments, selected_employees)
+        
+        logger.info("\n" + "=" * 80)
+        logger.info("CP-SAT TEMPLATE ROSTER COMPLETE")
+        logger.info("=" * 80)
+        logger.info(f"Total Assignments: {len(all_assignments)}")
+        logger.info(f"  - Assigned: {stats['assigned_count']}")
+        logger.info(f"  - Unassigned: {stats['unassigned_count']}")
+        logger.info(f"Employees Used: {stats['employees_used']}")
+        logger.info(f"Generation Time: {stats['generation_time']:.3f}s")
+        logger.info("=" * 80)
+        
+        return all_assignments, stats
+    
+    # ========== INCREMENTAL VALIDATION MODE (DEFAULT) ==========
+    logger.info("\n" + "=" * 80)
+    logger.info("INCREMENTAL VALIDATION MODE")
+    logger.info("=" * 80)
     
     # Group employees by OU
     employees_by_ou = _group_employees_by_ou(selected_employees)
