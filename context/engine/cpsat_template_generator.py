@@ -185,10 +185,13 @@ def _build_and_solve_template(
     
     # Extract solution
     work_days = [i for i in range(len(dates)) if i in x and solver.Value(x[i]) == 1]
-    logger.info(f"  CP-SAT solved: {len(work_days)} work days assigned")
+    off_days = [i for i in range(len(dates)) if i in x and solver.Value(x[i]) == 0]
+    logger.info(f"  CP-SAT solved: {len(work_days)} work days, {len(off_days)} off days")
     
-    # Convert to assignment dicts
+    # Convert to assignment dicts - include BOTH work days AND off days
     assignments = []
+    
+    # Create work day assignments
     for day_idx in work_days:
         date = dates[day_idx]
         assignment = _create_assignment(
@@ -199,6 +202,20 @@ def _build_and_solve_template(
             requirement
         )
         assignments.append(assignment)
+    
+    # Create OFF day assignments (for complete roster)
+    for day_idx in off_days:
+        date = dates[day_idx]
+        off_assignment = _create_off_day_assignment(
+            template_emp,
+            date,
+            demand,
+            requirement
+        )
+        assignments.append(off_assignment)
+    
+    # Sort by date for readability
+    assignments.sort(key=lambda a: a['date'])
     
     return assignments
 
@@ -355,6 +372,45 @@ def _create_assignment(
             'ph': 0.0,  # Public holiday hours (not determined in template phase)
             'restDayPay': hours_breakdown['restDayPay'],
             'paid': hours_breakdown['paid']  # Must include for output builder
+        }
+    }
+
+
+def _create_off_day_assignment(
+    employee: dict,
+    date: datetime,
+    demand: dict,
+    requirement: dict
+) -> dict:
+    """Create assignment dictionary for an OFF day (non-work day)."""
+    
+    emp_id = employee['employeeId']
+    date_str = date.strftime('%Y-%m-%d')
+    
+    demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
+    requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
+    
+    # OFF day assignment with zero hours
+    return {
+        'assignmentId': f"{demand_id}-{date_str}-O-{emp_id}",
+        'slotId': f"{demand_id}-{requirement_id}-O-{date_str}",
+        'employeeId': emp_id,
+        'demandId': demand_id,
+        'requirementId': requirement_id,
+        'date': date_str,
+        'shiftCode': 'O',  # O = OFF day
+        'startDateTime': None,  # No work on OFF days
+        'endDateTime': None,
+        'status': 'OFF',  # Distinguish from ASSIGNED work days
+        'hours': {
+            'gross': 0.0,
+            'lunch': 0.0,
+            'net': 0.0,
+            'normal': 0.0,
+            'ot': 0.0,
+            'ph': 0.0,
+            'restDayPay': 0.0,
+            'paid': 0.0
         }
     }
 

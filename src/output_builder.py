@@ -729,6 +729,17 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     
     for assignment in assignments:
         try:
+            # Check for OFF days (no work, no time calculation needed)
+            if assignment.get('status') == 'OFF' or assignment.get('shiftCode') == 'O':
+                # OFF day - keep zero hours as-is
+                if 'hours' not in assignment:
+                    assignment['hours'] = {
+                        'gross': 0.0, 'lunch': 0.0, 'normal': 0.0, 
+                        'ot': 0.0, 'restDayPay': 0.0, 'paid': 0.0
+                    }
+                annotated_assignments.append(assignment)
+                continue
+            
             start_dt = datetime.fromisoformat(assignment.get('startDateTime'))
             end_dt = datetime.fromisoformat(assignment.get('endDateTime'))
             emp_id = assignment.get('employeeId')
