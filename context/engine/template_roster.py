@@ -148,25 +148,32 @@ def generate_template_validated_roster(
             optimization_mode=optimization_mode
         )
         
-        # Generate statistics
-        stats = _generate_statistics(all_assignments, selected_employees)
-        
-        logger.info("\n" + "=" * 80)
-        logger.info("CP-SAT TEMPLATE ROSTER COMPLETE")
-        logger.info("=" * 80)
-        logger.info(f"Total Assignments: {len(all_assignments)}")
-        logger.info(f"  - Assigned: {stats['assigned_count']}")
-        logger.info(f"  - Unassigned: {stats['unassigned_count']}")
-        logger.info(f"Employees Used: {stats['employees_used']}")
-        logger.info(f"Generation Time: {stats['generation_time']:.3f}s")
-        logger.info("=" * 80)
-        
-        return all_assignments, stats
+        # If CP-SAT returns empty (not implemented or failed), fall back to incremental
+        if not all_assignments:
+            logger.warning("⚠️  CP-SAT template generation returned no assignments")
+            logger.warning("⚠️  Falling back to incremental validation mode")
+            template_mode = 'incremental'  # Force fallback
+        else:
+            # Generate statistics
+            stats = _generate_statistics(all_assignments, selected_employees)
+            
+            logger.info("\n" + "=" * 80)
+            logger.info("CP-SAT TEMPLATE ROSTER COMPLETE")
+            logger.info("=" * 80)
+            logger.info(f"Total Assignments: {len(all_assignments)}")
+            logger.info(f"  - Assigned: {stats['assigned_count']}")
+            logger.info(f"  - Unassigned: {stats['unassigned_count']}")
+            logger.info(f"Employees Used: {stats['employees_used']}")
+            logger.info(f"Generation Time: {stats['generation_time']:.3f}s")
+            logger.info("=" * 80)
+            
+            return all_assignments, stats
     
     # ========== INCREMENTAL VALIDATION MODE (DEFAULT) ==========
-    logger.info("\n" + "=" * 80)
-    logger.info("INCREMENTAL VALIDATION MODE")
-    logger.info("=" * 80)
+    if template_mode == 'incremental':
+        logger.info("\n" + "=" * 80)
+        logger.info("INCREMENTAL VALIDATION MODE")
+        logger.info("=" * 80)
     
     # Group employees by OU
     employees_by_ou = _group_employees_by_ou(selected_employees)
