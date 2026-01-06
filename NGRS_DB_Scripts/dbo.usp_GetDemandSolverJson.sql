@@ -972,6 +972,7 @@ BEGIN
                 '"locationId":"', ISNULL(@LocationCode, ''), '",',
                 '"shiftStartDate":"', CONVERT(VARCHAR(10), @StartDate, 23), '",',
                 '"rosteringBasis":"', @RosteringBasis, '",',
+                '"templateGenerationMode":"cpsat",',
                 '"minStaffThresholdPercentage":', CAST(@MinStaffThresholdPercentage AS NVARCHAR(10)), ',',
                 '"shifts":[', @ShiftsObjectJson, '],',
                 '"requirements":', @RequirementsJson,
