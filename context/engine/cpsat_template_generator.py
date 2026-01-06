@@ -332,14 +332,20 @@ def _create_assignment(
         all_assignments=[]  # Template phase - no previous assignments
     )
     
+    # Get shift code from shift details
+    shift_code = shift_details.get('shiftCode', 'D')
+    
     return {
+        'assignmentId': f"{demand_id}-{date_str}-{shift_code}-{emp_id}",
+        'slotId': f"{demand_id}-{requirement_id}-{shift_code}-{date_str}",
         'employeeId': emp_id,
         'demandId': demand_id,
         'requirementId': requirement_id,
         'date': date_str,
+        'shiftCode': shift_code,
         'startDateTime': start_datetime,
         'endDateTime': end_datetime,
-        'shiftType': requirement.get('shiftType', 'Day'),
+        'status': 'ASSIGNED',
         'hours': {
             'gross': hours_breakdown['gross'],
             'lunch': hours_breakdown['lunch'],
@@ -369,13 +375,20 @@ def _replicate_template_to_employee(
     import copy
     
     emp_assignments = []
+    emp_id = employee['employeeId']
+    demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     
     for template_assign in template_assignments:
         # Deep copy to avoid shared references
         assignment = copy.deepcopy(template_assign)
         
-        # Update only the employee ID (dates stay the same)
-        assignment['employeeId'] = employee['employeeId']
+        # Update employee-specific fields
+        assignment['employeeId'] = emp_id
+        
+        # Regenerate IDs with this employee's ID
+        date_str = assignment['date']
+        shift_code = assignment['shiftCode']
+        assignment['assignmentId'] = f"{demand_id}-{date_str}-{shift_code}-{emp_id}"
         
         emp_assignments.append(assignment)
     
