@@ -300,6 +300,41 @@ def solve_outcome_based_with_slots(ctx: Dict[str, Any], demand: Dict[str, Any],
     logger.info(f"  Work Pattern: {work_pattern}")
     logger.info(f"  Coverage Days: {coverage_days}")
     
+    # ========== UPFRONT PATTERN VALIDATION ==========
+    # Validate work pattern against all constraints BEFORE slot generation
+    from context.engine.pattern_validator import validate_pattern_for_requirement, log_pattern_validation_results
+    
+    logger.info("\n" + "=" * 80)
+    logger.info("WORK PATTERN VALIDATION")
+    logger.info("=" * 80)
+    
+    is_valid, violations_by_scheme = validate_pattern_for_requirement(
+        requirement=requirement,
+        demand=demand,
+        employees=eligible_employees,
+        ctx=ctx
+    )
+    
+    req_id = requirement.get('requirementId', 'unknown')
+    log_pattern_validation_results(is_valid, violations_by_scheme, req_id)
+    
+    if not is_valid:
+        # Pattern violates constraints - return error with detailed violations
+        error_msg = "Work pattern violates MOM constraints"
+        logger.error(f"\n❌ ABORTING: {error_msg}")
+        
+        return {
+            'assignments': [],
+            'metadata': {
+                'status': 'INVALID_PATTERN',
+                'error': error_msg,
+                'violations': violations_by_scheme,
+                'pattern': work_pattern
+            }
+        }
+    
+    logger.info("")  # Blank line after validation
+    
     # Step 0: Build employee licenses map for qualification checking
     all_employees = ctx.get('employees', [])
     employee_licenses_map = _build_employee_licenses_map(all_employees)

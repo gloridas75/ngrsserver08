@@ -78,9 +78,11 @@ def generate_template_with_cpsat(
     # Generate template for each OU
     for ou_id, ou_employees in employees_by_ou.items():
         logger.info(f"\nProcessing OU: {ou_id} ({len(ou_employees)} employees)")
+        print(f"[DEBUG] Processing OU: {ou_id}, Employees: {len(ou_employees)}")
         
         # Use first employee as template
         template_emp = ou_employees[0]
+        print(f"[DEBUG] Template employee: {template_emp.get('employeeId')}, Offset: {template_emp.get('rotationOffset')}")
         
         # Build CP-SAT model for template
         template_assignments = _build_and_solve_template(
@@ -154,6 +156,7 @@ def _build_and_solve_template(
             x[i] = model.NewIntVar(0, 0, f'off_{date.strftime("%Y%m%d")}')
     
     # Apply work pattern constraints
+    # For outcome-based with fixed rotation offsets, enforce the pattern strictly
     pattern_length = len(work_pattern)
     emp_offset = template_emp.get('rotationOffset', 0)
     
@@ -164,7 +167,11 @@ def _build_and_solve_template(
         if pattern_day == 'O':
             # Pattern says OFF - must not work
             model.Add(x[i] == 0)
-        # For 'D', 'N', 'E' etc - CP-SAT decides optimal days to work
+        else:
+            # Pattern says work (D, N, E, etc.) - must work on this day
+            # This ensures rotation offsets are respected across OUs
+            if i in x:  # Only if day is in coverage window
+                model.Add(x[i] == 1)
     
     # Apply core MOM constraints
     _apply_mom_constraints(model, x, dates, shift_details, template_emp, ctx, coverage_days)
@@ -452,13 +459,29 @@ def _replicate_template_to_employee(
 
 
 def _group_employees_by_ou(employees: List[dict]) -> Dict[str, List[dict]]:
-    """Group employees by organizational unit."""
+    """Group employees by organizational unit OR rotation offset.
+    
+    If employees have ouId (Organizational Unit ID), group by that.
+    Otherwise, group by rotationOffset to ensure different offsets get different templates.
+    """
     employees_by_ou = {}
+    
+    # Check if employees have OU IDs or just rotation offsets
+    has_ou_ids = any(emp.get('ouId') or emp.get('organizationalUnitId') for emp in employees)
+    
     for emp in employees:
-        ou_id = emp.get('organizationalUnitId', 'default')
+        if has_ou_ids:
+            # Group by OU ID (check both 'ouId' and 'organizationalUnitId' for compatibility)
+            ou_id = emp.get('ouId') or emp.get('organizationalUnitId', 'default')
+        else:
+            # Group by rotation offset (treat each offset as separate OU)
+            rotation_offset = emp.get('rotationOffset', 0)
+            ou_id = f"offset_{rotation_offset}"
+        
         if ou_id not in employees_by_ou:
             employees_by_ou[ou_id] = []
         employees_by_ou[ou_id].append(emp)
+    
     return employees_by_ou
 
 

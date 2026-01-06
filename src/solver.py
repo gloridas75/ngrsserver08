@@ -402,6 +402,18 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             assignments = result['assignments']
             metadata = result['metadata']
             
+            # Check if pattern validation failed
+            if metadata.get('status') == 'INVALID_PATTERN':
+                print(f"{log_prefix} ❌ Pattern validation failed - aborting solve")
+                return {
+                    'status': 'INFEASIBLE',
+                    'message': metadata.get('error', 'Invalid work pattern'),
+                    'violations': metadata.get('violations', {}),
+                    'pattern': metadata.get('pattern', []),
+                    'assignments': [],
+                    'employeeRoster': []
+                }
+            
             solver_time = time.time() - solver_start
             end_timestamp = datetime.now().isoformat()
             
@@ -421,20 +433,20 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                     'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
                     'headcount': metadata.get('headcount', 0),
                     'positions_created': metadata.get('positions_created', 0),
-                    'available_employees': metadata['available_employees'],
-                    'total_slots': metadata['total_slots'],
-                    'assigned_slots': metadata['assigned_slots'],
-                    'unassigned_slots': metadata['unassigned_slots'],
-                    'coverage_percentage': metadata['coverage_percentage']
+                    'available_employees': metadata.get('available_employees', 0),
+                    'total_slots': metadata.get('total_slots', 0),
+                    'assigned_slots': metadata.get('assigned_slots', 0),
+                    'unassigned_slots': metadata.get('unassigned_slots', 0),
+                    'coverage_percentage': metadata.get('coverage_percentage', 0.0)
                 }
             }
             violations = {}
             print(f"{log_prefix} ✓ Slot-based roster generated in {solver_time:.2f}s")
             print(f"{log_prefix} Status: {status_code}")
-            print(f"{log_prefix} Slots: {metadata['assigned_slots']} assigned, {metadata['unassigned_slots']} unassigned")
-            print(f"{log_prefix} Coverage: {metadata['coverage_percentage']:.1f}%")
-            print(f"{log_prefix} Headcount (positions): {metadata.get('headcount', metadata['positions_created'])}")
-            print(f"{log_prefix} Available employees: {metadata['available_employees']}")
+            print(f"{log_prefix} Slots: {metadata.get('assigned_slots', 0)} assigned, {metadata.get('unassigned_slots', 0)} unassigned")
+            print(f"{log_prefix} Coverage: {metadata.get('coverage_percentage', 0.0):.1f}%")
+            print(f"{log_prefix} Headcount (positions): {metadata.get('headcount', metadata.get('positions_created', 0))}")
+            print(f"{log_prefix} Available employees: {metadata.get('available_employees', 0)}")
             print()
             
         else:
@@ -451,6 +463,18 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             
             # Generate template-validated roster
             assignments, stats = generate_template_validated_roster(ctx, eligible_employees, requirement, demand)
+            
+            # Check if pattern validation failed
+            if stats.get('error') == 'Invalid work pattern':
+                print(f"{log_prefix} ❌ Pattern validation failed - aborting solve")
+                return {
+                    'status': 'INFEASIBLE',
+                    'message': stats.get('error', 'Invalid work pattern'),
+                    'violations': stats.get('violations', {}),
+                    'pattern': stats.get('pattern', []),
+                    'assignments': [],
+                    'employeeRoster': []
+                }
             
             solver_time = time.time() - solver_start
             end_timestamp = datetime.now().isoformat()
