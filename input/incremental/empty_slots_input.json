@@ -121,7 +121,7 @@
       {
         "employeeId": "EMP_001",
         "weeklyHours": {
-          "2026-W02": 32.0    // Week format: YYYY-WNN
+          "2026-W02": 32.0    
         },
         "monthlyHours": 32.0,
         "consecutiveWorkingDays": 3,

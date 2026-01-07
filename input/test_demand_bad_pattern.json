@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "0.98",
+  "planningReference": "TEST-DEMAND-BAD-PATTERN",
+  "timezone": "Asia/Singapore",
+  "planningHorizon": {
+    "startDate": "2026-04-01",
+    "endDate": "2026-04-14"
+  },
+  "publicHolidays": [],
+  "rosteringBasis": "demandBased",
+  "fixedRotationOffset": "auto",
+  "solverRunTime": {
+    "maxSeconds": 60
+  },
+  "schemeMap": {
+    "A": "Scheme A",
+    "B": "Scheme B",
+    "P": "Scheme P"
+  },
+  "constraintList": [
+    {
+      "constraintId": "C5",
+      "enabled": true,
+      "minOffDaysPerWeek": 1
+    },
+    {
+      "constraintId": "C2",
+      "enabled": true,
+      "weeklyHoursCap": 44.0
+    }
+  ],
+  "demandItems": [
+    {
+      "demandId": "D001",
+      "locationId": "LOC-TEST",
+      "shiftStartDate": "2026-04-01",
+      "rosteringBasis": "demandBased",
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "08:00:00",
+              "end": "20:00:00",
+              "nextDay": false
+            }
+          ],
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ]
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "REQ-001",
+          "productTypeId": "APO",
+          "rankIds": [
+            "PC"
+          ],
+          "workPattern": [
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "D"
+          ],
+          "headcount": 1,
+          "schemes": [
+            "B"
+          ]
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "EMP001",
+      "name": "Test Employee",
+      "scheme": "Scheme B",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "gender": "M",
+      "ouId": "OU1",
+      "rotationOffset": 0
+    }
+  ]
+}

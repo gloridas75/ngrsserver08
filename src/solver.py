@@ -347,12 +347,6 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     # ═══════════════════════════════════════════════════════════
     
     if rostering_basis == 'outcomeBased':
-        # Check if slot-based outcome mode should be used
-        from context.engine.outcome_based_with_slots import (
-            should_use_slot_based_outcome,
-            solve_outcome_based_with_slots
-        )
-        
         demand_items = input_data.get('demandItems', [])
         demand = demand_items[0] if demand_items else {}
         requirements = demand.get('requirements', [])
@@ -369,11 +363,25 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         else:
             eligible_employees = [emp for emp in all_employees if emp['employeeId'] in selected_emp_ids]
         
-        # Check if slot-based mode should activate
-        use_slot_based = should_use_slot_based_outcome(demand, requirement, len(eligible_employees))
+        # ========== ROUTING DECISION: Check templateGenerationMode FIRST ==========
+        # Priority 1: If templateGenerationMode is explicitly set, honor it
+        # Priority 2: Otherwise use heuristic (slot-based vs template-based)
+        template_mode = demand.get('templateGenerationMode')
+        
+        if template_mode == 'cpsat' or template_mode == 'incremental':
+            # EXPLICIT MODE: User specified templateGenerationMode
+            # Force template-based rostering (bypass slot-based heuristic)
+            use_slot_based = False
+            print(f"{log_prefix} Template mode explicitly set: '{template_mode}' → forcing template-based rostering")
+        else:
+            # HEURISTIC MODE: Check if slot-based mode should activate
+            from context.engine.outcome_based_with_slots import should_use_slot_based_outcome
+            use_slot_based = should_use_slot_based_outcome(demand, requirement, len(eligible_employees))
         
         if use_slot_based:
             # SLOT-BASED OUTCOME ROSTERING (Headcount-driven with load balancing)
+            from context.engine.outcome_based_with_slots import solve_outcome_based_with_slots
+            
             print(f"{log_prefix} ======================================================================")
             print(f"{log_prefix} SLOT-BASED OUTCOME ROSTERING")
             print(f"{log_prefix} ======================================================================")
@@ -450,10 +458,11 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             print()
             
         else:
-            # OUTCOME-BASED ROSTER GENERATION (Template Validation)
+            # TEMPLATE-BASED OUTCOME ROSTERING (CP-SAT or Incremental)
             print(f"{log_prefix} ======================================================================")
-            print(f"{log_prefix} OUTCOME-BASED ROSTERING (TEMPLATE VALIDATION)")
+            print(f"{log_prefix} TEMPLATE-BASED OUTCOME ROSTERING")
             print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} Mode: {template_mode or 'cpsat'} (constraint-validated template generation)")
             print(f"{log_prefix} Method: Generate template per OU → validate constraints → replicate")
             print(f"{log_prefix} Constraints: C1-C17 (core MOM regulatory constraints)")
             print()

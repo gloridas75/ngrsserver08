@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "RST-20260106-D293558C",
+  "publicHolidays": [
+    "2026-01-01"
+  ],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2026-01-06T12:29:16.024655",
+    "ended": "2026-01-06T12:29:16.025301",
+    "durationSeconds": 0.0006480216979980469,
+    "status": "OPTIMAL"
+  },
+  "score": {
+    "overall": 0,
+    "hard": 0,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "violations": []
+    },
+    "soft": {}
+  },
+  "assignments": [],
+  "employeeRoster": [],
+  "rosterSummary": {
+    "totalDailyStatuses": 0,
+    "byStatus": {
+      "ASSIGNED": 0,
+      "OFF_DAY": 0,
+      "UNASSIGNED": 0,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "OPTIMAL",
+    "solverStatus": "OPTIMAL",
+    "solverStatusExplanation": "CP-SAT proved this is the best possible solution. The solver exhaustively searched the solution space and mathematically verified no better solution exists.",
+    "qualityExplanation": "CP-SAT solver proved this is the best possible solution within the constraint model.",
+    "coverageMetrics": {
+      "totalSlots": 0,
+      "assignedSlots": 0,
+      "unassignedSlots": 0,
+      "coverageRate": 0,
+      "coverageQuality": "PARTIAL"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 76,
+      "employeesUsed": 0,
+      "employeesUnused": 76,
+      "utilizationRate": 0.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 0,
+      "maxShiftsPerEmployee": 0,
+      "avgShiftsPerEmployee": 0,
+      "shiftVariance": 0,
+      "balanceQuality": 0,
+      "balanceGrade": "N/A"
+    },
+    "optimizationContext": {
+      "optimizationMode": "minimizeEmployeeCount",
+      "fixedRotationOffset": "ouOffsets",
+      "patternBased": true,
+      "continuousAdherence": false
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:b3f5079a6532b3b1d7d30d89bdecd6ee7c0f770125a99e9ad18e86fbeb4c129d",
+    "generatedAt": "2026-01-06T12:29:16.025928",
+    "employeeHours": {}
+  }
+}

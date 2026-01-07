@@ -1,28 +1,35 @@
-"""C17: Monthly OT cap ≤72h per employee (HARD).
+"""C17: Monthly OT cap per employee (HARD).
 
 Canonical model:
 - ot_hours = max(0, gross_hours - 9.0) per shift
-- Sum of ot_hours per employee per calendar month ≤ 72h
+- Sum of ot_hours per employee per calendar month ≤ monthly OT cap
 
-This constraint enforces monthly OT doesn't exceed 72 hours (HARD).
+Monthly OT caps (from monthlyHourLimits):
+- Standard (non-APO): 72h per month
+- APGD-D10 (Scheme A + APO): 112-124h per month (varies by month length)
 
-Integrated with C2 for consistency: both use same hour calculation.
+This constraint enforces monthly OT doesn't exceed the scheme/product-specific limit (HARD).
 """
 from collections import defaultdict
-from context.engine.constraint_config import get_constraint_param
+from calendar import monthrange
+from context.engine.constraint_config import get_monthly_hour_limits
 
 
 def add_constraints(model, ctx):
     """
-    Enforce monthly OT hour cap (72h per employee) (HARD).
+    Enforce monthly OT hour cap per employee (HARD).
     
     Strategy: Group slots by (employee, calendar month).
     For each month, sum OT hours weighted by assignments.
-    Constraint: sum(var * scaled_ot) <= 720 (72h in tenths).
+    Constraint: sum(var * scaled_ot) <= monthly_ot_cap
+    
+    Monthly OT caps (from monthlyHourLimits):
+    - Standard: 72h
+    - APGD-D10 (APO): 112-124h depending on month length (28-31 days)
     
     Args:
         model: CP-SAT model
-        ctx: Context dict with 'employees', 'slots', 'x'
+        ctx: Context dict with 'employees', 'slots', 'x', 'monthlyHourLimits'
     """
     
     slots = ctx.get('slots', [])
@@ -41,12 +48,12 @@ def add_constraints(model, ctx):
         ot_hours = max(0, gross - 9.0)
         slot_ot_hours[slot.slot_id] = ot_hours
     
-    # Group slots by (employee, calendar month)
+    # Group slots by (employee, calendar month, year)
     emp_month_slots = defaultdict(list)
     
     for slot in slots:
         slot_date = slot.date
-        month_key = f"{slot_date.year}-{slot_date.month:02d}"
+        month_key = (slot_date.year, slot_date.month)
         
         for emp in employees:
             emp_id = emp.get('employeeId')
@@ -55,7 +62,16 @@ def add_constraints(model, ctx):
     
     # Add monthly OT cap constraints
     monthly_constraints = 0
+    apgd_employees = 0
+    
     for (emp_id, month_key), month_slots in emp_month_slots.items():
+        year, month = month_key
+        
+        # Find employee dict for this employee
+        employee = next((e for e in employees if e.get('employeeId') == emp_id), None)
+        if not employee:
+            continue
+        
         # Build weighted sum: sum(var * ot_hours_scaled)
         terms = []
         for slot in month_slots:
@@ -69,18 +85,32 @@ def add_constraints(model, ctx):
                     terms.append(var * int_hours)
         
         if terms:
-            # Read monthly OT cap from JSON with fallback to 72h
-            employee_dict = {'employeeId': emp_id}
-            monthly_ot_cap = get_constraint_param(
-                ctx, 'momMonthlyOTcap72h', employee_dict, default=72.0
-            )
+            # Get scheme/product-specific monthly OT cap from monthlyHourLimits
+            monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
+            monthly_ot_cap = monthly_limits.get('maxOvertimeHours', 72.0)
             monthly_ot_cap_int = int(round(monthly_ot_cap * 10))  # Convert to tenths
+            
+            # Track APGD-D10 (APO) employees
+            if monthly_ot_cap > 72.0:
+                apgd_employees += 1
             
             # Constraint: sum(var * scaled_ot) <= monthly_ot_cap
             model.Add(sum(terms) <= monthly_ot_cap_int)
             monthly_constraints += 1
     
+    # Calculate unique APO employees (avoid double counting across months)
+    unique_apgd = set()
+    for (emp_id, month_key), _ in emp_month_slots.items():
+        year, month = month_key
+        employee = next((e for e in employees if e.get('employeeId') == emp_id), None)
+        if employee:
+            monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
+            if monthly_limits.get('maxOvertimeHours', 72.0) > 72.0:
+                unique_apgd.add(emp_id)
+    
     print(f"[C17] Monthly OT Cap Constraint (HARD)")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")
-    print(f"     Monthly OT cap: ≤72h per employee per calendar month")
+    print(f"     Standard OT cap: ≤72h per month")
+    if unique_apgd:
+        print(f"     APGD-D10 (APO): {len(unique_apgd)} employees with ≤112-124h cap (month-dependent)")
     print(f"     ✓ Added {monthly_constraints} monthly OT constraints\n")

@@ -173,8 +173,12 @@ def _build_and_solve_template(
             if i in x:  # Only if day is in coverage window
                 model.Add(x[i] == 1)
     
-    # Apply core MOM constraints
-    _apply_mom_constraints(model, x, dates, shift_details, template_emp, ctx, coverage_days)
+    # Apply core MOM constraints (C2, C3, C5, C6, C7, C17)
+    _apply_mom_constraints(
+        model, x, dates, shift_details, template_emp, ctx, coverage_days,
+        requirement=requirement,
+        demand=demand
+    )
     
     # Objective: maximize work days (ensures we use the template employee fully)
     model.Maximize(sum(x[i] for i in range(len(dates)) if i in x))
@@ -235,14 +239,32 @@ def _apply_mom_constraints(
     shift_details: dict,
     employee: dict,
     ctx: dict,
-    coverage_days: List[str]
+    coverage_days: List[str],
+    requirement: dict = None,
+    demand: dict = None
 ):
-    """Apply core MOM regulatory constraints (C1-C17) - simplified version."""
+    """Apply core MOM regulatory constraints (C2, C3, C5, C6, C7, C17)."""
+    
+    from context.engine.time_utils import normalize_scheme, is_apgd_d10_employee
     
     # Use default MOM parameters (conservative approach)
-    max_consecutive_days = 12
     min_off_days_per_week = 1
-    max_weekly_normal_hours = 44.0  # This is for NORMAL hours, not gross
+    max_weekly_normal_hours = 44.0  # For full-time (Scheme A/B)
+    max_monthly_ot_hours = 72.0
+    
+    # Employee scheme and product type for special rules
+    emp_scheme_raw = employee.get('scheme', 'A')
+    emp_scheme = normalize_scheme(emp_scheme_raw)
+    
+    # Check if employee is APGD-D10 (Scheme A + APO)
+    is_apgd = is_apgd_d10_employee(employee, requirement)
+    
+    # C3: Maximum consecutive work days
+    # Standard: 12 days, APGD-D10 (APO): 8 days
+    max_consecutive_days = 8 if is_apgd else 12
+    
+    if is_apgd:
+        logger.info(f"  APGD-D10 detected (Scheme A + APO): Using 8-day consecutive limit and NO monthly OT cap")
     
     # Calculate shift duration
     shift_duration_hours = _calculate_shift_duration(shift_details)
@@ -251,20 +273,26 @@ def _apply_mom_constraints(
     # Use this as estimate for weekly hour cap (actual will be calculated in output builder)
     estimated_normal_hours_per_day = 8.8
     estimated_normal_minutes = int(estimated_normal_hours_per_day * 60)
+    
+    # C2: Maximum 44 normal hours per work week (Monday-Sunday) - Full-time only
+    # C6: Maximum 34.98 normal hours per week for Scheme P (part-time)
+    if emp_scheme == 'P':
+        max_weekly_normal_hours = 34.98
+        logger.info(f"  Applying C6: Scheme P weekly limit = {max_weekly_normal_hours}h")
+    
     max_weekly_normal_minutes = int(max_weekly_normal_hours * 60)
     
-    # C2: Maximum 44 normal hours per work week (Monday-Sunday)
     # Group dates into Monday-Sunday weeks
     weeks = _group_dates_by_week(dates)
     for week_dates in weeks:
         week_indices = [i for i, d in enumerate(dates) if d in week_dates and i in x]
         if week_indices:
-            # Sum of work days * estimated normal hours <= 44h weekly cap
+            # Sum of work days * estimated normal hours <= weekly cap (C2 or C6)
             # Note: Using 8.8h estimate; actual hours calculated later
             total_weekly_normal_minutes = sum(x[i] * estimated_normal_minutes for i in week_indices)
             model.Add(total_weekly_normal_minutes <= max_weekly_normal_minutes)
     
-    # C3: Maximum consecutive work days (default 12)
+    # C3: Maximum consecutive work days (12 for standard, 8 for APGD-D10/APO)
     for i in range(len(dates) - max_consecutive_days):
         consecutive_indices = [j for j in range(i, i + max_consecutive_days + 1) if j in x]
         if len(consecutive_indices) == max_consecutive_days + 1:
@@ -280,6 +308,95 @@ def _apply_mom_constraints(
             # Work days in window must leave enough off days
             max_work_days = 7 - min_off_days_per_week - coverage_skipped
             model.Add(sum(x[j] for j in window_indices) <= max_work_days)
+    
+    # C7: Qualification/license validity (only if requiredQualifications specified)
+    required_quals = requirement.get('requiredQualifications', []) if requirement else []
+    if required_quals:
+        logger.info(f"  Applying C7: Checking qualifications {required_quals}")
+        emp_licenses = {}
+        
+        # Build license map for this employee
+        for lic in employee.get('licenses', []):
+            code = lic.get('code')
+            expiry = lic.get('expiryDate')
+            if code and expiry:
+                emp_licenses[code] = expiry
+        
+        # Also check 'qualifications' field
+        for qual in employee.get('qualifications', []):
+            code = qual.get('code')
+            expiry = qual.get('expiryDate')
+            if code and expiry:
+                emp_licenses[code] = expiry
+        
+        # Check if employee meets requirements
+        has_required_quals = True
+        for qual_code in required_quals:
+            if qual_code not in emp_licenses:
+                has_required_quals = False
+                logger.warning(f"  ⚠️  Employee {employee.get('employeeId')} missing qualification: {qual_code}")
+                break
+            
+            # Check expiry for each work date
+            expiry_str = emp_licenses[qual_code]
+            try:
+                from datetime import datetime as dt
+                expiry_date = dt.strptime(expiry_str, '%Y-%m-%d').date()
+                
+                # For all work dates, ensure license is valid
+                for i, date in enumerate(dates):
+                    if i in x:
+                        if date.date() > expiry_date:
+                            # License expired before this date - cannot work
+                            model.Add(x[i] == 0)
+                            logger.info(f"    Blocking date {date.date()} (license expires {expiry_date})")
+            except (ValueError, AttributeError) as e:
+                logger.warning(f"  ⚠️  Invalid expiry date for {qual_code}: {expiry_str}")
+                has_required_quals = False
+                break
+        
+        if not has_required_quals:
+            # Employee doesn't meet qualifications - cannot work any day
+            logger.warning(f"  ⚠️  Employee {employee.get('employeeId')} does not meet qualification requirements")
+            for i in x:
+                model.Add(x[i] == 0)
+    
+    # C17: Monthly overtime cap
+    # Read monthly OT cap from monthlyHourLimits (scheme/product-specific)
+    # Standard: 72h/month, APGD-D10 (APO): 112-124h/month depending on month length
+    from context.engine.constraint_config import get_monthly_hour_limits
+    
+    # Group dates by calendar month
+    months = {}  # month_key -> (year, month, [date_indices])
+    for i, date in enumerate(dates):
+        if i in x:
+            month_key = f"{date.year}-{date.month:02d}"
+            if month_key not in months:
+                months[month_key] = (date.year, date.month, [])
+            months[month_key][2].append(i)
+    
+    # Apply monthly OT cap for each month
+    # OT hours = max(0, gross_hours - 9.0) per shift
+    gross_hours = shift_duration_hours
+    ot_hours_per_shift = max(0, gross_hours - 9.0)
+    
+    if ot_hours_per_shift > 0:
+        ot_hours_scaled = int(round(ot_hours_per_shift * 10))
+        
+        for month_key, (year, month, month_indices) in months.items():
+            # Get scheme/product-specific monthly OT cap
+            monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
+            monthly_ot_cap = monthly_limits.get('maxOvertimeHours', max_monthly_ot_hours)
+            monthly_ot_cap_scaled = int(round(monthly_ot_cap * 10))
+            
+            # Sum of OT hours for this month <= monthly cap
+            total_ot_terms = [x[i] * ot_hours_scaled for i in month_indices]
+            if total_ot_terms:
+                model.Add(sum(total_ot_terms) <= monthly_ot_cap_scaled)
+                if is_apgd:
+                    logger.info(f"  Applying C17 (APGD-D10): Monthly OT cap for {month_key} <= {monthly_ot_cap}h")
+                else:
+                    logger.info(f"  Applying C17: Monthly OT cap for {month_key} <= {monthly_ot_cap}h")
 
 
 def _calculate_shift_duration(shift_details: dict) -> float:

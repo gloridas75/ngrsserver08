@@ -1,0 +1,22 @@
+{
+  "status": "INFEASIBLE",
+  "message": "Invalid work pattern",
+  "violations": {
+    "Scheme B": [
+      "\u274c Pattern has NO off-days (requires at least 1 off-day per 7-day period)",
+      "\u274c Pattern provides only 0.00 off-days per 7-day period (minimum: 1)",
+      "\u274c Pattern generates 61.6h normal hours per week (cap: 44.0h). With 7 work days \u00d7 8.8h = 61.6h per 7-day cycle"
+    ]
+  },
+  "pattern": [
+    "D",
+    "D",
+    "D",
+    "D",
+    "D",
+    "D",
+    "D"
+  ],
+  "assignments": [],
+  "employeeRoster": []
+}

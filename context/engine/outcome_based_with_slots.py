@@ -794,4 +794,51 @@ def _assign_employees_to_slots_balanced(slots: List[Dict[str, Any]],
     for emp_id, count in employee_workload.items():
         logger.info(f"    {emp_id}: {count} days")
     
+    # CRITICAL FIX: Add OFF_DAY records from employee templates to assignments array
+    # This ensures all employees appear in the assignments array, not just those with work
+    logger.info(f"  Adding OFF_DAY records from employee templates...")
+    off_day_count = 0
+    
+    # Get dates that were already assigned (as work days)
+    assigned_dates_by_employee = defaultdict(set)
+    for assignment in assignments:
+        if assignment['status'] == 'ASSIGNED' and assignment.get('employeeId'):
+            assigned_dates_by_employee[assignment['employeeId']].add(assignment['date'])
+    
+    # Add OFF_DAY records for each employee's off days from their template
+    for emp_id, template_data in employee_templates.items():
+        template_result = template_data.get('template_result', {})
+        
+        for date_str, day_info in template_result.items():
+            # Only add OFF_DAY if:
+            # 1. It's marked as an off day in the template (!is_work_day)
+            # 2. Employee doesn't already have a work assignment on this date
+            # 3. Day passed template validation (assigned=True)
+            if (not day_info.get('is_work_day', False) and 
+                day_info.get('assigned', False) and
+                date_str not in assigned_dates_by_employee[emp_id]):
+                
+                # Extract shift timing from the day_info (from template generation)
+                shift_start = day_info.get('shift_start', '08:00:00')
+                shift_end = day_info.get('shift_end', '20:00:00')
+                
+                off_assignment = {
+                    'slotId': None,
+                    'demandId': None,
+                    'requirementId': None,
+                    'employeeId': emp_id,
+                    'date': date_str,
+                    'startDateTime': f"{date_str}T{shift_start}",
+                    'endDateTime': f"{date_str}T{shift_end}",
+                    'shiftCode': 'O',
+                    'position': None,
+                    'rotationOffset': day_info.get('rotation_offset'),
+                    'patternDay': day_info.get('pattern_day'),
+                    'status': 'OFF_DAY'
+                }
+                assignments.append(off_assignment)
+                off_day_count += 1
+    
+    logger.info(f"  ✓ Added {off_day_count} OFF_DAY records to assignments array")
+    
     return assignments

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": {
+    "scheme": "SchemeA",
+    "planId": "TEST-CPSAT-MODE",
+    "createdDate": "2024-06-01"
+  },
+  "planningHorizon": {
+    "startDate": "2024-06-01",
+    "endDate": "2024-06-14"
+  },
+  "solverConfig": {
+    "maxSolveTimeSeconds": 30,
+    "optimizationMode": "minimizeEmployeeCount",
+    "allowPartialSolution": true
+  },
+  "employees": [
+    {
+      "employeeId": "EMP001",
+      "ouId": "OU-A",
+      "rank": "SGT",
+      "isAPO": false,
+      "rotationOffset": 0,
+      "employmentScheme": "SchemeA"
+    },
+    {
+      "employeeId": "EMP002",
+      "ouId": "OU-A",
+      "rank": "SGT",
+      "isAPO": false,
+      "rotationOffset": 1,
+      "employmentScheme": "SchemeA"
+    },
+    {
+      "employeeId": "EMP003",
+      "ouId": "OU-A",
+      "rank": "SGT",
+      "isAPO": false,
+      "rotationOffset": 2,
+      "employmentScheme": "SchemeA"
+    }
+  ],
+  "demandItems": [
+    {
+      "demandId": "DEM-01",
+      "positionId": "SECURITY-OFFICER",
+      "locationId": "SITE-A",
+      "sourceMode": "outcomeBased",
+      "templateGenerationMode": "incremental",
+      "shifts": [
+        {
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "startTime": "07:00",
+              "endTime": "19:00"
+            }
+          ]
+        }
+      ],
+      "workRequirements": [
+        {
+          "requirementId": "REQ-01",
+          "requiredEmployeeCount": 3,
+          "minRank": "SGT",
+          "workPattern": [
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "D"
+          ],
+          "rotationPatternName": "7D-AUTO"
+        }
+      ]
+    }
+  ],
+  "constraintList": [
+    {
+      "constraintId": "C1",
+      "enabled": true
+    },
+    {
+      "constraintId": "C2",
+      "enabled": true
+    },
+    {
+      "constraintId": "C4",
+      "enabled": true
+    },
+    {
+      "constraintId": "C5",
+      "enabled": true
+    },
+    {
+      "constraintId": "C8",
+      "enabled": true
+    },
+    {
+      "constraintId": "C9",
+      "enabled": true
+    }
+  ]
+}

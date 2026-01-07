@@ -148,26 +148,35 @@ def generate_template_validated_roster(
             optimization_mode=optimization_mode
         )
         
-        # If CP-SAT returns empty (not implemented or failed), fall back to incremental
+        # Check if CP-SAT succeeded
         if not all_assignments:
-            logger.warning("⚠️  CP-SAT template generation returned no assignments")
-            logger.warning("⚠️  Falling back to incremental validation mode")
-            template_mode = 'incremental'  # Force fallback
-        else:
-            # Generate statistics
-            stats = _generate_statistics(all_assignments, selected_employees)
+            # CP-SAT failed - DO NOT fall back to incremental when explicitly requested
+            error_msg = "CP-SAT template generation failed (returned no assignments)"
+            logger.error(f"❌ {error_msg}")
+            logger.error("⚠️  templateGenerationMode='cpsat' was explicitly set")
+            logger.error("⚠️  Automatic fallback to incremental mode is DISABLED")
+            logger.error("⚠️  Check logs above for CP-SAT solver errors")
             
-            logger.info("\n" + "=" * 80)
-            logger.info("CP-SAT TEMPLATE ROSTER COMPLETE")
-            logger.info("=" * 80)
-            logger.info(f"Total Assignments: {len(all_assignments)}")
-            logger.info(f"  - Assigned: {stats['assigned_count']}")
-            logger.info(f"  - Unassigned: {stats['unassigned_count']}")
-            logger.info(f"Employees Used: {stats['employees_used']}")
-            logger.info(f"Generation Time: {stats['generation_time']:.3f}s")
-            logger.info("=" * 80)
-            
-            return all_assignments, stats
+            return [], {
+                'error': error_msg,
+                'mode': 'cpsat',
+                'reason': 'CP-SAT solver failed or returned empty results'
+            }
+        
+        # Generate statistics
+        stats = _generate_statistics(all_assignments, selected_employees)
+        
+        logger.info("\n" + "=" * 80)
+        logger.info("CP-SAT TEMPLATE ROSTER COMPLETE")
+        logger.info("=" * 80)
+        logger.info(f"Total Assignments: {len(all_assignments)}")
+        logger.info(f"  - Assigned: {stats['assigned_count']}")
+        logger.info(f"  - Unassigned: {stats['unassigned_count']}")
+        logger.info(f"Employees Used: {stats['employees_used']}")
+        logger.info(f"Generation Time: {stats['generation_time']:.3f}s")
+        logger.info("=" * 80)
+        
+        return all_assignments, stats
     
     # ========== INCREMENTAL VALIDATION MODE (DEFAULT) ==========
     if template_mode == 'incremental':
