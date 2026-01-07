@@ -408,7 +408,7 @@ def _create_off_day_assignment(
         'shiftCode': 'O',  # O = OFF day
         'startDateTime': None,  # No work on OFF days
         'endDateTime': None,
-        'status': 'OFF',  # Distinguish from ASSIGNED work days
+        'status': 'OFF_DAY',  # Standard status used throughout the system
         'hours': {
             'gross': 0.0,
             'lunch': 0.0,

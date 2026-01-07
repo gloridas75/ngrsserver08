@@ -730,7 +730,7 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     for assignment in assignments:
         try:
             # Check for OFF days (no work, no time calculation needed)
-            if assignment.get('status') == 'OFF' or assignment.get('shiftCode') == 'O':
+            if assignment.get('status') == 'OFF_DAY' or assignment.get('shiftCode') == 'O':
                 # OFF day - keep zero hours as-is
                 if 'hours' not in assignment:
                     assignment['hours'] = {

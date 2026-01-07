@@ -226,7 +226,8 @@ def generate_template_validated_roster(
                 emp,
                 template_pattern,
                 demand,
-                requirement
+                requirement,
+                shift_details
             )
             all_assignments.extend(emp_assignments)
     
@@ -793,7 +794,8 @@ def _replicate_template_to_employee(
     employee: Dict[str, Any],
     template_pattern: Dict[str, Dict[str, Any]],
     demand: Dict[str, Any],
-    requirement: Dict[str, Any]
+    requirement: Dict[str, Any],
+    shift_details: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
     """Replicate validated template pattern to an employee."""
     import copy
@@ -859,6 +861,20 @@ def _replicate_template_to_employee(
             demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
             requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
             
+            # Extract shift times from shift_details
+            shift_start = shift_details.get('start', '08:00:00')
+            shift_end = shift_details.get('end', '20:00:00')
+            next_day = shift_details.get('nextDay', False)
+            
+            # Create datetime strings
+            start_datetime = f"{date_str}T{shift_start}"
+            if next_day:
+                from datetime import timedelta
+                end_date = datetime.strptime(date_str, '%Y-%m-%d').date() + timedelta(days=1)
+                end_datetime = f"{end_date.strftime('%Y-%m-%d')}T{shift_end}"
+            else:
+                end_datetime = f"{date_str}T{shift_end}"
+            
             assignment = {
                 'assignmentId': f"{demand_id}-{date_str}-D-UNASSIGNED",
                 'demandId': demand_id,
@@ -866,6 +882,8 @@ def _replicate_template_to_employee(
                 'slotId': f"{demand_id}-{requirement_id}-D-{date_str}",
                 'employeeId': None,  # UNASSIGNED slots must have null employeeId
                 'date': date_str,
+                'startDateTime': start_datetime,
+                'endDateTime': end_datetime,
                 'shiftCode': 'D',
                 'status': 'UNASSIGNED',
                 'reason': day_info['reason']
