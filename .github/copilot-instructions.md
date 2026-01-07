@@ -159,6 +159,12 @@ python src/manage_ratio_cache.py clear
 
 ## API Endpoints (FastAPI)
 
+**IMPORTANT - Testing Protocol**:
+- **ALWAYS use production endpoint** for testing: `https://ngrssolver09.comcentricapps.com`
+- **Default to /solve/async** for all test requests (supports long-running jobs)
+- **Use /solve/async/{job_id}/result** to obtain final results
+- Never use local endpoints unless explicitly requested by the user
+
 ### 1. POST /solve (Synchronous)
 Immediate response, blocks until solve completes (use for small problems <10s):
 ```bash
@@ -167,16 +173,24 @@ curl -X POST http://localhost:8080/solve \
   -d @input_1211_optimized.json
 ```
 
-### 2. POST /solve/async (Asynchronous + Webhooks)
+### 2. POST /solve/async (Asynchronous + Webhooks) **[PREFERRED FOR TESTING]**
 Submit job → get job_id → poll status OR receive webhook:
 ```bash
-# Submit job with webhook
-curl -X POST http://localhost:8080/solve/async \
+# Submit job to PRODUCTION (always use this for testing)
+curl -X POST https://ngrssolver09.comcentricapps.com/solve/async \
+  -H "Content-Type: application/json" \
+  -d @"/path/to/input.json"
+
+# Check job status
+curl https://ngrssolver09.comcentricapps.com/solve/async/{job_id}
+
+# Get final results (use this endpoint, not just /solve/async/{job_id})
+curl https://ngrssolver09.comcentricapps.com/solve/async/{job_id}/result
+
+# Optional: Submit with webhook
+curl -X POST https://ngrssolver09.comcentricapps.com/solve/async \
   -H "Content-Type: application/json" \
   -d '{"input": {...}, "webhookUrl": "https://webhook.site/xyz"}'
-
-# Poll status (correct endpoint - no /status suffix)
-curl http://localhost:8080/solve/async/{job_id}
 ```
 - Jobs persist in Redis (`RedisJobManager`)
 - Workers process via `redis_worker.py`

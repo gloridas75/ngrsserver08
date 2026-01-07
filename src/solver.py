@@ -510,8 +510,8 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             
             print(f"{log_prefix} ✓ Template roster generated in {solver_time:.2f}s")
             print(f"{log_prefix} Status: {status_code}")
-            print(f"{log_prefix} Assignments: {stats['assigned_count']} assigned, {stats['unassigned_count']} unassigned")
-            print(f"{log_prefix} Employees: {stats['employees_used']}/{stats['total_available_employees']}")
+            print(f"{log_prefix} Assignments: {stats.get('assigned_count', 0)} assigned, {stats.get('unassigned_count', 0)} unassigned")
+            print(f"{log_prefix} Employees: {stats.get('employees_used', 0)}/{stats.get('total_available_employees', 0)}")
             print()
         
     else:
