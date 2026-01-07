@@ -657,13 +657,20 @@ def _replicate_template_to_employee(
         # Deep copy to avoid shared references
         assignment = copy.deepcopy(template_assign)
         
-        # Update employee-specific fields
-        assignment['employeeId'] = emp_id
-        
-        # Regenerate IDs with this employee's ID
-        date_str = assignment['date']
-        shift_code = assignment['shiftCode']
-        assignment['assignmentId'] = f"{demand_id}-{date_str}-{shift_code}-{emp_id}"
+        # Update employee-specific fields ONLY for ASSIGNED/OFF_DAY statuses
+        # UNASSIGNED slots must keep employeeId=null
+        status = assignment.get('status', 'ASSIGNED')
+        if status in ['ASSIGNED', 'OFF_DAY']:
+            assignment['employeeId'] = emp_id
+            # Regenerate IDs with this employee's ID
+            date_str = assignment['date']
+            shift_code = assignment['shiftCode']
+            assignment['assignmentId'] = f"{demand_id}-{date_str}-{shift_code}-{emp_id}"
+        else:
+            # UNASSIGNED: keep employeeId=null, but update assignmentId for tracking
+            date_str = assignment['date']
+            shift_code = assignment['shiftCode']
+            assignment['assignmentId'] = f"{demand_id}-{date_str}-UNASSIGNED-{date_str}"
         
         emp_assignments.append(assignment)
     
