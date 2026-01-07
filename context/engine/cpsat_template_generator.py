@@ -147,31 +147,31 @@ def _build_and_solve_template(
     
     # Decision variables: x[date_idx] = 1 if employee works on this date
     x = {}
-    for i, date in enumerate(dates):
-        day_name = date.strftime('%a')
-        if day_name in coverage_days:
-            x[i] = model.NewBoolVar(f'work_{date.strftime("%Y%m%d")}')
-        else:
-            # Outside coverage window - must be off
-            x[i] = model.NewIntVar(0, 0, f'off_{date.strftime("%Y%m%d")}')
-    
-    # Apply work pattern constraints
-    # For outcome-based with fixed rotation offsets, enforce the pattern strictly
+    pattern_violations = {}  # Track when pattern says work but constraints prevent it
     pattern_length = len(work_pattern)
     emp_offset = template_emp.get('rotationOffset', 0)
     
     for i, date in enumerate(dates):
+        day_name = date.strftime('%a')
         pattern_idx = (emp_offset + i) % pattern_length
         pattern_day = work_pattern[pattern_idx]
         
-        if pattern_day == 'O':
-            # Pattern says OFF - must not work
-            model.Add(x[i] == 0)
+        if day_name in coverage_days and pattern_day != 'O':
+            # Pattern says work AND day is in coverage window
+            # Create decision variable - let CP-SAT decide based on constraints
+            x[i] = model.NewBoolVar(f'work_{date.strftime("%Y%m%d")}')
+            # Track this as a day where pattern expects work
+            pattern_violations[i] = True
+        elif day_name in coverage_days and pattern_day == 'O':
+            # Pattern says OFF but day is in coverage window - should not work
+            x[i] = model.NewIntVar(0, 0, f'off_{date.strftime("%Y%m%d")}')
         else:
-            # Pattern says work (D, N, E, etc.) - must work on this day
-            # This ensures rotation offsets are respected across OUs
-            if i in x:  # Only if day is in coverage window
-                model.Add(x[i] == 1)
+            # Outside coverage window - must be off
+            x[i] = model.NewIntVar(0, 0, f'off_{date.strftime("%Y%m%d")}')
+    
+    # NOTE: We do NOT enforce pattern days as hard constraints
+    # Instead, we let MOM constraints (C1-C17) determine feasibility
+    # Days where pattern says work but constraints prevent it will become UNASSIGNED
     
     # Apply core MOM constraints (C2, C3, C5, C6, C7, C17)
     _apply_mom_constraints(
@@ -180,8 +180,9 @@ def _build_and_solve_template(
         demand=demand
     )
     
-    # Objective: maximize work days (ensures we use the template employee fully)
-    model.Maximize(sum(x[i] for i in range(len(dates)) if i in x))
+    # Objective: maximize work days where pattern expects work
+    # This prioritizes working on pattern days while respecting MOM constraints
+    model.Maximize(sum(x[i] for i in pattern_violations.keys() if i in x))
     
     # Solve
     solver = cp_model.CpSolver()
@@ -194,15 +195,20 @@ def _build_and_solve_template(
         logger.warning(f"  CP-SAT solver status: {solver.StatusName(status)}")
         return []
     
-    # Extract solution
+    # Extract solution and identify constraint violations
     work_days = [i for i in range(len(dates)) if i in x and solver.Value(x[i]) == 1]
     off_days = [i for i in range(len(dates)) if i in x and solver.Value(x[i]) == 0]
-    logger.info(f"  CP-SAT solved: {len(work_days)} work days, {len(off_days)} off days")
     
-    # Convert to assignment dicts - include BOTH work days AND off days
+    # Identify UNASSIGNED days: pattern expected work but constraints prevented it
+    unassigned_days = [i for i in pattern_violations.keys() if i in off_days]
+    actual_off_days = [i for i in off_days if i not in pattern_violations]
+    
+    logger.info(f"  CP-SAT solved: {len(work_days)} work days, {len(actual_off_days)} off days, {len(unassigned_days)} unassigned (constraint violations)")
+    
+    # Convert to assignment dicts - include ASSIGNED, OFF_DAY, and UNASSIGNED
     assignments = []
     
-    # Create work day assignments
+    # Create ASSIGNED work day assignments
     for day_idx in work_days:
         date = dates[day_idx]
         assignment = _create_assignment(
@@ -214,8 +220,8 @@ def _build_and_solve_template(
         )
         assignments.append(assignment)
     
-    # Create OFF day assignments (for complete roster)
-    for day_idx in off_days:
+    # Create OFF_DAY assignments (pattern said off OR outside coverage)
+    for day_idx in actual_off_days:
         date = dates[day_idx]
         off_assignment = _create_off_day_assignment(
             template_emp,
@@ -225,6 +231,22 @@ def _build_and_solve_template(
             shift_details
         )
         assignments.append(off_assignment)
+    
+    # Create UNASSIGNED assignments (pattern said work but constraints prevented)
+    for day_idx in unassigned_days:
+        date = dates[day_idx]
+        pattern_idx = (emp_offset + day_idx) % pattern_length
+        pattern_day = work_pattern[pattern_idx]
+        
+        unassigned_assignment = _create_unassigned_assignment(
+            template_emp,
+            date,
+            demand,
+            requirement,
+            shift_details,
+            reason=f"MOM constraint violation: pattern requires '{pattern_day}' shift but conflicts with weekly rest day requirement"
+        )
+        assignments.append(unassigned_assignment)
     
     # Sort by date for readability
     assignments.sort(key=lambda a: a['date'])
@@ -542,6 +564,63 @@ def _create_off_day_assignment(
         'startDateTime': start_datetime,  # Include shift time for UI display
         'endDateTime': end_datetime,
         'status': 'OFF_DAY',  # Standard status used throughout the system
+        'hours': {
+            'gross': 0.0,
+            'lunch': 0.0,
+            'net': 0.0,
+            'normal': 0.0,
+            'ot': 0.0,
+            'ph': 0.0,
+            'restDayPay': 0.0,
+            'paid': 0.0
+        }
+    }
+
+
+def _create_unassigned_assignment(
+    employee: dict,
+    date: datetime,
+    demand: dict,
+    requirement: dict,
+    shift_details: dict,
+    reason: str = "Constraint violation"
+) -> dict:
+    """Create assignment dictionary for an UNASSIGNED slot (constraint violation)."""
+    
+    emp_id = employee['employeeId']
+    date_str = date.strftime('%Y-%m-%d')
+    
+    demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
+    requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
+    
+    # Extract shift times
+    shift_start = shift_details.get('start', '08:00:00')
+    shift_end = shift_details.get('end', '20:00:00')
+    shift_code = shift_details.get('shiftCode', 'D')
+    next_day = shift_details.get('nextDay', False)
+    
+    # Create datetime strings
+    start_datetime = f"{date_str}T{shift_start}"
+    if next_day:
+        from datetime import timedelta
+        end_date = date + timedelta(days=1)
+        end_datetime = f"{end_date.strftime('%Y-%m-%d')}T{shift_end}"
+    else:
+        end_datetime = f"{date_str}T{shift_end}"
+    
+    # UNASSIGNED assignment with zero hours but includes reason
+    return {
+        'assignmentId': f"{demand_id}-{date_str}-UNASSIGNED-{emp_id}",
+        'slotId': f"{demand_id}-{requirement_id}-{shift_code}-{date_str}",
+        'employeeId': None,  # No employee assigned
+        'demandId': demand_id,
+        'requirementId': requirement_id,
+        'date': date_str,
+        'shiftCode': shift_code,
+        'startDateTime': start_datetime,
+        'endDateTime': end_datetime,
+        'status': 'UNASSIGNED',
+        'reason': reason,
         'hours': {
             'gross': 0.0,
             'lunch': 0.0,
