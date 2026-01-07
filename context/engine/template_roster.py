@@ -163,6 +163,17 @@ def generate_template_validated_roster(
                 'reason': 'CP-SAT solver failed or returned empty results'
             }
         
+        # POST-PROCESSING: Add UNASSIGNED slots if headcount > assigned employees
+        shift_details = _extract_shift_details(demand)
+        all_assignments = _add_unassigned_headcount_slots(
+            assignments=all_assignments,
+            requirement=requirement,
+            demand=demand,
+            start_date_str=start_date_str,
+            end_date_str=end_date_str,
+            shift_details=shift_details
+        )
+        
         # Generate statistics
         stats = _generate_statistics(all_assignments, selected_employees)
         
@@ -239,6 +250,17 @@ def generate_template_validated_roster(
                 shift_details
             )
             all_assignments.extend(emp_assignments)
+    
+    # POST-PROCESSING: Add UNASSIGNED slots if headcount > assigned employees
+    shift_details = _extract_shift_details(demand)
+    all_assignments = _add_unassigned_headcount_slots(
+        assignments=all_assignments,
+        requirement=requirement,
+        demand=demand,
+        start_date_str=start_date_str,
+        end_date_str=end_date_str,
+        shift_details=shift_details
+    )
     
     # Generate statistics
     stats = _generate_statistics(all_assignments, selected_employees)
@@ -899,6 +921,113 @@ def _replicate_template_to_employee(
             }
             
             assignments.append(assignment)
+    
+    return assignments
+
+
+def _add_unassigned_headcount_slots(
+    assignments: List[Dict[str, Any]],
+    requirement: Dict[str, Any],
+    demand: Dict[str, Any],
+    start_date_str: str,
+    end_date_str: str,
+    shift_details: Dict[str, Any]
+) -> List[Dict[str, Any]]:
+    """
+    Add UNASSIGNED slots to match headcount requirement (post-processing).
+    
+    This ensures outcomeBased + templateGenerationMode='cpsat' behaves like slot-based mode:
+    - headcount=500, employees=230 → Creates 270 UNASSIGNED slots
+    - Makes the employee shortage visible in output
+    
+    Args:
+        assignments: Existing assignments (all for available employees)
+        requirement: Requirement dict with headcount
+        demand: Demand item dict
+        start_date_str: Planning start date
+        end_date_str: Planning end date
+        shift_details: Shift timing details
+        
+    Returns:
+        Updated assignments list with UNASSIGNED slots added
+    """
+    headcount = requirement.get('headcount', 0)
+    
+    if headcount <= 0:
+        # No headcount specified - return as-is
+        return assignments
+    
+    # Count unique employees assigned per day
+    from collections import defaultdict
+    employees_per_day = defaultdict(set)
+    
+    for assignment in assignments:
+        if assignment.get('status') == 'ASSIGNED':
+            date = assignment.get('date')
+            emp_id = assignment.get('employeeId')
+            if date and emp_id:
+                employees_per_day[date].add(emp_id)
+    
+    # Calculate gap for each day
+    demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
+    requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
+    
+    # Get shift times
+    shift_start = shift_details.get('start', '08:00:00')
+    shift_end = shift_details.get('end', '20:00:00')
+    next_day = shift_details.get('nextDay', False)
+    shift_code = shift_details.get('shiftCode', 'D')
+    
+    # Iterate through planning horizon and add UNASSIGNED slots where needed
+    from datetime import datetime, timedelta
+    start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+    
+    current_date = start_date
+    unassigned_slots_added = 0
+    
+    while current_date <= end_date:
+        date_str = current_date.strftime('%Y-%m-%d')
+        assigned_count = len(employees_per_day.get(date_str, set()))
+        gap = headcount - assigned_count
+        
+        if gap > 0:
+            # Create UNASSIGNED slots for this day
+            for position in range(gap):
+                # Create datetime strings
+                start_datetime = f"{date_str}T{shift_start}"
+                if next_day:
+                    end_date_obj = current_date + timedelta(days=1)
+                    end_datetime = f"{end_date_obj.strftime('%Y-%m-%d')}T{shift_end}"
+                else:
+                    end_datetime = f"{date_str}T{shift_end}"
+                
+                # Standard UNASSIGNED format (matching outcome_based_with_slots.py lines 770-785)
+                assignment = {
+                    'slotId': f"{demand_id}-{requirement_id}-{shift_code}-P{assigned_count + position + 1}-{date_str}",
+                    'demandId': demand_id,
+                    'requirementId': requirement_id,
+                    'employeeId': None,  # UNASSIGNED must have null employeeId
+                    'date': date_str,
+                    'startDateTime': start_datetime,
+                    'endDateTime': end_datetime,
+                    'shiftCode': shift_code,
+                    'position': assigned_count + position + 1,
+                    'rotationOffset': (assigned_count + position + 1) % len(requirement.get('workPattern', [shift_code])),
+                    'patternDay': None,
+                    'status': 'UNASSIGNED',
+                    'reason': f"No eligible employees available (headcount gap: {assigned_count}/{headcount})"
+                }
+                
+                assignments.append(assignment)
+                unassigned_slots_added += 1
+        
+        current_date += timedelta(days=1)
+    
+    if unassigned_slots_added > 0:
+        logger.info(f"\n📊 HEADCOUNT POST-PROCESSING:")
+        logger.info(f"   Required headcount: {headcount} per day")
+        logger.info(f"   Added {unassigned_slots_added} UNASSIGNED slots to show gap")
     
     return assignments
 

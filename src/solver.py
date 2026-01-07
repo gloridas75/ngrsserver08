@@ -429,12 +429,23 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             has_unassigned = any(a.get('status') == 'UNASSIGNED' for a in assignments)
             status_code = "FEASIBLE" if has_unassigned else "OPTIMAL"
             
+            # Calculate hard score: Exclude headcount gap UNASSIGNED slots
+            headcount_gap_unassigned = sum(
+                1 for a in assignments 
+                if a.get('status') == 'UNASSIGNED' and 'headcount gap' in a.get('reason', '').lower()
+            )
+            constraint_unassigned = metadata.get('unassigned_slots', 0) - headcount_gap_unassigned
+            
             solver_result = {
                 'status': status_code,
                 'start_timestamp': start_timestamp,
                 'end_timestamp': end_timestamp,
                 'duration_seconds': solver_time,
-                'scores': {'hard': metadata.get('unassigned_slots', 0), 'soft': 0, 'overall': metadata.get('unassigned_slots', 0)},
+                'scores': {
+                    'hard': constraint_unassigned,  # Exclude headcount gaps
+                    'soft': 0,
+                    'overall': constraint_unassigned
+                },
                 'metadata': {
                     'method': 'slot_based_outcome',
                     'optimization': False,
@@ -445,6 +456,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                     'total_slots': metadata.get('total_slots', 0),
                     'assigned_slots': metadata.get('assigned_slots', 0),
                     'unassigned_slots': metadata.get('unassigned_slots', 0),
+                    'headcount_gap_slots': headcount_gap_unassigned,  # Track separately
                     'coverage_percentage': metadata.get('coverage_percentage', 0.0)
                 }
             }
@@ -493,25 +505,38 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             has_unassigned = any(a.get('status') == 'UNASSIGNED' for a in assignments)
             status_code = "FEASIBLE" if has_unassigned else "OPTIMAL"
             
+            # Calculate hard score: Exclude headcount gap UNASSIGNED slots
+            # Headcount gaps are not constraint violations, they indicate insufficient employees
+            headcount_gap_unassigned = sum(
+                1 for a in assignments 
+                if a.get('status') == 'UNASSIGNED' and 'headcount gap' in a.get('reason', '').lower()
+            )
+            constraint_unassigned = stats.get('unassigned_count', 0) - headcount_gap_unassigned
+            
             solver_result = {
                 'status': status_code,
                 'start_timestamp': start_timestamp,
                 'end_timestamp': end_timestamp,
                 'duration_seconds': solver_time,
-                'scores': {'hard': stats.get('unassigned_count', 0), 'soft': 0, 'overall': stats.get('unassigned_count', 0)},
+                'scores': {
+                    'hard': constraint_unassigned,  # Exclude headcount gaps
+                    'soft': 0, 
+                    'overall': constraint_unassigned
+                },
                 'metadata': {
                     'method': 'template_validation',
                     'optimization': False,
                     'constraints_validated': ['C1', 'C2', 'C3', 'C4', 'C5', 'C17'],
-                    'stats': stats
+                    'stats': stats,
+                    'headcount_gap_slots': headcount_gap_unassigned  # Track separately
                 }
             }
             violations = {}
             
             print(f"{log_prefix} ✓ Template roster generated in {solver_time:.2f}s")
             print(f"{log_prefix} Status: {status_code}")
-            print(f"{log_prefix} Assignments: {stats['assigned_count']} assigned, {stats['unassigned_count']} unassigned")
-            print(f"{log_prefix} Employees: {stats['employees_used']}/{stats['total_available_employees']}")
+            print(f"{log_prefix} Assignments: {stats.get('assigned_count', 0)} assigned, {stats.get('unassigned_count', 0)} unassigned")
+            print(f"{log_prefix} Employees: {stats.get('employees_used', 0)}/{stats.get('total_available_employees', 0)}")
             print()
         
     else:
