@@ -217,7 +217,8 @@ def _build_and_solve_template(
             template_emp,
             date,
             demand,
-            requirement
+            requirement,
+            shift_details
         )
         assignments.append(off_assignment)
     
@@ -387,7 +388,8 @@ def _create_off_day_assignment(
     employee: dict,
     date: datetime,
     demand: dict,
-    requirement: dict
+    requirement: dict,
+    shift_details: dict
 ) -> dict:
     """Create assignment dictionary for an OFF day (non-work day)."""
     
@@ -396,6 +398,20 @@ def _create_off_day_assignment(
     
     demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
+    
+    # Extract shift times for display purposes (even though it's an OFF day)
+    shift_start = shift_details.get('start', '08:00:00')
+    shift_end = shift_details.get('end', '20:00:00')
+    next_day = shift_details.get('nextDay', False)
+    
+    # Create datetime strings
+    start_datetime = f"{date_str}T{shift_start}"
+    if next_day:
+        from datetime import timedelta
+        end_date = date + timedelta(days=1)
+        end_datetime = f"{end_date.strftime('%Y-%m-%d')}T{shift_end}"
+    else:
+        end_datetime = f"{date_str}T{shift_end}"
     
     # OFF day assignment with zero hours
     return {
@@ -406,8 +422,8 @@ def _create_off_day_assignment(
         'requirementId': requirement_id,
         'date': date_str,
         'shiftCode': 'O',  # O = OFF day
-        'startDateTime': None,  # No work on OFF days
-        'endDateTime': None,
+        'startDateTime': start_datetime,  # Include shift time for UI display
+        'endDateTime': end_datetime,
         'status': 'OFF_DAY',  # Standard status used throughout the system
         'hours': {
             'gross': 0.0,
