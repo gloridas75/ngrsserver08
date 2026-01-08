@@ -366,10 +366,12 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         # use full CP-SAT solver (demandBased mode) instead of template generation
         # This ensures each employee's schedule respects ALL constraints including:
         # - Public holidays, - Employee availability/leave, - MOM compliance rules
+        print(f"{log_prefix} DEBUG: eligible_employees count: {len(eligible_employees)}")
         unique_ous = set(emp.get('ouId') for emp in eligible_employees if emp.get('ouId'))
         employee_offsets = [emp.get('rotationOffset') for emp in eligible_employees if 'rotationOffset' in emp]
         has_individual_offsets = len(set(employee_offsets)) > 1
         is_single_ou = len(unique_ous) == 1
+        print(f"{log_prefix} DEBUG: unique_ous={unique_ous}, has_individual_offsets={has_individual_offsets}, is_single_ou={is_single_ou}")
         
         if is_single_ou and has_individual_offsets and len(eligible_employees) <= 50:
             print(f"{log_prefix} ======================================================================")
