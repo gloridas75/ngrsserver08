@@ -671,8 +671,12 @@ def _replicate_template_to_employee(
     emp_offset = employee.get('rotationOffset', 0)
     demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     
+    print(f"\n[DEBUG ROTATION] === Replicating to employee {emp_id} ===")
+    print(f"[DEBUG ROTATION] Employee offset: {emp_offset}, Template offset: {template_offset}")
+    
     # Calculate date shift for backward rotation
     offset_diff = emp_offset - template_offset
+    print(f"[DEBUG ROTATION] Offset diff = {offset_diff} days (backward rotation)")
     
     # If offsets are the same, no date shifting needed
     if offset_diff == 0:
@@ -687,6 +691,7 @@ def _replicate_template_to_employee(
         template_by_date[date_str] = assign
     
     # Generate assignments for all dates in template
+    dates_shown = 0
     for template_assign in template_assignments:
         template_date_str = template_assign['date']
         template_date = datetime.strptime(template_date_str, '%Y-%m-%d')
@@ -694,6 +699,10 @@ def _replicate_template_to_employee(
         # Apply backward rotation: employee sees template's date+offset_diff
         source_date = template_date + timedelta(days=offset_diff)
         source_date_str = source_date.strftime('%Y-%m-%d')
+        
+        if dates_shown < 3:
+            print(f"[DEBUG ROTATION] Template date {template_date_str} → source date {source_date_str} (shift +{offset_diff} days)")
+            dates_shown += 1
         
         # Look up what the template had on the source date
         source_assign = template_by_date.get(source_date_str)

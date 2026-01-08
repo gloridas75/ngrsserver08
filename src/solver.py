@@ -294,8 +294,14 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         has_employee_offsets = any('rotationOffset' in emp and emp['rotationOffset'] is not None for emp in employees)
         is_single_ou = len(unique_ous) == 1
         
+        print(f"\n[DEBUG ROTATION] === Single OU Detection ===")
+        print(f"[DEBUG ROTATION] Unique OUs: {unique_ous} (count={len(unique_ous)})")
+        print(f"[DEBUG ROTATION] Has employee offsets: {has_employee_offsets}")
+        print(f"[DEBUG ROTATION] Is single OU: {is_single_ou}")
+        
         if is_single_ou and has_employee_offsets:
             # Single OU + employees have individual offsets → Use employee-level offsets (staggered rotation)
+            print(f"[DEBUG ROTATION] ✓ USING EMPLOYEE-LEVEL OFFSETS (single OU with individual offsets)")
             print(f"{log_prefix} Single OU with individual employee offsets: Using employee-level rotation")
             employee_level_count = 0
             for emp in employees:
