@@ -17,7 +17,7 @@ Input Schema (v0.70):
 """
 from collections import defaultdict
 from datetime import datetime, timedelta
-from context.engine.time_utils import split_shift_hours
+from context.engine.time_utils import split_shift_hours, normalize_scheme
 
 
 def add_constraints(model, ctx):
@@ -57,7 +57,8 @@ def add_constraints(model, ctx):
     
     for emp in employees:
         emp_id = emp.get('employeeId')
-        scheme = emp.get('scheme', 'A')
+        scheme_raw = emp.get('scheme', 'A')
+        scheme = normalize_scheme(scheme_raw)  # Normalize "Scheme A" → 'A'
         employee_scheme[emp_id] = scheme
         
         # Read max daily hours from constraintList (scheme-specific)

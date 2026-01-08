@@ -80,13 +80,28 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     if not rostering_basis:
         rostering_basis = input_data.get('rosteringBasis', 'demandBased')
     
-    # Check if fallback to outcomeBased is enabled (default: True)
-    fallback_enabled = input_data.get('fallbackToOutcomeBased', True)
+    # IMPORTANT: Validate templateGenerationMode consistency
+    # templateGenerationMode should ONLY be present for outcomeBased mode
+    template_mode = None
+    if demand_items and len(demand_items) > 0:
+        template_mode = demand_items[0].get('templateGenerationMode')
+    
+    if template_mode in ['cpsat', 'incremental'] and rostering_basis != 'outcomeBased':
+        print(f"{log_prefix} ⚠️  WARNING: templateGenerationMode='{template_mode}' with rosteringBasis='{rostering_basis}'")
+        print(f"{log_prefix} ⚠️  templateGenerationMode is only valid for outcomeBased mode!")
+        print(f"{log_prefix} ⚠️  Ignoring templateGenerationMode and using {rostering_basis} mode as specified.")
+        print()
+    
+    # NEVER override rosteringBasis - respect what input specifies
+    # Check if fallback to outcomeBased is enabled (only used if solve fails, not for preprocessing)
+    fallback_enabled = input_data.get('fallbackToOutcomeBased', False)  # Default to False
     original_rostering_basis = rostering_basis  # Store original for logging
     
     # Determine if ICPMP preprocessing is needed
-    # - ICPMP runs ONLY for demandBased mode
-    # - outcomeBased mode skips ICPMP entirely
+    # ICPMP ONLY runs for demandBased mode when:
+    # - No employees have pre-assigned workPatterns (employees_with_patterns == 0)
+    # - There are employees available (len(employees) > 0)
+    # NEVER runs for outcomeBased mode - outcomeBased already has work patterns in requirements
     needs_icpmp = (
         rostering_basis == 'demandBased' and 
         employees_with_patterns == 0 and 
@@ -127,37 +142,47 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             filtered_count = len(preprocessing_result['filtered_employees'])
             has_insufficient_warning = any("Insufficient employees" in w for w in preprocessing_result.get('warnings', []))
             
-            if filtered_count == 0 and has_insufficient_warning and fallback_enabled:
-                # AUTOMATIC FALLBACK: ICPMP failed due to insufficient employees
+            if filtered_count == 0 and has_insufficient_warning:
+                # ICPMP failed - no mode switching, just fail with clear error
                 warning_msg = next((w for w in preprocessing_result.get('warnings', []) if "Insufficient employees" in w), "ICPMP failed")
                 
                 print(f"{log_prefix} ❌ ICPMP preprocessing failed: {warning_msg}")
-                print(f"{log_prefix} ⚠️  AUTOMATIC FALLBACK ACTIVATED")
                 print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print(f"{log_prefix} Switching from 'demandBased' → 'outcomeBased' rostering")
-                print(f"{log_prefix} Reason: Insufficient employees for rotation-based staffing")
-                print(f"{log_prefix} Mode: Constraint-driven template validation (allows flexible scheduling)")
+                print(f"{log_prefix} Cannot proceed with demandBased mode - insufficient employees")
+                print(f"{log_prefix} Suggested fixes:")
+                print(f"{log_prefix}   1. Add more employees to the input")
+                print(f"{log_prefix}   2. Reduce headcount requirements")
+                print(f"{log_prefix}   3. Use outcomeBased mode instead (set rosteringBasis='outcomeBased')")
                 print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 print()
                 
-                # Switch mode and reset flags
-                rostering_basis = 'outcomeBased'
-                needs_icpmp = False
-                
                 icpmp_metadata = {
-                    'enabled': False,
-                    'fallback_triggered': True,
-                    'original_mode': original_rostering_basis,
-                    'fallback_mode': 'outcomeBased',
-                    'fallback_reason': warning_msg,
-                    'warnings': [f"Automatic fallback: {warning_msg}"]
+                    'enabled': True,
+                    'failed': True,
+                    'reason': warning_msg,
+                    'warnings': [warning_msg]
                 }
                 
-                # Restore original employees and continue with outcomeBased mode
-                input_data['employees'] = employees  # Use original employee list
+                # Return INFEASIBLE result
+                return {
+                    'status': 'INFEASIBLE',
+                    'assignments': [],
+                    'scoreBreakdown': {'hard': {'total': 999999, 'violations': []}, 'soft': {'total': 0, 'violations': []}},
+                    'summary': {
+                        'totalEmployees': len(employees),
+                        'employeesUsed': 0,
+                        'error': 'ICPMP preprocessing failed: Insufficient employees'
+                    },
+                    'preprocessingMetadata': icpmp_metadata,
+                    'metadata': {
+                        'mode': 'demandBased',
+                        'icpmpTime': time.time() - preprocessing_start,
+                        'totalTime': time.time() - overall_start
+                    }
+                }
                 
             else:
-                # ICPMP succeeded or fallback disabled
+                # ICPMP succeeded
                 # Replace employee list with filtered, optimized employees
                 input_data['employees'] = preprocessing_result['filtered_employees']
                 
@@ -195,44 +220,45 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                         icpmp_assigned_offsets[emp_id] = emp_offset
             
         except (ValueError, Exception) as preprocessing_error:
-            # Check if error is due to insufficient employees
+            # ICPMP preprocessing failed with exception
             error_msg = str(preprocessing_error)
-            is_insufficient_employees = "Insufficient employees" in error_msg or "Need" in error_msg and "but only" in error_msg
+            is_insufficient_employees = "Insufficient employees" in error_msg or ("Need" in error_msg and "but only" in error_msg)
             
-            if is_insufficient_employees and fallback_enabled:
-                # AUTOMATIC FALLBACK: Switch to outcomeBased mode
-                print(f"{log_prefix} ❌ ICPMP preprocessing failed: {preprocessing_error}")
-                print(f"{log_prefix} ⚠️  AUTOMATIC FALLBACK ACTIVATED")
-                print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print(f"{log_prefix} Switching from 'demandBased' → 'outcomeBased' rostering")
-                print(f"{log_prefix} Reason: Insufficient employees for rotation-based staffing")
-                print(f"{log_prefix} Mode: Constraint-driven template validation (allows flexible scheduling)")
-                print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print()
-                
-                # Switch mode and reset flags
-                rostering_basis = 'outcomeBased'
-                needs_icpmp = False
-                
-                icpmp_metadata = {
-                    'enabled': False,
-                    'fallback_triggered': True,
-                    'original_mode': original_rostering_basis,
-                    'fallback_mode': 'outcomeBased',
-                    'fallback_reason': error_msg,
-                    'warnings': [f"Automatic fallback: {error_msg}"]
+            # NO MODE SWITCHING - fail with clear error message
+            print(f"{log_prefix} ❌ ICPMP preprocessing failed: {preprocessing_error}")
+            print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            print(f"{log_prefix} Cannot proceed with demandBased mode")
+            print(f"{log_prefix} Suggested fixes:")
+            print(f"{log_prefix}   1. Add more employees to the input")
+            print(f"{log_prefix}   2. Reduce headcount requirements or buffer percentage")
+            print(f"{log_prefix}   3. Use outcomeBased mode instead (set rosteringBasis='outcomeBased')")
+            print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            print()
+            
+            icpmp_metadata = {
+                'enabled': True,
+                'failed': True,
+                'error': error_msg,
+                'warnings': [f"ICPMP failed: {error_msg}"]
+            }
+            
+            # Return INFEASIBLE result
+            return {
+                'status': 'INFEASIBLE',
+                'assignments': [],
+                'scoreBreakdown': {'hard': {'total': 999999, 'violations': []}, 'soft': {'total': 0, 'violations': []}},
+                'summary': {
+                    'totalEmployees': len(employees),
+                    'employeesUsed': 0,
+                    'error': f'ICPMP preprocessing failed: {error_msg}'
+                },
+                'preprocessingMetadata': icpmp_metadata,
+                'metadata': {
+                    'mode': 'demandBased',
+                    'icpmpTime': time.time() - preprocessing_start if 'preprocessing_start' in locals() else 0,
+                    'totalTime': time.time() - overall_start
                 }
-            else:
-                # Fallback disabled or different error - log and continue
-                print(f"{log_prefix} ❌ ICPMP preprocessing failed: {preprocessing_error}")
-                if is_insufficient_employees and not fallback_enabled:
-                    print(f"{log_prefix} ⚠️  Automatic fallback disabled (fallbackToOutcomeBased: false)")
-                    print(f"{log_prefix} ℹ️  Tip: Set 'fallbackToOutcomeBased': true to enable automatic mode switching")
-                print(f"{log_prefix} ⚠  Continuing with original employee list")
-                print()
-                
-                icpmp_metadata = {
-                    'enabled': False,
+            }
                     'warnings': [f"Preprocessing failed: {error_msg}"]
                 }
         
@@ -363,9 +389,10 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         else:
             eligible_employees = [emp for emp in all_employees if emp['employeeId'] in selected_emp_ids]
         
-        # ========== ROUTING DECISION: Check templateGenerationMode FIRST ==========
-        # Priority 1: If templateGenerationMode is explicitly set, honor it
-        # Priority 2: Otherwise use heuristic (slot-based vs template-based)
+        # ========== TEMPLATE GENERATION MODE SELECTION (outcomeBased ONLY) ==========
+        # For outcomeBased mode: Check if user specified templateGenerationMode
+        # Valid values: "cpsat", "incremental", "auto", "off"
+        # If not specified or "off", system decides based on heuristics
         template_mode = demand.get('templateGenerationMode')
         
         if template_mode == 'cpsat' or template_mode == 'incremental':
