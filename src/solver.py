@@ -289,6 +289,16 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         employees = ctx.get('employees', [])
         ou_offset_map = ctx.get('_ouOffsetMap', {})
         
+        print(f"{log_prefix} ╔════════════════════════════════════════════════════════════")
+        print(f"{log_prefix} ║ DEBUG: ROTATION OFFSET TRACKING - BEFORE LOGIC")
+        print(f"{log_prefix} ╠════════════════════════════════════════════════════════════")
+        print(f"{log_prefix} ║ Total employees in ctx: {len(employees)}")
+        print(f"{log_prefix} ║ OU offset map: {ou_offset_map}")
+        print(f"{log_prefix} ║ Sample employees (first 3):")
+        for emp in employees[:3]:
+            print(f"{log_prefix} ║   {emp['employeeId']}: rotationOffset={emp.get('rotationOffset', 'NOT SET')}, ouId={emp.get('ouId')}")
+        print(f"{log_prefix} ╚════════════════════════════════════════════════════════════")
+        
         # Check if employees already have individual offsets (single OU case)
         has_employee_offsets = any('rotationOffset' in emp and emp['rotationOffset'] is not None 
                                    for emp in employees)
@@ -297,8 +307,14 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         
         if is_single_ou and has_employee_offsets:
             # Single OU with individual employee offsets - preserve them
-            print(f"{log_prefix} Single OU with individual employee offsets detected")
-            print(f"{log_prefix} ✓ Preserving {len([e for e in employees if 'rotationOffset' in e])} individual offsets")
+            print(f"{log_prefix} ╔════════════════════════════════════════════════════════════")
+            print(f"{log_prefix} ║ SINGLE OU WITH INDIVIDUAL OFFSETS DETECTED")
+            print(f"{log_prefix} ╠════════════════════════════════════════════════════════════")
+            print(f"{log_prefix} ║ Preserving {len([e for e in employees if 'rotationOffset' in e])} individual offsets")
+            print(f"{log_prefix} ║ Sample preserved offsets:")
+            for emp in employees[:3]:
+                print(f"{log_prefix} ║   {emp['employeeId']}: offset={emp.get('rotationOffset', 'NONE')}")
+            print(f"{log_prefix} ╚════════════════════════════════════════════════════════════")
             # Ensure all employees have an offset (default to 0 if missing)
             for emp in employees:
                 if 'rotationOffset' not in emp:
@@ -366,13 +382,23 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         # use full CP-SAT solver (demandBased mode) instead of template generation
         # This ensures each employee's schedule respects ALL constraints including:
         # - Public holidays, - Employee availability/leave, - MOM compliance rules
-        print(f"{log_prefix} DEBUG: eligible_employees count: {len(eligible_employees)}")
+        print(f"{log_prefix} ╔════════════════════════════════════════════════════════════")
+        print(f"{log_prefix} ║ DEBUG: DETECTION LOGIC - CHECKING FOR MODE SWITCH")
+        print(f"{log_prefix} ╠════════════════════════════════════════════════════════════")
+        print(f"{log_prefix} ║ eligible_employees count: {len(eligible_employees)}")
         unique_ous = set(emp.get('ouId') for emp in eligible_employees if emp.get('ouId'))
         employee_offsets = [emp.get('rotationOffset') for emp in eligible_employees if 'rotationOffset' in emp]
-        print(f"{log_prefix} DEBUG: employee_offsets={employee_offsets}, unique_offsets={set(employee_offsets)}")
+        print(f"{log_prefix} ║ employee_offsets: {employee_offsets[:10]}")  # Show first 10
+        print(f"{log_prefix} ║ unique_offsets: {set(employee_offsets)}")
+        print(f"{log_prefix} ║ unique_ous: {unique_ous}")
         has_individual_offsets = len(set(employee_offsets)) > 1
         is_single_ou = len(unique_ous) == 1
-        print(f"{log_prefix} DEBUG: unique_ous={unique_ous}, has_individual_offsets={has_individual_offsets}, is_single_ou={is_single_ou}")
+        print(f"{log_prefix} ║ has_individual_offsets: {has_individual_offsets}")
+        print(f"{log_prefix} ║ is_single_ou: {is_single_ou}")
+        print(f"{log_prefix} ║ Sample eligible employees:")
+        for emp in eligible_employees[:3]:
+            print(f"{log_prefix} ║   {emp['employeeId']}: offset={emp.get('rotationOffset', 'NONE')}, ouId={emp.get('ouId')}")
+        print(f"{log_prefix} ╚════════════════════════════════════════════════════════════")
         
         if is_single_ou and has_individual_offsets and len(eligible_employees) <= 50:
             print(f"{log_prefix} ======================================================================")
