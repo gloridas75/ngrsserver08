@@ -143,44 +143,23 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             has_insufficient_warning = any("Insufficient employees" in w for w in preprocessing_result.get('warnings', []))
             
             if filtered_count == 0 and has_insufficient_warning:
-                # ICPMP failed - no mode switching, just fail with clear error
+                # ICPMP failed - log warning but CONTINUE with original employee list
                 warning_msg = next((w for w in preprocessing_result.get('warnings', []) if "Insufficient employees" in w), "ICPMP failed")
                 
-                print(f"{log_prefix} ❌ ICPMP preprocessing failed: {warning_msg}")
-                print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print(f"{log_prefix} Cannot proceed with demandBased mode - insufficient employees")
-                print(f"{log_prefix} Suggested fixes:")
-                print(f"{log_prefix}   1. Add more employees to the input")
-                print(f"{log_prefix}   2. Reduce headcount requirements")
-                print(f"{log_prefix}   3. Use outcomeBased mode instead (set rosteringBasis='outcomeBased')")
-                print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                print(f"{log_prefix} ⚠️  ICPMP preprocessing had issues: {warning_msg}")
+                print(f"{log_prefix} ℹ️  Continuing with original {len(employees)} employees...")
                 print()
                 
                 icpmp_metadata = {
                     'enabled': True,
                     'failed': True,
                     'reason': warning_msg,
-                    'warnings': [warning_msg]
+                    'warnings': [warning_msg],
+                    'fallback_to_original_employees': True
                 }
                 
-                # Return INFEASIBLE result
-                return {
-                    'status': 'INFEASIBLE',
-                    'assignments': [],
-                    'scoreBreakdown': {'hard': {'total': 999999, 'violations': []}, 'soft': {'total': 0, 'violations': []}},
-                    'summary': {
-                        'totalEmployees': len(employees),
-                        'employeesUsed': 0,
-                        'error': 'ICPMP preprocessing failed: Insufficient employees'
-                    },
-                    'preprocessingMetadata': icpmp_metadata,
-                    'metadata': {
-                        'mode': 'demandBased',
-                        'icpmpTime': time.time() - preprocessing_start,
-                        'totalTime': time.time() - overall_start
-                    }
-                }
-                
+                # DO NOT RETURN - Continue to CP-SAT solver with original employee list
+            
             else:
                 # ICPMP succeeded
                 # Replace employee list with filtered, optimized employees
@@ -224,42 +203,20 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             error_msg = str(preprocessing_error)
             is_insufficient_employees = "Insufficient employees" in error_msg or ("Need" in error_msg and "but only" in error_msg)
             
-            # NO MODE SWITCHING - fail with clear error message
-            print(f"{log_prefix} ❌ ICPMP preprocessing failed: {preprocessing_error}")
-            print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-            print(f"{log_prefix} Cannot proceed with demandBased mode")
-            print(f"{log_prefix} Suggested fixes:")
-            print(f"{log_prefix}   1. Add more employees to the input")
-            print(f"{log_prefix}   2. Reduce headcount requirements or buffer percentage")
-            print(f"{log_prefix}   3. Use outcomeBased mode instead (set rosteringBasis='outcomeBased')")
-            print(f"{log_prefix} ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            # Log warning but CONTINUE with original employee list
+            print(f"{log_prefix} ⚠️  ICPMP preprocessing failed: {preprocessing_error}")
+            print(f"{log_prefix} ℹ️  Continuing with original {len(employees)} employees...")
             print()
             
             icpmp_metadata = {
                 'enabled': True,
                 'failed': True,
                 'error': error_msg,
-                'warnings': [f"ICPMP failed: {error_msg}"]
+                'warnings': [f"ICPMP failed: {error_msg}"],
+                'fallback_to_original_employees': True
             }
             
-            # Return INFEASIBLE result
-            return {
-                'status': 'INFEASIBLE',
-                'assignments': [],
-                'scoreBreakdown': {'hard': {'total': 999999, 'violations': []}, 'soft': {'total': 0, 'violations': []}},
-                'summary': {
-                    'totalEmployees': len(employees),
-                    'employeesUsed': 0,
-                    'error': f'ICPMP preprocessing failed: {error_msg}'
-                },
-                'preprocessingMetadata': icpmp_metadata,
-                'metadata': {
-                    'mode': 'demandBased',
-                    'icpmpTime': time.time() - preprocessing_start if 'preprocessing_start' in locals() else 0,
-                    'totalTime': time.time() - overall_start
-                },
-                'warnings': [f"Preprocessing failed: {error_msg}"]
-            }
+            # DO NOT RETURN - Continue to CP-SAT solver with original employee list
         
         except Exception as preprocessing_error:
             # Other exceptions - log and continue

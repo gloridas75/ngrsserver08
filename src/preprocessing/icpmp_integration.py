@@ -416,45 +416,66 @@ class ICPMPPreprocessor:
         
         logger.info(f"    Available employees: {len(available)} (after availability check)")
         
-        # Apply buffer to increase employee count (default 20% buffer)
-        # This provides scheduling flexibility and constraint safety margin
+        # CRITICAL: Check if OT-aware ICPMP is enabled
+        # If OT-aware, ICPMP already applied buffer internally - DO NOT apply again!
+        # If not OT-aware, apply buffer here
+        enable_ot_aware = requirement.get('enableOtAwareIcpmp', False)
         buffer_percentage = requirement.get('icpmpBufferPercentage', 20)  # Default 20%
         
-        # INTELLIGENT BUFFER ADJUSTMENT:
-        # If requested buffer exceeds available employees, try fallback buffer (20%)
-        # This preserves demandBased mode when possible instead of forcing outcomeBased fallback
-        optimal_count = None
-        applied_buffer = buffer_percentage
-        fallback_buffer = 20
-        
-        if buffer_percentage > 0:
-            optimal_count = int(optimal_count_raw * (1 + buffer_percentage / 100))
-            
-            # Check if buffered count exceeds available employees
-            if optimal_count > len(available) and buffer_percentage > fallback_buffer:
-                logger.warning(f"    ⚠️  {buffer_percentage}% buffer exceeds available employees: {optimal_count} > {len(available)}")
-                logger.info(f"    ℹ️  Attempting intelligent buffer reduction: {buffer_percentage}% → {fallback_buffer}%")
-                
-                # Try fallback buffer
-                optimal_count_fallback = int(optimal_count_raw * (1 + fallback_buffer / 100))
-                
-                if optimal_count_fallback <= len(available):
-                    # Fallback buffer works!
-                    optimal_count = optimal_count_fallback
-                    applied_buffer = fallback_buffer
-                    logger.info(f"    ✓ Intelligent buffer adjustment successful: {optimal_count_raw} → {optimal_count} employees ({fallback_buffer}% buffer)")
-                    logger.info(f"    ✓ Preserved demandBased mode (avoided fallback to outcomeBased)")
-                else:
-                    # Even fallback buffer insufficient - will trigger outcomeBased fallback
-                    logger.warning(f"    ⚠️  Even {fallback_buffer}% buffer insufficient: {optimal_count_fallback} > {len(available)}")
-                    logger.info(f"    ℹ️  Using original {buffer_percentage}% buffer: {optimal_count} employees (will trigger outcomeBased fallback)")
-                    # Keep original optimal_count to trigger proper error message below
-            else:
-                logger.info(f"    ✓ Applying {buffer_percentage}% buffer: {optimal_count_raw} → {optimal_count} employees")
-        else:
+        if enable_ot_aware:
+            # OT-AWARE MODE: ICPMP already included buffer in optimal_count_raw
+            # Do NOT apply buffer again (would cause double-buffering bug)
             optimal_count = optimal_count_raw
             applied_buffer = 0
-            logger.info(f"    No buffer specified: using {optimal_count} employees")
+            logger.info(f"    ✓ OT-aware ICPMP: Using {optimal_count} employees (buffer already applied by ICPMP)")
+            
+            # If ICPMP's count exceeds available, cap it at available
+            if optimal_count > len(available):
+                logger.warning(f"    ⚠️  ICPMP requested {optimal_count} employees, but only {len(available)} available")
+                logger.info(f"    ℹ️  Capping to available count: {optimal_count} → {len(available)} employees")
+                optimal_count = len(available)
+        else:
+            # NON-OT-AWARE MODE: Apply buffer to optimal_count_raw
+            # This provides scheduling flexibility and constraint safety margin
+            optimal_count = None
+            applied_buffer = buffer_percentage
+            fallback_buffer = 20
+            
+            if buffer_percentage > 0:
+                optimal_count = int(optimal_count_raw * (1 + buffer_percentage / 100))
+                
+                # Check if buffered count exceeds available employees
+                if optimal_count > len(available) and buffer_percentage > fallback_buffer:
+                    logger.warning(f"    ⚠️  {buffer_percentage}% buffer exceeds available employees: {optimal_count} > {len(available)}")
+                    logger.info(f"    ℹ️  Attempting intelligent buffer reduction: {buffer_percentage}% → {fallback_buffer}%")
+                    
+                    # Try fallback buffer
+                    optimal_count_fallback = int(optimal_count_raw * (1 + fallback_buffer / 100))
+                    
+                    if optimal_count_fallback <= len(available):
+                        # Fallback buffer works!
+                        optimal_count = optimal_count_fallback
+                        applied_buffer = fallback_buffer
+                        logger.info(f"    ✓ Intelligent buffer adjustment successful: {optimal_count_raw} → {optimal_count} employees ({fallback_buffer}% buffer)")
+                    else:
+                        # Even fallback buffer insufficient - cap at available
+                        logger.warning(f"    ⚠️  Even {fallback_buffer}% buffer insufficient: {optimal_count_fallback} > {len(available)}")
+                        logger.info(f"    ℹ️  Capping to available count: {optimal_count} → {len(available)} employees")
+                        optimal_count = len(available)
+                        applied_buffer = 0
+                else:
+                    logger.info(f"    ✓ Applying {buffer_percentage}% buffer: {optimal_count_raw} → {optimal_count} employees")
+                    
+                    # Still cap at available if needed
+                    if optimal_count > len(available):
+                        logger.warning(f"    ⚠️  Buffered count {optimal_count} exceeds available {len(available)}")
+                        logger.info(f"    ℹ️  Capping to available count: {optimal_count} → {len(available)} employees")
+                        optimal_count = len(available)
+                        applied_buffer = 0
+            else:
+                optimal_count = optimal_count_raw
+                applied_buffer = 0
+                logger.info(f"    No buffer specified: using {optimal_count} employees")
         
         offset_distribution_dict = icpmp_result['configuration']['offsetDistribution']
         
@@ -478,13 +499,12 @@ class ICPMPPreprocessor:
         logger.info(f"    Original offset distribution: {offset_distribution_dict}")
         logger.info(f"    Final offset list ({len(offset_list)} employees): {offset_list}")
         
-        # Step 3: Check sufficiency
+        # Step 3: Validate employee count (should not fail here - we already capped at available)
         if len(available) < optimal_count:
-            raise ValueError(
-                f"Insufficient employees for requirement {req_id}: "
-                f"Need {optimal_count}, but only {len(available)} available. "
-                f"Total eligible: {len(eligible)}, Already assigned: {len(eligible) - len(available)}"
-            )
+            # This should not happen now that we cap at available count
+            logger.error(f"    ✗ Unexpected state: Need {optimal_count}, but only {len(available)} available")
+            logger.info(f"    ℹ️  Adjusting to use all {len(available)} available employees")
+            optimal_count = len(available)
         
         # Step 4: Select using balanced strategy
         selected = self._select_employees_balanced(
