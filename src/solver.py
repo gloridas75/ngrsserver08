@@ -288,30 +288,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     if rostering_basis == 'outcomeBased':
         employees = ctx.get('employees', [])
         ou_offset_map = ctx.get('_ouOffsetMap', {})
-        
-        # Check if this is single OU scenario with individual employee offsets
-        unique_ous = set(emp.get('ouId') for emp in employees if emp.get('ouId'))
-        has_employee_offsets = any('rotationOffset' in emp and emp['rotationOffset'] is not None for emp in employees)
-        is_single_ou = len(unique_ous) == 1
-        
-        print(f"\n[DEBUG ROTATION] === Single OU Detection ===")
-        print(f"[DEBUG ROTATION] Unique OUs: {unique_ous} (count={len(unique_ous)})")
-        print(f"[DEBUG ROTATION] Has employee offsets: {has_employee_offsets}")
-        print(f"[DEBUG ROTATION] Is single OU: {is_single_ou}")
-        
-        if is_single_ou and has_employee_offsets:
-            # Single OU + employees have individual offsets → Use employee-level offsets (staggered rotation)
-            print(f"[DEBUG ROTATION] ✓ USING EMPLOYEE-LEVEL OFFSETS (single OU with individual offsets)")
-            print(f"{log_prefix} Single OU with individual employee offsets: Using employee-level rotation")
-            employee_level_count = 0
-            for emp in employees:
-                if 'rotationOffset' not in emp or emp['rotationOffset'] is None:
-                    emp['rotationOffset'] = 0  # Default if missing
-                else:
-                    employee_level_count += 1
-            print(f"{log_prefix} ✓ Using individual offsets for {employee_level_count}/{len(employees)} employees")
-        elif ou_offset_map:
-            # Multiple OUs or no employee offsets → Use OU-level offsets
+        if ou_offset_map:
             print(f"{log_prefix} Applying OU rotation offsets from {len(ou_offset_map)} organizational units")
             assigned_count = 0
             for emp in employees:
@@ -321,7 +298,7 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                     assigned_count += 1
                 elif 'rotationOffset' not in emp:
                     emp['rotationOffset'] = 0  # Default offset
-            print(f"{log_prefix} ✓ Assigned OU offsets to {assigned_count}/{len(employees)} employees")
+            print(f"{log_prefix} ✓ Assigned rotation offsets to {assigned_count}/{len(employees)} employees")
         else:
             print(f"{log_prefix} ⚠️  WARNING: No ouOffsets found, defaulting all employees to offset=0")
             for emp in employees:
