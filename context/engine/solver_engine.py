@@ -638,7 +638,8 @@ def build_model(ctx):
                 
                 # For each possible offset value (0 to cycle_days-1)
                 for possible_offset in range(cycle_days_for_emp):
-                    # Calculate cycle day for this offset (offset = starting position in cycle)
+                    # FORWARD ROTATION: Add offset to shift pattern into the cycle
+                    # offset=0 starts at pattern[0], offset=1 starts at pattern[1], etc.
                     emp_cycle_day = (days_from_base + possible_offset) % cycle_days_for_emp
                     expected_shift = rotation_seq[emp_cycle_day]
                     
@@ -669,6 +670,9 @@ def build_model(ctx):
                 # Use offset=0 to avoid double-rotation. Otherwise use employee's offset normally.
                 effective_offset = 0 if emp.get('workPattern') else emp_offset
                 
+                # FORWARD ROTATION: Add offset to shift pattern into the cycle
+                # Example: offset=1 means employee starts 1 day later in the pattern cycle
+                # Pattern [D,D,D,D,D,O,O]: offset=0→D D D D D O O, offset=1→D D D D O O D
                 emp_cycle_day = (days_from_base + effective_offset) % cycle_days_for_emp
                 expected_shift = rotation_seq[emp_cycle_day]
                 
