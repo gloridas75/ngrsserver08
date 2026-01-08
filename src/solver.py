@@ -288,7 +288,23 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     if rostering_basis == 'outcomeBased':
         employees = ctx.get('employees', [])
         ou_offset_map = ctx.get('_ouOffsetMap', {})
-        if ou_offset_map:
+        
+        # Check if employees already have individual offsets (single OU case)
+        has_employee_offsets = any('rotationOffset' in emp and emp['rotationOffset'] is not None 
+                                   for emp in employees)
+        unique_ous = set(emp.get('ouId') for emp in employees if emp.get('ouId'))
+        is_single_ou = len(unique_ous) == 1
+        
+        if is_single_ou and has_employee_offsets:
+            # Single OU with individual employee offsets - preserve them
+            print(f"{log_prefix} Single OU with individual employee offsets detected")
+            print(f"{log_prefix} ✓ Preserving {len([e for e in employees if 'rotationOffset' in e])} individual offsets")
+            # Ensure all employees have an offset (default to 0 if missing)
+            for emp in employees:
+                if 'rotationOffset' not in emp:
+                    emp['rotationOffset'] = 0
+        elif ou_offset_map:
+            # Multiple OUs or no individual offsets - use OU-level offsets
             print(f"{log_prefix} Applying OU rotation offsets from {len(ou_offset_map)} organizational units")
             assigned_count = 0
             for emp in employees:
@@ -345,6 +361,34 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         else:
             eligible_employees = [emp for emp in all_employees if emp['employeeId'] in selected_emp_ids]
         
+        # ========== SINGLE OU WITH INDIVIDUAL OFFSETS DETECTION ==========
+        # If all employees from single OU with different rotation offsets,
+        # use full CP-SAT solver (demandBased mode) instead of template generation
+        # This ensures each employee's schedule respects ALL constraints including:
+        # - Public holidays, - Employee availability/leave, - MOM compliance rules
+        unique_ous = set(emp.get('ouId') for emp in eligible_employees if emp.get('ouId'))
+        employee_offsets = [emp.get('rotationOffset') for emp in eligible_employees if 'rotationOffset' in emp]
+        has_individual_offsets = len(set(employee_offsets)) > 1
+        is_single_ou = len(unique_ous) == 1
+        
+        if is_single_ou and has_individual_offsets and len(eligible_employees) <= 50:
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} SINGLE OU WITH INDIVIDUAL ROTATION OFFSETS DETECTED")
+            print(f"{log_prefix} ======================================================================")
+            print(f"{log_prefix} OU: {unique_ous.pop() if unique_ous else 'N/A'}")
+            print(f"{log_prefix} Employees: {len(eligible_employees)} with individual offsets")
+            print(f"{log_prefix} Strategy: Using full CP-SAT solver (like demandBased mode)")
+            print(f"{log_prefix} Reason: Template replication cannot handle individual constraints")
+            print(f"{log_prefix}         (public holidays, availability, leave, etc.)")
+            print()
+            
+            # Override to demandBased mode for this scenario
+            rostering_basis = 'demandBased'
+            print(f"{log_prefix} Switching to demandBased CP-SAT solver...")
+            print()
+    
+    # Continue with outcomeBased logic only if not switched to demandBased
+    if rostering_basis == 'outcomeBased':
         # ========== TEMPLATE GENERATION MODE SELECTION (outcomeBased ONLY) ==========
         # For outcomeBased mode: Check if user specified templateGenerationMode
         # Valid values: "cpsat", "incremental", "auto", "off"

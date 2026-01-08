@@ -1,0 +1,205 @@
+/Users/glori/anaconda3/lib/python3.11/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).
+  from pandas.core import (
+    ⚠️  50% buffer exceeds available employees: 16 > 12
+    ⚠️  Even 20% buffer insufficient: 13 > 12
+    ✗ Failed to process requirement 240_1: Insufficient employees for requirement 240_1: Need 16, but only 12 available. Total eligible: 12, Already assigned: 0
+    Traceback:
+Traceback (most recent call last):
+  File "/Users/glori/1 Anthony_Workspace/My Developments/NGRS/ngrs-solver-v0.7/ngrssolver/src/preprocessing/icpmp_integration.py", line 106, in preprocess_all_requirements
+    selected_employees = self._select_and_assign_employees(
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/glori/1 Anthony_Workspace/My Developments/NGRS/ngrs-solver-v0.7/ngrssolver/src/preprocessing/icpmp_integration.py", line 483, in _select_and_assign_employees
+    raise ValueError(
+ValueError: Insufficient employees for requirement 240_1: Need 16, but only 12 available. Total eligible: 12, Already assigned: 0
+No employees found in input
+[CLI] Applying resource limits (75% system RAM)...
+[ResourceLimiter] Applying resource limits...
+  System: 32.0 GB RAM, 12 CPUs
+[ResourceLimiter] ⚠️  Could not set memory limit: current limit exceeds maximum limit
+[ResourceLimiter] ✓ Resource limits applied
+[CLI] Using unified solver
+[CLI] ======================================================================
+[CLI] ICPMP v3.0 PREPROCESSING (demandBased mode)
+[CLI] ======================================================================
+[CLI] Input: 12 employees, 0 have patterns
+  ✓ 11 employees: FEASIBLE!
+[CLI] ✓ ICPMP preprocessing completed
+[CLI] ✓ Filtered: 12 → 0 employees
+[CLI] ✓ Utilization: 0.0%
+[CLI] ✓ Time: 0.00s
+[CLI] ⚠️  No employees selected! Automatic fallback disabled.
+[CLI] ℹ️  Tip: Set 'fallbackToOutcomeBased': true to enable automatic mode switching
+
+[CLI] ======================================================================
+[CLI] USING ICPMP-ASSIGNED OFFSETS
+[CLI] ======================================================================
+[CLI] ✓ ICPMP assigned rotation offsets to 0 employees
+[CLI] ℹ️  Skipping auto-staggering to preserve ICPMP's optimal offset distribution
+
+[CLI] Loading input into solver context...
+[CLI] ℹ️  Stored 0 ICPMP offsets in context for output builder
+[CLI] Starting CP-SAT solver...
+
+================================================================================
+[SOLVER STARTING]
+================================================================================
+
+
+[slot_builder] Expanding demands into slots...
+  Planning horizon: 2026-01-01 to 2026-01-31
+  Public holidays: [datetime.date(2026, 1, 1)]
+  Demand DI-2601050851-62182727: base=2026-01-01, location=LOC-DATT-3167
+    Shift #0: coverage_days=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], includePH=True, includeEvePH=True
+      Requirement 240_1: product=AVSO, ranks=['ASO', 'AVSP', 'SASS'], gender=Any, scheme=Global
+        Headcount (legacy): 5 per shift
+        Work Pattern: ['D', 'D', 'D', 'D', 'D', 'O', 'O']
+        Creating slots for shift codes from workPattern: ['D']
+        Creating 5 position(s) for shift D
+        Shift D, Position 0: Created 31 slots
+        Shift D, Position 1: Created 31 slots
+        Shift D, Position 2: Created 31 slots
+        Shift D, Position 3: Created 31 slots
+        Shift D, Position 4: Created 31 slots
+[slot_builder] ✓ Expanded to 155 total slots
+
+[build_model] Creating decision variables...
+  Slots: 155
+  Employees: 0
+  Cached: 0 employees, 31 dates
+[build_model] ✓ Created 0 decision variables
+  ℹ️  Work pattern enforcement will be handled as hard constraints
+
+[build_model] Creating unassigned slot variables...
+  ✓ Created 155 unassigned slot variables
+
+[build_model] Adding headcount constraints (with unassigned option)...
+  ✓ Added 155 headcount constraints (allowing unassigned)
+
+[build_model] Adding one-per-day constraints...
+  ✓ Added 0 one-per-day constraints
+
+[build_model] Creating total unassigned counter...
+  ✓ Created total_unassigned variable (range: 0-155)
+
+[build_model] Optimization Mode: minimizeEmployeeCount
+  Max employees to use: 12
+  ✓ Using fixed rotation offsets from employee data
+
+[build_model] Adding work pattern constraints...
+  ✓ Added 0 work pattern constraints (HARD, all fixed offsets)
+
+[build_model] STRICT adherence constraints REMOVED - all employees flexible within pattern
+  ℹ️  Employees can work any 'D' day that matches their rotation offset
+  ℹ️  Weekly/monthly hour caps will naturally limit assignments
+
+[build_model] TEMPORARILY DISABLED - testing without continuity constraints...
+  ⚠️  CONTINUITY CONSTRAINTS DISABLED
+
+[build_model] TEMPORARILY DISABLED - testing without anchor preferences...
+  ⚠️  ANCHOR PREFERENCES DISABLED
+
+  ✓ No anchor preferences needed
+
+[build_model] Adding rotation pattern compliance penalties...
+  ✓ No rotation violations detected
+
+[build_model] Setting objective: Multi-level optimization
+  PRIORITY 1: Minimize unassigned slots (1,000,000×)
+  PRIORITY 2: Minimize employee count (100,000×)
+  PRIORITY 3: Minimize soft penalties (1,000×)
+    - Rotation violations
+    - Anchor offset penalties
+  PRIORITY 4: Maximize assignments (1×)
+  ✓ Objective configured with multi-term optimization
+
+[C1] Warning: Slots or decision variables not available
+[C2] Warning: Slots or decision variables not available
+[C3] Warning: Slots, employees, or decision variables not available
+[C4] Warning: Slots, employees, or decision variables not available
+[C5] Warning: Slots, employees, or decision variables not available
+[C6] Warning: Slots, employees, or decision variables not available
+[C7] Warning: Slots or decision variables not available
+[C8] Warning: Slots, employees, or decision variables not available
+[C9] Warning: Slots, employees, or decision variables not available
+[C11] Warning: Slots or decision variables not available
+[C12] Warning: Slots, employees, or decision variables not available
+[C15] Qualification Expiry Override Control Constraint (HARD)
+     Skipping: slots or decision variables not available
+
+[C16] No Overlapping Shifts Constraint
+     Skipping: slots or decision variables not available
+[C17] Warning: Slots, employees, or decision variables not available
+[S1] Rotation Pattern Compliance (SOFT) - registered for post-solution scoring
+
+[S2] Employee Preferences (SOFT) - registered for post-solution scoring
+
+[S3] Consistent Shift Start Times (SOFT) - registered for post-solution scoring
+
+[S4] Minimize Short Rest Gaps (SOFT) - registered for post-solution scoring
+
+[S5] Officer Continuity (SOFT) - registered for post-solution scoring
+
+[S6] Minimize Team Changes (SOFT) - registered for post-solution scoring
+
+[S7] Zone Preferences (SOFT) - registered for post-solution scoring
+
+[S8] Team Size Feasibility (SOFT) - registered for post-solution scoring
+
+[S9] Travel Slack Buffer (SOFT) - registered for post-solution scoring
+
+[S10] Fair OT Distribution (SOFT) - registered for post-solution scoring
+
+[S11] Public Holiday Coverage (SOFT) - registered for post-solution scoring
+
+[S12] Allowance Optimization (SOFT) - registered for post-solution scoring
+
+[S13] Substitute Logic (SOFT) - registered for post-solution scoring
+
+[S14] Midmonth Insert Constraint (SOFT)
+     Skipping: slots or decision variables not available
+[S15] Demand Coverage Score Constraint (SOFT)
+     Skipping: slots or decision variables not available
+[S16] Whitelist/Blacklist Constraint (SOFT)
+     Skipping: slots or decision variables not available
+  Warning: Could not load S18_minimize_gaps: No module named 'context.constraints.S18_minimize_gaps'
+  ✓ Loaded constraint modules
+
+[solve] Running CP-SAT solver...
+  Problem size: 155 slots × 0 employees
+  Time limit: 300s (user-specified)
+  Parallel search workers: 1 (adaptive)
+[solve] Raw status code: 4 (OPTIMAL=4, FEASIBLE=2, INFEASIBLE=3, MODEL_INVALID=1)
+[extract_assignments] Extracting assignments from solution...
+  ✓ Extracted 0 assigned slots
+  ✓ Extracted 155 unassigned slots
+  ✓ Total: 155 entries
+
+[solve] Solution found with 155 assignments
+[calculate_scores] Computing constraint violations...
+  Assigned slots: 0
+  Unassigned slots: 155
+  ℹ️  155 slots could not be filled without violating hard constraints
+[calculate_scores] Evaluating soft constraints...
+  Warning: Could not score S17_work_continuity: '>' not supported between instances of 'NoneType' and 'int'
+  ✓ Scored 17 soft constraint modules
+
+  Hard violations: 155
+  Soft penalties: 0
+  Unassigned slots: 155
+  Total violations recorded: 155
+
+[solve] Status override: OPTIMAL → INFEASIBLE (hard_score=155)
+[solve] Status: INFEASIBLE
+================================================================================
+
+[CLI] ✓ CP-SAT completed in 0.04s
+[CLI] Status: 4
+[CLI] Assignments: 155
+
+[CLI] Building output JSON...
+[CLI] ✓ Total time: 0.08s (ICPMP: 0.00s, Solve: 0.04s)
+✓ Solve status: INFEASIBLE → wrote output/test_scheme_debug.json
+  Assignments: 155
+  Hard score: 155
+  Soft score: 0
+  Overall score: 155
