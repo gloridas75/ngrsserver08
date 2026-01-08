@@ -257,10 +257,9 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
                     'mode': 'demandBased',
                     'icpmpTime': time.time() - preprocessing_start if 'preprocessing_start' in locals() else 0,
                     'totalTime': time.time() - overall_start
-                }
+                },
+                'warnings': [f"Preprocessing failed: {error_msg}"]
             }
-                    'warnings': [f"Preprocessing failed: {error_msg}"]
-                }
         
         except Exception as preprocessing_error:
             # Other exceptions - log and continue
