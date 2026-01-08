@@ -216,7 +216,9 @@ def apply_ou_offsets(input_data: Dict[str, Any]) -> int:
     """
     Apply OU-level offsets to employees.
     
-    Each employee inherits the rotationOffset from their OU.
+    Each employee inherits the rotationOffset from their OU UNLESS:
+    - Single OU scenario with individual employee offsets already set
+    - In this case, preserve individual offsets
     
     Args:
         input_data: Full input JSON data (modified in place)
@@ -234,9 +236,26 @@ def apply_ou_offsets(input_data: Dict[str, Any]) -> int:
         if ou_id and offset is not None:
             ou_offset_map[ou_id] = offset
     
+    employees = input_data.get('employees', [])
+    
+    # ========== INDIVIDUAL EMPLOYEE OFFSETS DETECTION ==========
+    # Check if employees have varied individual offsets (regardless of OU count)
+    employee_offsets = [emp.get('rotationOffset') for emp in employees if 'rotationOffset' in emp]
+    has_varied_offsets = len(set(employee_offsets)) > 1
+    
+    # If employees have varied individual offsets, preserve them (don't override with OU offsets)
+    if has_varied_offsets:
+        unique_ous = set(emp.get('ouId') for emp in employees if emp.get('ouId'))
+        logger.info(f"⚠️  INDIVIDUAL EMPLOYEE OFFSETS DETECTED")
+        logger.info(f"   {len(employees)} employees across {len(unique_ous)} OU(s)")
+        logger.info(f"   {len(set(employee_offsets))} unique offsets: {sorted(set(employee_offsets))}")
+        logger.info(f"   ✓ PRESERVING individual employee offsets (not overwriting with OU offsets)")
+        logger.info(f"   Reason: Individual schedules need different rotation offsets")
+        return 0  # No updates - preserve existing offsets
+    
+    # ========== NORMAL OU OFFSET APPLICATION ==========
     # Apply to employees based on their ouId
     updated_count = 0
-    employees = input_data.get('employees', [])
     for emp in employees:
         ou_id = emp.get('ouId')
         if ou_id and ou_id in ou_offset_map:
