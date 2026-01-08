@@ -280,6 +280,16 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     # PHASE 2: LOAD INPUT & BUILD CONTEXT
     # ═══════════════════════════════════════════════════════════
     
+    print(f"{log_prefix} ╔════════════════════════════════════════════════════════════")
+    print(f"{log_prefix} ║ DEBUG: RAW INPUT EMPLOYEES - BEFORE load_input()")
+    print(f"{log_prefix} ╠════════════════════════════════════════════════════════════")
+    raw_employees = input_data.get('employees', [])
+    print(f"{log_prefix} ║ Total raw employees: {len(raw_employees)}")
+    print(f"{log_prefix} ║ First 3 raw employees:")
+    for emp in raw_employees[:3]:
+        print(f"{log_prefix} ║   {emp.get('employeeId')}: rotationOffset={emp.get('rotationOffset', 'NOT SET')}, ouId={emp.get('ouId')}")
+    print(f"{log_prefix} ╚════════════════════════════════════════════════════════════")
+    
     print(f"{log_prefix} Loading input into solver context...")
     ctx = load_input(input_data)
     ctx['timeLimit'] = input_data.get('solverRunTime', {}).get('maxSeconds', 15)
