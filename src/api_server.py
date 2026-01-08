@@ -1049,9 +1049,8 @@ async def solve_async(
                 f"warnings={len(validation_result.warnings)}"
             )
         
-        # ====== AUTO-STAGGER ROTATION OFFSETS ======
-        # Automatically ensure employees have staggered offsets for O-pattern coverage
-        input_json = ensure_staggered_offsets(input_json)
+        # NOTE: Rotation offset handling is now done inside solve_problem() in src/solver.py
+        # This ensures consistent behavior between API and CLI paths
         
         # Perform quick feasibility check (< 100ms)
         feasibility_result = None
