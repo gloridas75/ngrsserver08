@@ -560,15 +560,48 @@ clear_logs() {
     echo ""
 }
 
+# Function to fix service file issues
+fix_service_file() {
+    print_status "Checking for common service file issues..."
+    
+    SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+    
+    if [ ! -f "$SERVICE_FILE" ]; then
+        print_warning "Service file not found at $SERVICE_FILE"
+        return 0
+    fi
+    
+    # Check for invalid RestartMode directive (not supported in older systemd)
+    if grep -q "RestartMode=" "$SERVICE_FILE" 2>/dev/null; then
+        print_warning "Found invalid 'RestartMode' directive in service file"
+        print_status "Removing invalid directive..."
+        
+        # Create backup
+        sudo cp "$SERVICE_FILE" "${SERVICE_FILE}.backup.$(date +%Y%m%d_%H%M%S)"
+        
+        # Remove RestartMode line
+        sudo sed -i '/^RestartMode=/d' "$SERVICE_FILE"
+        
+        print_success "Removed invalid directive"
+        
+        # Reload daemon
+        print_status "Reloading systemd daemon..."
+        sudo systemctl daemon-reload
+        print_success "Daemon reloaded"
+    fi
+    
+    echo ""
+}
+
 # Function to start service
 start_service() {
     print_status "Starting $SERVICE_NAME service..."
     
-    # Validate service file first
-    print_status "Validating service file..."
-    if ! sudo systemd-analyze verify "$SERVICE_NAME.service" 2>&1 | grep -v "Failed to load"; then
-        print_warning "Service file validation warnings (non-critical)"
-    fi
+    # Fix any service file issues first
+    fix_service_file
+    
+    # Reload daemon to pick up any changes
+    sudo systemctl daemon-reload
     
     sudo systemctl start $SERVICE_NAME
     
@@ -580,16 +613,15 @@ start_service() {
         print_success "Service started successfully"
     else
         print_error "Service failed to start"
+        print_error ""
         print_error "Checking service status..."
-        sudo systemctl status $SERVICE_NAME --no-pager -l || true
+        sudo systemctl status $SERVICE_NAME --no-pager -l --lines=50 | tail -30
         echo ""
-        print_error "Last 30 lines of log:"
-        tail -30 "$LOG_FILE" 2>/dev/null || echo "No log file found"
+        print_error "Checking recent error logs..."
+        tail -50 "$LOG_FILE" 2>/dev/null | grep -i "error\|traceback\|exception" | tail -10 || echo "No recent errors in log"
         echo ""
-        print_error "To restore service file from backup:"
-        print_error "  sudo cp /etc/systemd/system/${SERVICE_NAME}.service.backup.* /etc/systemd/system/${SERVICE_NAME}.service"
-        print_error "  sudo systemctl daemon-reload"
-        print_error "  sudo systemctl start ${SERVICE_NAME}"
+        print_error "Full logs: tail -f $LOG_FILE"
+        print_error "Service status: sudo systemctl status $SERVICE_NAME"
         exit 1
     fi
     echo ""
@@ -657,10 +689,24 @@ show_status() {
 
 # Function to show recent logs
 show_logs() {
-    print_status "Recent logs (last 20 lines):"
-    echo -e "${YELLOW}--------------------------------${NC}"
-    tail -20 "$LOG_FILE"
-    echo -e "${YELLOW}--------------------------------${NC}"
+    print_status "Recent logs (last 30 lines, cleaned):"
+    echo -e "${YELLOW}────────────────────────────────────────────────────────────${NC}"
+    
+    if [ -f "$LOG_FILE" ]; then
+        # Clean up logs: remove ANSI codes, trim long lines, show relevant content
+        tail -30 "$LOG_FILE" | \
+            sed 's/\x1b\[[0-9;]*m//g' | \
+            sed 's/\r//g' | \
+            cut -c 1-120 | \
+            grep -v "^$"
+    else
+        echo "No log file found at $LOG_FILE"
+    fi
+    
+    echo -e "${YELLOW}────────────────────────────────────────────────────────────${NC}"
+    echo ""
+    echo "For live logs: tail -f $LOG_FILE"
+    echo "For errors only: tail -f $LOG_FILE | grep -i error"
     echo ""
 }
 
