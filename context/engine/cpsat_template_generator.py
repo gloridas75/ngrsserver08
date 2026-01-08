@@ -112,13 +112,16 @@ def generate_template_with_cpsat(
             logger.info(f"  Selected employees: {[e.get('employeeId') for e in employees_to_roster]}")
         
         for emp in employees_to_roster:
+            print(f"[DEBUG] Replicating to employee {emp.get('employeeId')}, offset={emp.get('rotationOffset')}, template_offset={template_emp.get('rotationOffset', 0)}")
             emp_assignments = _replicate_template_to_employee(
                 emp,
                 template_assignments,
                 demand,
                 requirement,
-                shift_details
+                shift_details,
+                template_offset=template_emp.get('rotationOffset', 0)
             )
+            print(f"[DEBUG]   → Generated {len(emp_assignments)} assignments")
             all_assignments.extend(emp_assignments)
     
     logger.info(f"\n✓ CP-SAT template generation complete: {len(all_assignments)} total assignments")
@@ -646,38 +649,105 @@ def _replicate_template_to_employee(
     template_assignments: List[dict],
     demand: dict,
     requirement: dict,
-    shift_details: dict
+    shift_details: dict,
+    template_offset: int = 0
 ) -> List[dict]:
     """
-    Replicate template assignments to an employee.
+    Replicate template assignments to an employee with rotation offset support.
     
-    All employees in the same OU get the SAME dates (no date shifting).
-    The rotation offset was already applied during template generation.
+    Applies backward rotation: employee with offset=N gets template's date+N assignments.
+    This ensures different offsets work different dates while maintaining the work pattern.
+    
+    Example with pattern [D,D,D,D,D,O,O]:
+      Template (offset=0): Jan1=D, Jan2=D, Jan3=D, Jan4=D, Jan5=D, Jan6=O, Jan7=O
+      Employee (offset=1): Jan1=D (from template Jan2), Jan2=D (from Jan3), ...
+      Employee (offset=2): Jan1=D (from template Jan3), Jan2=D (from Jan4), ...
     """
     import copy
+    from datetime import datetime, timedelta
     
     emp_assignments = []
     emp_id = employee['employeeId']
+    emp_offset = employee.get('rotationOffset', 0)
     demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     
+    # Calculate date shift for backward rotation
+    offset_diff = emp_offset - template_offset
+    
+    # If offsets are the same, no date shifting needed
+    if offset_diff == 0:
+        logger.debug(f"  Employee {emp_id}: Same offset as template, no rotation")
+    else:
+        logger.info(f"  Employee {emp_id}: Applying backward rotation (offset={emp_offset}, shift={offset_diff} days)")
+    
+    # Build date-to-assignment mapping from template
+    template_by_date = {}
+    for assign in template_assignments:
+        date_str = assign['date']
+        template_by_date[date_str] = assign
+    
+    # Generate assignments for all dates in template
     for template_assign in template_assignments:
-        # Deep copy to avoid shared references
-        assignment = copy.deepcopy(template_assign)
+        template_date_str = template_assign['date']
+        template_date = datetime.strptime(template_date_str, '%Y-%m-%d')
         
-        # Update employee-specific fields ONLY for ASSIGNED/OFF_DAY statuses
-        # UNASSIGNED slots must keep employeeId=null
-        status = assignment.get('status', 'ASSIGNED')
-        if status in ['ASSIGNED', 'OFF_DAY']:
-            assignment['employeeId'] = emp_id
-            # Regenerate IDs with this employee's ID
-            date_str = assignment['date']
-            shift_code = assignment['shiftCode']
-            assignment['assignmentId'] = f"{demand_id}-{date_str}-{shift_code}-{emp_id}"
+        # Apply backward rotation: employee sees template's date+offset_diff
+        source_date = template_date + timedelta(days=offset_diff)
+        source_date_str = source_date.strftime('%Y-%m-%d')
+        
+        # Look up what the template had on the source date
+        source_assign = template_by_date.get(source_date_str)
+        
+        if source_assign is None:
+            # Source date is outside template range (edge case at month boundaries)
+            # Keep employee's date but mark as unassigned
+            logger.debug(f"    Date {template_date_str}: No source assignment at {source_date_str}, marking unassigned")
+            assignment = {
+                'assignmentId': f"{demand_id}-{template_date_str}-UNASSIGNED-BOUNDARY",
+                'employeeId': None,
+                'date': template_date_str,
+                'shiftCode': 'O',
+                'status': 'UNASSIGNED',
+                'startDateTime': None,
+                'endDateTime': None,
+                'locationId': demand.get('locationId'),
+                'demandId': demand_id
+            }
         else:
-            # UNASSIGNED: keep employeeId=null, but update assignmentId for tracking
-            date_str = assignment['date']
-            shift_code = assignment['shiftCode']
-            assignment['assignmentId'] = f"{demand_id}-{date_str}-UNASSIGNED-{date_str}"
+            # Deep copy source assignment
+            assignment = copy.deepcopy(source_assign)
+            
+            # Update to employee's actual date (not source date)
+            assignment['date'] = template_date_str
+            
+            # Update employee-specific fields ONLY for ASSIGNED/OFF_DAY statuses
+            status = assignment.get('status', 'ASSIGNED')
+            if status in ['ASSIGNED', 'OFF_DAY']:
+                assignment['employeeId'] = emp_id
+                shift_code = assignment['shiftCode']
+                assignment['assignmentId'] = f"{demand_id}-{template_date_str}-{shift_code}-{emp_id}"
+                
+                # Update datetime fields to employee's actual date
+                if assignment.get('startDateTime'):
+                    source_start = datetime.fromisoformat(assignment['startDateTime'].replace('Z', '+00:00'))
+                    employee_start = source_start.replace(
+                        year=template_date.year,
+                        month=template_date.month,
+                        day=template_date.day
+                    )
+                    assignment['startDateTime'] = employee_start.strftime('%Y-%m-%dT%H:%M:%S')
+                
+                if assignment.get('endDateTime'):
+                    source_end = datetime.fromisoformat(assignment['endDateTime'].replace('Z', '+00:00'))
+                    employee_end = source_end.replace(
+                        year=template_date.year,
+                        month=template_date.month,
+                        day=template_date.day
+                    )
+                    assignment['endDateTime'] = employee_end.strftime('%Y-%m-%dT%H:%M:%S')
+            else:
+                # UNASSIGNED: keep employeeId=null
+                assignment['assignmentId'] = f"{demand_id}-{template_date_str}-UNASSIGNED-{template_date_str}"
         
         emp_assignments.append(assignment)
     
