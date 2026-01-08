@@ -463,29 +463,51 @@ clear_cache() {
     
     cd "$APP_DIR"
     
-    # Remove Python bytecode cache files
+    # Remove Python bytecode cache files (.pyc)
     print_status "  → Removing .pyc files..."
     find . -type f -name "*.pyc" -delete 2>/dev/null || true
     
-    # Remove __pycache__ directories
+    # Remove compiled Python files (.pyo)
+    print_status "  → Removing .pyo files..."
+    find . -type f -name "*.pyo" -delete 2>/dev/null || true
+    
+    # Remove __pycache__ directories (critical for module reloading)
     print_status "  → Removing __pycache__ directories..."
     find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    
+    # Second pass to ensure all __pycache__ are gone (nested directories)
+    print_status "  → Second pass on __pycache__ cleanup..."
+    find . -name "__pycache__" -type d -prune -exec rm -rf {} + 2>/dev/null || true
     
     # Remove .pytest_cache if exists
     if [ -d ".pytest_cache" ]; then
         print_status "  → Removing .pytest_cache..."
-        rm -rf .pytest_cache
+        rm -rf .pytest_cache 2>/dev/null || true
     fi
+    
+    # Remove pytest .pyc files in .pytest_cache
+    print_status "  → Removing any remaining pytest cache..."
+    find . -path "*/.pytest_cache/*" -delete 2>/dev/null || true
     
     # Clear pip cache (optional, but helps with clean installs)
     if [ -d "venv" ]; then
         print_status "  → Clearing pip cache..."
-        source venv/bin/activate
+        source venv/bin/activate 2>/dev/null || true
         pip cache purge 2>/dev/null || true
-        deactivate
+        deactivate 2>/dev/null || true
     fi
     
-    print_success "All caches cleared"
+    # Verify cleanup was successful
+    REMAINING_PYC=$(find . -name "*.pyc" -o -name "*.pyo" | wc -l)
+    REMAINING_CACHE=$(find . -type d -name "__pycache__" | wc -l)
+    
+    if [ "$REMAINING_PYC" -eq 0 ] && [ "$REMAINING_CACHE" -eq 0 ]; then
+        print_success "All Python caches cleared successfully"
+    else
+        print_warning "Found $REMAINING_PYC .pyc/.pyo files and $REMAINING_CACHE __pycache__ dirs remaining"
+        print_warning "This may indicate permission issues - continuing anyway"
+    fi
+    
     echo ""
 }
 
