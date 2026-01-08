@@ -1165,7 +1165,7 @@ def calculate_scores(ctx, assignments) -> tuple:
                     
                     # Build employee capabilities lookup
                     employee_ranks = {emp.get('employeeId'): emp.get('rankId') for emp in employees_list}
-                    employee_schemes = {emp.get('employeeId'): emp.get('scheme', 'A') for emp in employees_list}
+                    employee_schemes = {emp.get('employeeId'): normalize_scheme(emp.get('scheme', 'A')) for emp in employees_list}
                     employee_genders = {emp.get('employeeId'): emp.get('gender') for emp in employees_list}
                     employee_types = {emp.get('employeeId'): emp.get('employmentType') for emp in employees_list}
                     
