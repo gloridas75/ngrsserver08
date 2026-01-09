@@ -280,6 +280,10 @@ def _apply_mom_constraints(
     
     from context.engine.time_utils import normalize_scheme, is_apgd_d10_employee
     
+    # Get work pattern info early (needed for both C2 and C5)
+    work_pattern = requirement.get('workPattern', []) if requirement else []
+    pattern_length = len(work_pattern)
+    
     # Use default MOM parameters (conservative approach)
     min_off_days_per_week = 1
     max_weekly_normal_hours = 44.0  # For full-time (Scheme A/B)
@@ -317,13 +321,40 @@ def _apply_mom_constraints(
     
     # Group dates into Monday-Sunday weeks
     weeks = _group_dates_by_week(dates)
+    
+    # C2 with rest day pay awareness:
+    # Days 1-5 in calendar week: 8.8h normal
+    # Days 6-7 in calendar week: 0h normal (rest day pay instead)
+    # This allows 6-day patterns while enforcing 44h weekly normal cap
+    print(f"[C2 DEBUG] Applying smart weekly hours constraint (pattern length = {pattern_length})")
+    print(f"[C2 DEBUG] Logic: Only first 5 work days per week count toward 44h cap")
+    print(f"[C2 DEBUG] Days 6-7 in calendar week get rest day pay (0h normal)")
+    
     for week_dates in weeks:
         week_indices = [i for i, d in enumerate(dates) if d in week_dates and i in x]
-        if week_indices:
-            # Sum of work days * estimated normal hours <= weekly cap (C2 or C6)
-            # Note: Using 8.8h estimate; actual hours calculated later
-            total_weekly_normal_minutes = sum(x[i] * estimated_normal_minutes for i in week_indices)
-            model.Add(total_weekly_normal_minutes <= max_weekly_normal_minutes)
+        if not week_indices:
+            continue
+        
+        # Count how many work days we might have in this week
+        num_potential_work_days = len(week_indices)
+        
+        # Only first 5 work days contribute to normal hours cap
+        # Days 6+ get rest day pay (0h normal), so they don't count toward 44h
+        days_that_count = min(5, num_potential_work_days)
+        
+        # Build constraint: sum of (first 5 work days × 8.8h) <= 44h
+        normal_hour_terms = []
+        for position in range(days_that_count):
+            idx = week_indices[position]
+            normal_hour_terms.append(x[idx] * estimated_normal_minutes)
+        
+        if normal_hour_terms:
+            model.Add(sum(normal_hour_terms) <= max_weekly_normal_minutes)
+            
+            expected_max_normal = days_that_count * 8.8
+            print(f"[C2 DEBUG] Week {week_dates[0].strftime('%Y-%m-%d')}: "
+                  f"Up to {num_potential_work_days} work days, "
+                  f"first {days_that_count} count (max {expected_max_normal:.1f}h normal)")
     
     # C3: Maximum consecutive work days (12 for standard, 8 for APGD-D10/APO)
     for i in range(len(dates) - max_consecutive_days):
@@ -332,15 +363,45 @@ def _apply_mom_constraints(
             # At least one day in this window must be OFF
             model.Add(sum(x[j] for j in consecutive_indices) <= max_consecutive_days)
     
-    # C5: Minimum off days per week (rolling 7-day window)
-    for i in range(len(dates) - 6):
-        window_indices = [j for j in range(i, i + 7) if j in x]
-        if len(window_indices) == 7:
-            # Count coverage-skipped days in this window
-            coverage_skipped = sum(1 for j in window_indices if dates[j].strftime('%a') not in coverage_days)
-            # Work days in window must leave enough off days
-            max_work_days = 7 - min_off_days_per_week - coverage_skipped
-            model.Add(sum(x[j] for j in window_indices) <= max_work_days)
+    # C5: Minimum off days per week
+    # Use different strategies based on pattern alignment with calendar weeks
+    # (pattern_length already defined earlier)
+    
+    print(f"[C5 DEBUG] Pattern length: {pattern_length}, Pattern: {work_pattern}")
+    
+    if pattern_length == 7:
+        # Pattern aligns with calendar weeks - use rolling 7-day windows (stricter)
+        print(f"[C5 DEBUG] Using rolling windows (pattern length = 7)")
+        logger.info(f"  C5: Using rolling windows (pattern length = 7)")
+        for i in range(len(dates) - 6):
+            window_indices = [j for j in range(i, i + 7) if j in x]
+            if len(window_indices) == 7:
+                # Count coverage-skipped days in this window
+                coverage_skipped = sum(1 for j in window_indices if dates[j].strftime('%a') not in coverage_days)
+                # Work days in window must leave enough off days
+                max_work_days = 7 - min_off_days_per_week - coverage_skipped
+                model.Add(sum(x[j] for j in window_indices) <= max_work_days)
+    else:
+        # Pattern doesn't align with calendar weeks - use calendar week boundaries
+        # This avoids false violations from pattern drift across week boundaries
+        print(f"[C5 DEBUG] Using calendar weeks (pattern length = {pattern_length} ≠ 7)")
+        logger.info(f"  C5: Using calendar weeks (pattern length = {pattern_length} ≠ 7)")
+        weeks = _group_dates_by_week(dates)
+        print(f"[C5 DEBUG] Grouped {len(dates)} dates into {len(weeks)} calendar weeks")
+        for week_dates in weeks:
+            week_indices = [i for i, d in enumerate(dates) if d in week_dates and i in x]
+            if week_indices:
+                # Only enforce weekly rest for FULL 7-day weeks
+                # Partial weeks at start/end don't need this constraint
+                if len(week_dates) == 7:
+                    # Count coverage-skipped days in this week
+                    coverage_skipped = sum(1 for i in week_indices if dates[i].strftime('%a') not in coverage_days)
+                    # Work days in week must leave enough off days
+                    max_work_days = 7 - min_off_days_per_week - coverage_skipped
+                    print(f"[C5 DEBUG] Full week {week_dates[0].strftime('%Y-%m-%d')} - {week_dates[-1].strftime('%Y-%m-%d')}: max_work_days={max_work_days}, coverage_skipped={coverage_skipped}")
+                    model.Add(sum(x[i] for i in week_indices) <= max_work_days)
+                else:
+                    print(f"[C5 DEBUG] Partial week {week_dates[0].strftime('%Y-%m-%d')} - {week_dates[-1].strftime('%Y-%m-%d')}: Skipping constraint ({len(week_dates)} days < 7)")
     
     # C7: Qualification/license validity (only if requiredQualifications specified)
     required_quals = requirement.get('requiredQualifications', []) if requirement else []
@@ -473,8 +534,6 @@ def _create_assignment(
     requirement: dict
 ) -> dict:
     """Create assignment dictionary for a work day."""
-    from context.engine.time_utils import calculate_mom_compliant_hours
-    
     emp_id = employee['employeeId']
     date_str = date.strftime('%Y-%m-%d')
     
@@ -495,21 +554,12 @@ def _create_assignment(
     else:
         end_datetime = f"{date_str}T{shift_end}"
     
-    # Calculate hours using MOM-compliant logic
-    start_dt = datetime.fromisoformat(start_datetime)
-    end_dt = datetime.fromisoformat(end_datetime)
-    
-    hours_breakdown = calculate_mom_compliant_hours(
-        start_dt=start_dt,
-        end_dt=end_dt,
-        employee_id=emp_id,
-        assignment_date_obj=date,
-        all_assignments=[]  # Template phase - no previous assignments
-    )
-    
     # Get shift code from shift details
     shift_code = shift_details.get('shiftCode', 'D')
     
+    # NOTE: Hours NOT calculated here during template generation
+    # Output builder will calculate hours properly with full assignment context
+    # This ensures rest day pay logic can access all assignments in the week
     return {
         'assignmentId': f"{demand_id}-{date_str}-{shift_code}-{emp_id}",
         'slotId': f"{demand_id}-{requirement_id}-{shift_code}-{date_str}",
@@ -520,17 +570,8 @@ def _create_assignment(
         'shiftCode': shift_code,
         'startDateTime': start_datetime,
         'endDateTime': end_datetime,
-        'status': 'ASSIGNED',
-        'hours': {
-            'gross': hours_breakdown['gross'],
-            'lunch': hours_breakdown['lunch'],
-            'net': hours_breakdown['gross'] - hours_breakdown['lunch'],
-            'normal': hours_breakdown['normal'],
-            'ot': hours_breakdown['ot'],
-            'ph': 0.0,  # Public holiday hours (not determined in template phase)
-            'restDayPay': hours_breakdown['restDayPay'],
-            'paid': hours_breakdown['paid']  # Must include for output builder
-        }
+        'status': 'ASSIGNED'
+        # No 'hours' field - will be calculated by output builder
     }
 
 
