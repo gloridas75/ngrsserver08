@@ -103,13 +103,17 @@ def generate_template_with_cpsat(
         
         logger.info(f"  Template: {len(template_assignments)} assignments")
         
-        # Replicate template to employees - respect headcount
-        headcount = requirement.get('headcount', len(ou_employees))
-        employees_to_roster = ou_employees[:headcount]  # Only use first N employees
-        
-        if len(ou_employees) > headcount:
+        # Replicate template to employees
+        # headcount = 0 means "roster all employees" (no limit)
+        # headcount > 0 means "roster first N employees only"
+        headcount = requirement.get('headcount', 0)
+        if headcount > 0:
+            employees_to_roster = ou_employees[:headcount]  # Limit to first N employees
             logger.info(f"  Headcount limit: Using {headcount}/{len(ou_employees)} employees")
             logger.info(f"  Selected employees: {[e.get('employeeId') for e in employees_to_roster]}")
+        else:
+            employees_to_roster = ou_employees  # Roster all employees in OU
+            logger.info(f"  No headcount limit: Rostering all {len(ou_employees)} employees in OU")
         
         for emp in employees_to_roster:
             emp_assignments = _replicate_template_to_employee(
