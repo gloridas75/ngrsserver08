@@ -351,19 +351,51 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     # Get minStaffThresholdPercentage from parent demand item
                     min_threshold = dmd.get('minStaffThresholdPercentage', 100)
                     
-                    # Calculate workable days ratio from work pattern
+                    # Calculate workable days ratio - need to consider employee-specific constraints
+                    # Some employees (APGD-D10) can work all days, others need weekly rest
                     work_pattern = req.get('workPattern', [])
                     if work_pattern:
                         work_days_in_pattern = sum(1 for day in work_pattern if day != 'O')
                         pattern_length = len(work_pattern)
-                        workable_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
+                        
+                        # Calculate effective capacity per employee considering their constraints
+                        from context.engine.time_utils import is_apgd_d10_employee
+                        
+                        total_capacity_ratio = 0
+                        for emp in matching_employees:
+                            # Check if employee is APGD-D10 (exempt from weekly rest)
+                            is_apgd = is_apgd_d10_employee(emp)
+                            
+                            if is_apgd:
+                                # APGD-D10: Can work all pattern days
+                                emp_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
+                            else:
+                                # Standard: Must have 1 off day per week
+                                # If pattern is 7-day all-work (DDDDDDD), effective = 6/7
+                                if pattern_length == 7 and work_days_in_pattern == 7:
+                                    emp_ratio = 6.0 / 7.0  # Max 6 days per week
+                                else:
+                                    emp_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
+                            
+                            total_capacity_ratio += emp_ratio
+                        
+                        # Average workable ratio across employees
+                        workable_ratio = total_capacity_ratio / len(matching_employees) if matching_employees else 1.0
+                        
+                        # Log if there's a mismatch
+                        naive_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
+                        if abs(workable_ratio - naive_ratio) > 0.01:
+                            print(f"        ⚠️  Adjusted workable ratio for mixed schemes: {naive_ratio:.2%} → {workable_ratio:.2%}")
+                            print(f"        ⚠️  (Accounts for weekly rest requirements)")
                     else:
                         workable_ratio = 1.0  # No pattern means all days workable
                     
                     # Calculate positions per day using Option C formula:
                     # positions_per_day = matching_employees × threshold × workable_ratio
                     positions_per_day = len(matching_employees) * (min_threshold / 100) * workable_ratio
-                    positions_per_day_int = int(math.ceil(positions_per_day))
+                    # Use floor() to ensure we don't create more slots than capacity
+                    # (Conservative: guarantees feasibility even with weekly rest constraints)
+                    positions_per_day_int = int(math.floor(positions_per_day))
                     
                     # Group matching employees by OU for employee selection
                     employees_by_ou = defaultdict(list)

@@ -7,9 +7,9 @@
   "solverRun": {
     "runId": "SRN-local-0.4",
     "solverVersion": "optSolve-py-0.95.0",
-    "startedAt": "2026-01-10T20:53:17.271176",
-    "ended": "2026-01-10T20:53:17.290707",
-    "durationSeconds": 0.02,
+    "startedAt": "2026-01-10T20:51:48.421114",
+    "ended": "2026-01-10T20:51:48.449772",
+    "durationSeconds": 0.029,
     "status": "INFEASIBLE"
   },
   "score": {
@@ -19,7 +19,7 @@
   },
   "scoreBreakdown": {
     "hard": {
-      "unassignedSlots": 31
+      "unassignedSlots": 62
     },
     "soft": {}
   },
@@ -40,9 +40,9 @@
     "solverStatusExplanation": "No solution exists that satisfies all hard constraints. This means the problem is over-constrained (too many restrictions) or under-resourced (not enough employees/capacity).",
     "qualityExplanation": "No valid solution exists that satisfies all hard constraints. Review constraints, employee availability, or demand requirements.",
     "coverageMetrics": {
-      "totalSlots": 31,
+      "totalSlots": 62,
       "assignedSlots": 0,
-      "unassignedSlots": 31,
+      "unassignedSlots": 62,
       "coverageRate": 0.0,
       "coverageQuality": "PARTIAL"
     },
@@ -70,8 +70,8 @@
   },
   "unmetDemand": [],
   "meta": {
-    "inputHash": "sha256:228365a747201f69381f01ff4656ec15e75ba1d718b6c5bb509cfe64f02d1531",
-    "generatedAt": "2026-01-10T20:53:17.291919",
+    "inputHash": "sha256:a3571ea29cb31db1f26ec18bf6dfb853958eb1702b6f05dbcd251ffceeba1c05",
+    "generatedAt": "2026-01-10T20:51:48.451604",
     "employeeHours": {}
   }
 }

@@ -7,9 +7,9 @@
   "solverRun": {
     "runId": "SRN-local-0.4",
     "solverVersion": "optSolve-py-0.95.0",
-    "startedAt": "2026-01-10T20:53:17.271176",
-    "ended": "2026-01-10T20:53:17.290707",
-    "durationSeconds": 0.02,
+    "startedAt": "2026-01-10T20:55:29.758274",
+    "ended": "2026-01-10T20:55:29.784032",
+    "durationSeconds": 0.026,
     "status": "INFEASIBLE"
   },
   "score": {
@@ -70,8 +70,8 @@
   },
   "unmetDemand": [],
   "meta": {
-    "inputHash": "sha256:228365a747201f69381f01ff4656ec15e75ba1d718b6c5bb509cfe64f02d1531",
-    "generatedAt": "2026-01-10T20:53:17.291919",
+    "inputHash": "sha256:f1da86f457a41f503853a4961a28e07de595b8757c9b5401429aa12d95526b0c",
+    "generatedAt": "2026-01-10T20:55:29.785268",
     "employeeHours": {}
   }
 }
