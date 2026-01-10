@@ -75,7 +75,8 @@ def add_constraints(model, ctx):
     # Build scheme-wise summary for logging
     max_gross_by_scheme = {}
     for scheme in ['A', 'B', 'P']:
-        emp_of_scheme = [e for e in employees if e.get('scheme') == scheme]
+        # Compare with normalized scheme
+        emp_of_scheme = [e for e in employees if normalize_scheme(e.get('scheme', 'A')) == scheme]
         if emp_of_scheme:
             max_gross_by_scheme[scheme] = max_gross_by_employee.get(emp_of_scheme[0]['employeeId'], 14.0)
     
@@ -89,6 +90,7 @@ def add_constraints(model, ctx):
     
     # Add constraints: For each slot-employee pair, check if shift exceeds scheme limit
     constraints_added = 0
+    blocks_by_employee = {}  # Track blocks per employee for debugging
     
     for slot in slots:
         slot_key = (slot.demandId, slot.shiftCode)
@@ -108,10 +110,19 @@ def add_constraints(model, ctx):
                 var = x[(slot.slot_id, emp_id)]
                 model.Add(var == 0)
                 constraints_added += 1
+                blocks_by_employee[emp_id] = blocks_by_employee.get(emp_id, 0) + 1
     
     print(f"[C1] Daily Gross Hours Constraint (HARD - by Scheme)")
     print(f"     Total employees: {len(employees)}")
     print(f"     Total slots: {len(slots)}")
     print(f"     Unique shifts: {len(shift_hours)}")
-    print(f"     Scheme limits: A≤{max_gross_by_scheme['A']}h, B≤{max_gross_by_scheme['B']}h, P≤{max_gross_by_scheme['P']}h")
+    print(f"     Scheme limits: A≤{max_gross_by_scheme.get('A', 14)}h, B≤{max_gross_by_scheme.get('B', 13)}h, P≤{max_gross_by_scheme.get('P', 9)}h")
+    
+    if blocks_by_employee:
+        print(f"     Blocks by employee:")
+        for emp_id, count in blocks_by_employee.items():
+            emp_scheme = employee_scheme.get(emp_id, 'Unknown')
+            emp_limit = max_gross_by_employee.get(emp_id, 0)
+            print(f"       {emp_id} (Scheme {emp_scheme}, {emp_limit}h limit): {count} blocks")
+    
     print(f"     ✓ Added {constraints_added} per-shift scheme violations blocks\n")

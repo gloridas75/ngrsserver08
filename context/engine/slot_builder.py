@@ -299,9 +299,10 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 headcount_raw = req.get("headcount", 1)
                 
                 # OUTCOME-BASED MODE OVERRIDE: Calculate feasible headcount based on work pattern
+                # Only applies when headcount is 0 or not set (auto-calculate mode)
                 rostering_basis = inputs.get('_rosteringBasis', 'demandBased')
-                if rostering_basis == 'outcomeBased':
-                    # For outcomeBased, calculate positions per day based on:
+                if rostering_basis == 'outcomeBased' and headcount_raw == 0:
+                    # For outcomeBased with headcount=0, calculate positions per day based on:
                     # - Total matching employees
                     # - minStaffThresholdPercentage (employee pool filter)
                     # - Work pattern (workable days ratio)
@@ -311,6 +312,41 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     # Filter employees by rank to match this requirement
                     # Note: employees use 'rankId' (singular), requirements use 'rankIds' (plural array)
                     matching_employees = [emp for emp in employees if emp.get('rankId') in rank_ids]
+                    
+                    # FILTER OUT employees who cannot work this shift due to daily hours cap
+                    # Check shift duration against employee's scheme-specific daily limit
+                    from context.engine.time_utils import normalize_scheme
+                    from context.engine.constraint_config import get_constraint_param
+                    
+                    eligible_employees = []
+                    for emp in matching_employees:
+                        # Calculate max shift duration for this shift
+                        max_shift_hours = 0
+                        for sd in sh.get("shiftDetails", []):
+                            start_time = datetime.strptime(sd.get('start', '00:00:00'), '%H:%M:%S')
+                            end_time = datetime.strptime(sd.get('end', '00:00:00'), '%H:%M:%S')
+                            if sd.get('nextDay', False):
+                                end_time += timedelta(days=1)
+                            shift_hours = (end_time - start_time).total_seconds() / 3600.0
+                            max_shift_hours = max(max_shift_hours, shift_hours)
+                        
+                        # Get employee's daily hours limit
+                        max_daily_hours = get_constraint_param(
+                            inputs,
+                            'momDailyHoursCap',
+                            employee=emp,
+                            param_name='maxDailyHours',
+                            default=14.0
+                        )
+                        
+                        # Only include if employee can work this shift
+                        if max_shift_hours <= max_daily_hours:
+                            eligible_employees.append(emp)
+                        else:
+                            scheme = normalize_scheme(emp.get('scheme', 'A'))
+                            print(f"        ⚠️  Excluding {emp['employeeId']} (Scheme {scheme}): shift {max_shift_hours}h > daily limit {max_daily_hours}h")
+                    
+                    matching_employees = eligible_employees
                     
                     # Get minStaffThresholdPercentage from parent demand item
                     min_threshold = dmd.get('minStaffThresholdPercentage', 100)
@@ -377,6 +413,9 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     selected_emp_ids = {emp['employeeId'] for emp in selected_employees}
                     inputs['_selectedEmployeeIds'] = selected_emp_ids
                     
+                    # Set target employee count for solver (number of eligible employees)
+                    inputs['_targetEmployeeCount'] = len(selected_employees)
+                    
                     # Override headcount with calculated positions per day
                     headcount_raw = employee_based_headcount
                 
@@ -392,7 +431,7 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 gender_req = req.get("gender", "Any")
                 # Normalize scheme value: "Scheme P" → "P", "Scheme A" → "A", etc.
                 scheme_req_raw = req.get("Scheme", "Global")
-                scheme_req = normalize_scheme(scheme_req_raw, scheme_map)
+                scheme_req = normalize_scheme(scheme_req_raw)
                 
                 # Normalize qualifications to group format (backwards compatible)
                 required_quals_raw = req.get("requiredQualifications", [])
