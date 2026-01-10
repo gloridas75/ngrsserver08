@@ -218,6 +218,13 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
                 roster_summary["byStatus"][status_type] += 1
     
     # Build output structure
+    # Convert infinity to large integer for JSON compatibility
+    def safe_score(value):
+        import math
+        if math.isinf(value):
+            return 999999
+        return int(value) if isinstance(value, (int, float)) else 0
+    
     output = {
         "schemaVersion": "0.43",
         "planningReference": ctx.get("planningReference", "UNKNOWN"),
@@ -231,9 +238,9 @@ def build_output_schema(input_path, ctx, status, solver_result, assignments, vio
             "status": solver_result["status"]
         },
         "score": {
-            "overall": scores.get('overall', 0),
-            "hard": scores.get('hard', 0),
-            "soft": scores.get('soft', 0)
+            "overall": safe_score(scores.get('overall', 0)),
+            "hard": safe_score(scores.get('hard', 0)),
+            "soft": safe_score(scores.get('soft', 0))
         },
         "scoreBreakdown": score_breakdown,
         "assignments": annotated_assignments,  # Now includes hour breakdowns

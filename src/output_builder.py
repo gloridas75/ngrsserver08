@@ -6,6 +6,7 @@ Refactored from run_solver.py to ensure CLI and API produce identical output.
 
 import json
 import hashlib
+import math
 from datetime import datetime, timedelta
 from collections import defaultdict
 from context.engine.time_utils import (
@@ -14,6 +15,13 @@ from context.engine.time_utils import (
     calculate_apgd_d10_hours,
     is_apgd_d10_employee
 )
+
+
+def _safe_score(value):
+    """Convert infinity to large integer for JSON compatibility with .NET."""
+    if math.isinf(value):
+        return 999999
+    return int(value) if isinstance(value, (int, float)) else 0
 
 
 def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None):
@@ -907,9 +915,9 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             "status": solver_result.get("status", status)
         },
         "score": {
-            "overall": scores.get('overall', 0),
-            "hard": scores.get('hard', 0),
-            "soft": scores.get('soft', 0)
+            "overall": _safe_score(scores.get('overall', 0)),
+            "hard": _safe_score(scores.get('hard', 0)),
+            "soft": _safe_score(scores.get('soft', 0))
         },
         "scoreBreakdown": score_breakdown,
         "assignments": annotated_assignments,
@@ -1128,9 +1136,9 @@ def build_incremental_output(
             "status": solver_result.get("status", status)
         },
         "score": {
-            "overall": scores.get('overall', 0),
-            "hard": scores.get('hard', 0),
-            "soft": scores.get('soft', 0)
+            "overall": _safe_score(scores.get('overall', 0)),
+            "hard": _safe_score(scores.get('hard', 0)),
+            "soft": _safe_score(scores.get('soft', 0))
         },
         "scoreBreakdown": score_breakdown,
         "assignments": all_assignments_sorted,

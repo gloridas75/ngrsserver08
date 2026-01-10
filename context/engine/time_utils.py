@@ -308,27 +308,34 @@ def calculate_apgd_d10_hours(
         rest_day_pay_count = 1  # 1 RDP = 8 hours paid
         ot = max(0.0, gross - ln - 8.0)  # e.g., 12h gross - 1h lunch - 8h RDP = 3h OT
     
-    # Calculate normal/OT based on work days pattern (for days 1-5)
-    elif work_days_in_week == 4:
-        # 4 days: 11.0h normal each
-        normal = min(11.0, gross - ln)
-        ot = max(0.0, gross - ln - 11.0)
-    
-    elif work_days_in_week == 5:
-        # 5 days: 8.8h normal + 2.2h OT each
-        normal = min(8.8, gross - ln)
-        ot = max(0.0, gross - ln - 8.8)
-    
-    elif work_days_in_week >= 6:
-        # 6+ days: Days 1-5 use 8.8h normal each
-        # (Day 6+ already handled above by consecutive_position check)
-        normal = min(8.8, gross - ln)
-        ot = max(0.0, gross - ln - 8.8)
-    
+    # Calculate normal/OT for positions 1-5 based on consecutive work pattern
+    # CRITICAL: For 6+ day patterns (including partial weeks), use 8.8h normal cap
+    # Only 4-day standalone patterns get 11.0h (44h/4 = 11h)
     else:
-        # Fallback for < 4 days (conservative default)
-        normal = min(8.8, gross - ln)
-        ot = max(0.0, gross - ln - 8.8)
+        # Get employee's work pattern to determine if this is a 4-day standalone pattern
+        # or part of a longer pattern (5+ days)
+        is_standalone_4day = False
+        
+        if employee_dict:
+            work_pattern_def = employee_dict.get('workPatternDefinition', {})
+            work_pattern = work_pattern_def.get('workPattern', [])
+            # Count work days ('D') in pattern
+            pattern_work_days = sum(1 for day in work_pattern if day == 'D')
+            is_standalone_4day = (pattern_work_days == 4)
+        
+        if is_standalone_4day and work_days_in_week == 4:
+            # Standalone 4-day pattern: 11.0h normal each (44h / 4 = 11h)
+            normal = min(11.0, gross - ln)
+            ot = max(0.0, gross - ln - 11.0)
+        else:
+            # All other patterns (5+ days, or partial weeks): 8.8h normal + OT
+            # This includes:
+            # - 5-day patterns
+            # - 6-day patterns (days 1-5)
+            # - 7-day patterns (days 1-5)
+            # - Partial weeks at period start/end
+            normal = min(8.8, gross - ln)
+            ot = max(0.0, gross - ln - 8.8)
     
     return {
         'gross': round(gross, 2),
