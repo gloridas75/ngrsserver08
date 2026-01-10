@@ -392,10 +392,27 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     
                     # Calculate positions per day using Option C formula:
                     # positions_per_day = matching_employees × threshold × workable_ratio
+                    #
+                    # IMPORTANT: For mixed schemes (APGD-D10 + Standard), we need to ensure
+                    # we create enough positions to use all employees effectively.
+                    # Standard approach: Use average workable ratio → may under-provision
+                    # Better approach: Use total guaranteed capacity across all employees
+                    
                     positions_per_day = len(matching_employees) * (min_threshold / 100) * workable_ratio
-                    # Use floor() to ensure we don't create more slots than capacity
-                    # (Conservative: guarantees feasibility even with weekly rest constraints)
-                    positions_per_day_int = int(math.floor(positions_per_day))
+                    
+                    # FEASIBILITY CHECK: Ensure we have enough positions for minimum employee usage
+                    # If we need to use N employees (from minStaffThresholdPercentage), we need
+                    # at least N concurrent positions for them to work simultaneously
+                    min_employees_needed = len(matching_employees) * (min_threshold / 100)
+                    
+                    # CRITICAL: Don't use floor() - it causes infeasibility with mixed schemes!
+                    # Example: 2 employees × 92.86% = 1.857 → floor(1.857) = 1 position
+                    # But solver needs 2 employees used → INFEASIBLE with only 1 position!
+                    # Solution: Round up to ensure minimum employees can be used
+                    positions_per_day_int = max(
+                        int(math.ceil(min_employees_needed)),  # At least enough for min employees
+                        int(math.floor(positions_per_day))     # But don't exceed capacity
+                    )
                     
                     # Group matching employees by OU for employee selection
                     employees_by_ou = defaultdict(list)
@@ -461,9 +478,29 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     default_headcount = headcount_raw
                 
                 gender_req = req.get("gender", "Any")
-                # Normalize scheme value: "Scheme P" → "P", "Scheme A" → "A", etc.
-                scheme_req_raw = req.get("Scheme", "Global")
+                
+                # Normalize scheme value: support both "Scheme" (singular) and "schemes" (plural array)
+                # "Scheme A" → "A", "schemes": ["Any"] → "Global", etc.
+                scheme_req_raw = None
+                if "schemes" in req:
+                    # New format: "schemes": ["Any"] or ["A", "B"]
+                    schemes_list = req.get("schemes", [])
+                    if isinstance(schemes_list, list) and schemes_list:
+                        # If multiple schemes or "Any", treat as Global
+                        if len(schemes_list) > 1 or schemes_list[0].upper() in ('ANY', 'GLOBAL', 'ALL'):
+                            scheme_req_raw = "Global"
+                        else:
+                            scheme_req_raw = schemes_list[0]
+                    else:
+                        scheme_req_raw = "Global"
+                elif "Scheme" in req:
+                    # Old format: "Scheme": "A"
+                    scheme_req_raw = req.get("Scheme")
+                else:
+                    scheme_req_raw = "Global"
+                
                 scheme_req = normalize_scheme(scheme_req_raw)
+                print(f"      Requirement {requirement_id}: product={product_type}, ranks={rank_ids}, gender={gender_req}, scheme={scheme_req}")
                 
                 # Normalize qualifications to group format (backwards compatible)
                 required_quals_raw = req.get("requiredQualifications", [])
@@ -475,8 +512,6 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                 if not work_pattern:
                     print(f"      ⚠️  Requirement {requirement_id} has empty work pattern, skipping")
                     continue
-                
-                print(f"      Requirement {requirement_id}: product={product_type}, ranks={rank_ids}, gender={gender_req}, scheme={scheme_req}")
                 
                 # Display headcount info
                 if isinstance(headcount_raw, dict):

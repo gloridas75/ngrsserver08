@@ -30,29 +30,38 @@ except ImportError:
 
 def normalize_scheme(scheme_value: str) -> str:
     """
-    Normalize scheme value to single letter code.
+    Normalize scheme value to single letter code or wildcard.
     Handles both short codes ('P', 'A', 'B') and full names ('Scheme P', 'Scheme A', 'Scheme B').
+    Preserves wildcards: 'Any', 'Global', 'All' remain as 'Global'.
     
     Args:
-        scheme_value: Either 'P' or 'Scheme P' format
+        scheme_value: Either 'P', 'Scheme P', 'Any', 'Global', etc.
     
     Returns:
-        Single letter code: 'P', 'A', or 'B'
+        Single letter code ('P', 'A', 'B') or 'Global' for wildcards
     """
     if not scheme_value:
         return 'A'  # Default to Scheme A
     
     scheme_str = str(scheme_value).strip()
+    scheme_upper = scheme_str.upper()
+    
+    # Check for wildcard values (case-insensitive)
+    if scheme_upper in ('ANY', 'GLOBAL', 'ALL'):
+        return 'Global'
     
     # If already a single letter, return it
-    if len(scheme_str) == 1 and scheme_str.upper() in ('A', 'B', 'P'):
-        return scheme_str.upper()
+    if len(scheme_str) == 1 and scheme_upper in ('A', 'B', 'P'):
+        return scheme_upper
     
-    # Extract letter from "Scheme X" format
-    if scheme_str.startswith('Scheme '):
-        letter = scheme_str.split()[-1].strip().upper()
-        if letter in ('A', 'B', 'P'):
-            return letter
+    # Extract letter from "Scheme X" format (case-insensitive)
+    if 'SCHEME' in scheme_upper:
+        # Split and get last word
+        parts = scheme_str.split()
+        if len(parts) > 1:
+            letter = parts[-1].strip().upper()
+            if letter in ('A', 'B', 'P'):
+                return letter
     
     # Default fallback
     return 'A'
