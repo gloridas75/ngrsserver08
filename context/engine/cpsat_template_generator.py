@@ -368,19 +368,34 @@ def _apply_mom_constraints(
     # (pattern_length already defined earlier)
     
     print(f"[C5 DEBUG] Pattern length: {pattern_length}, Pattern: {work_pattern}")
+    print(f"[C5 DEBUG] Max consecutive days: {max_consecutive_days}, Is APGD-D10: {is_apgd}")
     
     if pattern_length == 7:
-        # Pattern aligns with calendar weeks - use rolling 7-day windows (stricter)
-        print(f"[C5 DEBUG] Using rolling windows (pattern length = 7)")
-        logger.info(f"  C5: Using rolling windows (pattern length = 7)")
-        for i in range(len(dates) - 6):
-            window_indices = [j for j in range(i, i + 7) if j in x]
-            if len(window_indices) == 7:
-                # Count coverage-skipped days in this window
-                coverage_skipped = sum(1 for j in window_indices if dates[j].strftime('%a') not in coverage_days)
-                # Work days in window must leave enough off days
-                max_work_days = 7 - min_off_days_per_week - coverage_skipped
-                model.Add(sum(x[j] for j in window_indices) <= max_work_days)
+        # For APGD-D10 with 7-day patterns and 8-day consecutive approval:
+        # Use 8-day windows (not 7) to allow 8 consecutive work days
+        if is_apgd and max_consecutive_days >= 8 and all(d != 'O' for d in work_pattern):
+            print(f"[C5 DEBUG] APGD-D10 with 7 consecutive work pattern and 8-day approval")
+            print(f"[C5 DEBUG] Using 8-day windows to allow 8 consecutive days")
+            logger.info(f"  C5: APGD-D10 special - using 8-day windows for 8 consecutive")
+            
+            # Use 8-day rolling windows: max 8 work days, min 1 OFF in any 9 days
+            for i in range(len(dates) - 8):
+                window_indices = [j for j in range(i, i + 9) if j in x]
+                if len(window_indices) == 9:
+                    # In any 9 consecutive days, allow up to 8 work days
+                    model.Add(sum(x[j] for j in window_indices) <= 8)
+        else:
+            # Pattern aligns with calendar weeks - use rolling 7-day windows (stricter)
+            print(f"[C5 DEBUG] Using rolling 7-day windows (standard pattern length = 7)")
+            logger.info(f"  C5: Using rolling windows (pattern length = 7)")
+            for i in range(len(dates) - 6):
+                window_indices = [j for j in range(i, i + 7) if j in x]
+                if len(window_indices) == 7:
+                    # Count coverage-skipped days in this window
+                    coverage_skipped = sum(1 for j in window_indices if dates[j].strftime('%a') not in coverage_days)
+                    # Work days in window must leave enough off days
+                    max_work_days = 7 - min_off_days_per_week - coverage_skipped
+                    model.Add(sum(x[j] for j in window_indices) <= max_work_days)
     else:
         # Pattern doesn't align with calendar weeks - use calendar week boundaries
         # This avoids false violations from pattern drift across week boundaries
