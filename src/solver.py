@@ -387,6 +387,64 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         else:
             eligible_employees = [emp for emp in all_employees if emp['employeeId'] in selected_emp_ids]
         
+        # ========== DAILY HOURS CAP FILTERING ==========
+        # Filter out employees whose daily hours cap is less than shift duration
+        # Example: Scheme P (9h cap) cannot work 12-hour shifts
+        from context.engine.constraint_config import get_constraint_param
+        from context.engine.time_utils import normalize_scheme
+        from datetime import datetime, timedelta as td
+        
+        # Calculate max shift duration from demand
+        shifts = demand.get('shifts', [])
+        max_shift_hours = 0.0
+        if shifts:
+            for sh in shifts:
+                for sd in sh.get('shiftDetails', []):
+                    start_time = datetime.strptime(sd.get('start', '00:00:00'), '%H:%M:%S')
+                    end_time = datetime.strptime(sd.get('end', '00:00:00'), '%H:%M:%S')
+                    if sd.get('nextDay', False):
+                        end_time += td(days=1)
+                    shift_hours = (end_time - start_time).total_seconds() / 3600.0
+                    max_shift_hours = max(max_shift_hours, shift_hours)
+        
+        if max_shift_hours > 0:
+            print(f"{log_prefix} Filtering employees by daily hours cap (shift duration: {max_shift_hours}h)...")
+            filtered_employees = []
+            excluded_count = 0
+            
+            for emp in eligible_employees:
+                max_daily_hours = get_constraint_param(
+                    ctx,
+                    'momDailyHoursCap',
+                    employee=emp,
+                    default=14.0
+                )
+                
+                if max_shift_hours <= max_daily_hours:
+                    filtered_employees.append(emp)
+                else:
+                    scheme = normalize_scheme(emp.get('scheme', ''))
+                    print(f"{log_prefix}   ⚠️  Excluding {emp['employeeId']} (Scheme {scheme}): "
+                          f"shift {max_shift_hours}h > daily limit {max_daily_hours}h")
+                    excluded_count += 1
+            
+            if excluded_count > 0:
+                print(f"{log_prefix}   ✓ Filtered {len(filtered_employees)}/{len(eligible_employees)} employees "
+                      f"({excluded_count} excluded due to daily hours cap)")
+                eligible_employees = filtered_employees
+            else:
+                print(f"{log_prefix}   ✓ All {len(eligible_employees)} employees pass daily hours cap check")
+        
+        # Abort if no eligible employees remain
+        if not eligible_employees:
+            print(f"{log_prefix} ❌ ERROR: No eligible employees after daily hours cap filtering")
+            return {
+                'status': 'INFEASIBLE',
+                'message': 'No employees can work shifts of this duration given their daily hours caps',
+                'assignments': [],
+                'employeeRoster': []
+            }
+        
         # ========== SINGLE OU WITH INDIVIDUAL OFFSETS DETECTION ==========
         # If all employees from single OU with different rotation offsets,
         # use full CP-SAT solver (demandBased mode) instead of template generation
