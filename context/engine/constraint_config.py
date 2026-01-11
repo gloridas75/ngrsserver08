@@ -127,7 +127,15 @@ def _get_param_new_format(constraint: dict, employee: Optional[dict], default: A
     # Extract employee attributes
     scheme_raw = employee.get('scheme', 'A')
     scheme = normalize_scheme(scheme_raw)
+    
+    # Handle both 'productTypes' (list) and 'productTypeId' (string)
     product_types = employee.get('productTypes', [])
+    if not product_types and 'productTypeId' in employee:
+        # Convert singular productTypeId to list
+        product_type_id = employee.get('productTypeId', '')
+        if product_type_id:
+            product_types = [product_type_id]
+    
     rank = employee.get('rank', '')
     
     # Check for scheme overrides

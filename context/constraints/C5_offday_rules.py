@@ -86,13 +86,17 @@ def add_constraints(model, ctx):
     # For each employee, create day-worked indicator variables and add constraints
     for emp in employees:
         emp_id = emp.get('employeeId')
+        emp_scheme = emp.get('scheme', 'Unknown')
         
         # Skip APGD-D10 employees (exempt from weekly rest day)
         if emp_id in apgd_employees:
+            print(f"     ✓ Skipping {emp_id} (Scheme {emp_scheme}): APGD-D10 EXEMPT from weekly rest")
             continue
         
         if emp_id not in emp_slots_by_date:
             continue  # No slots for this employee
+        
+        print(f"     → Adding C5 constraints for {emp_id} (Scheme {emp_scheme})")
         
         # Create indicator variables: day_worked[(emp_id, date)] = 1 if employee works on date
         day_worked = {}

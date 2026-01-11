@@ -33,29 +33,17 @@ def add_constraints(model, ctx):
         print(f"[C3] Warning: Slots, employees, or decision variables not available")
         return
     
-    # Build requirement map for APGD-D10 detection
-    req_map = {}
-    for demand in ctx.get('demandItems', []):
-        for req in demand.get('requirements', []):
-            req_map[req['requirementId']] = req
-    
-    # Identify APGD-D10 employees
-    apgd_employees = set()
-    for emp in employees:
-        emp_id = emp.get('employeeId')
-        # Try to find matching requirement
-        product = emp.get('productTypeId', '')
-        for req_id, req in req_map.items():
-            if req.get('productTypeId', '') == product:
-                if is_apgd_d10_employee(emp, req):
-                    apgd_employees.add(emp_id)
-                    break
-    
     # Import constraint config helper
     from context.engine.constraint_config import get_constraint_param
     
+    # Identify APGD-D10 employees (simplified - just use employee object)
+    apgd_employees = set()
+    for emp in employees:
+        if is_apgd_d10_employee(emp):
+            apgd_employees.add(emp.get('employeeId'))
+    
     if apgd_employees:
-        print(f"[C3] APGD-D10 detected: {len(apgd_employees)} employees with configurable consecutive limit")
+        print(f"[C3] APGD-D10 detected: {len(apgd_employees)} employees with 8-day consecutive limit")
     
     # Read max consecutive days from constraintList (per employee, scheme-specific)
     # NEW format supports: defaultValue + schemeOverrides with productTypes filter
@@ -224,7 +212,27 @@ def add_constraints(model, ctx):
                     model.Add(sum(day_vars_in_window) <= emp_max_consecutive)
                     constraints_added += 1
     
+    # Summary with per-employee limits
     print(f"[C3] Maximum Consecutive Working Days Constraint (HARD)")
     print(f"     Employees: {len(employees)}, Planning horizon: {len(sorted_dates)} days")
-    print(f"     Max consecutive days allowed: {max_consecutive}")
+    
+    # Show breakdown of limits
+    limit_counts = {}
+    for emp_id, limit in max_consecutive_by_employee.items():
+        limit_counts[limit] = limit_counts.get(limit, 0) + 1
+    
+    if len(limit_counts) == 1:
+        # All employees have same limit
+        limit = list(limit_counts.keys())[0]
+        print(f"     Max consecutive days: {limit} (all employees)")
+    else:
+        # Mixed limits
+        print(f"     Max consecutive days (varied by scheme):")
+        for limit in sorted(limit_counts.keys()):
+            count = limit_counts[limit]
+            if limit == 8 and apgd_employees:
+                print(f"       {limit} days: {count} employees (APGD-D10)")
+            else:
+                print(f"       {limit} days: {count} employees")
+    
     print(f"     ✓ Added {constraints_added} rolling window constraints\n")

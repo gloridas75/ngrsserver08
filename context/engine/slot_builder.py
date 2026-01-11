@@ -362,6 +362,9 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                         from context.engine.time_utils import is_apgd_d10_employee
                         
                         total_capacity_ratio = 0
+                        apgd_count = 0
+                        standard_count = 0
+                        
                         for emp in matching_employees:
                             # Check if employee is APGD-D10 (exempt from weekly rest)
                             is_apgd = is_apgd_d10_employee(emp)
@@ -369,36 +372,63 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                             if is_apgd:
                                 # APGD-D10: Can work all pattern days
                                 emp_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
+                                apgd_count += 1
                             else:
                                 # Standard: Must have 1 off day per week
                                 # If pattern is 7-day all-work (DDDDDDD), effective = 6/7
                                 if pattern_length == 7 and work_days_in_pattern == 7:
                                     emp_ratio = 6.0 / 7.0  # Max 6 days per week
+                                    standard_count += 1
                                 else:
                                     emp_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
                             
                             total_capacity_ratio += emp_ratio
                         
-                        # Average workable ratio across employees
-                        workable_ratio = total_capacity_ratio / len(matching_employees) if matching_employees else 1.0
-                        
-                        # Log if there's a mismatch
-                        naive_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
-                        if abs(workable_ratio - naive_ratio) > 0.01:
-                            print(f"        ⚠️  Adjusted workable ratio for mixed schemes: {naive_ratio:.2%} → {workable_ratio:.2%}")
-                            print(f"        ⚠️  (Accounts for weekly rest requirements)")
+                        # CRITICAL FIX: For mixed schemes (APGD + Standard), don't use average!
+                        # Using average forces solver to distribute work evenly, which incorrectly
+                        # limits APGD-D10 employees who should be able to work all days.
+                        # Instead: Use maximum workable ratio to create enough positions
+                        if apgd_count > 0 and standard_count > 0:
+                            # Mixed schemes: Use 100% ratio to allow APGD employees full capacity
+                            workable_ratio = 1.0
+                            print(f"        ✓ Mixed schemes detected: {apgd_count} APGD-D10, {standard_count} Standard")
+                            print(f"        ✓ Using 100% workable ratio (allows APGD-D10 full capacity)")
+                            print(f"        ✓ C5 constraint will enforce weekly rest for Standard employees only")
+                        else:
+                            # All same type: Use average workable ratio
+                            workable_ratio = total_capacity_ratio / len(matching_employees) if matching_employees else 1.0
+                            naive_ratio = work_days_in_pattern / pattern_length if pattern_length > 0 else 1.0
+                            if abs(workable_ratio - naive_ratio) > 0.01:
+                                print(f"        ⚠️  Adjusted workable ratio: {naive_ratio:.2%} → {workable_ratio:.2%}")
+                                print(f"        ⚠️  (Accounts for weekly rest requirements)")
                     else:
                         workable_ratio = 1.0  # No pattern means all days workable
                     
                     # Calculate positions per day using Option C formula:
                     # positions_per_day = matching_employees × threshold × workable_ratio
                     #
-                    # IMPORTANT: For mixed schemes (APGD-D10 + Standard), we need to ensure
-                    # we create enough positions to use all employees effectively.
-                    # Standard approach: Use average workable ratio → may under-provision
-                    # Better approach: Use total guaranteed capacity across all employees
+                    # CRITICAL: For mixed schemes (APGD-D10 + Standard), we must create
+                    # enough positions for APGD-D10 to work at FULL capacity.
+                    # 
+                    # Strategy:
+                    # - APGD-D10: Can work ALL days (100% capacity)
+                    # - Standard: C5 constraint limits to ~6/7 days
+                    # - Create positions = APGD count + Standard average capacity
+                    # - This allows APGD to fill all available positions
+                    #   while Standard employees get blocked by C5 naturally
                     
-                    positions_per_day = len(matching_employees) * (min_threshold / 100) * workable_ratio
+                    if apgd_count > 0 and standard_count > 0:
+                        # Mixed schemes: Calculate positions to support APGD-D10 full usage
+                        # APGD employees contribute full capacity
+                        apgd_positions = apgd_count * (min_threshold / 100)
+                        # Standard employees contribute capacity adjusted for weekly rest
+                        standard_workable = 6.0 / 7.0 if (pattern_length == 7 and work_days_in_pattern == 7) else 1.0
+                        standard_positions = standard_count * (min_threshold / 100) * standard_workable
+                        positions_per_day = apgd_positions + standard_positions
+                        print(f"        📊 Positions: {apgd_count} APGD (100%) + {standard_count} Std ({standard_workable:.1%}) = {positions_per_day:.2f}")
+                    else:
+                        # All same type: Use standard calculation
+                        positions_per_day = len(matching_employees) * (min_threshold / 100) * workable_ratio
                     
                     # FEASIBILITY CHECK: Ensure we have enough positions for minimum employee usage
                     # If we need to use N employees (from minStaffThresholdPercentage), we need

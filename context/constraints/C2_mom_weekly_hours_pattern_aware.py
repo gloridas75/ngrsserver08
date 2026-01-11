@@ -314,9 +314,37 @@ def add_constraints(model, ctx):
                 model.Add(constraint_expr <= remaining_capacity_int)
                 weekly_constraints += 1
 
-    # ===== ADD CONSTRAINTS FOR MONTHLY OT HOURS <= 72H =====
+    # ===== ADD CONSTRAINTS FOR MONTHLY OT HOURS =====
+    # APGD-D10 employees have higher monthly OT caps:
+    # - Foreign SGT/COR: 144h
+    # - Local: 246h
+    # - Standard employees: 72h
     monthly_constraints = 0
     for emp_id, months in emp_month_slots.items():
+        # Get employee data to check APGD-D10 status
+        employee_dict = next((e for e in employees if e.get('employeeId') == emp_id), None)
+        if not employee_dict:
+            continue
+        
+        # Determine monthly OT cap based on APGD-D10 status
+        is_apgd = is_apgd_d10_employee(employee_dict)
+        if is_apgd:
+            # APGD-D10: Higher caps
+            local_status = employee_dict.get('local', 1)  # 1=local, 0=foreign
+            rank = employee_dict.get('rank', '')
+            
+            if local_status == 1:
+                # Local: 246h monthly OT cap
+                monthly_ot_cap_hours = 246.0
+            else:
+                # Foreign SGT/COR: 144h monthly OT cap
+                monthly_ot_cap_hours = 144.0
+        else:
+            # Standard employee: 72h monthly OT cap
+            monthly_ot_cap_hours = 72.0
+        
+        monthly_ot_cap_int = int(round(monthly_ot_cap_hours * 10))  # Convert to tenths
+        
         for month_key, month_slots in months.items():
             weighted_assignments = []
             
@@ -343,7 +371,7 @@ def add_constraints(model, ctx):
             
             if weighted_assignments:
                 constraint_expr = sum(var * hours for var, hours in weighted_assignments)
-                model.Add(constraint_expr <= 720)  # 72 hours = 720 tenths
+                model.Add(constraint_expr <= monthly_ot_cap_int)
                 monthly_constraints += 1
 
     # Summary

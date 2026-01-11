@@ -13,6 +13,7 @@ from collections import defaultdict
 from .data_loader import load_input
 from .score_helpers import ScoreBook
 from .slot_builder import build_slots, normalize_scheme
+from .time_utils import is_apgd_d10_employee
 
 # Optimization mode constants
 OPTIMIZATION_MODE_BALANCE = "balanceWorkload"
@@ -803,10 +804,29 @@ def build_model(ctx):
     #    - minimizeEmployeeCount: Minimize employee count (priority: 100,000)
     #    - balanceWorkload: Minimize soft penalties (priority: 1,000)
     # 3. TERTIARY: Minimize soft penalties (priority: 1,000)
-    # 4. QUATERNARY: Maximize total assignments (priority: 1)
+    # 4. QUATERNARY: Maximize total assignments (priority: 1 or 10,000)
+    #
+    # SPECIAL CASE: When APGD-D10 mixed with Standard schemes:
+    # - APGD-D10 can work ALL days (exempt from weekly rest)
+    # - We want to maximize coverage, not balance workload
+    # - Increase "maximize assignments" priority to 10,000× (between soft penalties and employee count)
     BIG_MULTIPLIER = 1_000_000
     MEDIUM_MULTIPLIER = 100_000
     SOFT_MULTIPLIER = 1_000
+    
+    # Detect APGD-D10 + Standard mix
+    apgd_count = sum(1 for e in employees if is_apgd_d10_employee(e))
+    standard_count = len(employees) - apgd_count
+    has_mixed_apgd_standard = apgd_count > 0 and standard_count > 0
+    
+    # Adjust multipliers for APGD-D10 mixed scenarios
+    if has_mixed_apgd_standard:
+        ASSIGNMENT_MULTIPLIER = 10_000  # High priority: Fill all available slots
+        EMPLOYEE_COUNT_MULTIPLIER = 0    # DISABLE: Don't minimize employee count (we expect both to work)
+        print(f"[build_model] ⚡ APGD-D10 mixed scenario detected: Prioritizing coverage over employee minimization")
+    else:
+        ASSIGNMENT_MULTIPLIER = 1  # Low priority: Just a tie-breaker
+        EMPLOYEE_COUNT_MULTIPLIER = MEDIUM_MULTIPLIER  # Use standard 100,000× multiplier
     
     # Calculate total assignments for tertiary optimization
     total_assignments = sum(x.values())
@@ -815,26 +835,26 @@ def build_model(ctx):
     print(f"  PRIORITY 1: Minimize unassigned slots ({BIG_MULTIPLIER:,}×)")
     
     if optimization_mode == OPTIMIZATION_MODE_MINIMIZE:
-        print(f"  PRIORITY 2: Minimize employee count ({MEDIUM_MULTIPLIER:,}×)")
+        print(f"  PRIORITY 2: Minimize employee count ({EMPLOYEE_COUNT_MULTIPLIER:,}×)")
         print(f"  PRIORITY 3: Minimize soft penalties ({SOFT_MULTIPLIER:,}×)")
         print(f"    - Rotation violations")
         print(f"    - Anchor offset penalties")
-        print(f"  PRIORITY 4: Maximize assignments (1×)")
+        print(f"  PRIORITY 4: Maximize assignments ({ASSIGNMENT_MULTIPLIER:,}×)")
         
         # Combined objective for minimizeEmployeeCount mode
         objective_expr = (
             BIG_MULTIPLIER * total_unassigned +
-            MEDIUM_MULTIPLIER * total_employees_used +
+            EMPLOYEE_COUNT_MULTIPLIER * total_employees_used +
             SOFT_MULTIPLIER * total_rotation_violations +
             SOFT_MULTIPLIER * total_anchor_penalty -
-            total_assignments
+            ASSIGNMENT_MULTIPLIER * total_assignments
         )
     else:
         print(f"  PRIORITY 2: Minimize soft penalties ({SOFT_MULTIPLIER:,}×)")
         print(f"    - Rotation violations")
         print(f"    - Anchor offset penalties")
         # print(f"    - Workload imbalance")  # DISABLED: Testing continuous adherence without workload balance
-        print(f"  PRIORITY 3: Maximize assignments (1×)")
+        print(f"  PRIORITY 3: Maximize assignments ({ASSIGNMENT_MULTIPLIER:,}×)")
         
         # Combined objective for balanceWorkload mode
         objective_expr = (
@@ -843,7 +863,7 @@ def build_model(ctx):
             SOFT_MULTIPLIER * total_anchor_penalty +
             # SOFT_MULTIPLIER * workload_imbalance -  # DISABLED: Testing continuous adherence
             0 -  # Placeholder
-            total_assignments
+            ASSIGNMENT_MULTIPLIER * total_assignments
         )
     
     model.Minimize(objective_expr)
