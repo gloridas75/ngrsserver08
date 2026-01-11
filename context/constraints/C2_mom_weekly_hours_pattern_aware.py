@@ -315,37 +315,59 @@ def add_constraints(model, ctx):
                 weekly_constraints += 1
 
     # ===== ADD CONSTRAINTS FOR MONTHLY OT HOURS =====
-    # APGD-D10 employees have higher monthly OT caps:
-    # - Foreign SGT/COR: 144h
-    # - Local: 246h
-    # - Standard employees: 72h
+    # APGD-D10 employees have month-dependent OT caps from monthlyHourLimits:
+    # - 28 days: 112h OT
+    # - 29 days: 116h OT
+    # - 30 days: 120h OT
+    # - 31 days: 124h OT
+    # - Standard employees: 72h OT (all months)
     monthly_constraints = 0
+    
+    # Extract APGD max OT hours from monthlyHourLimits
+    apgd_ot_by_days = {}
+    monthly_hour_limits = ctx.get('monthlyHourLimits', [])
+    for limit_config in monthly_hour_limits:
+        if limit_config.get('id') == 'apgdMaximumOvertimeHours':
+            values_by_length = limit_config.get('valuesByMonthLength', {})
+            for days_str, values in values_by_length.items():
+                apgd_ot_by_days[int(days_str)] = values.get('maxOvertimeHours', 72)
+            break
+    
+    # Track applied caps for debug output
+    applied_ot_caps = {}  # emp_id -> (is_apgd, month_length, cap_hours)
+    
     for emp_id, months in emp_month_slots.items():
         # Get employee data to check APGD-D10 status
         employee_dict = next((e for e in employees if e.get('employeeId') == emp_id), None)
         if not employee_dict:
             continue
         
-        # Determine monthly OT cap based on APGD-D10 status
+        # Determine if this is APGD-D10 employee
         is_apgd = is_apgd_d10_employee(employee_dict)
-        if is_apgd:
-            # APGD-D10: Higher caps
-            local_status = employee_dict.get('local', 1)  # 1=local, 0=foreign
-            rank = employee_dict.get('rank', '')
-            
-            if local_status == 1:
-                # Local: 246h monthly OT cap
-                monthly_ot_cap_hours = 246.0
-            else:
-                # Foreign SGT/COR: 144h monthly OT cap
-                monthly_ot_cap_hours = 144.0
-        else:
-            # Standard employee: 72h monthly OT cap
-            monthly_ot_cap_hours = 72.0
-        
-        monthly_ot_cap_int = int(round(monthly_ot_cap_hours * 10))  # Convert to tenths
         
         for month_key, month_slots in months.items():
+            # Determine month length (number of days in this month)
+            if month_slots:
+                # Get first and last date of the month from slots
+                month_dates = set(slot.date for slot in month_slots)
+                month_length = len(month_dates)
+                
+                # Get appropriate OT cap based on employee type and month length
+                if is_apgd:
+                    # APGD-D10: Use month-dependent cap (112-124h)
+                    monthly_ot_cap_hours = apgd_ot_by_days.get(month_length, 72.0)
+                else:
+                    # Standard employee: 72h for all months
+                    monthly_ot_cap_hours = 72.0
+                
+                monthly_ot_cap_int = int(round(monthly_ot_cap_hours * 10))  # Convert to tenths
+                
+                # Track for debug output
+                if emp_id not in applied_ot_caps:
+                    applied_ot_caps[emp_id] = (is_apgd, month_length, monthly_ot_cap_hours)
+            else:
+                continue
+            
             weighted_assignments = []
             
             for slot in month_slots:
@@ -389,5 +411,20 @@ def add_constraints(model, ctx):
     print(f"     6-day employees: {six_day_employees} (8.8h normal for first 5 days, 0h for 6th)")
     if apgd_skipped > 0:
         print(f"     APGD-D10: {apgd_skipped} employees EXEMPT from weekly 44h cap (use monthly caps)")
+    
+    # Show applied monthly OT caps
+    if applied_ot_caps:
+        apgd_caps = [(emp_id, month_len, cap) for emp_id, (is_apgd, month_len, cap) in applied_ot_caps.items() if is_apgd]
+        std_caps = [(emp_id, month_len, cap) for emp_id, (is_apgd, month_len, cap) in applied_ot_caps.items() if not is_apgd]
+        
+        if apgd_caps:
+            print(f"     Monthly OT caps (APGD-D10):")
+            for emp_id, month_len, cap in apgd_caps:
+                print(f"       {emp_id}: {cap:.0f}h ({month_len}-day month)")
+        if std_caps:
+            print(f"     Monthly OT caps (Standard):")
+            for emp_id, month_len, cap in std_caps:
+                print(f"       {emp_id}: {cap:.0f}h")
+    
     print(f"     ✓ Added {weekly_constraints} weekly normal hours constraints (HARD)")
     print(f"     ✓ Added {monthly_constraints} monthly OT hours constraints (HARD)\n")
