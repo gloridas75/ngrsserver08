@@ -89,7 +89,7 @@ def generate_template_with_cpsat(
             ctx=ctx,
             template_emp=template_emp,
             work_pattern=work_pattern,
-            shift_details=shift_details,
+            shift_details_map=shift_details,
             start_date=start_date,
             end_date=end_date,
             demand=demand,
@@ -133,7 +133,7 @@ def _build_and_solve_template(
     ctx: dict,
     template_emp: dict,
     work_pattern: List[str],
-    shift_details: dict,
+    shift_details_map: dict,
     start_date: datetime,
     end_date: datetime,
     demand: dict,
@@ -142,6 +142,9 @@ def _build_and_solve_template(
 ) -> List[dict]:
     """
     Build CP-SAT model for single template employee and solve.
+    
+    Args:
+        shift_details_map: Dict mapping shift codes to their timing details
     
     Returns list of assignment dicts for the template employee.
     """
@@ -184,9 +187,13 @@ def _build_and_solve_template(
     # Instead, we let MOM constraints (C1-C17) determine feasibility
     # Days where pattern says work but constraints prevent it will become UNASSIGNED
     
+    # For MOM constraints, use first shift details for duration calculation
+    # (constraints care about shift duration, not specific shift type)
+    first_shift_details = list(shift_details_map.values())[0] if shift_details_map else {}
+    
     # Apply core MOM constraints (C2, C3, C5, C6, C7, C17)
     _apply_mom_constraints(
-        model, x, dates, shift_details, template_emp, ctx, coverage_days,
+        model, x, dates, first_shift_details, template_emp, ctx, coverage_days,
         requirement=requirement,
         demand=demand
     )
@@ -222,12 +229,15 @@ def _build_and_solve_template(
     # Create ASSIGNED work day assignments
     for day_idx in work_days:
         date = dates[day_idx]
+        pattern_idx = (emp_offset + day_idx) % pattern_length
         assignment = _create_assignment(
             template_emp,
             date,
-            shift_details,
+            shift_details_map,
             demand,
-            requirement
+            requirement,
+            work_pattern=work_pattern,
+            pattern_idx=pattern_idx
         )
         assignments.append(assignment)
     
@@ -239,7 +249,7 @@ def _build_and_solve_template(
             date,
             demand,
             requirement,
-            shift_details
+            shift_details_map
         )
         assignments.append(off_assignment)
     
@@ -254,7 +264,9 @@ def _build_and_solve_template(
             date,
             demand,
             requirement,
-            shift_details,
+            shift_details_map,
+            work_pattern=work_pattern,
+            pattern_idx=pattern_idx,
             reason=f"MOM constraint violation: pattern requires '{pattern_day}' shift but conflicts with weekly rest day requirement"
         )
         assignments.append(unassigned_assignment)
@@ -554,16 +566,40 @@ def _group_dates_by_week(dates: List[datetime]) -> List[List[datetime]]:
 def _create_assignment(
     employee: dict,
     date: datetime,
-    shift_details: dict,
+    shift_details_map: dict,
     demand: dict,
-    requirement: dict
+    requirement: dict,
+    work_pattern: List[str] = None,
+    pattern_idx: int = None
 ) -> dict:
-    """Create assignment dictionary for a work day."""
+    """Create assignment dictionary for a work day.
+    
+    Args:
+        employee: Employee dict
+        date: Assignment date
+        shift_details_map: Dict mapping shift codes to shift details
+        demand: Demand dict
+        requirement: Requirement dict
+        work_pattern: List of shift codes (e.g., ['D', 'D', 'N', 'N', 'O', 'O'])
+        pattern_idx: Index in work_pattern for this date
+    """
     emp_id = employee['employeeId']
     date_str = date.strftime('%Y-%m-%d')
     
     demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
+    
+    # Determine shift code from work pattern
+    if work_pattern and pattern_idx is not None:
+        shift_code = work_pattern[pattern_idx]
+    else:
+        shift_code = 'D'  # Default
+    
+    # Get shift details for this shift code
+    shift_details = shift_details_map.get(shift_code, {})
+    if not shift_details:
+        # Fallback: if shift code not in map, use first available shift
+        shift_details = list(shift_details_map.values())[0] if shift_details_map else {}
     
     # Extract shift times
     shift_start = shift_details.get('start', '08:00:00')
@@ -579,8 +615,8 @@ def _create_assignment(
     else:
         end_datetime = f"{date_str}T{shift_end}"
     
-    # Get shift code from shift details
-    shift_code = shift_details.get('shiftCode', 'D')
+    # Use the determined shift code
+    shift_code = shift_details.get('shiftCode', shift_code)
     
     # NOTE: Hours NOT calculated here during template generation
     # Output builder will calculate hours properly with full assignment context
@@ -605,7 +641,7 @@ def _create_off_day_assignment(
     date: datetime,
     demand: dict,
     requirement: dict,
-    shift_details: dict
+    shift_details_map: dict
 ) -> dict:
     """Create assignment dictionary for an OFF day (non-work day)."""
     
@@ -615,7 +651,8 @@ def _create_off_day_assignment(
     demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
     
-    # Extract shift times for display purposes (even though it's an OFF day)
+    # Use first shift details for display purposes (even though it's an OFF day)
+    shift_details = list(shift_details_map.values())[0] if shift_details_map else {}
     shift_start = shift_details.get('start', '08:00:00')
     shift_end = shift_details.get('end', '20:00:00')
     next_day = shift_details.get('nextDay', False)
@@ -659,7 +696,9 @@ def _create_unassigned_assignment(
     date: datetime,
     demand: dict,
     requirement: dict,
-    shift_details: dict,
+    shift_details_map: dict,
+    work_pattern: List[str] = None,
+    pattern_idx: int = None,
     reason: str = "Constraint violation"
 ) -> dict:
     """Create assignment dictionary for an UNASSIGNED slot (constraint violation)."""
@@ -670,10 +709,22 @@ def _create_unassigned_assignment(
     demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
     
+    # Determine shift code from work pattern
+    if work_pattern and pattern_idx is not None:
+        shift_code = work_pattern[pattern_idx]
+    else:
+        shift_code = 'D'  # Default
+    
+    # Get shift details for this shift code
+    shift_details = shift_details_map.get(shift_code, {})
+    if not shift_details:
+        # Fallback: use first available shift
+        shift_details = list(shift_details_map.values())[0] if shift_details_map else {}
+    
     # Extract shift times
     shift_start = shift_details.get('start', '08:00:00')
     shift_end = shift_details.get('end', '20:00:00')
-    shift_code = shift_details.get('shiftCode', 'D')
+    shift_code = shift_details.get('shiftCode', shift_code)  # Use actual shift code from details
     next_day = shift_details.get('nextDay', False)
     
     # Create datetime strings
@@ -782,7 +833,14 @@ def _group_employees_by_ou(employees: List[dict]) -> Dict[str, List[dict]]:
 
 
 def _extract_shift_details(demand: dict) -> dict:
-    """Extract shift timing details from demand."""
+    """Extract shift timing details from demand and create shift code mapping.
+    
+    Returns dict mapping shift codes to their details:
+    {
+        'D': {shiftCode: 'D', start: '08:00', end: '20:00', ...},
+        'N': {shiftCode: 'N', start: '20:00', end: '08:00', nextDay: True, ...}
+    }
+    """
     shifts = demand.get('shifts', [])
     if not shifts:
         return {}
@@ -791,7 +849,13 @@ def _extract_shift_details(demand: dict) -> dict:
     if not shift_details_list:
         return {}
     
-    return shift_details_list[0]
+    # Create mapping of shift code → shift details
+    shift_map = {}
+    for shift_detail in shift_details_list:
+        shift_code = shift_detail.get('shiftCode', 'D')
+        shift_map[shift_code] = shift_detail
+    
+    return shift_map
 
 
 def _extract_coverage_days(demand: dict) -> List[str]:
