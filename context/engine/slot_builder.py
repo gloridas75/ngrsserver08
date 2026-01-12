@@ -16,6 +16,10 @@ from collections import defaultdict
 import math
 import uuid
 
+# Import helper functions at module level to avoid UnboundLocalError
+from context.engine.time_utils import normalize_scheme, is_apgd_d10_employee
+from context.engine.constraint_config import get_constraint_param
+
 
 @dataclass
 class Slot:
@@ -315,8 +319,6 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                     
                     # FILTER OUT employees who cannot work this shift due to daily hours cap
                     # Check shift duration against employee's scheme-specific daily limit
-                    from context.engine.time_utils import normalize_scheme
-                    from context.engine.constraint_config import get_constraint_param
                     
                     eligible_employees = []
                     for emp in matching_employees:
@@ -359,7 +361,6 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
                         pattern_length = len(work_pattern)
                         
                         # Calculate effective capacity per employee considering their constraints
-                        from context.engine.time_utils import is_apgd_d10_employee
                         
                         total_capacity_ratio = 0
                         apgd_count = 0

@@ -1301,7 +1301,19 @@ def calculate_scores(ctx, assignments) -> tuple:
             )
     
     # ========== C2a CHECK: Weekly Normal Hours (44h cap) ==========
+    # APGD-D10 employees are EXEMPT from weekly 44h cap
+    from context.engine.time_utils import is_apgd_d10_employee
+    apgd_employees = set()
+    employees_list = ctx.get('employees', [])
+    for emp in employees_list:
+        if is_apgd_d10_employee(emp):
+            apgd_employees.add(emp.get('employeeId'))
+    
     for (emp_id, week_key), week_assignments in emp_assignments_by_week.items():
+        # Skip APGD-D10 employees (exempt from weekly cap)
+        if emp_id in apgd_employees:
+            continue
+            
         weekly_normal = 0
         for a in week_assignments:
             start = datetime.fromisoformat(a.get('startDateTime'))

@@ -164,26 +164,31 @@ def add_constraints(model, ctx):
                 req_patterns[req_id] = pattern
     
     # Build employee → pattern mapping by checking which slots they can be assigned to
-    # This works because slots have requirementId, and requirements have workPattern
+    # For demandBased: ICPMP assigns patterns to requirements, NOT employees
+    # For outcomeBased: patterns may be in requirements OR employees
+    # Strategy: Always look up from slots → requirements (works for both modes)
     emp_patterns = {}
     for emp in employees:
         emp_id = emp.get('employeeId')
-        pattern = emp.get('workPattern', [])  # Try direct first (v0.95+)
+        pattern = []
         
+        # Find pattern from slots this employee can be assigned to
+        # This works for both demandBased (ICPMP) and outcomeBased modes
+        for slot in slots:
+            if (slot.slot_id, emp_id) in x:
+                # This employee can be assigned to this slot
+                req_id = getattr(slot, 'requirementId', None)
+                if req_id and req_id in req_patterns:
+                    pattern = req_patterns[req_id]
+                    break  # Found pattern, stop searching
+        
+        # Fallback 1: Try direct employee.workPattern (for outcomeBased with explicit patterns)
         if not pattern:
-            # Find pattern from slots this employee can be assigned to
-            # Check first slot with this employee in decision variables
-            for slot in slots:
-                if (slot.slot_id, emp_id) in x:
-                    # This employee can be assigned to this slot
-                    req_id = getattr(slot, 'requirementId', None)
-                    if req_id and req_id in req_patterns:
-                        pattern = req_patterns[req_id]
-                        break  # Found pattern, stop searching
-            
-            if not pattern:
-                # Fallback: assume 5-day pattern
-                pattern = ['D', 'D', 'D', 'D', 'D', 'O', 'O']
+            pattern = emp.get('workPattern', [])
+        
+        # Fallback 2: Assume standard 5-day pattern
+        if not pattern:
+            pattern = ['D', 'D', 'D', 'D', 'D', 'O', 'O']
         
         emp_patterns[emp_id] = pattern
     
