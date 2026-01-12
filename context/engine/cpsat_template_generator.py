@@ -419,8 +419,18 @@ def _apply_mom_constraints(
                     print(f"[C5 DEBUG] Partial week {week_dates[0].strftime('%Y-%m-%d')} - {week_dates[-1].strftime('%Y-%m-%d')}: Skipping constraint ({len(week_dates)} days < 7)")
     
     # C7: Qualification/license validity (only if requiredQualifications specified)
-    required_quals = requirement.get('requiredQualifications', []) if requirement else []
-    if required_quals:
+    required_quals_raw = requirement.get('requiredQualifications', []) if requirement else []
+    
+    # Normalize qualifications to handle both old (array of strings) and new (grouped) formats
+    from context.engine.slot_builder import normalize_qualifications
+    required_qual_groups = normalize_qualifications(required_quals_raw)
+    
+    if required_qual_groups:
+        # Flatten all qualifications from all groups for checking
+        required_quals = []
+        for group in required_qual_groups:
+            required_quals.extend(group.get('qualifications', []))
+        
         logger.info(f"  Applying C7: Checking qualifications {required_quals}")
         emp_licenses = {}
         

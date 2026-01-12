@@ -1,0 +1,10 @@
+{
+  "status": "INFEASIBLE",
+  "total_assignments": 155,
+  "assigned_count": 42,
+  "unassigned_count": 113,
+  "hard_score": 113,
+  "soft_score": 0,
+  "hard_violations": 113,
+  "employees_used": 2
+}

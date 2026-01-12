@@ -1,0 +1,10 @@
+{
+  "status": "OPTIMAL",
+  "total_assignments": 392,
+  "assigned_count": 280,
+  "unassigned_count": 0,
+  "hard_score": 0,
+  "soft_score": 0,
+  "hard_violations": 0,
+  "employees_used": 14
+}

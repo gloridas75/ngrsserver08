@@ -1,0 +1,10 @@
+{
+  "status": "FEASIBLE",
+  "total_assignments": 30,
+  "assigned_count": 28,
+  "unassigned_count": 2,
+  "hard_score": 2,
+  "soft_score": 0,
+  "hard_violations": 0,
+  "employees_used": 1
+}

@@ -1,0 +1,20 @@
+{
+  "status": "INFEASIBLE",
+  "message": "Work pattern violates MOM constraints",
+  "violations": {
+    "ALL": [
+      "No shift configuration found"
+    ]
+  },
+  "pattern": [
+    "D",
+    "D",
+    "D",
+    "D",
+    "D",
+    "O",
+    "O"
+  ],
+  "assignments": [],
+  "employeeRoster": []
+}

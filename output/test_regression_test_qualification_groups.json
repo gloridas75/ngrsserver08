@@ -1,0 +1,1110 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "TEST-QUAL-GROUPS",
+  "publicHolidays": [],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2026-01-12T11:53:25.842454",
+    "ended": "2026-01-12T11:53:25.858137",
+    "durationSeconds": 0.016,
+    "status": "INFEASIBLE"
+  },
+  "score": {
+    "overall": 2,
+    "hard": 2,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "violations": [
+        {
+          "type": "hard",
+          "id": "hard_constraint_combination",
+          "note": "Slot TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-05-64783c on 2026-01-05 unassigned - Multiple hard constraints (work pattern, consecutive days, rest periods, weekly hours, or other MOM rules) prevented all employees from being assigned"
+        },
+        {
+          "type": "hard",
+          "id": "hard_constraint_combination",
+          "note": "Slot TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-06-5c957f on 2026-01-06 unassigned - Multiple hard constraints (work pattern, consecutive days, rest periods, weekly hours, or other MOM rules) prevented all employees from being assigned"
+        }
+      ]
+    },
+    "soft": {
+      "totalPenalty": 0,
+      "details": []
+    },
+    "unassignedSlots": {
+      "count": 2,
+      "total": 21,
+      "percentage": 9.52,
+      "slots": [
+        {
+          "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-05-64783c",
+          "demandId": "TEST-SECURITY-CHECKPOINT",
+          "date": "2026-01-05",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        },
+        {
+          "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-06-5c957f",
+          "demandId": "TEST-SECURITY-CHECKPOINT",
+          "date": "2026-01-06",
+          "shiftCode": "D",
+          "reason": "No employee could be assigned without violating hard constraints"
+        }
+      ]
+    }
+  },
+  "assignments": [
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-01-D-EMP_002",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-01",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-01-f239a0",
+      "shiftCode": "D",
+      "patternDay": 1,
+      "startDateTime": "2026-01-01T08:00:00",
+      "endDateTime": "2026-01-01T20:00:00",
+      "employeeId": "EMP_002",
+      "newRotationOffset": 1,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-01-D-EMP_003",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-01",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P1-2026-01-01-a5f8f6",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2026-01-01T08:00:00",
+      "endDateTime": "2026-01-01T20:00:00",
+      "employeeId": "EMP_003",
+      "newRotationOffset": 2,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-01-D-EMP_005_FAILS",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_BASIC",
+      "date": "2026-01-01",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_BASIC-D-P0-2026-01-01-a05450",
+      "shiftCode": "D",
+      "patternDay": 4,
+      "startDateTime": "2026-01-01T08:00:00",
+      "endDateTime": "2026-01-01T20:00:00",
+      "employeeId": "EMP_005_FAILS",
+      "newRotationOffset": 4,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-02-D-EMP_002",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-02",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-02-533c0f",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2026-01-02T08:00:00",
+      "endDateTime": "2026-01-02T20:00:00",
+      "employeeId": "EMP_002",
+      "newRotationOffset": 1,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-02-D-EMP_003",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-02",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P1-2026-01-02-485cea",
+      "shiftCode": "D",
+      "patternDay": 3,
+      "startDateTime": "2026-01-02T08:00:00",
+      "endDateTime": "2026-01-02T20:00:00",
+      "employeeId": "EMP_003",
+      "newRotationOffset": 2,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-02-D-EMP_004_FAILS",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_BASIC",
+      "date": "2026-01-02",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_BASIC-D-P0-2026-01-02-2f5042",
+      "shiftCode": "D",
+      "patternDay": 4,
+      "startDateTime": "2026-01-02T08:00:00",
+      "endDateTime": "2026-01-02T20:00:00",
+      "employeeId": "EMP_004_FAILS",
+      "newRotationOffset": 3,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-03-D-EMP_001",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_BASIC",
+      "date": "2026-01-03",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_BASIC-D-P0-2026-01-03-ed4224",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2026-01-03T08:00:00",
+      "endDateTime": "2026-01-03T20:00:00",
+      "employeeId": "EMP_001",
+      "newRotationOffset": 0,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-03-D-EMP_002",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-03",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P1-2026-01-03-ff6841",
+      "shiftCode": "D",
+      "patternDay": 3,
+      "startDateTime": "2026-01-03T08:00:00",
+      "endDateTime": "2026-01-03T20:00:00",
+      "employeeId": "EMP_002",
+      "newRotationOffset": 1,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-03-D-EMP_003",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-03",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-03-1d5988",
+      "shiftCode": "D",
+      "patternDay": 4,
+      "startDateTime": "2026-01-03T08:00:00",
+      "endDateTime": "2026-01-03T20:00:00",
+      "employeeId": "EMP_003",
+      "newRotationOffset": 2,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-04-D-EMP_001",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-04",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-04-06435b",
+      "shiftCode": "D",
+      "patternDay": 3,
+      "startDateTime": "2026-01-04T08:00:00",
+      "endDateTime": "2026-01-04T20:00:00",
+      "employeeId": "EMP_001",
+      "newRotationOffset": 0,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-04-D-EMP_002",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-04",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P1-2026-01-04-11650b",
+      "shiftCode": "D",
+      "patternDay": 4,
+      "startDateTime": "2026-01-04T08:00:00",
+      "endDateTime": "2026-01-04T20:00:00",
+      "employeeId": "EMP_002",
+      "newRotationOffset": 1,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-04-D-EMP_005_FAILS",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_BASIC",
+      "date": "2026-01-04",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_BASIC-D-P0-2026-01-04-68ebdb",
+      "shiftCode": "D",
+      "patternDay": 0,
+      "startDateTime": "2026-01-04T08:00:00",
+      "endDateTime": "2026-01-04T20:00:00",
+      "employeeId": "EMP_005_FAILS",
+      "newRotationOffset": 4,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-05-D-UNASSIGNED",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-05",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-05-64783c",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-01-05T08:00:00",
+      "endDateTime": "2026-01-05T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-05-D-EMP_001",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-05",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P1-2026-01-05-7e9b0b",
+      "shiftCode": "D",
+      "patternDay": 4,
+      "startDateTime": "2026-01-05T08:00:00",
+      "endDateTime": "2026-01-05T20:00:00",
+      "employeeId": "EMP_001",
+      "newRotationOffset": 0,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-05-D-EMP_005_FAILS",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_BASIC",
+      "date": "2026-01-05",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_BASIC-D-P0-2026-01-05-718a32",
+      "shiftCode": "D",
+      "patternDay": 1,
+      "startDateTime": "2026-01-05T08:00:00",
+      "endDateTime": "2026-01-05T20:00:00",
+      "employeeId": "EMP_005_FAILS",
+      "newRotationOffset": 4,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-06-D-UNASSIGNED",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-06",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-06-5c957f",
+      "shiftCode": "D",
+      "patternDay": null,
+      "startDateTime": "2026-01-06T08:00:00",
+      "endDateTime": "2026-01-06T20:00:00",
+      "employeeId": null,
+      "status": "UNASSIGNED",
+      "reason": "No employee could be assigned without violating hard constraints",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-06-D-EMP_003",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-06",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P1-2026-01-06-bc6cac",
+      "shiftCode": "D",
+      "patternDay": 0,
+      "startDateTime": "2026-01-06T08:00:00",
+      "endDateTime": "2026-01-06T20:00:00",
+      "employeeId": "EMP_003",
+      "newRotationOffset": 2,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-06-D-EMP_005_FAILS",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_BASIC",
+      "date": "2026-01-06",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_BASIC-D-P0-2026-01-06-bda2fc",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2026-01-06T08:00:00",
+      "endDateTime": "2026-01-06T20:00:00",
+      "employeeId": "EMP_005_FAILS",
+      "newRotationOffset": 4,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-07-D-EMP_002",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-07",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P0-2026-01-07-dde07a",
+      "shiftCode": "D",
+      "patternDay": 0,
+      "startDateTime": "2026-01-07T08:00:00",
+      "endDateTime": "2026-01-07T20:00:00",
+      "employeeId": "EMP_002",
+      "newRotationOffset": 1,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-07-D-EMP_003",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_SCREENING",
+      "date": "2026-01-07",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_SCREENING-D-P1-2026-01-07-fc9a35",
+      "shiftCode": "D",
+      "patternDay": 1,
+      "startDateTime": "2026-01-07T08:00:00",
+      "endDateTime": "2026-01-07T20:00:00",
+      "employeeId": "EMP_003",
+      "newRotationOffset": 2,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-07-D-EMP_004_FAILS",
+      "demandId": "TEST-SECURITY-CHECKPOINT",
+      "requirementId": "REQ_BASIC",
+      "date": "2026-01-07",
+      "slotId": "TEST-SECURITY-CHECKPOINT-REQ_BASIC-D-P0-2026-01-07-475e88",
+      "shiftCode": "D",
+      "patternDay": 2,
+      "startDateTime": "2026-01-07T08:00:00",
+      "endDateTime": "2026-01-07T20:00:00",
+      "employeeId": "EMP_004_FAILS",
+      "newRotationOffset": 3,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    }
+  ],
+  "employeeRoster": [
+    {
+      "employeeId": "EMP_001",
+      "rankId": "OFFICER",
+      "productTypeId": "SECURITY",
+      "ouId": "SECURITY-OU",
+      "scheme": "A",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 7,
+      "workDays": 3,
+      "offDays": 2,
+      "normalHours": 26.4,
+      "otHours": 6.6,
+      "totalHours": 36.0,
+      "assignedDays": 3,
+      "unassignedDays": 2,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-03-D-EMP_001",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-04-D-EMP_001",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-05-D-EMP_001",
+          "startDateTime": "2026-01-05T08:00:00",
+          "endDateTime": "2026-01-05T20:00:00"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "OFF-EMP_001-2026-01-06-214a6f",
+          "startDateTime": "2026-01-06T08:00:00",
+          "endDateTime": "2026-01-06T20:00:00"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "OFF-EMP_001-2026-01-07-8cad86",
+          "startDateTime": "2026-01-07T08:00:00",
+          "endDateTime": "2026-01-07T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "EMP_002",
+      "rankId": "OFFICER",
+      "productTypeId": "SECURITY",
+      "ouId": "SECURITY-OU",
+      "scheme": "A",
+      "rotationOffset": 1,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O",
+        "D"
+      ],
+      "totalDays": 7,
+      "workDays": 5,
+      "offDays": 2,
+      "normalHours": 52.8,
+      "otHours": 2.2,
+      "totalHours": 60.0,
+      "assignedDays": 5,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-01-D-EMP_002",
+          "startDateTime": "2026-01-01T08:00:00",
+          "endDateTime": "2026-01-01T20:00:00"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-02-D-EMP_002",
+          "startDateTime": "2026-01-02T08:00:00",
+          "endDateTime": "2026-01-02T20:00:00"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-03-D-EMP_002",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-04-D-EMP_002",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 4,
+          "assignmentId": "OFF-EMP_002-2026-01-05-6cd687",
+          "startDateTime": "2026-01-05T08:00:00",
+          "endDateTime": "2026-01-05T20:00:00"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "OFF-EMP_002-2026-01-06-018ca0",
+          "startDateTime": "2026-01-06T08:00:00",
+          "endDateTime": "2026-01-06T20:00:00"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 6,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-07-D-EMP_002",
+          "startDateTime": "2026-01-07T08:00:00",
+          "endDateTime": "2026-01-07T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "EMP_003",
+      "rankId": "OFFICER",
+      "productTypeId": "SECURITY",
+      "ouId": "SECURITY-OU",
+      "scheme": "A",
+      "rotationOffset": 2,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "O",
+        "O",
+        "D",
+        "D"
+      ],
+      "totalDays": 7,
+      "workDays": 5,
+      "offDays": 2,
+      "normalHours": 44.0,
+      "otHours": 11.0,
+      "totalHours": 60.0,
+      "assignedDays": 5,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-01-D-EMP_003",
+          "startDateTime": "2026-01-01T08:00:00",
+          "endDateTime": "2026-01-01T20:00:00"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-02-D-EMP_003",
+          "startDateTime": "2026-01-02T08:00:00",
+          "endDateTime": "2026-01-02T20:00:00"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-03-D-EMP_003",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 3,
+          "assignmentId": "OFF-EMP_003-2026-01-04-f61349",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 4,
+          "assignmentId": "OFF-EMP_003-2026-01-05-425044",
+          "startDateTime": "2026-01-05T08:00:00",
+          "endDateTime": "2026-01-05T20:00:00"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 5,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-06-D-EMP_003",
+          "startDateTime": "2026-01-06T08:00:00",
+          "endDateTime": "2026-01-06T20:00:00"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 6,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-07-D-EMP_003",
+          "startDateTime": "2026-01-07T08:00:00",
+          "endDateTime": "2026-01-07T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "EMP_004_FAILS",
+      "rankId": "OFFICER",
+      "productTypeId": "SECURITY",
+      "ouId": "SECURITY-OU",
+      "scheme": "A",
+      "rotationOffset": 3,
+      "workPattern": [
+        "D",
+        "D",
+        "O",
+        "O",
+        "D",
+        "D",
+        "D"
+      ],
+      "totalDays": 7,
+      "workDays": 2,
+      "offDays": 2,
+      "normalHours": 17.6,
+      "otHours": 4.4,
+      "totalHours": 24.0,
+      "assignedDays": 2,
+      "unassignedDays": 3,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-02-D-EMP_004_FAILS",
+          "startDateTime": "2026-01-02T08:00:00",
+          "endDateTime": "2026-01-02T20:00:00"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "OFF-EMP_004_FAILS-2026-01-03-34a4a3",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 3,
+          "assignmentId": "OFF-EMP_004_FAILS-2026-01-04-bda760",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 6,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-07-D-EMP_004_FAILS",
+          "startDateTime": "2026-01-07T08:00:00",
+          "endDateTime": "2026-01-07T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "EMP_005_FAILS",
+      "rankId": "OFFICER",
+      "productTypeId": "SECURITY",
+      "ouId": "SECURITY-OU",
+      "scheme": "A",
+      "rotationOffset": 4,
+      "workPattern": [
+        "D",
+        "O",
+        "O",
+        "D",
+        "D",
+        "D",
+        "D"
+      ],
+      "totalDays": 7,
+      "workDays": 4,
+      "offDays": 2,
+      "normalHours": 35.2,
+      "otHours": 8.8,
+      "totalHours": 48.0,
+      "assignedDays": 4,
+      "unassignedDays": 1,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-01-D-EMP_005_FAILS",
+          "startDateTime": "2026-01-01T08:00:00",
+          "endDateTime": "2026-01-01T20:00:00"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 1,
+          "assignmentId": "OFF-EMP_005_FAILS-2026-01-02-6ac8d7",
+          "startDateTime": "2026-01-02T08:00:00",
+          "endDateTime": "2026-01-02T20:00:00"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "OFF-EMP_005_FAILS-2026-01-03-c06e16",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-04-D-EMP_005_FAILS",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-05-D-EMP_005_FAILS",
+          "startDateTime": "2026-01-05T08:00:00",
+          "endDateTime": "2026-01-05T20:00:00"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 5,
+          "assignmentId": "TEST-SECURITY-CHECKPOINT-2026-01-06-D-EMP_005_FAILS",
+          "startDateTime": "2026-01-06T08:00:00",
+          "endDateTime": "2026-01-06T20:00:00"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        }
+      ]
+    }
+  ],
+  "rosterSummary": {
+    "totalDailyStatuses": 35,
+    "byStatus": {
+      "ASSIGNED": 19,
+      "OFF_DAY": 10,
+      "UNASSIGNED": 6,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "INFEASIBLE",
+    "solverStatus": "INFEASIBLE",
+    "solverStatusExplanation": "No solution exists that satisfies all hard constraints. This means the problem is over-constrained (too many restrictions) or under-resourced (not enough employees/capacity).",
+    "qualityExplanation": "No valid solution exists that satisfies all hard constraints. Review constraints, employee availability, or demand requirements.",
+    "coverageMetrics": {
+      "totalSlots": 21,
+      "assignedSlots": 21,
+      "unassignedSlots": 0,
+      "coverageRate": 100.0,
+      "coverageQuality": "COMPLETE"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 5,
+      "employeesUsed": 5,
+      "employeesUnused": 0,
+      "utilizationRate": 100.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 2,
+      "maxShiftsPerEmployee": 5,
+      "avgShiftsPerEmployee": 3.8,
+      "shiftVariance": 3,
+      "balanceQuality": 21.1,
+      "balanceGrade": "POOR"
+    },
+    "optimizationContext": {
+      "optimizationMode": "balanceWorkload",
+      "fixedRotationOffset": true,
+      "patternBased": true,
+      "continuousAdherence": false
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:f883c247253969f31d0ff7fb0130b3940d934773f6f235dcd29c273022d2a688",
+    "generatedAt": "2026-01-12T11:53:25.859739",
+    "employeeHours": {
+      "EMP_002": {
+        "weekly_normal": {
+          "2026-W01": 44.0,
+          "2026-W02": 8.8
+        },
+        "monthly_ot": {
+          "2026-01": 2.2
+        }
+      },
+      "EMP_003": {
+        "weekly_normal": {
+          "2026-W01": 26.4,
+          "2026-W02": 17.6
+        },
+        "monthly_ot": {
+          "2026-01": 11.0
+        }
+      },
+      "EMP_005_FAILS": {
+        "weekly_normal": {
+          "2026-W01": 17.6,
+          "2026-W02": 17.6
+        },
+        "monthly_ot": {
+          "2026-01": 8.8
+        }
+      },
+      "EMP_004_FAILS": {
+        "weekly_normal": {
+          "2026-W01": 8.8,
+          "2026-W02": 8.8
+        },
+        "monthly_ot": {
+          "2026-01": 4.4
+        }
+      },
+      "EMP_001": {
+        "weekly_normal": {
+          "2026-W01": 17.6,
+          "2026-W02": 8.8
+        },
+        "monthly_ot": {
+          "2026-01": 6.6
+        }
+      },
+      "None": {
+        "weekly_normal": {
+          "2026-W02": 17.6
+        },
+        "monthly_ot": {
+          "2026-01": 4.4
+        }
+      }
+    }
+  },
+  "icpmpPreprocessing": {
+    "enabled": true,
+    "preprocessing_time_seconds": 0.0006039142608642578,
+    "original_employee_count": 5,
+    "selected_employee_count": 5,
+    "utilization_percentage": 100.0,
+    "requirements": {
+      "REQ_SCREENING": {
+        "demandId": "TEST-SECURITY-CHECKPOINT",
+        "optimal_employees": 7,
+        "selected_count": 5,
+        "u_slots_total": 0,
+        "offset_distribution": {
+          "0": 1,
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "is_optimal": false,
+        "coverage_rate": 250.0
+      },
+      "REQ_BASIC": {
+        "demandId": "TEST-SECURITY-CHECKPOINT",
+        "optimal_employees": 7,
+        "selected_count": 0,
+        "u_slots_total": 0,
+        "offset_distribution": {
+          "0": 1,
+          "1": 1,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 1,
+          "6": 1
+        },
+        "is_optimal": false,
+        "coverage_rate": 400.0
+      }
+    },
+    "warnings": []
+  }
+}

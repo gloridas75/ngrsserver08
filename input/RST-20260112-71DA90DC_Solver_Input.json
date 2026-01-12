@@ -1,0 +1,2448 @@
+{
+  "schemaVersion": "0.98",
+  "planningReference": "RST-20260112-71DA90DC",
+  "timezone": "Asia/Singapore",
+  "planningHorizon": {
+    "startDate": "2026-02-01",
+    "endDate": "2026-02-28"
+  },
+  "publicHolidays": [
+    "2026-02-17",
+    "2026-02-18"
+  ],
+  "solverConfig": {
+    "optimizationMode": "minimizeEmployeeCount",
+    "maxEmployeesToUse": 69
+  },
+  "solverRunTime": {
+    "maxSeconds": 300
+  },
+  "schemeMap": {
+    "A": "Scheme A",
+    "B": "Scheme B",
+    "P": "Scheme P"
+  },
+  "fixedRotationOffset": "ouOffsets",
+  "ouOffsets": [
+    {
+      "ouId": "ATSU T1 LSU A1",
+      "rotationOffset": 0
+    },
+    {
+      "ouId": "ATSU T1 LSU A2",
+      "rotationOffset": 1
+    },
+    {
+      "ouId": "ATSU T1 LSU A3",
+      "rotationOffset": 2
+    }
+  ],
+  "demandItems": [
+    {
+      "demandId": "DI-2512170306-49570437",
+      "locationId": "LOC-SECU-6588",
+      "shiftStartDate": "2026-02-01",
+      "rosteringBasis": "outcomeBased",
+      "templateGenerationMode": "cpsat",
+      "minStaffThresholdPercentage": 70,
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "08:00:00",
+              "end": "20:00:00",
+              "nextDay": false
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": true,
+          "shiftSetId": "Set_DI_2512170306_49570437",
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "coverageAnchor": "2026-02-01",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": []
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "142_1",
+          "icpmpBufferPercentage": 50,
+          "productTypeId": "APO",
+          "rankIds": [
+            "PC",
+            "COR",
+            "SGT"
+          ],
+          "headcount": 1,
+          "workPattern": [
+            "D",
+            "D",
+            "D",
+            "D",
+            "O",
+            "O",
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "O"
+          ],
+          "requiredQualifications": [
+            {
+              "groupId": "G1",
+              "matchType": "ANY",
+              "qualifications": [
+                "12104_Conducting_Pre_Ops_Checks_(CWATCH)",
+                "12105_Conducting_Pre_Ops_Checks_(Safeview)",
+                "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+                "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)"
+              ]
+            }
+          ],
+          "gender": "Any",
+          "schemes": [
+            "Any"
+          ],
+          "enableOtAwareIcpmp": false
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "00016839",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2012-04-01",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00017450",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2016-03-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00018011",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2022-11-07",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00018070",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2008-05-11",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00018405",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2008-04-30",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00018864",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-07-12",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00021016",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2008-05-15",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00024914",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2008-05-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00025637",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2008-01-01",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2024-03-12",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00026296",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2008-11-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00026305",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-04-27",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2009-07-19",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00028541",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2023-05-25",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00028922",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2008-06-29",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2009-06-16",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00029171",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2010-01-20",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2024-03-19",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00029316",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2012-04-01",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00030111",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-02-21",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2010-05-06",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00030891",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2016-02-05",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00031052",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2016-03-04",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2010-03-23",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00043568",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2009-10-21",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00052099",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2012-04-01",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00054313",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2012-02-29",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00059690",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2013-01-08",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00060880",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2013-02-13",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00071261",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme P",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2013-10-18",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00073556",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2014-08-08",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2024-05-03",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00083949",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme P",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2015-10-31",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00087101",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme P",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2016-03-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00090682",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme P",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2016-09-22",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00092044",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2016-12-01",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00094392",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2017-02-16",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00095865",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2017-03-16",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-01",
+        "2026-02-02",
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-08",
+        "2026-02-09",
+        "2026-02-10",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-15",
+        "2026-02-16",
+        "2026-02-17",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-21",
+        "2026-02-22",
+        "2026-02-23",
+        "2026-02-24",
+        "2026-02-25",
+        "2026-02-26",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00103934",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2017-12-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00112831",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2013-09-30",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00114074",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme P",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2017-03-30",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": []
+    },
+    {
+      "employeeId": "00121815",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2019-07-22",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00125764",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2019-12-30",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00131929",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2020-06-15",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00134813",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2020-09-10",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00136833",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2020-11-25",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00140838",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2021-10-05",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00144315",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2022-01-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00164235",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-07-23",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00166253",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-09-25",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00167775",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-12-05",
+          "expiryDate": "9999-12-31"
+        },
+        {
+          "code": "558_Deterrence(Mge_Disordrly_Cdt_&_Threat_B)",
+          "validFrom": "2022-07-28",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00167818",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-12-19",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00167875",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-11-23",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00168273",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-01-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00168274",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-01-04",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00168275",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2024-12-19",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00169894",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-02-19",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00170621",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-03-19",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00170844",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-11",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00171049",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 2,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-03-21",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00171112",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00171118",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00171119",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00171120",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00171121",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00171122",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00171123",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00171124",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00171125",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00171126",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00171135",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00171136",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 1,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00171137",
+      "ouId": "ATSU T1 LSU A3",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-04",
+        "2026-02-05",
+        "2026-02-11",
+        "2026-02-12",
+        "2026-02-18",
+        "2026-02-19",
+        "2026-02-25",
+        "2026-02-26"
+      ]
+    },
+    {
+      "employeeId": "00171138",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-09",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    },
+    {
+      "employeeId": "00171210",
+      "ouId": "ATSU T1 LSU A2",
+      "productTypeId": "APO",
+      "rankId": "PC",
+      "scheme": "Scheme A",
+      "rotationOffset": 1,
+      "local": 1,
+      "gender": "FEMALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-04-30",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-05",
+        "2026-02-06",
+        "2026-02-12",
+        "2026-02-13",
+        "2026-02-19",
+        "2026-02-20",
+        "2026-02-26",
+        "2026-02-27"
+      ]
+    },
+    {
+      "employeeId": "00172003",
+      "ouId": "ATSU T1 LSU A1",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 1,
+      "gender": "MALE",
+      "qualifications": [
+        {
+          "code": "555_CONDUCT_CROWD_AND_TRAFFIC_CONTROL",
+          "validFrom": "2025-05-23",
+          "expiryDate": "9999-12-31"
+        }
+      ],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-06",
+        "2026-02-07",
+        "2026-02-13",
+        "2026-02-14",
+        "2026-02-20",
+        "2026-02-21",
+        "2026-02-27",
+        "2026-02-28"
+      ]
+    }
+  ],
+  "constraintList": [
+    {
+      "id": "maxConsecutiveWorkingDays",
+      "enforcement": "hard",
+      "description": "Maximum consecutive working days",
+      "frequency": "Continuous",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 12,
+      "schemeOverrides": {
+        "A": {
+          "productTypes": [
+            "APO"
+          ],
+          "value": 8,
+          "description": "APGD-D10 (Scheme A + APO product type) can work 8 consecutive days including off-day"
+        }
+      }
+    },
+    {
+      "id": "momDailyHoursCap",
+      "enforcement": "hard",
+      "description": "Maximum daily working hours by scheme",
+      "frequency": "Daily",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 9,
+      "schemeOverrides": {
+        "A": 14,
+        "B": 13,
+        "P": 9
+      }
+    },
+    {
+      "id": "momWeeklyHoursCap44h",
+      "enforcement": "hard",
+      "description": "Weekly normal hours cap (same for all schemes)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 44
+    },
+    {
+      "id": "minimumOffDaysPerWeek",
+      "enforcement": "hard",
+      "description": "Minimum off-days per week",
+      "frequency": "Weekly",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "All schemes require 1 off-day per week. Scheme A with APO can work on off-day for up to 8 consecutive days."
+    },
+    {
+      "id": "momMonthlyOTcap72h",
+      "enforcement": "hard",
+      "description": "MOM Employment Act:Maximum 72 hours overtime per month",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 72,
+      "exemptions": [
+        {
+          "id": "exemption_1767083037037",
+          "startDate": "2025-12-15",
+          "endDate": "2025-12-31",
+          "reason": "New Years"
+        }
+      ]
+    },
+    {
+      "id": "momLunchBreak",
+      "enforcement": "hard",
+      "description": "Meal break deduction",
+      "frequency": "Per Shift",
+      "uom": "Minutes",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 60,
+      "params": {
+        "deductIfShiftAtLeastMinutes": 480
+      }
+    },
+    {
+      "id": "apgdMinRestBetweenShifts",
+      "enforcement": "hard",
+      "description": "Minimum rest between shifts",
+      "frequency": "Between Shifts",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 8,
+      "schemeOverrides": {
+        "P": 1
+      },
+      "notes": "Scheme P requires only 1 hour rest, enabling split-shift patterns. All other schemes require 8 hours."
+    },
+    {
+      "id": "oneShiftPerDay",
+      "enforcement": "hard",
+      "description": "Maximum shifts per day",
+      "frequency": "Per Day",
+      "uom": "Number",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "Currently all schemes limited to 1 shift per day. Scheme P = 2 shifts deferred for future implementation."
+    },
+    {
+      "id": "partTimerWeeklyHours",
+      "enforcement": "hard",
+      "description": "Part-timer weekly hour limits (Scheme P only)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "params": {
+        "maxHours4Days": 34.98,
+        "maxHoursMoreDays": 29.98
+      },
+      "notes": "<=4 working days per week:max 34.98h, >4 days per week:max 29.98h",
+      "applicableToSchemes": [
+        "P"
+      ]
+    }
+  ],
+  "monthlyHourLimits": [
+    {
+      "id": "standardMonthlyHours",
+      "description": "Standard monthly working hours based on 44h/week",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": "All",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "normalHours": 176,
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288,
+          "notes": "28 days in month",
+          "calculation": "28 days × 44h/7 = 176h normal"
+        },
+        "29": {
+          "normalHours": 182,
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298,
+          "notes": "29 days in month (leap year Feb)",
+          "calculation": "29 days × 44h/7 = 182h normal"
+        },
+        "30": {
+          "normalHours": 189,
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309,
+          "notes": "30 days in month",
+          "calculation": "30 days × 44h/7 = 189h normal"
+        },
+        "31": {
+          "normalHours": 195,
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319,
+          "notes": "31 days in month",
+          "calculation": "31 days × 44h/7 = 195h normal"
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHours",
+      "description": "APGD-D10 minimum contractual hours for LOCAL SG/PR employees (excluding CPL and SGT who have different requirements)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "Local",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranksExcluded": []
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 224
+        },
+        "29": {
+          "minimumContractualHours": 231
+        },
+        "30": {
+          "minimumContractualHours": 238
+        },
+        "31": {
+          "minimumContractualHours": 246
+        }
+      }
+    },
+    {
+      "id": "apgdMinimumContractualHoursCplSgt",
+      "description": "APGD-D10 minimum contractual hours for FOREIGNER CPL and SGT ranks with higher requirements",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "Foreigner",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": []
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 244
+        },
+        "29": {
+          "minimumContractualHours": 252
+        },
+        "30": {
+          "minimumContractualHours": 260
+        },
+        "31": {
+          "minimumContractualHours": 268
+        }
+      }
+    },
+    {
+      "id": "apgdMaximumOvertimeHours",
+      "description": "APGD-D10 maximum overtime hours per month (MOM limit: 72h/month)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "maxOvertimeHours": 112
+        },
+        "29": {
+          "maxOvertimeHours": 116
+        },
+        "30": {
+          "maxOvertimeHours": 120
+        },
+        "31": {
+          "maxOvertimeHours": 124
+        }
+      }
+    },
+    {
+      "id": "apgdTotalMaxHours",
+      "description": "APGD-D10 total maximum working hours per month (normal + OT)",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "totalMaxHours": 288
+        },
+        "29": {
+          "totalMaxHours": 298
+        },
+        "30": {
+          "totalMaxHours": 309
+        },
+        "31": {
+          "totalMaxHours": 319
+        }
+      }
+    },
+    {
+      "id": "apgdAppreciationIncentive",
+      "description": "APGD-D10 minimum hours required to qualify for appreciation incentive",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "enforcement": "soft",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ],
+        "ranks": "All"
+      },
+      "valuesByMonthLength": {
+        "28": {
+          "appreciationMinHours": 220
+        },
+        "29": {
+          "appreciationMinHours": 227
+        },
+        "30": {
+          "appreciationMinHours": 234
+        },
+        "31": {
+          "appreciationMinHours": 242
+        }
+      }
+    }
+  ],
+  "softConstraintWeights": {
+    "rotationPatternCompliance": 10,
+    "employeePreferences": 5,
+    "consistentShiftStart": 3,
+    "minimizeShortRestGaps": 8,
+    "officerContinuity": 4,
+    "minimizeTeamChanges": 2,
+    "zonePreference": 3,
+    "teamSizeFeasibility": 2,
+    "travelSlackBuffer": 1,
+    "fairOvertimeDistribution": 6,
+    "publicHolidayCoverage": 4,
+    "allowanceOptimization": 2,
+    "substituteLogic": 1,
+    "midMonthInsert": 1,
+    "demandCoverageScore": 5,
+    "travelSlackTime": 1
+  },
+  "solverScoreConfig": {}
+}

@@ -1,0 +1,2940 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "TEST-INCR-OB-2025",
+  "publicHolidays": [],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2026-01-12T11:53:23.743356",
+    "ended": "2026-01-12T11:53:23.749313",
+    "durationSeconds": 0.005957126617431641,
+    "status": "OPTIMAL"
+  },
+  "score": {
+    "overall": 0,
+    "hard": 0,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "violations": []
+    },
+    "soft": {}
+  },
+  "assignments": [
+    {
+      "assignmentId": "DI-001-2026-01-01-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-01",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-01T08:00:00",
+      "endDateTime": "2026-01-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-02-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-02",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-02T08:00:00",
+      "endDateTime": "2026-01-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-03-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-03",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-03T08:00:00",
+      "endDateTime": "2026-01-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-04-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-04",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-04T08:00:00",
+      "endDateTime": "2026-01-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-05-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-05",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-05T08:00:00",
+      "endDateTime": "2026-01-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-06-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-06",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-06T08:00:00",
+      "endDateTime": "2026-01-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-07-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-07",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-07T08:00:00",
+      "endDateTime": "2026-01-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-08-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-08",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-08T08:00:00",
+      "endDateTime": "2026-01-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-09-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-09",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-09T08:00:00",
+      "endDateTime": "2026-01-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-10-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-10",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-10T08:00:00",
+      "endDateTime": "2026-01-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-11-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-11",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-11T08:00:00",
+      "endDateTime": "2026-01-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-12-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-12",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-12T08:00:00",
+      "endDateTime": "2026-01-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-13-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-13",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-13T08:00:00",
+      "endDateTime": "2026-01-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-14-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-14",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-14T08:00:00",
+      "endDateTime": "2026-01-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-15-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-15",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-15T08:00:00",
+      "endDateTime": "2026-01-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-16-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-16",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-16T08:00:00",
+      "endDateTime": "2026-01-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-17-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-17",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-17T08:00:00",
+      "endDateTime": "2026-01-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-18-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-18",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-18T08:00:00",
+      "endDateTime": "2026-01-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-19-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-19",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-19T08:00:00",
+      "endDateTime": "2026-01-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-20-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-20",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-20T08:00:00",
+      "endDateTime": "2026-01-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-21-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-21",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-21T08:00:00",
+      "endDateTime": "2026-01-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-22-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-22",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-22T08:00:00",
+      "endDateTime": "2026-01-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-23-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-23",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-23T08:00:00",
+      "endDateTime": "2026-01-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-24-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-24",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-24T08:00:00",
+      "endDateTime": "2026-01-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-25-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-25",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-25T08:00:00",
+      "endDateTime": "2026-01-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-26-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-26",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-26T08:00:00",
+      "endDateTime": "2026-01-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-27-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-27",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-27T08:00:00",
+      "endDateTime": "2026-01-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-28-O-EMP001",
+      "slotId": "DI-001-REQ-001-O-2026-01-28",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-28T08:00:00",
+      "endDateTime": "2026-01-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-29-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-29",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-29T08:00:00",
+      "endDateTime": "2026-01-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-30-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-30",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-30T08:00:00",
+      "endDateTime": "2026-01-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-31-D-EMP001",
+      "slotId": "DI-001-REQ-001-D-2026-01-31",
+      "employeeId": "EMP001",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-31T08:00:00",
+      "endDateTime": "2026-01-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-01-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-01",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-01T08:00:00",
+      "endDateTime": "2026-01-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-02-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-02",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-02T08:00:00",
+      "endDateTime": "2026-01-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-03-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-03",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-03T08:00:00",
+      "endDateTime": "2026-01-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-04-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-04",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-04T08:00:00",
+      "endDateTime": "2026-01-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-05-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-05",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-05T08:00:00",
+      "endDateTime": "2026-01-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-06-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-06",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-06T08:00:00",
+      "endDateTime": "2026-01-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-07-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-07",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-07T08:00:00",
+      "endDateTime": "2026-01-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-08-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-08",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-08T08:00:00",
+      "endDateTime": "2026-01-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-09-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-09",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-09T08:00:00",
+      "endDateTime": "2026-01-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-10-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-10",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-10T08:00:00",
+      "endDateTime": "2026-01-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-11-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-11",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-11T08:00:00",
+      "endDateTime": "2026-01-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-12-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-12",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-12T08:00:00",
+      "endDateTime": "2026-01-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-13-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-13",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-13T08:00:00",
+      "endDateTime": "2026-01-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-14-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-14",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-14T08:00:00",
+      "endDateTime": "2026-01-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-15-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-15",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-15T08:00:00",
+      "endDateTime": "2026-01-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-16-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-16",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-16T08:00:00",
+      "endDateTime": "2026-01-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-17-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-17",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-17T08:00:00",
+      "endDateTime": "2026-01-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-18-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-18",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-18T08:00:00",
+      "endDateTime": "2026-01-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-19-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-19",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-19T08:00:00",
+      "endDateTime": "2026-01-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-20-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-20",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-20T08:00:00",
+      "endDateTime": "2026-01-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-21-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-21",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-21T08:00:00",
+      "endDateTime": "2026-01-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-22-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-22",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-22T08:00:00",
+      "endDateTime": "2026-01-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-23-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-23",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-23T08:00:00",
+      "endDateTime": "2026-01-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-24-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-24",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-24T08:00:00",
+      "endDateTime": "2026-01-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-25-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-25",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-25T08:00:00",
+      "endDateTime": "2026-01-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-26-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-26",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-26T08:00:00",
+      "endDateTime": "2026-01-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-27-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-27",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-27T08:00:00",
+      "endDateTime": "2026-01-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-28-O-EMP002",
+      "slotId": "DI-001-REQ-001-O-2026-01-28",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-28T08:00:00",
+      "endDateTime": "2026-01-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-29-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-29",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-29T08:00:00",
+      "endDateTime": "2026-01-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-30-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-30",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-30T08:00:00",
+      "endDateTime": "2026-01-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-31-D-EMP002",
+      "slotId": "DI-001-REQ-001-D-2026-01-31",
+      "employeeId": "EMP002",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-31T08:00:00",
+      "endDateTime": "2026-01-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-01-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-01",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-01T08:00:00",
+      "endDateTime": "2026-01-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-02-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-02",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-02T08:00:00",
+      "endDateTime": "2026-01-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-03-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-03",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-03T08:00:00",
+      "endDateTime": "2026-01-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-04-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-04",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-04T08:00:00",
+      "endDateTime": "2026-01-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-05-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-05",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-05T08:00:00",
+      "endDateTime": "2026-01-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-06-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-06",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-06T08:00:00",
+      "endDateTime": "2026-01-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-07-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-07",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-07T08:00:00",
+      "endDateTime": "2026-01-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-08-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-08",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-08T08:00:00",
+      "endDateTime": "2026-01-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-09-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-09",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-09T08:00:00",
+      "endDateTime": "2026-01-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-10-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-10",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-10T08:00:00",
+      "endDateTime": "2026-01-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-11-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-11",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-11T08:00:00",
+      "endDateTime": "2026-01-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-12-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-12",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-12T08:00:00",
+      "endDateTime": "2026-01-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-13-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-13",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-13T08:00:00",
+      "endDateTime": "2026-01-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-14-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-14",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-14T08:00:00",
+      "endDateTime": "2026-01-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-15-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-15",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-15T08:00:00",
+      "endDateTime": "2026-01-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-16-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-16",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-16T08:00:00",
+      "endDateTime": "2026-01-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-17-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-17",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-17T08:00:00",
+      "endDateTime": "2026-01-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-18-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-18",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-18T08:00:00",
+      "endDateTime": "2026-01-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-19-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-19",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-19T08:00:00",
+      "endDateTime": "2026-01-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-20-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-20",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-20T08:00:00",
+      "endDateTime": "2026-01-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-21-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-21",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-21T08:00:00",
+      "endDateTime": "2026-01-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-22-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-22",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-22T08:00:00",
+      "endDateTime": "2026-01-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-23-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-23",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-23T08:00:00",
+      "endDateTime": "2026-01-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-24-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-24",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-24T08:00:00",
+      "endDateTime": "2026-01-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-25-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-25",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-25T08:00:00",
+      "endDateTime": "2026-01-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-26-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-26",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-26T08:00:00",
+      "endDateTime": "2026-01-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-27-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-27",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-27T08:00:00",
+      "endDateTime": "2026-01-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-28-O-EMP003",
+      "slotId": "DI-001-REQ-001-O-2026-01-28",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-01-28T08:00:00",
+      "endDateTime": "2026-01-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-29-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-29",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-29T08:00:00",
+      "endDateTime": "2026-01-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-30-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-30",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-30T08:00:00",
+      "endDateTime": "2026-01-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-001-2026-01-31-D-EMP003",
+      "slotId": "DI-001-REQ-001-D-2026-01-31",
+      "employeeId": "EMP003",
+      "demandId": "DI-001",
+      "requirementId": "REQ-001",
+      "date": "2026-01-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-01-31T08:00:00",
+      "endDateTime": "2026-01-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    }
+  ],
+  "employeeRoster": [
+    {
+      "employeeId": "EMP001",
+      "rankId": "PC",
+      "productTypeId": "APO",
+      "ouId": null,
+      "scheme": "SchemeA",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-01-D-EMP001",
+          "startDateTime": "2026-01-01T08:00:00",
+          "endDateTime": "2026-01-01T20:00:00"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-02-D-EMP001",
+          "startDateTime": "2026-01-02T08:00:00",
+          "endDateTime": "2026-01-02T20:00:00"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-03-D-EMP001",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-04-D-EMP001",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-05-D-EMP001",
+          "startDateTime": "2026-01-05T08:00:00",
+          "endDateTime": "2026-01-05T20:00:00"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-06-O-EMP001",
+          "startDateTime": "2026-01-06T08:00:00",
+          "endDateTime": "2026-01-06T20:00:00"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-07-O-EMP001",
+          "startDateTime": "2026-01-07T08:00:00",
+          "endDateTime": "2026-01-07T20:00:00"
+        },
+        {
+          "date": "2026-01-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-08-D-EMP001",
+          "startDateTime": "2026-01-08T08:00:00",
+          "endDateTime": "2026-01-08T20:00:00"
+        },
+        {
+          "date": "2026-01-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-09-D-EMP001",
+          "startDateTime": "2026-01-09T08:00:00",
+          "endDateTime": "2026-01-09T20:00:00"
+        },
+        {
+          "date": "2026-01-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-10-D-EMP001",
+          "startDateTime": "2026-01-10T08:00:00",
+          "endDateTime": "2026-01-10T20:00:00"
+        },
+        {
+          "date": "2026-01-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-11-D-EMP001",
+          "startDateTime": "2026-01-11T08:00:00",
+          "endDateTime": "2026-01-11T20:00:00"
+        },
+        {
+          "date": "2026-01-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-12-D-EMP001",
+          "startDateTime": "2026-01-12T08:00:00",
+          "endDateTime": "2026-01-12T20:00:00"
+        },
+        {
+          "date": "2026-01-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-13-O-EMP001",
+          "startDateTime": "2026-01-13T08:00:00",
+          "endDateTime": "2026-01-13T20:00:00"
+        },
+        {
+          "date": "2026-01-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-14-O-EMP001",
+          "startDateTime": "2026-01-14T08:00:00",
+          "endDateTime": "2026-01-14T20:00:00"
+        },
+        {
+          "date": "2026-01-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-15-D-EMP001",
+          "startDateTime": "2026-01-15T08:00:00",
+          "endDateTime": "2026-01-15T20:00:00"
+        },
+        {
+          "date": "2026-01-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-16-D-EMP001",
+          "startDateTime": "2026-01-16T08:00:00",
+          "endDateTime": "2026-01-16T20:00:00"
+        },
+        {
+          "date": "2026-01-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-17-D-EMP001",
+          "startDateTime": "2026-01-17T08:00:00",
+          "endDateTime": "2026-01-17T20:00:00"
+        },
+        {
+          "date": "2026-01-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-18-D-EMP001",
+          "startDateTime": "2026-01-18T08:00:00",
+          "endDateTime": "2026-01-18T20:00:00"
+        },
+        {
+          "date": "2026-01-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-19-D-EMP001",
+          "startDateTime": "2026-01-19T08:00:00",
+          "endDateTime": "2026-01-19T20:00:00"
+        },
+        {
+          "date": "2026-01-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-20-O-EMP001",
+          "startDateTime": "2026-01-20T08:00:00",
+          "endDateTime": "2026-01-20T20:00:00"
+        },
+        {
+          "date": "2026-01-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-21-O-EMP001",
+          "startDateTime": "2026-01-21T08:00:00",
+          "endDateTime": "2026-01-21T20:00:00"
+        },
+        {
+          "date": "2026-01-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-22-D-EMP001",
+          "startDateTime": "2026-01-22T08:00:00",
+          "endDateTime": "2026-01-22T20:00:00"
+        },
+        {
+          "date": "2026-01-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-23-D-EMP001",
+          "startDateTime": "2026-01-23T08:00:00",
+          "endDateTime": "2026-01-23T20:00:00"
+        },
+        {
+          "date": "2026-01-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-24-D-EMP001",
+          "startDateTime": "2026-01-24T08:00:00",
+          "endDateTime": "2026-01-24T20:00:00"
+        },
+        {
+          "date": "2026-01-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-25-D-EMP001",
+          "startDateTime": "2026-01-25T08:00:00",
+          "endDateTime": "2026-01-25T20:00:00"
+        },
+        {
+          "date": "2026-01-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-26-D-EMP001",
+          "startDateTime": "2026-01-26T08:00:00",
+          "endDateTime": "2026-01-26T20:00:00"
+        },
+        {
+          "date": "2026-01-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-27-O-EMP001",
+          "startDateTime": "2026-01-27T08:00:00",
+          "endDateTime": "2026-01-27T20:00:00"
+        },
+        {
+          "date": "2026-01-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-28-O-EMP001",
+          "startDateTime": "2026-01-28T08:00:00",
+          "endDateTime": "2026-01-28T20:00:00"
+        },
+        {
+          "date": "2026-01-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-29-D-EMP001",
+          "startDateTime": "2026-01-29T08:00:00",
+          "endDateTime": "2026-01-29T20:00:00"
+        },
+        {
+          "date": "2026-01-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-30-D-EMP001",
+          "startDateTime": "2026-01-30T08:00:00",
+          "endDateTime": "2026-01-30T20:00:00"
+        },
+        {
+          "date": "2026-01-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-31-D-EMP001",
+          "startDateTime": "2026-01-31T08:00:00",
+          "endDateTime": "2026-01-31T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "EMP002",
+      "rankId": "PC",
+      "productTypeId": "APO",
+      "ouId": null,
+      "scheme": "SchemeA",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-01-D-EMP002",
+          "startDateTime": "2026-01-01T08:00:00",
+          "endDateTime": "2026-01-01T20:00:00"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-02-D-EMP002",
+          "startDateTime": "2026-01-02T08:00:00",
+          "endDateTime": "2026-01-02T20:00:00"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-03-D-EMP002",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-04-D-EMP002",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-05-D-EMP002",
+          "startDateTime": "2026-01-05T08:00:00",
+          "endDateTime": "2026-01-05T20:00:00"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-06-O-EMP002",
+          "startDateTime": "2026-01-06T08:00:00",
+          "endDateTime": "2026-01-06T20:00:00"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-07-O-EMP002",
+          "startDateTime": "2026-01-07T08:00:00",
+          "endDateTime": "2026-01-07T20:00:00"
+        },
+        {
+          "date": "2026-01-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-08-D-EMP002",
+          "startDateTime": "2026-01-08T08:00:00",
+          "endDateTime": "2026-01-08T20:00:00"
+        },
+        {
+          "date": "2026-01-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-09-D-EMP002",
+          "startDateTime": "2026-01-09T08:00:00",
+          "endDateTime": "2026-01-09T20:00:00"
+        },
+        {
+          "date": "2026-01-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-10-D-EMP002",
+          "startDateTime": "2026-01-10T08:00:00",
+          "endDateTime": "2026-01-10T20:00:00"
+        },
+        {
+          "date": "2026-01-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-11-D-EMP002",
+          "startDateTime": "2026-01-11T08:00:00",
+          "endDateTime": "2026-01-11T20:00:00"
+        },
+        {
+          "date": "2026-01-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-12-D-EMP002",
+          "startDateTime": "2026-01-12T08:00:00",
+          "endDateTime": "2026-01-12T20:00:00"
+        },
+        {
+          "date": "2026-01-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-13-O-EMP002",
+          "startDateTime": "2026-01-13T08:00:00",
+          "endDateTime": "2026-01-13T20:00:00"
+        },
+        {
+          "date": "2026-01-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-14-O-EMP002",
+          "startDateTime": "2026-01-14T08:00:00",
+          "endDateTime": "2026-01-14T20:00:00"
+        },
+        {
+          "date": "2026-01-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-15-D-EMP002",
+          "startDateTime": "2026-01-15T08:00:00",
+          "endDateTime": "2026-01-15T20:00:00"
+        },
+        {
+          "date": "2026-01-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-16-D-EMP002",
+          "startDateTime": "2026-01-16T08:00:00",
+          "endDateTime": "2026-01-16T20:00:00"
+        },
+        {
+          "date": "2026-01-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-17-D-EMP002",
+          "startDateTime": "2026-01-17T08:00:00",
+          "endDateTime": "2026-01-17T20:00:00"
+        },
+        {
+          "date": "2026-01-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-18-D-EMP002",
+          "startDateTime": "2026-01-18T08:00:00",
+          "endDateTime": "2026-01-18T20:00:00"
+        },
+        {
+          "date": "2026-01-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-19-D-EMP002",
+          "startDateTime": "2026-01-19T08:00:00",
+          "endDateTime": "2026-01-19T20:00:00"
+        },
+        {
+          "date": "2026-01-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-20-O-EMP002",
+          "startDateTime": "2026-01-20T08:00:00",
+          "endDateTime": "2026-01-20T20:00:00"
+        },
+        {
+          "date": "2026-01-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-21-O-EMP002",
+          "startDateTime": "2026-01-21T08:00:00",
+          "endDateTime": "2026-01-21T20:00:00"
+        },
+        {
+          "date": "2026-01-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-22-D-EMP002",
+          "startDateTime": "2026-01-22T08:00:00",
+          "endDateTime": "2026-01-22T20:00:00"
+        },
+        {
+          "date": "2026-01-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-23-D-EMP002",
+          "startDateTime": "2026-01-23T08:00:00",
+          "endDateTime": "2026-01-23T20:00:00"
+        },
+        {
+          "date": "2026-01-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-24-D-EMP002",
+          "startDateTime": "2026-01-24T08:00:00",
+          "endDateTime": "2026-01-24T20:00:00"
+        },
+        {
+          "date": "2026-01-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-25-D-EMP002",
+          "startDateTime": "2026-01-25T08:00:00",
+          "endDateTime": "2026-01-25T20:00:00"
+        },
+        {
+          "date": "2026-01-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-26-D-EMP002",
+          "startDateTime": "2026-01-26T08:00:00",
+          "endDateTime": "2026-01-26T20:00:00"
+        },
+        {
+          "date": "2026-01-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-27-O-EMP002",
+          "startDateTime": "2026-01-27T08:00:00",
+          "endDateTime": "2026-01-27T20:00:00"
+        },
+        {
+          "date": "2026-01-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-28-O-EMP002",
+          "startDateTime": "2026-01-28T08:00:00",
+          "endDateTime": "2026-01-28T20:00:00"
+        },
+        {
+          "date": "2026-01-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-29-D-EMP002",
+          "startDateTime": "2026-01-29T08:00:00",
+          "endDateTime": "2026-01-29T20:00:00"
+        },
+        {
+          "date": "2026-01-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-30-D-EMP002",
+          "startDateTime": "2026-01-30T08:00:00",
+          "endDateTime": "2026-01-30T20:00:00"
+        },
+        {
+          "date": "2026-01-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-31-D-EMP002",
+          "startDateTime": "2026-01-31T08:00:00",
+          "endDateTime": "2026-01-31T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "EMP003",
+      "rankId": "PC",
+      "productTypeId": "APO",
+      "ouId": null,
+      "scheme": "SchemeA",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-01-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-01-D-EMP003",
+          "startDateTime": "2026-01-01T08:00:00",
+          "endDateTime": "2026-01-01T20:00:00"
+        },
+        {
+          "date": "2026-01-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-02-D-EMP003",
+          "startDateTime": "2026-01-02T08:00:00",
+          "endDateTime": "2026-01-02T20:00:00"
+        },
+        {
+          "date": "2026-01-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-03-D-EMP003",
+          "startDateTime": "2026-01-03T08:00:00",
+          "endDateTime": "2026-01-03T20:00:00"
+        },
+        {
+          "date": "2026-01-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-04-D-EMP003",
+          "startDateTime": "2026-01-04T08:00:00",
+          "endDateTime": "2026-01-04T20:00:00"
+        },
+        {
+          "date": "2026-01-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-05-D-EMP003",
+          "startDateTime": "2026-01-05T08:00:00",
+          "endDateTime": "2026-01-05T20:00:00"
+        },
+        {
+          "date": "2026-01-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-06-O-EMP003",
+          "startDateTime": "2026-01-06T08:00:00",
+          "endDateTime": "2026-01-06T20:00:00"
+        },
+        {
+          "date": "2026-01-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-07-O-EMP003",
+          "startDateTime": "2026-01-07T08:00:00",
+          "endDateTime": "2026-01-07T20:00:00"
+        },
+        {
+          "date": "2026-01-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-08-D-EMP003",
+          "startDateTime": "2026-01-08T08:00:00",
+          "endDateTime": "2026-01-08T20:00:00"
+        },
+        {
+          "date": "2026-01-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-09-D-EMP003",
+          "startDateTime": "2026-01-09T08:00:00",
+          "endDateTime": "2026-01-09T20:00:00"
+        },
+        {
+          "date": "2026-01-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-10-D-EMP003",
+          "startDateTime": "2026-01-10T08:00:00",
+          "endDateTime": "2026-01-10T20:00:00"
+        },
+        {
+          "date": "2026-01-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-11-D-EMP003",
+          "startDateTime": "2026-01-11T08:00:00",
+          "endDateTime": "2026-01-11T20:00:00"
+        },
+        {
+          "date": "2026-01-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-12-D-EMP003",
+          "startDateTime": "2026-01-12T08:00:00",
+          "endDateTime": "2026-01-12T20:00:00"
+        },
+        {
+          "date": "2026-01-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-13-O-EMP003",
+          "startDateTime": "2026-01-13T08:00:00",
+          "endDateTime": "2026-01-13T20:00:00"
+        },
+        {
+          "date": "2026-01-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-14-O-EMP003",
+          "startDateTime": "2026-01-14T08:00:00",
+          "endDateTime": "2026-01-14T20:00:00"
+        },
+        {
+          "date": "2026-01-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-15-D-EMP003",
+          "startDateTime": "2026-01-15T08:00:00",
+          "endDateTime": "2026-01-15T20:00:00"
+        },
+        {
+          "date": "2026-01-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-16-D-EMP003",
+          "startDateTime": "2026-01-16T08:00:00",
+          "endDateTime": "2026-01-16T20:00:00"
+        },
+        {
+          "date": "2026-01-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-17-D-EMP003",
+          "startDateTime": "2026-01-17T08:00:00",
+          "endDateTime": "2026-01-17T20:00:00"
+        },
+        {
+          "date": "2026-01-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-18-D-EMP003",
+          "startDateTime": "2026-01-18T08:00:00",
+          "endDateTime": "2026-01-18T20:00:00"
+        },
+        {
+          "date": "2026-01-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-19-D-EMP003",
+          "startDateTime": "2026-01-19T08:00:00",
+          "endDateTime": "2026-01-19T20:00:00"
+        },
+        {
+          "date": "2026-01-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-20-O-EMP003",
+          "startDateTime": "2026-01-20T08:00:00",
+          "endDateTime": "2026-01-20T20:00:00"
+        },
+        {
+          "date": "2026-01-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-21-O-EMP003",
+          "startDateTime": "2026-01-21T08:00:00",
+          "endDateTime": "2026-01-21T20:00:00"
+        },
+        {
+          "date": "2026-01-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-22-D-EMP003",
+          "startDateTime": "2026-01-22T08:00:00",
+          "endDateTime": "2026-01-22T20:00:00"
+        },
+        {
+          "date": "2026-01-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-23-D-EMP003",
+          "startDateTime": "2026-01-23T08:00:00",
+          "endDateTime": "2026-01-23T20:00:00"
+        },
+        {
+          "date": "2026-01-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-24-D-EMP003",
+          "startDateTime": "2026-01-24T08:00:00",
+          "endDateTime": "2026-01-24T20:00:00"
+        },
+        {
+          "date": "2026-01-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-25-D-EMP003",
+          "startDateTime": "2026-01-25T08:00:00",
+          "endDateTime": "2026-01-25T20:00:00"
+        },
+        {
+          "date": "2026-01-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-26-D-EMP003",
+          "startDateTime": "2026-01-26T08:00:00",
+          "endDateTime": "2026-01-26T20:00:00"
+        },
+        {
+          "date": "2026-01-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-27-O-EMP003",
+          "startDateTime": "2026-01-27T08:00:00",
+          "endDateTime": "2026-01-27T20:00:00"
+        },
+        {
+          "date": "2026-01-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-28-O-EMP003",
+          "startDateTime": "2026-01-28T08:00:00",
+          "endDateTime": "2026-01-28T20:00:00"
+        },
+        {
+          "date": "2026-01-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-29-D-EMP003",
+          "startDateTime": "2026-01-29T08:00:00",
+          "endDateTime": "2026-01-29T20:00:00"
+        },
+        {
+          "date": "2026-01-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-30-D-EMP003",
+          "startDateTime": "2026-01-30T08:00:00",
+          "endDateTime": "2026-01-30T20:00:00"
+        },
+        {
+          "date": "2026-01-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": null,
+          "assignmentId": "DI-001-2026-01-31-D-EMP003",
+          "startDateTime": "2026-01-31T08:00:00",
+          "endDateTime": "2026-01-31T20:00:00"
+        }
+      ]
+    }
+  ],
+  "rosterSummary": {
+    "totalDailyStatuses": 93,
+    "byStatus": {
+      "ASSIGNED": 69,
+      "OFF_DAY": 24,
+      "UNASSIGNED": 0,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "OPTIMAL",
+    "solverStatus": "OPTIMAL",
+    "solverStatusExplanation": "CP-SAT proved this is the best possible solution. The solver exhaustively searched the solution space and mathematically verified no better solution exists.",
+    "qualityExplanation": "CP-SAT solver proved this is the best possible solution within the constraint model.",
+    "coverageMetrics": {
+      "totalSlots": 0,
+      "assignedSlots": 93,
+      "unassignedSlots": -93,
+      "coverageRate": 0,
+      "coverageQuality": "PARTIAL"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 3,
+      "employeesUsed": 3,
+      "employeesUnused": 0,
+      "utilizationRate": 100.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 31,
+      "maxShiftsPerEmployee": 31,
+      "avgShiftsPerEmployee": 31.0,
+      "shiftVariance": 0,
+      "balanceQuality": 100.0,
+      "balanceGrade": "PERFECT"
+    },
+    "optimizationContext": {
+      "optimizationMode": "balanceWorkload",
+      "fixedRotationOffset": true,
+      "patternBased": true,
+      "continuousAdherence": true
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:3b972a4a2940176d9ea82d966c8e8d808c53bedfa0c65c6508692c72a24b0b6f",
+    "generatedAt": "2026-01-12T11:53:23.752889",
+    "employeeHours": {
+      "EMP001": {
+        "weekly_normal": {
+          "2026-W01": 35.2,
+          "2026-W02": 44.0,
+          "2026-W03": 44.0,
+          "2026-W04": 44.0,
+          "2026-W05": 35.2
+        },
+        "monthly_ot": {
+          "2026-01": 50.6
+        }
+      },
+      "EMP002": {
+        "weekly_normal": {
+          "2026-W01": 35.2,
+          "2026-W02": 44.0,
+          "2026-W03": 44.0,
+          "2026-W04": 44.0,
+          "2026-W05": 35.2
+        },
+        "monthly_ot": {
+          "2026-01": 50.6
+        }
+      },
+      "EMP003": {
+        "weekly_normal": {
+          "2026-W01": 35.2,
+          "2026-W02": 44.0,
+          "2026-W03": 44.0,
+          "2026-W04": 44.0,
+          "2026-W05": 35.2
+        },
+        "monthly_ot": {
+          "2026-01": 50.6
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": {
+    "referenceId": "TEST-MULTI-RANK-SIMPLE",
+    "maxSolveTimeSeconds": 10
+  },
+  "publicHolidays": [],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2026-01-12T11:53:24.131431",
+    "ended": "2026-01-12T11:53:24.140220",
+    "durationSeconds": 0.009,
+    "status": "INFEASIBLE"
+  },
+  "score": {
+    "overall": 999999,
+    "hard": 999999,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "unassignedSlots": 0
+    },
+    "soft": {}
+  },
+  "assignments": [],
+  "employeeRoster": [],
+  "rosterSummary": {
+    "totalDailyStatuses": 0,
+    "byStatus": {
+      "ASSIGNED": 0,
+      "OFF_DAY": 0,
+      "UNASSIGNED": 0,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "INFEASIBLE",
+    "solverStatus": "INFEASIBLE",
+    "solverStatusExplanation": "No solution exists that satisfies all hard constraints. This means the problem is over-constrained (too many restrictions) or under-resourced (not enough employees/capacity).",
+    "qualityExplanation": "No valid solution exists that satisfies all hard constraints. Review constraints, employee availability, or demand requirements.",
+    "coverageMetrics": {
+      "totalSlots": 0,
+      "assignedSlots": 0,
+      "unassignedSlots": 0,
+      "coverageRate": 0,
+      "coverageQuality": "PARTIAL"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 2,
+      "employeesUsed": 0,
+      "employeesUnused": 2,
+      "utilizationRate": 0.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 0,
+      "maxShiftsPerEmployee": 0,
+      "avgShiftsPerEmployee": 0,
+      "shiftVariance": 0,
+      "balanceQuality": 0,
+      "balanceGrade": "N/A"
+    },
+    "optimizationContext": {
+      "optimizationMode": "balanceWorkload",
+      "fixedRotationOffset": false,
+      "patternBased": true,
+      "continuousAdherence": false
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:9e1837fc286d9a2015a918e484ecfee54f6e405a57f93e12402490681e424716",
+    "generatedAt": "2026-01-12T11:53:24.140389",
+    "employeeHours": {}
+  },
+  "icpmpPreprocessing": {
+    "enabled": true,
+    "preprocessing_time_seconds": 0.0001251697540283203,
+    "original_employee_count": 3,
+    "selected_employee_count": 2,
+    "utilization_percentage": 66.66666666666666,
+    "requirements": {
+      "REQ-MULTI": {
+        "demandId": "D-MULTI-RANK",
+        "optimal_employees": 2,
+        "selected_count": 2,
+        "u_slots_total": 0,
+        "offset_distribution": {
+          "0": 2
+        },
+        "is_optimal": true,
+        "coverage_rate": 0.0
+      }
+    },
+    "warnings": []
+  }
+}
