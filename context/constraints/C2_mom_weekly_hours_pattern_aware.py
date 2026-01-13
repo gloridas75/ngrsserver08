@@ -15,7 +15,8 @@ Monthly cap: sum(ot_hours) <= 72h per employee per calendar month
 All constraints added via model.Add() for hard enforcement.
 """
 from datetime import datetime, timedelta
-from context.engine.time_utils import split_shift_hours
+from context.engine.time_utils import split_shift_hours, normalize_scheme
+from context.engine.constraint_config import get_constraint_param
 from collections import defaultdict
 
 
@@ -152,27 +153,36 @@ def add_constraints(model, ctx):
     if apgd_employees:
         print(f"[C2] APGD-D10 detected: {len(apgd_employees)} employees EXEMPT from weekly 44h cap")
     
-    # Build requirement → pattern mapping from demandItems
+    # Build requirement → pattern and scheme mapping from demandItems
     # This is needed for v0.70 schema where ICPMP assigns patterns to requirements,
     # not directly to employees
-    req_patterns = {}
+    req_patterns = {}  # requirementId -> work_pattern list
+    req_schemes = {}   # requirementId -> scheme
     for demand in demand_items:
         for req in demand.get('requirements', []):
             req_id = req.get('requirementId')
             pattern = req.get('workPattern', [])
+            schemes = req.get('schemes', [])
+            # Get first scheme or default to 'A'
+            scheme_str = schemes[0] if schemes else 'A'
+            scheme_normalized = normalize_scheme(scheme_str)
+            
             if req_id and pattern:
                 req_patterns[req_id] = pattern
+                req_schemes[req_id] = scheme_normalized
     
-    # Build employee → pattern mapping by checking which slots they can be assigned to
+    # Build employee → pattern and scheme mapping by checking which slots they can be assigned to
     # For demandBased: ICPMP assigns patterns to requirements, NOT employees
     # For outcomeBased: patterns may be in requirements OR employees
     # Strategy: Always look up from slots → requirements (works for both modes)
-    emp_patterns = {}
+    emp_patterns = {}  # emp_id -> work_pattern list
+    emp_schemes = {}   # emp_id -> scheme ('A', 'B', or 'P')
     for emp in employees:
         emp_id = emp.get('employeeId')
         pattern = []
+        scheme = None
         
-        # Find pattern from slots this employee can be assigned to
+        # Find pattern and scheme from slots this employee can be assigned to
         # This works for both demandBased (ICPMP) and outcomeBased modes
         for slot in slots:
             if (slot.slot_id, emp_id) in x:
@@ -180,25 +190,36 @@ def add_constraints(model, ctx):
                 req_id = getattr(slot, 'requirementId', None)
                 if req_id and req_id in req_patterns:
                     pattern = req_patterns[req_id]
+                    # Also get scheme from requirement (for Scheme P detection)
+                    if req_id in req_schemes:
+                        scheme = req_schemes[req_id]
                     break  # Found pattern, stop searching
         
-        # Fallback 1: Try direct employee.workPattern (for outcomeBased with explicit patterns)
+        # Fallback 1: Try direct employee.workPattern and scheme (for outcomeBased with explicit patterns)
         if not pattern:
             pattern = emp.get('workPattern', [])
+        if not scheme:
+            scheme_raw = emp.get('scheme', 'A')
+            scheme = normalize_scheme(scheme_raw)
         
         # Fallback 2: Assume standard 5-day pattern
         if not pattern:
             pattern = ['D', 'D', 'D', 'D', 'D', 'O', 'O']
+        if not scheme:
+            scheme = 'A'
         
         emp_patterns[emp_id] = pattern
+        emp_schemes[emp_id] = scheme
     
-    # Debug: Check pattern detection
+    # Debug: Check pattern and scheme detection
     pattern_lengths = [len(p) for p in emp_patterns.values()]
     work_days_counts = [sum(1 for d in p if d != 'O') for p in emp_patterns.values()]
     print(f"[C2] DEBUG: Pattern lengths: min={min(pattern_lengths) if pattern_lengths else 0}, max={max(pattern_lengths) if pattern_lengths else 0}")
     print(f"[C2] DEBUG: Work days: min={min(work_days_counts) if work_days_counts else 0}, max={max(work_days_counts) if work_days_counts else 0}")
     print(f"[C2] DEBUG: Sample patterns: {list(emp_patterns.values())[:3]}")
+    print(f"[C2] DEBUG: Sample schemes: {list(emp_schemes.values())[:3]}")
     print(f"[C2] DEBUG: Requirement patterns available: {list(req_patterns.values())}")
+    print(f"[C2] DEBUG: Requirement schemes available: {list(req_schemes.values())}")
 
     # Extract shift information by demand and shift code
     shift_info = {}
@@ -311,10 +332,33 @@ def add_constraints(model, ctx):
                     week_tuple = (iso_year, iso_week)
                     locked_hours = locked_weekly_hours[emp_id].get(week_tuple, 0.0)
                 
-                remaining_capacity = 44.0 - locked_hours
+                # SCHEME-AWARE WEEKLY NORMAL CAP (read from JSON with fallback)
+                # Scheme A/B: 44h/week (default)
+                # Scheme P: 34.98h (≤4 days) or 29.98h (5+ days)
+                employee_dict = {'employeeId': emp_id, 'scheme': emp_schemes.get(emp_id, 'A')}
+                emp_scheme = emp_schemes.get(emp_id, 'A')
+                
+                if emp_scheme == 'P':
+                    # Part-timer: Different caps based on work days per week
+                    work_days_count = sum(1 for d in work_pattern if d != 'O')
+                    if work_days_count <= 4:
+                        weekly_normal_cap = get_constraint_param(
+                            ctx, 'partTimerWeeklyHours', employee_dict, param_name='maxHours4Days', default=34.98
+                        )
+                    else:  # 5, 6, or 7 days
+                        weekly_normal_cap = get_constraint_param(
+                            ctx, 'partTimerWeeklyHours', employee_dict, param_name='maxHoursMoreDays', default=29.98
+                        )
+                else:
+                    # Full-timer: 44h/week
+                    weekly_normal_cap = get_constraint_param(
+                        ctx, 'momWeeklyHoursCap44h', employee_dict, default=44.0
+                    )
+                
+                remaining_capacity = weekly_normal_cap - locked_hours
                 remaining_capacity_int = int(round(remaining_capacity * 10))
                 
-                # Add constraint: sum(normal_hours) <= 44h
+                # Add constraint: sum(normal_hours) <= weekly_normal_cap
                 constraint_expr = sum(var * hours for var, hours in weighted_assignments)
                 model.Add(constraint_expr <= remaining_capacity_int)
                 weekly_constraints += 1

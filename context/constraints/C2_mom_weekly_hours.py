@@ -205,6 +205,21 @@ def add_constraints(model, ctx):
         emp_patterns[emp_id] = pattern
         emp_schemes[emp_id] = scheme_normalized
     
+    # Build requirement patterns map (for demand-based mode where employees don't have patterns)
+    req_patterns = {}  # requirementId -> work_pattern list
+    req_schemes = {}   # requirementId -> scheme
+    for demand in demand_items:
+        for req in demand.get('requirements', []):
+            req_id = req.get('requirementId')
+            pattern = req.get('workPattern', [])
+            schemes = req.get('schemes', [])
+            # Get first scheme or default to 'A'
+            scheme_str = schemes[0] if schemes else 'A'
+            scheme_normalized = normalize_scheme(scheme_str)
+            
+            req_patterns[req_id] = pattern
+            req_schemes[req_id] = scheme_normalized
+    
     # Extract shift information by demand and shift code
     shift_info = {}
     for demand in demand_items:
@@ -268,6 +283,19 @@ def add_constraints(model, ctx):
         # Get employee's work pattern and scheme
         work_pattern = emp_patterns.get(emp_id, [])
         emp_scheme = emp_schemes.get(emp_id, 'A')
+        
+        # DEMAND-BASED MODE: If employee has no pattern, use requirement pattern from first slot
+        # All slots in demand-based mode share the same requirement pattern
+        if not work_pattern and weeks:
+            first_week_slots = next(iter(weeks.values()), [])
+            if first_week_slots:
+                first_slot = first_week_slots[0]
+                req_id = getattr(first_slot, 'requirementId', None)
+                if req_id and req_id in req_patterns:
+                    work_pattern = req_patterns[req_id]
+                    # Also use requirement scheme for Scheme P detection
+                    if req_id in req_schemes:
+                        emp_scheme = req_schemes[req_id]
         
         for week_key, week_slots in weeks.items():
             # For each slot in this week, calculate pattern-aware normal hours
@@ -348,6 +376,17 @@ def add_constraints(model, ctx):
     for emp_id, months in emp_month_slots.items():
         work_pattern = emp_patterns.get(emp_id, [])
         emp_scheme = emp_schemes.get(emp_id, 'A')
+        
+        # DEMAND-BASED MODE: If employee has no pattern, use requirement pattern from first slot
+        if not work_pattern and months:
+            first_month_slots = next(iter(months.values()), [])
+            if first_month_slots:
+                first_slot = first_month_slots[0]
+                req_id = getattr(first_slot, 'requirementId', None)
+                if req_id and req_id in req_patterns:
+                    work_pattern = req_patterns[req_id]
+                    if req_id in req_schemes:
+                        emp_scheme = req_schemes[req_id]
         
         for month_key, month_slots in months.items():
             weighted_assignments = []
