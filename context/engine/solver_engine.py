@@ -1131,6 +1131,102 @@ def extract_assignments(ctx, solver) -> list:
     return assignments
 
 
+def generate_off_day_assignments(ctx, work_assignments: list) -> list:
+    """Generate OFF_DAY assignments for dates where pattern says 'O'.
+    
+    For demandBased mode, work assignments only include work shifts (D, N, E).
+    This function creates OFF_DAY assignments for off days in the pattern.
+    
+    Args:
+        ctx: Context dict with employees, planning horizon, demand items
+        work_assignments: List of work assignments (ASSIGNED/UNASSIGNED only)
+    
+    Returns:
+        List of OFF_DAY assignments to merge with work assignments
+    """
+    from datetime import datetime, timedelta
+    
+    print(f"[generate_off_day_assignments] Creating OFF_DAY assignments...")
+    
+    off_day_assignments = []
+    employees = ctx.get('employees', [])
+    demand_items = ctx.get('demandItems', [])
+    optimized_offsets = ctx.get('optimized_offsets', {})
+    
+    # Get planning horizon
+    planning_horizon = ctx.get('planningHorizon', {})
+    start_date = datetime.fromisoformat(planning_horizon.get('startDate'))
+    end_date = datetime.fromisoformat(planning_horizon.get('endDate'))
+    
+    # Group work assignments by (employeeId, date) for quick lookup
+    work_by_emp_date = {}
+    for assignment in work_assignments:
+        emp_id = assignment.get('employeeId')
+        date_str = assignment.get('date')
+        if emp_id and date_str:
+            key = (emp_id, date_str)
+            work_by_emp_date[key] = assignment
+    
+    # For each requirement, generate OFF days based on pattern
+    for demand in demand_items:
+        demand_id = demand.get('id', demand.get('demandId'))
+        shift_start_date_str = demand.get('shiftStartDate')
+        if not shift_start_date_str:
+            continue
+        
+        shift_start_date = datetime.fromisoformat(shift_start_date_str).date()
+        
+        for requirement in demand.get('requirements', []):
+            requirement_id = requirement.get('id', requirement.get('requirementId'))
+            work_pattern = requirement.get('workPattern', [])
+            
+            if not work_pattern:
+                continue
+            
+            pattern_length = len(work_pattern)
+            
+            # For each employee assigned to this requirement
+            for emp in employees:
+                emp_id = emp.get('employeeId')
+                emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
+                
+                # Check each date in planning horizon
+                current_date = start_date.date()
+                while current_date <= end_date.date():
+                    date_str = current_date.isoformat()
+                    
+                    # Calculate pattern day for this employee
+                    days_since_start = (current_date - shift_start_date).days
+                    pattern_idx = (days_since_start + emp_offset) % pattern_length
+                    pattern_day = work_pattern[pattern_idx]
+                    
+                    # If pattern says OFF ('O') and employee has no work assignment on this date
+                    if pattern_day == 'O':
+                        key = (emp_id, date_str)
+                        if key not in work_by_emp_date:
+                            # Create OFF_DAY assignment
+                            off_assignment = {
+                                "assignmentId": f"{demand_id}-{date_str}-O-{emp_id}",
+                                "demandId": demand_id,
+                                "requirementId": requirement_id,
+                                "date": date_str,
+                                "slotId": f"{demand_id}-{requirement_id}-O-{date_str}",
+                                "shiftCode": "O",
+                                "patternDay": pattern_idx,
+                                "startDateTime": f"{date_str}T00:00:00",
+                                "endDateTime": f"{date_str}T23:59:59",
+                                "employeeId": emp_id,
+                                "newRotationOffset": emp_offset,
+                                "status": "OFF_DAY"
+                            }
+                            off_day_assignments.append(off_assignment)
+                    
+                    current_date += timedelta(days=1)
+    
+    print(f"  ✓ Generated {len(off_day_assignments)} OFF_DAY assignments\n")
+    return off_day_assignments
+
+
 def calculate_scores(ctx, assignments) -> tuple:
     """Calculate hard and soft constraint violation scores.
     
@@ -1809,7 +1905,15 @@ def solve(ctx):
     # Extract assignments
     assignments = []
     if status in [cp_model.OPTIMAL, cp_model.FEASIBLE]:
-        assignments = extract_assignments(ctx, solver)
+        work_assignments = extract_assignments(ctx, solver)
+        
+        # Generate OFF_DAY assignments for demandBased mode
+        # (outcomeBased mode already creates OFF_DAY assignments in template generator)
+        off_day_assignments = generate_off_day_assignments(ctx, work_assignments)
+        
+        # Merge work and OFF_DAY assignments
+        assignments = work_assignments + off_day_assignments
+        
         print(f"[solve] Solution found with {len(assignments)} assignments")
     
     # Calculate scores with lazy evaluation
