@@ -9,7 +9,7 @@
     "summary_off_days": 48,
     "missing": 0,
     "extra": 0,
-    "total_assignments": 163,
+    "total_assignments": 186,
     "solver_status": "OPTIMAL"
   },
   {
@@ -22,7 +22,7 @@
     "summary_off_days": 230,
     "missing": 0,
     "extra": 0,
-    "total_assignments": 545,
+    "total_assignments": 713,
     "solver_status": "OPTIMAL"
   },
   {
@@ -35,7 +35,7 @@
     "summary_off_days": 480,
     "missing": 0,
     "extra": 0,
-    "total_assignments": 543,
+    "total_assignments": 1995,
     "solver_status": "FEASIBLE"
   },
   {
@@ -48,7 +48,7 @@
     "summary_off_days": 0,
     "missing": 0,
     "extra": 0,
-    "total_assignments": 93,
+    "total_assignments": 105,
     "solver_status": "FEASIBLE"
   },
   {
@@ -61,7 +61,7 @@
     "summary_off_days": 48,
     "missing": 0,
     "extra": 0,
-    "total_assignments": 198,
+    "total_assignments": 212,
     "solver_status": "INFEASIBLE"
   },
   {

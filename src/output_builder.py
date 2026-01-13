@@ -684,6 +684,54 @@ def insert_off_day_assignments(assignments, input_data, ctx):
     return all_assignments_sorted
 
 
+def extract_unassigned_from_roster(employee_roster):
+    """
+    Extract UNASSIGNED assignments from employeeRoster.
+    
+    The build_employee_roster() function has comprehensive logic to determine
+    when a date should be marked as UNASSIGNED (no pattern, pattern mismatch, etc.).
+    This function extracts those UNASSIGNED entries and creates corresponding
+    assignment records to maintain schema consistency.
+    
+    Args:
+        employee_roster: List of employee roster dicts with dailyStatus
+    
+    Returns:
+        List of UNASSIGNED assignment dicts
+    """
+    import uuid
+    
+    unassigned_assignments = []
+    
+    for emp in employee_roster:
+        emp_id = emp.get('employeeId')
+        daily_status = emp.get('dailyStatus', [])
+        
+        for day in daily_status:
+            if day.get('status') == 'UNASSIGNED':
+                # Create UNASSIGNED assignment record
+                unassigned_asg = {
+                    'assignmentId': str(uuid.uuid4()),
+                    'employeeId': emp_id,
+                    'date': day.get('date'),
+                    'shiftCode': 'UNASSIGNED',
+                    'startDateTime': None,
+                    'endDateTime': None,
+                    'normalHours': 0,
+                    'overtimeHours': 0,
+                    'publicHolidayHours': 0,
+                    'restDayPayHours': 0,
+                    'demandItemId': None,
+                    'positionCode': None,
+                    'locationCode': None
+                }
+                unassigned_assignments.append(unassigned_asg)
+    
+    return unassigned_assignments
+
+
+
+
 def build_output(input_data, ctx, status, solver_result, assignments, violations):
     """
     Build output in expected schema format (v0.43+).
@@ -716,6 +764,9 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     all_with_off = insert_off_day_assignments(assignments, input_data, ctx)
     # Include ALL assignments (work + OFF days) in assignments array
     assignments = all_with_off
+    
+    # NOTE: UNASSIGNED assignments are added AFTER employee_roster is built
+    # (see extract_unassigned_from_roster() call below)
     
     # Extract scores from solver_result
     scores = solver_result.get('scores', {'hard': 0, 'soft': 0, 'overall': 0})
@@ -867,6 +918,18 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     # Build employee roster with daily status for ALL employees
     # All assignments (including OFF days) are now in the main assignments list
     employee_roster = build_employee_roster(input_data, ctx, annotated_assignments, off_day_assignments=None)
+    
+    # ========== EXTRACT AND ADD UNASSIGNED ASSIGNMENTS ==========
+    # The employee_roster logic has comprehensive rules for UNASSIGNED status
+    # Extract those UNASSIGNED entries and add them to assignments array for consistency
+    unassigned_from_roster = extract_unassigned_from_roster(employee_roster)
+    if unassigned_from_roster:
+        annotated_assignments.extend(unassigned_from_roster)
+        # Re-sort to maintain date/employee order
+        annotated_assignments = sorted(
+            annotated_assignments,
+            key=lambda a: (a.get('date') or '', a.get('employeeId') or '')
+        )
     
     # ========== CALCULATE ROSTER SUMMARY ==========
     roster_summary = {

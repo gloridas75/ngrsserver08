@@ -1,0 +1,5817 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "RST-20260113-C9FE1E08",
+  "publicHolidays": [
+    "2026-05-01",
+    "2026-05-27",
+    "2026-05-31"
+  ],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2026-01-13T13:16:29.178062",
+    "ended": "2026-01-13T13:16:29.208002",
+    "durationSeconds": 0.029940128326416016,
+    "status": "OPTIMAL"
+  },
+  "score": {
+    "overall": 0,
+    "hard": 0,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "violations": []
+    },
+    "soft": {}
+  },
+  "assignments": [
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-01",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-01T08:00:00",
+      "endDateTime": "2026-05-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-01",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-01T08:00:00",
+      "endDateTime": "2026-05-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-01",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-01T08:00:00",
+      "endDateTime": "2026-05-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-01",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-01T08:00:00",
+      "endDateTime": "2026-05-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-01",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-01",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-01T08:00:00",
+      "endDateTime": "2026-05-01T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "b623a82f-3687-4f77-9a39-32142a4ee294",
+      "employeeId": "00034833",
+      "date": "2026-05-01",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-02",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-02T08:00:00",
+      "endDateTime": "2026-05-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-02",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-02T08:00:00",
+      "endDateTime": "2026-05-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-02",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-02T08:00:00",
+      "endDateTime": "2026-05-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-02",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-02T08:00:00",
+      "endDateTime": "2026-05-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-02",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-02",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-02T08:00:00",
+      "endDateTime": "2026-05-02T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "d3090550-1fb4-47e4-a86f-b09cca722e76",
+      "employeeId": "00034833",
+      "date": "2026-05-02",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-03",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-03T08:00:00",
+      "endDateTime": "2026-05-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-03",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-03T08:00:00",
+      "endDateTime": "2026-05-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-03",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-03T08:00:00",
+      "endDateTime": "2026-05-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-03",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-03T08:00:00",
+      "endDateTime": "2026-05-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-03",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-03T08:00:00",
+      "endDateTime": "2026-05-03T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "0059924c-5255-44e6-8d51-61a23334638a",
+      "employeeId": "00034833",
+      "date": "2026-05-03",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-04",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-04T08:00:00",
+      "endDateTime": "2026-05-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-04",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-04T08:00:00",
+      "endDateTime": "2026-05-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-04",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-04T08:00:00",
+      "endDateTime": "2026-05-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-04",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-04T08:00:00",
+      "endDateTime": "2026-05-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-04",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-04",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-04T08:00:00",
+      "endDateTime": "2026-05-04T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "9bd87744-b4d0-4cdd-933a-6856bacc94f9",
+      "employeeId": "00034833",
+      "date": "2026-05-04",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-05",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-05T08:00:00",
+      "endDateTime": "2026-05-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-05",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-05T08:00:00",
+      "endDateTime": "2026-05-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-05",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-05T08:00:00",
+      "endDateTime": "2026-05-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-05",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-05T08:00:00",
+      "endDateTime": "2026-05-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-05",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-05",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-05T08:00:00",
+      "endDateTime": "2026-05-05T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "56078811-852e-43fd-949c-8bd449aa6f5b",
+      "employeeId": "00034833",
+      "date": "2026-05-05",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-06",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-06T08:00:00",
+      "endDateTime": "2026-05-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-06",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-06T08:00:00",
+      "endDateTime": "2026-05-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-06",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-06T08:00:00",
+      "endDateTime": "2026-05-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-06",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-06T08:00:00",
+      "endDateTime": "2026-05-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-06",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-06",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-06T08:00:00",
+      "endDateTime": "2026-05-06T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-06-f38990",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-06",
+      "employeeId": "00034833",
+      "date": "2026-05-06",
+      "startDateTime": "2026-05-06T08:00:00",
+      "endDateTime": "2026-05-06T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 5,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-07",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-07T08:00:00",
+      "endDateTime": "2026-05-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-07",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-07T08:00:00",
+      "endDateTime": "2026-05-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-07",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-07T08:00:00",
+      "endDateTime": "2026-05-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-07",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-07T08:00:00",
+      "endDateTime": "2026-05-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-07",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-07",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-07T08:00:00",
+      "endDateTime": "2026-05-07T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-07-85b8f9",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-07",
+      "employeeId": "00034833",
+      "date": "2026-05-07",
+      "startDateTime": "2026-05-07T08:00:00",
+      "endDateTime": "2026-05-07T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 6,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-08",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-08T08:00:00",
+      "endDateTime": "2026-05-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-08",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-08T08:00:00",
+      "endDateTime": "2026-05-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-08",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-08T08:00:00",
+      "endDateTime": "2026-05-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-08",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-08T08:00:00",
+      "endDateTime": "2026-05-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-08",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-08",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-08T08:00:00",
+      "endDateTime": "2026-05-08T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "2674f7be-1a9b-4eb9-b3d8-67838ea17a86",
+      "employeeId": "00034833",
+      "date": "2026-05-08",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-09",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-09T08:00:00",
+      "endDateTime": "2026-05-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-09",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-09T08:00:00",
+      "endDateTime": "2026-05-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-09",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-09T08:00:00",
+      "endDateTime": "2026-05-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-09",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-09T08:00:00",
+      "endDateTime": "2026-05-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-09",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-09",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-09T08:00:00",
+      "endDateTime": "2026-05-09T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "9d12064b-2350-4f70-a23e-a9d6e413d73c",
+      "employeeId": "00034833",
+      "date": "2026-05-09",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-10",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-10T08:00:00",
+      "endDateTime": "2026-05-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-10",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-10T08:00:00",
+      "endDateTime": "2026-05-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-10",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-10T08:00:00",
+      "endDateTime": "2026-05-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-10",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-10T08:00:00",
+      "endDateTime": "2026-05-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-10",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-10",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-10T08:00:00",
+      "endDateTime": "2026-05-10T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "2f0cedaa-f968-44e2-843c-abe138b0093c",
+      "employeeId": "00034833",
+      "date": "2026-05-10",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-11",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-11T08:00:00",
+      "endDateTime": "2026-05-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-11",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-11T08:00:00",
+      "endDateTime": "2026-05-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-11",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-11T08:00:00",
+      "endDateTime": "2026-05-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-11",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-11T08:00:00",
+      "endDateTime": "2026-05-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-11",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-11",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-11T08:00:00",
+      "endDateTime": "2026-05-11T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "ea567790-03a3-4a52-a68b-66c74d286aa7",
+      "employeeId": "00034833",
+      "date": "2026-05-11",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-12",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-12T08:00:00",
+      "endDateTime": "2026-05-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-12",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-12T08:00:00",
+      "endDateTime": "2026-05-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-12",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-12T08:00:00",
+      "endDateTime": "2026-05-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-12",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-12T08:00:00",
+      "endDateTime": "2026-05-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-12",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-12",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-12T08:00:00",
+      "endDateTime": "2026-05-12T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "bbab960c-248c-45a8-9ed1-a870e8a5a0a7",
+      "employeeId": "00034833",
+      "date": "2026-05-12",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-13",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-13T08:00:00",
+      "endDateTime": "2026-05-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-13",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-13T08:00:00",
+      "endDateTime": "2026-05-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-13",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-13T08:00:00",
+      "endDateTime": "2026-05-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-13",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-13T08:00:00",
+      "endDateTime": "2026-05-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-13",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-13",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-13T08:00:00",
+      "endDateTime": "2026-05-13T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-13-c7c815",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-13",
+      "employeeId": "00034833",
+      "date": "2026-05-13",
+      "startDateTime": "2026-05-13T08:00:00",
+      "endDateTime": "2026-05-13T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 5,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-14",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-14T08:00:00",
+      "endDateTime": "2026-05-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-14",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-14T08:00:00",
+      "endDateTime": "2026-05-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-14",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-14T08:00:00",
+      "endDateTime": "2026-05-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-14",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-14T08:00:00",
+      "endDateTime": "2026-05-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-14",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-14",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-14T08:00:00",
+      "endDateTime": "2026-05-14T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-14-f0f913",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-14",
+      "employeeId": "00034833",
+      "date": "2026-05-14",
+      "startDateTime": "2026-05-14T08:00:00",
+      "endDateTime": "2026-05-14T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 6,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-15",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-15T08:00:00",
+      "endDateTime": "2026-05-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-15",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-15T08:00:00",
+      "endDateTime": "2026-05-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-15",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-15T08:00:00",
+      "endDateTime": "2026-05-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-15",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-15T08:00:00",
+      "endDateTime": "2026-05-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-15",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-15",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-15T08:00:00",
+      "endDateTime": "2026-05-15T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "035b12e6-bbec-43a9-b0a9-0153eaa0584a",
+      "employeeId": "00034833",
+      "date": "2026-05-15",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-16",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-16T08:00:00",
+      "endDateTime": "2026-05-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-16",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-16T08:00:00",
+      "endDateTime": "2026-05-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-16",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-16T08:00:00",
+      "endDateTime": "2026-05-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-16",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-16T08:00:00",
+      "endDateTime": "2026-05-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-16",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-16",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-16T08:00:00",
+      "endDateTime": "2026-05-16T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "54681045-3cb6-4328-a9f0-81ab01fc3c57",
+      "employeeId": "00034833",
+      "date": "2026-05-16",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-17",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-17T08:00:00",
+      "endDateTime": "2026-05-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-17",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-17T08:00:00",
+      "endDateTime": "2026-05-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-17",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-17T08:00:00",
+      "endDateTime": "2026-05-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-17",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-17T08:00:00",
+      "endDateTime": "2026-05-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-17",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-17",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-17T08:00:00",
+      "endDateTime": "2026-05-17T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "095ed8dd-3db6-4007-ad82-42442de71f6d",
+      "employeeId": "00034833",
+      "date": "2026-05-17",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-18",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-18T08:00:00",
+      "endDateTime": "2026-05-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-18",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-18T08:00:00",
+      "endDateTime": "2026-05-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-18",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-18T08:00:00",
+      "endDateTime": "2026-05-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-18",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-18T08:00:00",
+      "endDateTime": "2026-05-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-18",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-18",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-18T08:00:00",
+      "endDateTime": "2026-05-18T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "eb0d8b64-fb3b-467e-b0a0-cb9aecc73971",
+      "employeeId": "00034833",
+      "date": "2026-05-18",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-19",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-19T08:00:00",
+      "endDateTime": "2026-05-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-19",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-19T08:00:00",
+      "endDateTime": "2026-05-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-19",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-19T08:00:00",
+      "endDateTime": "2026-05-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-19",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-19T08:00:00",
+      "endDateTime": "2026-05-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-19",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-19",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-19T08:00:00",
+      "endDateTime": "2026-05-19T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "5249deab-6756-4aaa-a881-5deb3f06ecfe",
+      "employeeId": "00034833",
+      "date": "2026-05-19",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-20",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-20T08:00:00",
+      "endDateTime": "2026-05-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-20",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-20T08:00:00",
+      "endDateTime": "2026-05-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-20",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-20T08:00:00",
+      "endDateTime": "2026-05-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-20",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-20T08:00:00",
+      "endDateTime": "2026-05-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-20",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-20",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-20T08:00:00",
+      "endDateTime": "2026-05-20T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-20-d7b5a7",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-20",
+      "employeeId": "00034833",
+      "date": "2026-05-20",
+      "startDateTime": "2026-05-20T08:00:00",
+      "endDateTime": "2026-05-20T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 5,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-21",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-21T08:00:00",
+      "endDateTime": "2026-05-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-21",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-21T08:00:00",
+      "endDateTime": "2026-05-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-21",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-21T08:00:00",
+      "endDateTime": "2026-05-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-21",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-21T08:00:00",
+      "endDateTime": "2026-05-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-21",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-21",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-21T08:00:00",
+      "endDateTime": "2026-05-21T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-21-996028",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-21",
+      "employeeId": "00034833",
+      "date": "2026-05-21",
+      "startDateTime": "2026-05-21T08:00:00",
+      "endDateTime": "2026-05-21T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 6,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-22",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-22T08:00:00",
+      "endDateTime": "2026-05-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-22",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-22T08:00:00",
+      "endDateTime": "2026-05-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-22",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-22T08:00:00",
+      "endDateTime": "2026-05-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-22",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-22T08:00:00",
+      "endDateTime": "2026-05-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-22",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-22",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-22T08:00:00",
+      "endDateTime": "2026-05-22T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "a37cfa23-6ec1-47f5-a233-12a820055164",
+      "employeeId": "00034833",
+      "date": "2026-05-22",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-23",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-23T08:00:00",
+      "endDateTime": "2026-05-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-23",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-23T08:00:00",
+      "endDateTime": "2026-05-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-23",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-23T08:00:00",
+      "endDateTime": "2026-05-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-23",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-23T08:00:00",
+      "endDateTime": "2026-05-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-23",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-23",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-23T08:00:00",
+      "endDateTime": "2026-05-23T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "1e612cb2-5c36-4772-ac99-69fe45215c47",
+      "employeeId": "00034833",
+      "date": "2026-05-23",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-24",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-24T08:00:00",
+      "endDateTime": "2026-05-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-24",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-24T08:00:00",
+      "endDateTime": "2026-05-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-24",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-24T08:00:00",
+      "endDateTime": "2026-05-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-24",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-24T08:00:00",
+      "endDateTime": "2026-05-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-24",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-24",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-24T08:00:00",
+      "endDateTime": "2026-05-24T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "a636e4f8-c61b-4c29-9e9e-d34e85f0d0dd",
+      "employeeId": "00034833",
+      "date": "2026-05-24",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-25",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-25T08:00:00",
+      "endDateTime": "2026-05-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-25",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-25T08:00:00",
+      "endDateTime": "2026-05-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-25",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-25T08:00:00",
+      "endDateTime": "2026-05-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-25",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-25T08:00:00",
+      "endDateTime": "2026-05-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-25",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-25",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-25T08:00:00",
+      "endDateTime": "2026-05-25T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "f4d324ac-3de1-4e78-a7e1-e87d9dc9ec14",
+      "employeeId": "00034833",
+      "date": "2026-05-25",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-26",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-26T08:00:00",
+      "endDateTime": "2026-05-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-26",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-26T08:00:00",
+      "endDateTime": "2026-05-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-26",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-26T08:00:00",
+      "endDateTime": "2026-05-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-26",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-26T08:00:00",
+      "endDateTime": "2026-05-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-26",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-26",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-26T08:00:00",
+      "endDateTime": "2026-05-26T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "a6078d82-4921-47a2-8f96-b9a302f5e932",
+      "employeeId": "00034833",
+      "date": "2026-05-26",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-27",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-27T08:00:00",
+      "endDateTime": "2026-05-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-27",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-27T08:00:00",
+      "endDateTime": "2026-05-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-27",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-27T08:00:00",
+      "endDateTime": "2026-05-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-27",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-27T08:00:00",
+      "endDateTime": "2026-05-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-27",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-27",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-27T08:00:00",
+      "endDateTime": "2026-05-27T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-27-2d639a",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-27",
+      "employeeId": "00034833",
+      "date": "2026-05-27",
+      "startDateTime": "2026-05-27T08:00:00",
+      "endDateTime": "2026-05-27T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 5,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-28",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-28T08:00:00",
+      "endDateTime": "2026-05-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-28",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-28T08:00:00",
+      "endDateTime": "2026-05-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-28",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-28T08:00:00",
+      "endDateTime": "2026-05-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-28",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-28T08:00:00",
+      "endDateTime": "2026-05-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-O-2026-05-28",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-28",
+      "shiftCode": "O",
+      "startDateTime": "2026-05-28T08:00:00",
+      "endDateTime": "2026-05-28T20:00:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "OFF-00034833-2026-05-28-dc124a",
+      "demandId": "N/A",
+      "requirementId": "N/A",
+      "slotId": "OFF-00034833-2026-05-28",
+      "employeeId": "00034833",
+      "date": "2026-05-28",
+      "startDateTime": "2026-05-28T08:00:00",
+      "endDateTime": "2026-05-28T20:00:00",
+      "shiftCode": "O",
+      "patternDay": 6,
+      "newRotationOffset": 0,
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-29",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-29T08:00:00",
+      "endDateTime": "2026-05-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-29",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-29T08:00:00",
+      "endDateTime": "2026-05-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-29",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-29T08:00:00",
+      "endDateTime": "2026-05-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-29",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-29T08:00:00",
+      "endDateTime": "2026-05-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-29",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-29",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-29T08:00:00",
+      "endDateTime": "2026-05-29T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "7b4c98fd-3d2e-474b-805c-e662a9efe6e5",
+      "employeeId": "00034833",
+      "date": "2026-05-29",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-30",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-30T08:00:00",
+      "endDateTime": "2026-05-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-30",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-30T08:00:00",
+      "endDateTime": "2026-05-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-30",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-30T08:00:00",
+      "endDateTime": "2026-05-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-30",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-30T08:00:00",
+      "endDateTime": "2026-05-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-30",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-30",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-30T08:00:00",
+      "endDateTime": "2026-05-30T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "c5298a25-f539-4bc8-8e08-384705e1cf28",
+      "employeeId": "00034833",
+      "date": "2026-05-30",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00032093",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-31",
+      "employeeId": "00032093",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-31T08:00:00",
+      "endDateTime": "2026-05-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033064",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-31",
+      "employeeId": "00033064",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-31T08:00:00",
+      "endDateTime": "2026-05-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033182",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-31",
+      "employeeId": "00033182",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-31T08:00:00",
+      "endDateTime": "2026-05-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033261",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-31",
+      "employeeId": "00033261",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-31T08:00:00",
+      "endDateTime": "2026-05-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033642",
+      "slotId": "DI-2512310229-69005564-255_1-D-2026-05-31",
+      "employeeId": "00033642",
+      "demandId": "DI-2512310229-69005564",
+      "requirementId": "255_1",
+      "date": "2026-05-31",
+      "shiftCode": "D",
+      "startDateTime": "2026-05-31T08:00:00",
+      "endDateTime": "2026-05-31T20:00:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "6698fcc6-0de2-4211-b62d-e3894f501214",
+      "employeeId": "00034833",
+      "date": "2026-05-31",
+      "shiftCode": "UNASSIGNED",
+      "startDateTime": null,
+      "endDateTime": null,
+      "normalHours": 0,
+      "overtimeHours": 0,
+      "publicHolidayHours": 0,
+      "restDayPayHours": 0,
+      "demandItemId": null,
+      "positionCode": null,
+      "locationCode": null,
+      "hours": {
+        "gross": 0,
+        "lunch": 0,
+        "normal": 0,
+        "ot": 0,
+        "paid": 0,
+        "error": "fromisoformat: argument must be str"
+      }
+    }
+  ],
+  "employeeRoster": [
+    {
+      "employeeId": "00032093",
+      "rankId": "SGT",
+      "productTypeId": "APO",
+      "ouId": "PB T1 A1",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-05-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00032093",
+          "startDateTime": "2026-05-01T08:00:00",
+          "endDateTime": "2026-05-01T20:00:00"
+        },
+        {
+          "date": "2026-05-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00032093",
+          "startDateTime": "2026-05-02T08:00:00",
+          "endDateTime": "2026-05-02T20:00:00"
+        },
+        {
+          "date": "2026-05-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00032093",
+          "startDateTime": "2026-05-03T08:00:00",
+          "endDateTime": "2026-05-03T20:00:00"
+        },
+        {
+          "date": "2026-05-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00032093",
+          "startDateTime": "2026-05-04T08:00:00",
+          "endDateTime": "2026-05-04T20:00:00"
+        },
+        {
+          "date": "2026-05-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00032093",
+          "startDateTime": "2026-05-05T08:00:00",
+          "endDateTime": "2026-05-05T20:00:00"
+        },
+        {
+          "date": "2026-05-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00032093",
+          "startDateTime": "2026-05-06T08:00:00",
+          "endDateTime": "2026-05-06T20:00:00"
+        },
+        {
+          "date": "2026-05-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00032093",
+          "startDateTime": "2026-05-07T08:00:00",
+          "endDateTime": "2026-05-07T20:00:00"
+        },
+        {
+          "date": "2026-05-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00032093",
+          "startDateTime": "2026-05-08T08:00:00",
+          "endDateTime": "2026-05-08T20:00:00"
+        },
+        {
+          "date": "2026-05-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00032093",
+          "startDateTime": "2026-05-09T08:00:00",
+          "endDateTime": "2026-05-09T20:00:00"
+        },
+        {
+          "date": "2026-05-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00032093",
+          "startDateTime": "2026-05-10T08:00:00",
+          "endDateTime": "2026-05-10T20:00:00"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00032093",
+          "startDateTime": "2026-05-11T08:00:00",
+          "endDateTime": "2026-05-11T20:00:00"
+        },
+        {
+          "date": "2026-05-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00032093",
+          "startDateTime": "2026-05-12T08:00:00",
+          "endDateTime": "2026-05-12T20:00:00"
+        },
+        {
+          "date": "2026-05-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00032093",
+          "startDateTime": "2026-05-13T08:00:00",
+          "endDateTime": "2026-05-13T20:00:00"
+        },
+        {
+          "date": "2026-05-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00032093",
+          "startDateTime": "2026-05-14T08:00:00",
+          "endDateTime": "2026-05-14T20:00:00"
+        },
+        {
+          "date": "2026-05-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00032093",
+          "startDateTime": "2026-05-15T08:00:00",
+          "endDateTime": "2026-05-15T20:00:00"
+        },
+        {
+          "date": "2026-05-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00032093",
+          "startDateTime": "2026-05-16T08:00:00",
+          "endDateTime": "2026-05-16T20:00:00"
+        },
+        {
+          "date": "2026-05-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00032093",
+          "startDateTime": "2026-05-17T08:00:00",
+          "endDateTime": "2026-05-17T20:00:00"
+        },
+        {
+          "date": "2026-05-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00032093",
+          "startDateTime": "2026-05-18T08:00:00",
+          "endDateTime": "2026-05-18T20:00:00"
+        },
+        {
+          "date": "2026-05-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00032093",
+          "startDateTime": "2026-05-19T08:00:00",
+          "endDateTime": "2026-05-19T20:00:00"
+        },
+        {
+          "date": "2026-05-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00032093",
+          "startDateTime": "2026-05-20T08:00:00",
+          "endDateTime": "2026-05-20T20:00:00"
+        },
+        {
+          "date": "2026-05-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00032093",
+          "startDateTime": "2026-05-21T08:00:00",
+          "endDateTime": "2026-05-21T20:00:00"
+        },
+        {
+          "date": "2026-05-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00032093",
+          "startDateTime": "2026-05-22T08:00:00",
+          "endDateTime": "2026-05-22T20:00:00"
+        },
+        {
+          "date": "2026-05-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00032093",
+          "startDateTime": "2026-05-23T08:00:00",
+          "endDateTime": "2026-05-23T20:00:00"
+        },
+        {
+          "date": "2026-05-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00032093",
+          "startDateTime": "2026-05-24T08:00:00",
+          "endDateTime": "2026-05-24T20:00:00"
+        },
+        {
+          "date": "2026-05-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00032093",
+          "startDateTime": "2026-05-25T08:00:00",
+          "endDateTime": "2026-05-25T20:00:00"
+        },
+        {
+          "date": "2026-05-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00032093",
+          "startDateTime": "2026-05-26T08:00:00",
+          "endDateTime": "2026-05-26T20:00:00"
+        },
+        {
+          "date": "2026-05-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00032093",
+          "startDateTime": "2026-05-27T08:00:00",
+          "endDateTime": "2026-05-27T20:00:00"
+        },
+        {
+          "date": "2026-05-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00032093",
+          "startDateTime": "2026-05-28T08:00:00",
+          "endDateTime": "2026-05-28T20:00:00"
+        },
+        {
+          "date": "2026-05-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00032093",
+          "startDateTime": "2026-05-29T08:00:00",
+          "endDateTime": "2026-05-29T20:00:00"
+        },
+        {
+          "date": "2026-05-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00032093",
+          "startDateTime": "2026-05-30T08:00:00",
+          "endDateTime": "2026-05-30T20:00:00"
+        },
+        {
+          "date": "2026-05-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00032093",
+          "startDateTime": "2026-05-31T08:00:00",
+          "endDateTime": "2026-05-31T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00033064",
+      "rankId": "SI",
+      "productTypeId": "APO",
+      "ouId": "PB T1 A1",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-05-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033064",
+          "startDateTime": "2026-05-01T08:00:00",
+          "endDateTime": "2026-05-01T20:00:00"
+        },
+        {
+          "date": "2026-05-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033064",
+          "startDateTime": "2026-05-02T08:00:00",
+          "endDateTime": "2026-05-02T20:00:00"
+        },
+        {
+          "date": "2026-05-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033064",
+          "startDateTime": "2026-05-03T08:00:00",
+          "endDateTime": "2026-05-03T20:00:00"
+        },
+        {
+          "date": "2026-05-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033064",
+          "startDateTime": "2026-05-04T08:00:00",
+          "endDateTime": "2026-05-04T20:00:00"
+        },
+        {
+          "date": "2026-05-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033064",
+          "startDateTime": "2026-05-05T08:00:00",
+          "endDateTime": "2026-05-05T20:00:00"
+        },
+        {
+          "date": "2026-05-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033064",
+          "startDateTime": "2026-05-06T08:00:00",
+          "endDateTime": "2026-05-06T20:00:00"
+        },
+        {
+          "date": "2026-05-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033064",
+          "startDateTime": "2026-05-07T08:00:00",
+          "endDateTime": "2026-05-07T20:00:00"
+        },
+        {
+          "date": "2026-05-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033064",
+          "startDateTime": "2026-05-08T08:00:00",
+          "endDateTime": "2026-05-08T20:00:00"
+        },
+        {
+          "date": "2026-05-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033064",
+          "startDateTime": "2026-05-09T08:00:00",
+          "endDateTime": "2026-05-09T20:00:00"
+        },
+        {
+          "date": "2026-05-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033064",
+          "startDateTime": "2026-05-10T08:00:00",
+          "endDateTime": "2026-05-10T20:00:00"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033064",
+          "startDateTime": "2026-05-11T08:00:00",
+          "endDateTime": "2026-05-11T20:00:00"
+        },
+        {
+          "date": "2026-05-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033064",
+          "startDateTime": "2026-05-12T08:00:00",
+          "endDateTime": "2026-05-12T20:00:00"
+        },
+        {
+          "date": "2026-05-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033064",
+          "startDateTime": "2026-05-13T08:00:00",
+          "endDateTime": "2026-05-13T20:00:00"
+        },
+        {
+          "date": "2026-05-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033064",
+          "startDateTime": "2026-05-14T08:00:00",
+          "endDateTime": "2026-05-14T20:00:00"
+        },
+        {
+          "date": "2026-05-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033064",
+          "startDateTime": "2026-05-15T08:00:00",
+          "endDateTime": "2026-05-15T20:00:00"
+        },
+        {
+          "date": "2026-05-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033064",
+          "startDateTime": "2026-05-16T08:00:00",
+          "endDateTime": "2026-05-16T20:00:00"
+        },
+        {
+          "date": "2026-05-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033064",
+          "startDateTime": "2026-05-17T08:00:00",
+          "endDateTime": "2026-05-17T20:00:00"
+        },
+        {
+          "date": "2026-05-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033064",
+          "startDateTime": "2026-05-18T08:00:00",
+          "endDateTime": "2026-05-18T20:00:00"
+        },
+        {
+          "date": "2026-05-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033064",
+          "startDateTime": "2026-05-19T08:00:00",
+          "endDateTime": "2026-05-19T20:00:00"
+        },
+        {
+          "date": "2026-05-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033064",
+          "startDateTime": "2026-05-20T08:00:00",
+          "endDateTime": "2026-05-20T20:00:00"
+        },
+        {
+          "date": "2026-05-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033064",
+          "startDateTime": "2026-05-21T08:00:00",
+          "endDateTime": "2026-05-21T20:00:00"
+        },
+        {
+          "date": "2026-05-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033064",
+          "startDateTime": "2026-05-22T08:00:00",
+          "endDateTime": "2026-05-22T20:00:00"
+        },
+        {
+          "date": "2026-05-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033064",
+          "startDateTime": "2026-05-23T08:00:00",
+          "endDateTime": "2026-05-23T20:00:00"
+        },
+        {
+          "date": "2026-05-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033064",
+          "startDateTime": "2026-05-24T08:00:00",
+          "endDateTime": "2026-05-24T20:00:00"
+        },
+        {
+          "date": "2026-05-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033064",
+          "startDateTime": "2026-05-25T08:00:00",
+          "endDateTime": "2026-05-25T20:00:00"
+        },
+        {
+          "date": "2026-05-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033064",
+          "startDateTime": "2026-05-26T08:00:00",
+          "endDateTime": "2026-05-26T20:00:00"
+        },
+        {
+          "date": "2026-05-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033064",
+          "startDateTime": "2026-05-27T08:00:00",
+          "endDateTime": "2026-05-27T20:00:00"
+        },
+        {
+          "date": "2026-05-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033064",
+          "startDateTime": "2026-05-28T08:00:00",
+          "endDateTime": "2026-05-28T20:00:00"
+        },
+        {
+          "date": "2026-05-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033064",
+          "startDateTime": "2026-05-29T08:00:00",
+          "endDateTime": "2026-05-29T20:00:00"
+        },
+        {
+          "date": "2026-05-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033064",
+          "startDateTime": "2026-05-30T08:00:00",
+          "endDateTime": "2026-05-30T20:00:00"
+        },
+        {
+          "date": "2026-05-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033064",
+          "startDateTime": "2026-05-31T08:00:00",
+          "endDateTime": "2026-05-31T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00033182",
+      "rankId": "SGT",
+      "productTypeId": "APO",
+      "ouId": "PB T1 A1",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-05-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033182",
+          "startDateTime": "2026-05-01T08:00:00",
+          "endDateTime": "2026-05-01T20:00:00"
+        },
+        {
+          "date": "2026-05-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033182",
+          "startDateTime": "2026-05-02T08:00:00",
+          "endDateTime": "2026-05-02T20:00:00"
+        },
+        {
+          "date": "2026-05-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033182",
+          "startDateTime": "2026-05-03T08:00:00",
+          "endDateTime": "2026-05-03T20:00:00"
+        },
+        {
+          "date": "2026-05-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033182",
+          "startDateTime": "2026-05-04T08:00:00",
+          "endDateTime": "2026-05-04T20:00:00"
+        },
+        {
+          "date": "2026-05-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033182",
+          "startDateTime": "2026-05-05T08:00:00",
+          "endDateTime": "2026-05-05T20:00:00"
+        },
+        {
+          "date": "2026-05-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033182",
+          "startDateTime": "2026-05-06T08:00:00",
+          "endDateTime": "2026-05-06T20:00:00"
+        },
+        {
+          "date": "2026-05-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033182",
+          "startDateTime": "2026-05-07T08:00:00",
+          "endDateTime": "2026-05-07T20:00:00"
+        },
+        {
+          "date": "2026-05-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033182",
+          "startDateTime": "2026-05-08T08:00:00",
+          "endDateTime": "2026-05-08T20:00:00"
+        },
+        {
+          "date": "2026-05-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033182",
+          "startDateTime": "2026-05-09T08:00:00",
+          "endDateTime": "2026-05-09T20:00:00"
+        },
+        {
+          "date": "2026-05-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033182",
+          "startDateTime": "2026-05-10T08:00:00",
+          "endDateTime": "2026-05-10T20:00:00"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033182",
+          "startDateTime": "2026-05-11T08:00:00",
+          "endDateTime": "2026-05-11T20:00:00"
+        },
+        {
+          "date": "2026-05-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033182",
+          "startDateTime": "2026-05-12T08:00:00",
+          "endDateTime": "2026-05-12T20:00:00"
+        },
+        {
+          "date": "2026-05-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033182",
+          "startDateTime": "2026-05-13T08:00:00",
+          "endDateTime": "2026-05-13T20:00:00"
+        },
+        {
+          "date": "2026-05-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033182",
+          "startDateTime": "2026-05-14T08:00:00",
+          "endDateTime": "2026-05-14T20:00:00"
+        },
+        {
+          "date": "2026-05-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033182",
+          "startDateTime": "2026-05-15T08:00:00",
+          "endDateTime": "2026-05-15T20:00:00"
+        },
+        {
+          "date": "2026-05-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033182",
+          "startDateTime": "2026-05-16T08:00:00",
+          "endDateTime": "2026-05-16T20:00:00"
+        },
+        {
+          "date": "2026-05-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033182",
+          "startDateTime": "2026-05-17T08:00:00",
+          "endDateTime": "2026-05-17T20:00:00"
+        },
+        {
+          "date": "2026-05-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033182",
+          "startDateTime": "2026-05-18T08:00:00",
+          "endDateTime": "2026-05-18T20:00:00"
+        },
+        {
+          "date": "2026-05-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033182",
+          "startDateTime": "2026-05-19T08:00:00",
+          "endDateTime": "2026-05-19T20:00:00"
+        },
+        {
+          "date": "2026-05-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033182",
+          "startDateTime": "2026-05-20T08:00:00",
+          "endDateTime": "2026-05-20T20:00:00"
+        },
+        {
+          "date": "2026-05-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033182",
+          "startDateTime": "2026-05-21T08:00:00",
+          "endDateTime": "2026-05-21T20:00:00"
+        },
+        {
+          "date": "2026-05-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033182",
+          "startDateTime": "2026-05-22T08:00:00",
+          "endDateTime": "2026-05-22T20:00:00"
+        },
+        {
+          "date": "2026-05-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033182",
+          "startDateTime": "2026-05-23T08:00:00",
+          "endDateTime": "2026-05-23T20:00:00"
+        },
+        {
+          "date": "2026-05-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033182",
+          "startDateTime": "2026-05-24T08:00:00",
+          "endDateTime": "2026-05-24T20:00:00"
+        },
+        {
+          "date": "2026-05-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033182",
+          "startDateTime": "2026-05-25T08:00:00",
+          "endDateTime": "2026-05-25T20:00:00"
+        },
+        {
+          "date": "2026-05-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033182",
+          "startDateTime": "2026-05-26T08:00:00",
+          "endDateTime": "2026-05-26T20:00:00"
+        },
+        {
+          "date": "2026-05-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033182",
+          "startDateTime": "2026-05-27T08:00:00",
+          "endDateTime": "2026-05-27T20:00:00"
+        },
+        {
+          "date": "2026-05-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033182",
+          "startDateTime": "2026-05-28T08:00:00",
+          "endDateTime": "2026-05-28T20:00:00"
+        },
+        {
+          "date": "2026-05-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033182",
+          "startDateTime": "2026-05-29T08:00:00",
+          "endDateTime": "2026-05-29T20:00:00"
+        },
+        {
+          "date": "2026-05-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033182",
+          "startDateTime": "2026-05-30T08:00:00",
+          "endDateTime": "2026-05-30T20:00:00"
+        },
+        {
+          "date": "2026-05-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033182",
+          "startDateTime": "2026-05-31T08:00:00",
+          "endDateTime": "2026-05-31T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00033261",
+      "rankId": "SGT",
+      "productTypeId": "APO",
+      "ouId": "PB T1 A1",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-05-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033261",
+          "startDateTime": "2026-05-01T08:00:00",
+          "endDateTime": "2026-05-01T20:00:00"
+        },
+        {
+          "date": "2026-05-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033261",
+          "startDateTime": "2026-05-02T08:00:00",
+          "endDateTime": "2026-05-02T20:00:00"
+        },
+        {
+          "date": "2026-05-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033261",
+          "startDateTime": "2026-05-03T08:00:00",
+          "endDateTime": "2026-05-03T20:00:00"
+        },
+        {
+          "date": "2026-05-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033261",
+          "startDateTime": "2026-05-04T08:00:00",
+          "endDateTime": "2026-05-04T20:00:00"
+        },
+        {
+          "date": "2026-05-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033261",
+          "startDateTime": "2026-05-05T08:00:00",
+          "endDateTime": "2026-05-05T20:00:00"
+        },
+        {
+          "date": "2026-05-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033261",
+          "startDateTime": "2026-05-06T08:00:00",
+          "endDateTime": "2026-05-06T20:00:00"
+        },
+        {
+          "date": "2026-05-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033261",
+          "startDateTime": "2026-05-07T08:00:00",
+          "endDateTime": "2026-05-07T20:00:00"
+        },
+        {
+          "date": "2026-05-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033261",
+          "startDateTime": "2026-05-08T08:00:00",
+          "endDateTime": "2026-05-08T20:00:00"
+        },
+        {
+          "date": "2026-05-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033261",
+          "startDateTime": "2026-05-09T08:00:00",
+          "endDateTime": "2026-05-09T20:00:00"
+        },
+        {
+          "date": "2026-05-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033261",
+          "startDateTime": "2026-05-10T08:00:00",
+          "endDateTime": "2026-05-10T20:00:00"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033261",
+          "startDateTime": "2026-05-11T08:00:00",
+          "endDateTime": "2026-05-11T20:00:00"
+        },
+        {
+          "date": "2026-05-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033261",
+          "startDateTime": "2026-05-12T08:00:00",
+          "endDateTime": "2026-05-12T20:00:00"
+        },
+        {
+          "date": "2026-05-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033261",
+          "startDateTime": "2026-05-13T08:00:00",
+          "endDateTime": "2026-05-13T20:00:00"
+        },
+        {
+          "date": "2026-05-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033261",
+          "startDateTime": "2026-05-14T08:00:00",
+          "endDateTime": "2026-05-14T20:00:00"
+        },
+        {
+          "date": "2026-05-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033261",
+          "startDateTime": "2026-05-15T08:00:00",
+          "endDateTime": "2026-05-15T20:00:00"
+        },
+        {
+          "date": "2026-05-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033261",
+          "startDateTime": "2026-05-16T08:00:00",
+          "endDateTime": "2026-05-16T20:00:00"
+        },
+        {
+          "date": "2026-05-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033261",
+          "startDateTime": "2026-05-17T08:00:00",
+          "endDateTime": "2026-05-17T20:00:00"
+        },
+        {
+          "date": "2026-05-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033261",
+          "startDateTime": "2026-05-18T08:00:00",
+          "endDateTime": "2026-05-18T20:00:00"
+        },
+        {
+          "date": "2026-05-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033261",
+          "startDateTime": "2026-05-19T08:00:00",
+          "endDateTime": "2026-05-19T20:00:00"
+        },
+        {
+          "date": "2026-05-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033261",
+          "startDateTime": "2026-05-20T08:00:00",
+          "endDateTime": "2026-05-20T20:00:00"
+        },
+        {
+          "date": "2026-05-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033261",
+          "startDateTime": "2026-05-21T08:00:00",
+          "endDateTime": "2026-05-21T20:00:00"
+        },
+        {
+          "date": "2026-05-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033261",
+          "startDateTime": "2026-05-22T08:00:00",
+          "endDateTime": "2026-05-22T20:00:00"
+        },
+        {
+          "date": "2026-05-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033261",
+          "startDateTime": "2026-05-23T08:00:00",
+          "endDateTime": "2026-05-23T20:00:00"
+        },
+        {
+          "date": "2026-05-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033261",
+          "startDateTime": "2026-05-24T08:00:00",
+          "endDateTime": "2026-05-24T20:00:00"
+        },
+        {
+          "date": "2026-05-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033261",
+          "startDateTime": "2026-05-25T08:00:00",
+          "endDateTime": "2026-05-25T20:00:00"
+        },
+        {
+          "date": "2026-05-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033261",
+          "startDateTime": "2026-05-26T08:00:00",
+          "endDateTime": "2026-05-26T20:00:00"
+        },
+        {
+          "date": "2026-05-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033261",
+          "startDateTime": "2026-05-27T08:00:00",
+          "endDateTime": "2026-05-27T20:00:00"
+        },
+        {
+          "date": "2026-05-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033261",
+          "startDateTime": "2026-05-28T08:00:00",
+          "endDateTime": "2026-05-28T20:00:00"
+        },
+        {
+          "date": "2026-05-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033261",
+          "startDateTime": "2026-05-29T08:00:00",
+          "endDateTime": "2026-05-29T20:00:00"
+        },
+        {
+          "date": "2026-05-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033261",
+          "startDateTime": "2026-05-30T08:00:00",
+          "endDateTime": "2026-05-30T20:00:00"
+        },
+        {
+          "date": "2026-05-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033261",
+          "startDateTime": "2026-05-31T08:00:00",
+          "endDateTime": "2026-05-31T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00033642",
+      "rankId": "COR",
+      "productTypeId": "APO",
+      "ouId": "PB T1 A1",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 23,
+      "offDays": 8,
+      "normalHours": 202.4,
+      "otHours": 50.6,
+      "totalHours": 276.0,
+      "assignedDays": 23,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-05-01",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-01-D-00033642",
+          "startDateTime": "2026-05-01T08:00:00",
+          "endDateTime": "2026-05-01T20:00:00"
+        },
+        {
+          "date": "2026-05-02",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-02-D-00033642",
+          "startDateTime": "2026-05-02T08:00:00",
+          "endDateTime": "2026-05-02T20:00:00"
+        },
+        {
+          "date": "2026-05-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-03-D-00033642",
+          "startDateTime": "2026-05-03T08:00:00",
+          "endDateTime": "2026-05-03T20:00:00"
+        },
+        {
+          "date": "2026-05-04",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-04-D-00033642",
+          "startDateTime": "2026-05-04T08:00:00",
+          "endDateTime": "2026-05-04T20:00:00"
+        },
+        {
+          "date": "2026-05-05",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-05-D-00033642",
+          "startDateTime": "2026-05-05T08:00:00",
+          "endDateTime": "2026-05-05T20:00:00"
+        },
+        {
+          "date": "2026-05-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-06-O-00033642",
+          "startDateTime": "2026-05-06T08:00:00",
+          "endDateTime": "2026-05-06T20:00:00"
+        },
+        {
+          "date": "2026-05-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-07-O-00033642",
+          "startDateTime": "2026-05-07T08:00:00",
+          "endDateTime": "2026-05-07T20:00:00"
+        },
+        {
+          "date": "2026-05-08",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-08-D-00033642",
+          "startDateTime": "2026-05-08T08:00:00",
+          "endDateTime": "2026-05-08T20:00:00"
+        },
+        {
+          "date": "2026-05-09",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-09-D-00033642",
+          "startDateTime": "2026-05-09T08:00:00",
+          "endDateTime": "2026-05-09T20:00:00"
+        },
+        {
+          "date": "2026-05-10",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-10-D-00033642",
+          "startDateTime": "2026-05-10T08:00:00",
+          "endDateTime": "2026-05-10T20:00:00"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-11-D-00033642",
+          "startDateTime": "2026-05-11T08:00:00",
+          "endDateTime": "2026-05-11T20:00:00"
+        },
+        {
+          "date": "2026-05-12",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-12-D-00033642",
+          "startDateTime": "2026-05-12T08:00:00",
+          "endDateTime": "2026-05-12T20:00:00"
+        },
+        {
+          "date": "2026-05-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-13-O-00033642",
+          "startDateTime": "2026-05-13T08:00:00",
+          "endDateTime": "2026-05-13T20:00:00"
+        },
+        {
+          "date": "2026-05-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-14-O-00033642",
+          "startDateTime": "2026-05-14T08:00:00",
+          "endDateTime": "2026-05-14T20:00:00"
+        },
+        {
+          "date": "2026-05-15",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-15-D-00033642",
+          "startDateTime": "2026-05-15T08:00:00",
+          "endDateTime": "2026-05-15T20:00:00"
+        },
+        {
+          "date": "2026-05-16",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-16-D-00033642",
+          "startDateTime": "2026-05-16T08:00:00",
+          "endDateTime": "2026-05-16T20:00:00"
+        },
+        {
+          "date": "2026-05-17",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-17-D-00033642",
+          "startDateTime": "2026-05-17T08:00:00",
+          "endDateTime": "2026-05-17T20:00:00"
+        },
+        {
+          "date": "2026-05-18",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-18-D-00033642",
+          "startDateTime": "2026-05-18T08:00:00",
+          "endDateTime": "2026-05-18T20:00:00"
+        },
+        {
+          "date": "2026-05-19",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-19-D-00033642",
+          "startDateTime": "2026-05-19T08:00:00",
+          "endDateTime": "2026-05-19T20:00:00"
+        },
+        {
+          "date": "2026-05-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-20-O-00033642",
+          "startDateTime": "2026-05-20T08:00:00",
+          "endDateTime": "2026-05-20T20:00:00"
+        },
+        {
+          "date": "2026-05-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-21-O-00033642",
+          "startDateTime": "2026-05-21T08:00:00",
+          "endDateTime": "2026-05-21T20:00:00"
+        },
+        {
+          "date": "2026-05-22",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-22-D-00033642",
+          "startDateTime": "2026-05-22T08:00:00",
+          "endDateTime": "2026-05-22T20:00:00"
+        },
+        {
+          "date": "2026-05-23",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-23-D-00033642",
+          "startDateTime": "2026-05-23T08:00:00",
+          "endDateTime": "2026-05-23T20:00:00"
+        },
+        {
+          "date": "2026-05-24",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-24-D-00033642",
+          "startDateTime": "2026-05-24T08:00:00",
+          "endDateTime": "2026-05-24T20:00:00"
+        },
+        {
+          "date": "2026-05-25",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 3,
+          "assignmentId": "DI-2512310229-69005564-2026-05-25-D-00033642",
+          "startDateTime": "2026-05-25T08:00:00",
+          "endDateTime": "2026-05-25T20:00:00"
+        },
+        {
+          "date": "2026-05-26",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 4,
+          "assignmentId": "DI-2512310229-69005564-2026-05-26-D-00033642",
+          "startDateTime": "2026-05-26T08:00:00",
+          "endDateTime": "2026-05-26T20:00:00"
+        },
+        {
+          "date": "2026-05-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "DI-2512310229-69005564-2026-05-27-O-00033642",
+          "startDateTime": "2026-05-27T08:00:00",
+          "endDateTime": "2026-05-27T20:00:00"
+        },
+        {
+          "date": "2026-05-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "DI-2512310229-69005564-2026-05-28-O-00033642",
+          "startDateTime": "2026-05-28T08:00:00",
+          "endDateTime": "2026-05-28T20:00:00"
+        },
+        {
+          "date": "2026-05-29",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 0,
+          "assignmentId": "DI-2512310229-69005564-2026-05-29-D-00033642",
+          "startDateTime": "2026-05-29T08:00:00",
+          "endDateTime": "2026-05-29T20:00:00"
+        },
+        {
+          "date": "2026-05-30",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 1,
+          "assignmentId": "DI-2512310229-69005564-2026-05-30-D-00033642",
+          "startDateTime": "2026-05-30T08:00:00",
+          "endDateTime": "2026-05-30T20:00:00"
+        },
+        {
+          "date": "2026-05-31",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2512310229-69005564-2026-05-31-D-00033642",
+          "startDateTime": "2026-05-31T08:00:00",
+          "endDateTime": "2026-05-31T20:00:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00034833",
+      "rankId": "COR",
+      "productTypeId": "APO",
+      "ouId": "PB T1 A1",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "D",
+        "D",
+        "D",
+        "O",
+        "O"
+      ],
+      "totalDays": 31,
+      "workDays": 0,
+      "offDays": 8,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 23,
+      "dailyStatus": [
+        {
+          "date": "2026-05-01",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-02",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-03",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-04",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-05",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-06",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "OFF-00034833-2026-05-06-f38990",
+          "startDateTime": "2026-05-06T08:00:00",
+          "endDateTime": "2026-05-06T20:00:00"
+        },
+        {
+          "date": "2026-05-07",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "OFF-00034833-2026-05-07-85b8f9",
+          "startDateTime": "2026-05-07T08:00:00",
+          "endDateTime": "2026-05-07T20:00:00"
+        },
+        {
+          "date": "2026-05-08",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-09",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-10",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-11",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-12",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-13",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "OFF-00034833-2026-05-13-c7c815",
+          "startDateTime": "2026-05-13T08:00:00",
+          "endDateTime": "2026-05-13T20:00:00"
+        },
+        {
+          "date": "2026-05-14",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "OFF-00034833-2026-05-14-f0f913",
+          "startDateTime": "2026-05-14T08:00:00",
+          "endDateTime": "2026-05-14T20:00:00"
+        },
+        {
+          "date": "2026-05-15",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-16",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-17",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-18",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-19",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-20",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "OFF-00034833-2026-05-20-d7b5a7",
+          "startDateTime": "2026-05-20T08:00:00",
+          "endDateTime": "2026-05-20T20:00:00"
+        },
+        {
+          "date": "2026-05-21",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "OFF-00034833-2026-05-21-996028",
+          "startDateTime": "2026-05-21T08:00:00",
+          "endDateTime": "2026-05-21T20:00:00"
+        },
+        {
+          "date": "2026-05-22",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-23",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-24",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-25",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-26",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-27",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 5,
+          "assignmentId": "OFF-00034833-2026-05-27-2d639a",
+          "startDateTime": "2026-05-27T08:00:00",
+          "endDateTime": "2026-05-27T20:00:00"
+        },
+        {
+          "date": "2026-05-28",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 6,
+          "assignmentId": "OFF-00034833-2026-05-28-dc124a",
+          "startDateTime": "2026-05-28T08:00:00",
+          "endDateTime": "2026-05-28T20:00:00"
+        },
+        {
+          "date": "2026-05-29",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-30",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        },
+        {
+          "date": "2026-05-31",
+          "status": "UNASSIGNED",
+          "shiftCode": null,
+          "expectedShift": "D",
+          "reason": "Pattern indicates D shift but not assigned"
+        }
+      ]
+    }
+  ],
+  "rosterSummary": {
+    "totalDailyStatuses": 186,
+    "byStatus": {
+      "ASSIGNED": 115,
+      "OFF_DAY": 48,
+      "UNASSIGNED": 23,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "OPTIMAL",
+    "solverStatus": "OPTIMAL",
+    "solverStatusExplanation": "CP-SAT proved this is the best possible solution. The solver exhaustively searched the solution space and mathematically verified no better solution exists.",
+    "qualityExplanation": "CP-SAT solver proved this is the best possible solution within the constraint model.",
+    "coverageMetrics": {
+      "totalSlots": 0,
+      "assignedSlots": 186,
+      "unassignedSlots": -186,
+      "coverageRate": 0,
+      "coverageQuality": "PARTIAL"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 6,
+      "employeesUsed": 6,
+      "employeesUnused": 0,
+      "utilizationRate": 100.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 31,
+      "maxShiftsPerEmployee": 31,
+      "avgShiftsPerEmployee": 31.0,
+      "shiftVariance": 0,
+      "balanceQuality": 100.0,
+      "balanceGrade": "PERFECT"
+    },
+    "optimizationContext": {
+      "optimizationMode": "minimizeEmployeeCount",
+      "fixedRotationOffset": "ouOffsets",
+      "patternBased": true,
+      "continuousAdherence": true
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:e6a029a10c1d059ff21da47ba148d66e0d901c46d4c9c2692d9ae203ed98b443",
+    "generatedAt": "2026-01-13T13:16:29.215721",
+    "employeeHours": {
+      "00032093": {
+        "weekly_normal": {
+          "2026-W18": 26.4,
+          "2026-W19": 44.0,
+          "2026-W20": 44.0,
+          "2026-W21": 44.0,
+          "2026-W22": 44.0
+        },
+        "monthly_ot": {
+          "2026-05": 50.6
+        }
+      },
+      "00033064": {
+        "weekly_normal": {
+          "2026-W18": 26.4,
+          "2026-W19": 44.0,
+          "2026-W20": 44.0,
+          "2026-W21": 44.0,
+          "2026-W22": 44.0
+        },
+        "monthly_ot": {
+          "2026-05": 50.6
+        }
+      },
+      "00033182": {
+        "weekly_normal": {
+          "2026-W18": 26.4,
+          "2026-W19": 44.0,
+          "2026-W20": 44.0,
+          "2026-W21": 44.0,
+          "2026-W22": 44.0
+        },
+        "monthly_ot": {
+          "2026-05": 50.6
+        }
+      },
+      "00033261": {
+        "weekly_normal": {
+          "2026-W18": 26.4,
+          "2026-W19": 44.0,
+          "2026-W20": 44.0,
+          "2026-W21": 44.0,
+          "2026-W22": 44.0
+        },
+        "monthly_ot": {
+          "2026-05": 50.6
+        }
+      },
+      "00033642": {
+        "weekly_normal": {
+          "2026-W18": 26.4,
+          "2026-W19": 44.0,
+          "2026-W20": 44.0,
+          "2026-W21": 44.0,
+          "2026-W22": 44.0
+        },
+        "monthly_ot": {
+          "2026-05": 50.6
+        }
+      }
+    }
+  }
+}
