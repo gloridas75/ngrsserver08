@@ -1,0 +1,79 @@
+[
+  {
+    "test": "RST-20260113-C9FE1E08_Solver_Input.json",
+    "rostering_basis": "outcomeBased",
+    "output_file": "output/regression_RST-20260113-C9FE1E08_Solver_Input_output.json",
+    "status": "PASS",
+    "assignments_off_days": 48,
+    "roster_off_days": 48,
+    "summary_off_days": 48,
+    "missing": 0,
+    "extra": 0,
+    "total_assignments": 163,
+    "solver_status": "OPTIMAL"
+  },
+  {
+    "test": "input/RST-20260112-4E8B07EE_Solver_Input.json",
+    "rostering_basis": "outcomeBased",
+    "output_file": "output/regression_RST-20260112-4E8B07EE_Solver_Input_output.json",
+    "status": "PASS",
+    "assignments_off_days": 230,
+    "roster_off_days": 230,
+    "summary_off_days": 230,
+    "missing": 0,
+    "extra": 0,
+    "total_assignments": 545,
+    "solver_status": "OPTIMAL"
+  },
+  {
+    "test": "input/RST-20260112-71DA90DC_Solver_Input.json",
+    "rostering_basis": "outcomeBased",
+    "output_file": "output/regression_RST-20260112-71DA90DC_Solver_Input_output.json",
+    "status": "PASS",
+    "assignments_off_days": 480,
+    "roster_off_days": 480,
+    "summary_off_days": 480,
+    "missing": 0,
+    "extra": 0,
+    "total_assignments": 543,
+    "solver_status": "FEASIBLE"
+  },
+  {
+    "test": "input/RST-20260112-D6226DC3_Solver_Input.json",
+    "rostering_basis": "outcomeBased",
+    "output_file": "output/regression_RST-20260112-D6226DC3_Solver_Input_output.json",
+    "status": "PASS",
+    "assignments_off_days": 0,
+    "roster_off_days": 0,
+    "summary_off_days": 0,
+    "missing": 0,
+    "extra": 0,
+    "total_assignments": 93,
+    "solver_status": "FEASIBLE"
+  },
+  {
+    "test": "input/RST-20260113-6C5FEBA6_Solver_Input.json",
+    "rostering_basis": "demandBased",
+    "output_file": "output/regression_RST-20260113-6C5FEBA6_Solver_Input_output.json",
+    "status": "PASS",
+    "assignments_off_days": 48,
+    "roster_off_days": 48,
+    "summary_off_days": 48,
+    "missing": 0,
+    "extra": 0,
+    "total_assignments": 198,
+    "solver_status": "INFEASIBLE"
+  },
+  {
+    "test": "test_baselines/RST-20260112-4E8B07EE_Solver_Input.json",
+    "rostering_basis": "unknown",
+    "status": "ERROR",
+    "error": "Solver failed: /Users/glori/anaconda3/lib/python3.11/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).\n  from"
+  },
+  {
+    "test": "test_baselines/AUTO-20251206-233E7006_Solver_Input.json",
+    "rostering_basis": "unknown",
+    "status": "ERROR",
+    "error": "Solver failed: /Users/glori/anaconda3/lib/python3.11/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.5' currently installed).\n  from"
+  }
+]

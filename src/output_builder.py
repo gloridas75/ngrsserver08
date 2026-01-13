@@ -706,19 +706,16 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     # Compute input hash for reproducibility tracking (use input_data, not ctx which has IntVars)
     input_hash = compute_input_hash(input_data)
     
-    # ========== HANDLE OFF DAY ASSIGNMENTS (for demandBased rosters) ==========
-    # Generate OFF day records but keep them separate from assignments array
-    # OFF days should ONLY appear in employeeRoster.dailyStatus, NOT in assignments
+    # ========== HANDLE OFF DAY ASSIGNMENTS (for ALL roster types) ==========
+    # Generate OFF day records and include them in assignments array
+    # OFF days should appear in BOTH assignments array AND employeeRoster.dailyStatus
     rostering_basis = input_data.get('demandItems', [{}])[0].get('rosteringBasis', 'demandBased')
     
-    # Store OFF day assignments separately for employeeRoster only (not in assignments array)
-    off_day_assignments_for_roster = []
-    if rostering_basis == 'demandBased':
-        all_with_off = insert_off_day_assignments(assignments, input_data, ctx)
-        # Separate actual work assignments from OFF days
-        off_day_assignments_for_roster = [a for a in all_with_off if a.get('status') == 'OFF_DAY']
-        # Keep only work assignments in main assignments array
-        assignments = [a for a in all_with_off if a.get('status') != 'OFF_DAY']
+    # Generate and merge OFF day assignments for both assignments array and employeeRoster
+    # This applies to BOTH demandBased and outcomeBased rosters
+    all_with_off = insert_off_day_assignments(assignments, input_data, ctx)
+    # Include ALL assignments (work + OFF days) in assignments array
+    assignments = all_with_off
     
     # Extract scores from solver_result
     scores = solver_result.get('scores', {'hard': 0, 'soft': 0, 'overall': 0})
@@ -868,8 +865,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     
     # ========== BUILD OUTPUT ==========
     # Build employee roster with daily status for ALL employees
-    # Pass OFF day assignments separately - they appear in employeeRoster but NOT in assignments array
-    employee_roster = build_employee_roster(input_data, ctx, annotated_assignments, off_day_assignments_for_roster)
+    # All assignments (including OFF days) are now in the main assignments list
+    employee_roster = build_employee_roster(input_data, ctx, annotated_assignments, off_day_assignments=None)
     
     # ========== CALCULATE ROSTER SUMMARY ==========
     roster_summary = {
