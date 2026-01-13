@@ -331,6 +331,9 @@ def _generate_validated_template(
     req_product = requirement.get('productTypeId', '')
     is_scheme_a_apo = (emp_scheme == 'Scheme A' and emp_product == 'APO' and req_product == 'APO')
     
+    # Store work pattern in ctx for constraint validation (needed for Scheme P weekly cap)
+    ctx['_temp_work_pattern'] = work_pattern
+    
     # Track state for constraint validation
     consecutive_days = 0
     weekly_hours = []  # List of (date, hours) tuples
@@ -600,7 +603,7 @@ def _validate_assignment(
     if shift_duration_hours > max_daily_hours:
         return {'valid': False, 'reason': f'C1: Shift {shift_duration_hours}h exceeds {max_daily_hours}h daily cap'}
     
-    # C2: Weekly 44h normal hours cap
+    # C2: Weekly normal hours cap (SCHEME-AWARE)
     # SPECIAL CASE: Scheme A APO employees can work 6th day with rest day pay (0h normal)
     # Calculate what normal hours would be for THIS shift
     gross_hours = _calculate_shift_duration(shift_details)
@@ -613,15 +616,35 @@ def _validate_assignment(
     else:
         shift_normal_hours = min(net_hours, 8.8)  # Standard: Cap at 8.8h normal
     
-    # Read weekly cap from JSON config if available
-    if _has_constraint_config:
-        weekly_cap = get_constraint_param(ctx, 'momWeeklyHoursCap44h', employee_dict, default=44.0)
+    # Determine weekly cap based on scheme (FIX: Add Scheme P support)
+    # Scheme A/B: 44h/week
+    # Scheme P: 34.98h (≤4 work days) or 29.98h (5+ work days)
+    if 'Scheme P' in scheme:
+        # Part-timer: Need to count work days in pattern to determine cap
+        # For template validation, we need to know the work pattern
+        work_pattern = ctx.get('_temp_work_pattern', [])  # Should be set by caller
+        work_days_count = sum(1 for d in work_pattern if d != 'O') if work_pattern else 4  # Default to 4 if unknown
+        
+        if work_days_count <= 4:
+            if _has_constraint_config:
+                weekly_cap = get_constraint_param(ctx, 'partTimerWeeklyHours', employee_dict, param_name='maxHours4Days', default=34.98)
+            else:
+                weekly_cap = 34.98
+        else:  # 5, 6, or 7 days
+            if _has_constraint_config:
+                weekly_cap = get_constraint_param(ctx, 'partTimerWeeklyHours', employee_dict, param_name='maxHoursMoreDays', default=29.98)
+            else:
+                weekly_cap = 29.98
     else:
-        weekly_cap = 44.0
+        # Full-timer (Scheme A/B): 44h/week
+        if _has_constraint_config:
+            weekly_cap = get_constraint_param(ctx, 'momWeeklyHoursCap44h', employee_dict, default=44.0)
+        else:
+            weekly_cap = 44.0
     
     current_week_normal_hours = sum(h for d, h in weekly_hours)
     if current_week_normal_hours + shift_normal_hours > weekly_cap:
-        return {'valid': False, 'reason': f'C2: Weekly normal hours {current_week_normal_hours + shift_normal_hours:.1f}h would exceed {weekly_cap}h cap'}
+        return {'valid': False, 'reason': f'C2: Weekly normal hours {current_week_normal_hours + shift_normal_hours:.1f}h would exceed {weekly_cap}h cap (Scheme: {scheme})'}
     
     # C3: Maximum consecutive days
     is_apgd_d10 = is_apgd_d10_employee(employee, ctx)

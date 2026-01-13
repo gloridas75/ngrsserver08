@@ -334,13 +334,17 @@ def _apply_mom_constraints(
     # Group dates into Monday-Sunday weeks
     weeks = _group_dates_by_week(dates)
     
-    # C2 with rest day pay awareness:
-    # Days 1-5 in calendar week: 8.8h normal
-    # Days 6-7 in calendar week: 0h normal (rest day pay instead)
-    # This allows 6-day patterns while enforcing 44h weekly normal cap
-    print(f"[C2 DEBUG] Applying smart weekly hours constraint (pattern length = {pattern_length})")
-    print(f"[C2 DEBUG] Logic: Only first 5 work days per week count toward 44h cap")
-    print(f"[C2 DEBUG] Days 6-7 in calendar week get rest day pay (0h normal)")
+    # C2 with scheme-aware weekly cap logic:
+    # Scheme A/B (full-time): Days 1-5 count as normal hours (8.8h), Days 6-7 get rest day pay (0h normal)
+    # Scheme P (part-time): ALL work days count toward weekly cap (no rest day pay logic)
+    print(f"[C2 DEBUG] Applying scheme-aware weekly hours constraint (pattern length = {pattern_length})")
+    print(f"[C2 DEBUG] Scheme: {emp_scheme}, Weekly cap: {max_weekly_normal_hours}h")
+    
+    if emp_scheme == 'P':
+        print(f"[C2 DEBUG] Scheme P: ALL work days count toward {max_weekly_normal_hours}h cap (no rest day pay)")
+    else:
+        print(f"[C2 DEBUG] Scheme A/B: Only first 5 work days per week count toward {max_weekly_normal_hours}h cap")
+        print(f"[C2 DEBUG] Days 6-7 in calendar week get rest day pay (0h normal)")
     
     for week_dates in weeks:
         week_indices = [i for i, d in enumerate(dates) if d in week_dates and i in x]
@@ -350,11 +354,16 @@ def _apply_mom_constraints(
         # Count how many work days we might have in this week
         num_potential_work_days = len(week_indices)
         
-        # Only first 5 work days contribute to normal hours cap
-        # Days 6+ get rest day pay (0h normal), so they don't count toward 44h
-        days_that_count = min(5, num_potential_work_days)
+        # Scheme-aware logic for which days count toward weekly cap
+        if emp_scheme == 'P':
+            # Scheme P: ALL work days count toward weekly cap (part-timers don't get rest day pay)
+            days_that_count = num_potential_work_days
+        else:
+            # Scheme A/B: Only first 5 work days contribute to normal hours cap
+            # Days 6+ get rest day pay (0h normal), so they don't count toward 44h
+            days_that_count = min(5, num_potential_work_days)
         
-        # Build constraint: sum of (first 5 work days × 8.8h) <= 44h
+        # Build constraint: sum of work days × 8.8h <= weekly cap
         normal_hour_terms = []
         for position in range(days_that_count):
             idx = week_indices[position]
@@ -366,7 +375,7 @@ def _apply_mom_constraints(
             expected_max_normal = days_that_count * 8.8
             print(f"[C2 DEBUG] Week {week_dates[0].strftime('%Y-%m-%d')}: "
                   f"Up to {num_potential_work_days} work days, "
-                  f"first {days_that_count} count (max {expected_max_normal:.1f}h normal)")
+                  f"{days_that_count} count toward cap (max {expected_max_normal:.1f}h normal)")
     
     # C3: Maximum consecutive work days (12 for standard, 8 for APGD-D10/APO)
     for i in range(len(dates) - max_consecutive_days):
