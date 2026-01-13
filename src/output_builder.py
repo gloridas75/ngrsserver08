@@ -561,6 +561,13 @@ def insert_off_day_assignments(assignments, input_data, ctx):
     pattern_start_date_obj = datetime.fromisoformat(pattern_start_date).date()
     pattern_length = len(base_pattern)
     
+    # Build set of employees who have at least one work assignment (D or N shift)
+    employees_with_work = set()
+    for assignment in assignments:
+        shift_code = assignment.get('shiftCode')
+        if shift_code in ['D', 'N']:  # Only count actual work shifts
+            employees_with_work.add(assignment.get('employeeId'))
+    
     # Generate OFF day assignments for each employee
     off_day_assignments = []
     
@@ -568,8 +575,10 @@ def insert_off_day_assignments(assignments, input_data, ctx):
         emp_id = emp.get('employeeId')
         emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
         
-        # Generate OFF days for ALL employees (even if they have no work assignments)
-        # This ensures pattern-based OFF days are always shown in employeeRoster
+        # ONLY generate OFF days for employees who have at least one work assignment
+        # Skip completely unused employees (they should be marked NOT_USED, not OFF_DAY)
+        if emp_id not in employees_with_work:
+            continue
         
         # Calculate employee's rotated pattern
         from context.engine.solver_engine import calculate_employee_work_pattern
@@ -693,6 +702,9 @@ def extract_unassigned_from_roster(employee_roster):
     This function extracts those UNASSIGNED entries and creates corresponding
     assignment records to maintain schema consistency.
     
+    IMPORTANT: Only extracts UNASSIGNED for employees who have at least one work assignment.
+    Employees marked as NOT_USED (no work assignments at all) are skipped.
+    
     Args:
         employee_roster: List of employee roster dicts with dailyStatus
     
@@ -704,6 +716,12 @@ def extract_unassigned_from_roster(employee_roster):
     for emp in employee_roster:
         emp_id = emp.get('employeeId')
         daily_status = emp.get('dailyStatus', [])
+        
+        # Check if employee has ANY work assignments (ASSIGNED status)
+        # Skip employees who are completely NOT_USED
+        has_work = any(day.get('status') == 'ASSIGNED' for day in daily_status)
+        if not has_work:
+            continue
         
         for day in daily_status:
             if day.get('status') == 'UNASSIGNED':

@@ -1167,6 +1167,17 @@ def generate_off_day_assignments(ctx, work_assignments: list) -> list:
             key = (emp_id, date_str)
             work_by_emp_date[key] = assignment
     
+    # Build set of employees who have at least one WORK assignment (D or N shift)
+    # Only generate OFF_DAY assignments for employees who are actually being used
+    employees_with_work = set()
+    for assignment in work_assignments:
+        shift_code = assignment.get('shiftCode')
+        status = assignment.get('status')
+        if shift_code in ['D', 'N'] and status == 'ASSIGNED':  # Only actual work assignments
+            employees_with_work.add(assignment.get('employeeId'))
+    
+    print(f"  Employees with work assignments: {len(employees_with_work)}/{len(employees)}")
+    
     # For each requirement, generate OFF days based on pattern
     for demand in demand_items:
         demand_id = demand.get('id', demand.get('demandId'))
@@ -1188,6 +1199,12 @@ def generate_off_day_assignments(ctx, work_assignments: list) -> list:
             # For each employee assigned to this requirement
             for emp in employees:
                 emp_id = emp.get('employeeId')
+                
+                # ONLY generate OFF days for employees who have at least one work assignment
+                # Skip completely unused employees (they should be marked NOT_USED, not OFF_DAY)
+                if emp_id not in employees_with_work:
+                    continue
+                
                 emp_offset = optimized_offsets.get(emp_id, emp.get('rotationOffset', 0))
                 
                 # Check each date in planning horizon
