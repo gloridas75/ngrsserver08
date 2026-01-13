@@ -7,6 +7,7 @@ Refactored from run_solver.py to ensure CLI and API produce identical output.
 import json
 import hashlib
 import math
+import uuid
 from datetime import datetime, timedelta
 from collections import defaultdict
 from context.engine.time_utils import (
@@ -517,7 +518,6 @@ def insert_off_day_assignments(assignments, input_data, ctx):
         Expanded assignments list including both work shifts and OFF days
     """
     from datetime import datetime, timedelta
-    import uuid
     
     # Get date range from existing assignments (filter out None values explicitly)
     date_values = set(a.get('date') for a in assignments if a.get('date') is not None)
@@ -699,8 +699,6 @@ def extract_unassigned_from_roster(employee_roster):
     Returns:
         List of UNASSIGNED assignment dicts
     """
-    import uuid
-    
     unassigned_assignments = []
     
     for emp in employee_roster:

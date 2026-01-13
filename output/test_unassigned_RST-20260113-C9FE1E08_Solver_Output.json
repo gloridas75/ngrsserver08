@@ -9,9 +9,9 @@
   "solverRun": {
     "runId": "SRN-local-0.4",
     "solverVersion": "optSolve-py-0.95.0",
-    "startedAt": "2026-01-13T13:19:43.849159",
-    "ended": "2026-01-13T13:19:43.876042",
-    "durationSeconds": 0.026884078979492188,
+    "startedAt": "2026-01-13T13:34:44.578979",
+    "ended": "2026-01-13T13:34:44.608261",
+    "durationSeconds": 0.02928304672241211,
     "status": "OPTIMAL"
   },
   "score": {
@@ -127,7 +127,7 @@
       }
     },
     {
-      "assignmentId": "b9fadd0d-6ce7-4a43-8657-e2a36aaf77d8",
+      "assignmentId": "63789add-a735-44e3-8571-6ab104b5e912",
       "employeeId": "00034833",
       "date": "2026-05-01",
       "shiftCode": "UNASSIGNED",
@@ -242,7 +242,7 @@
       }
     },
     {
-      "assignmentId": "e6c93855-1d93-47ca-9b99-7dd1c5012022",
+      "assignmentId": "21f23588-71a4-4e56-ac35-98e3e2de2fed",
       "employeeId": "00034833",
       "date": "2026-05-02",
       "shiftCode": "UNASSIGNED",
@@ -357,7 +357,7 @@
       }
     },
     {
-      "assignmentId": "597866da-de1a-46a4-a0ab-27466ea4a0ce",
+      "assignmentId": "aaa194b7-6410-4092-8d7a-ec944f3b163c",
       "employeeId": "00034833",
       "date": "2026-05-03",
       "shiftCode": "UNASSIGNED",
@@ -472,7 +472,7 @@
       }
     },
     {
-      "assignmentId": "e79a2d1e-e13e-4a5c-9ff6-30c96a82e97e",
+      "assignmentId": "2e1d1160-450c-418f-9905-2629cdbc5c16",
       "employeeId": "00034833",
       "date": "2026-05-04",
       "shiftCode": "UNASSIGNED",
@@ -587,7 +587,7 @@
       }
     },
     {
-      "assignmentId": "efc53768-063b-4186-8263-9fcdb790299b",
+      "assignmentId": "32e2688a-f26a-490b-a5f0-8392a123cc03",
       "employeeId": "00034833",
       "date": "2026-05-05",
       "shiftCode": "UNASSIGNED",
@@ -712,7 +712,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-06-5acc32",
+      "assignmentId": "OFF-00034833-2026-05-06-cb062b",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-06",
@@ -844,7 +844,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-07-0ce344",
+      "assignmentId": "OFF-00034833-2026-05-07-5a65a6",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-07",
@@ -966,7 +966,7 @@
       }
     },
     {
-      "assignmentId": "57fa1095-9474-4fb5-922b-b9db2f5ad065",
+      "assignmentId": "6dc505c0-40da-4fb9-b0b7-a23441088460",
       "employeeId": "00034833",
       "date": "2026-05-08",
       "shiftCode": "UNASSIGNED",
@@ -1081,7 +1081,7 @@
       }
     },
     {
-      "assignmentId": "952f79f4-0eba-44b3-8cde-f6f559c14303",
+      "assignmentId": "4657aa5c-4c9b-44ee-a76a-a4e9def1c8d5",
       "employeeId": "00034833",
       "date": "2026-05-09",
       "shiftCode": "UNASSIGNED",
@@ -1196,7 +1196,7 @@
       }
     },
     {
-      "assignmentId": "1a1c74cc-c19f-406c-a151-96d7c2fcb865",
+      "assignmentId": "e3909a02-5a46-404f-88e4-f5f13bfebf62",
       "employeeId": "00034833",
       "date": "2026-05-10",
       "shiftCode": "UNASSIGNED",
@@ -1311,7 +1311,7 @@
       }
     },
     {
-      "assignmentId": "38db3f57-9cc5-4e59-b7b4-24d7ab4af054",
+      "assignmentId": "97b587d5-d5af-4605-b8fe-7f12d1a440f9",
       "employeeId": "00034833",
       "date": "2026-05-11",
       "shiftCode": "UNASSIGNED",
@@ -1426,7 +1426,7 @@
       }
     },
     {
-      "assignmentId": "3d9d66d3-728c-4b50-b06a-3ee4b1aa76e9",
+      "assignmentId": "f307b3fc-1f5b-4d71-901b-5639781cbc0a",
       "employeeId": "00034833",
       "date": "2026-05-12",
       "shiftCode": "UNASSIGNED",
@@ -1551,7 +1551,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-13-4ebebb",
+      "assignmentId": "OFF-00034833-2026-05-13-0487ed",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-13",
@@ -1683,7 +1683,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-14-8da910",
+      "assignmentId": "OFF-00034833-2026-05-14-a24cd1",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-14",
@@ -1805,7 +1805,7 @@
       }
     },
     {
-      "assignmentId": "f54662bb-bbd3-46b0-9761-9e7170239050",
+      "assignmentId": "4adcca3b-c435-43f8-9fc1-dfd4c2188512",
       "employeeId": "00034833",
       "date": "2026-05-15",
       "shiftCode": "UNASSIGNED",
@@ -1920,7 +1920,7 @@
       }
     },
     {
-      "assignmentId": "f38f1c6d-68e9-455f-8fac-5e850769a920",
+      "assignmentId": "86235200-1448-4cbb-9dc6-3987e9e6b8c7",
       "employeeId": "00034833",
       "date": "2026-05-16",
       "shiftCode": "UNASSIGNED",
@@ -2035,7 +2035,7 @@
       }
     },
     {
-      "assignmentId": "fea20141-7c2c-4f01-95e1-20448eaa1fa7",
+      "assignmentId": "c8fbe3fd-56c4-438e-adff-e7a024d82daa",
       "employeeId": "00034833",
       "date": "2026-05-17",
       "shiftCode": "UNASSIGNED",
@@ -2150,7 +2150,7 @@
       }
     },
     {
-      "assignmentId": "147a4cc7-1053-4a6b-b374-30f34d98c89d",
+      "assignmentId": "64ca5504-221f-45eb-bcea-fde33102ab64",
       "employeeId": "00034833",
       "date": "2026-05-18",
       "shiftCode": "UNASSIGNED",
@@ -2265,7 +2265,7 @@
       }
     },
     {
-      "assignmentId": "6fae6a94-3eb1-4e1e-9448-459f931bb7e0",
+      "assignmentId": "723495ef-097c-4b1a-bcd5-80439cffe135",
       "employeeId": "00034833",
       "date": "2026-05-19",
       "shiftCode": "UNASSIGNED",
@@ -2390,7 +2390,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-20-3af67f",
+      "assignmentId": "OFF-00034833-2026-05-20-fbc89b",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-20",
@@ -2522,7 +2522,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-21-c21a18",
+      "assignmentId": "OFF-00034833-2026-05-21-73371f",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-21",
@@ -2644,7 +2644,7 @@
       }
     },
     {
-      "assignmentId": "c80616ac-42bf-409d-86ba-b974b5edc400",
+      "assignmentId": "ce3d39d7-a8cf-4661-b3eb-70b5f9e24dfa",
       "employeeId": "00034833",
       "date": "2026-05-22",
       "shiftCode": "UNASSIGNED",
@@ -2759,7 +2759,7 @@
       }
     },
     {
-      "assignmentId": "2840e239-2db4-4f18-a242-c7b394dd07c9",
+      "assignmentId": "812eeaa4-d89c-424b-8e51-f236026b56e2",
       "employeeId": "00034833",
       "date": "2026-05-23",
       "shiftCode": "UNASSIGNED",
@@ -2874,7 +2874,7 @@
       }
     },
     {
-      "assignmentId": "588a261a-23e9-4985-b339-153e8130106e",
+      "assignmentId": "fd4d0dbb-e4b9-48cc-9023-2ef1a17b18ae",
       "employeeId": "00034833",
       "date": "2026-05-24",
       "shiftCode": "UNASSIGNED",
@@ -2989,7 +2989,7 @@
       }
     },
     {
-      "assignmentId": "88f630c2-8bd1-4faf-898a-a66fbf431113",
+      "assignmentId": "a8bcd1f2-4ab7-4e38-9b08-f93a0f54109c",
       "employeeId": "00034833",
       "date": "2026-05-25",
       "shiftCode": "UNASSIGNED",
@@ -3104,7 +3104,7 @@
       }
     },
     {
-      "assignmentId": "5ce8bc11-c8c6-4b25-9d59-0d17f2f4bf42",
+      "assignmentId": "f40e7257-30d9-46ef-8828-1fb8b2bd25f2",
       "employeeId": "00034833",
       "date": "2026-05-26",
       "shiftCode": "UNASSIGNED",
@@ -3229,7 +3229,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-27-080b7a",
+      "assignmentId": "OFF-00034833-2026-05-27-6d02cf",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-27",
@@ -3361,7 +3361,7 @@
       }
     },
     {
-      "assignmentId": "OFF-00034833-2026-05-28-149f62",
+      "assignmentId": "OFF-00034833-2026-05-28-9839ae",
       "demandId": "N/A",
       "requirementId": "N/A",
       "slotId": "OFF-00034833-2026-05-28",
@@ -3483,7 +3483,7 @@
       }
     },
     {
-      "assignmentId": "8fd24d23-e57d-40b1-9275-6f7b79a2aba0",
+      "assignmentId": "6f144585-1ab3-430c-a3e8-077511a6eebc",
       "employeeId": "00034833",
       "date": "2026-05-29",
       "shiftCode": "UNASSIGNED",
@@ -3598,7 +3598,7 @@
       }
     },
     {
-      "assignmentId": "fd134e42-5b41-4ae7-95c9-23db7b60a8fa",
+      "assignmentId": "d869cb03-e687-4405-9286-7155acb6d5bb",
       "employeeId": "00034833",
       "date": "2026-05-30",
       "shiftCode": "UNASSIGNED",
@@ -3713,7 +3713,7 @@
       }
     },
     {
-      "assignmentId": "39304496-b08d-4c94-8e02-d45ef8b8b26a",
+      "assignmentId": "ee5561d8-e0d0-42b1-bdca-e129b051df7e",
       "employeeId": "00034833",
       "date": "2026-05-31",
       "shiftCode": "UNASSIGNED",
@@ -5324,7 +5324,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 5,
-          "assignmentId": "OFF-00034833-2026-05-06-5acc32",
+          "assignmentId": "OFF-00034833-2026-05-06-cb062b",
           "startDateTime": "2026-05-06T08:00:00",
           "endDateTime": "2026-05-06T20:00:00"
         },
@@ -5333,7 +5333,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 6,
-          "assignmentId": "OFF-00034833-2026-05-07-0ce344",
+          "assignmentId": "OFF-00034833-2026-05-07-5a65a6",
           "startDateTime": "2026-05-07T08:00:00",
           "endDateTime": "2026-05-07T20:00:00"
         },
@@ -5377,7 +5377,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 5,
-          "assignmentId": "OFF-00034833-2026-05-13-4ebebb",
+          "assignmentId": "OFF-00034833-2026-05-13-0487ed",
           "startDateTime": "2026-05-13T08:00:00",
           "endDateTime": "2026-05-13T20:00:00"
         },
@@ -5386,7 +5386,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 6,
-          "assignmentId": "OFF-00034833-2026-05-14-8da910",
+          "assignmentId": "OFF-00034833-2026-05-14-a24cd1",
           "startDateTime": "2026-05-14T08:00:00",
           "endDateTime": "2026-05-14T20:00:00"
         },
@@ -5430,7 +5430,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 5,
-          "assignmentId": "OFF-00034833-2026-05-20-3af67f",
+          "assignmentId": "OFF-00034833-2026-05-20-fbc89b",
           "startDateTime": "2026-05-20T08:00:00",
           "endDateTime": "2026-05-20T20:00:00"
         },
@@ -5439,7 +5439,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 6,
-          "assignmentId": "OFF-00034833-2026-05-21-c21a18",
+          "assignmentId": "OFF-00034833-2026-05-21-73371f",
           "startDateTime": "2026-05-21T08:00:00",
           "endDateTime": "2026-05-21T20:00:00"
         },
@@ -5483,7 +5483,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 5,
-          "assignmentId": "OFF-00034833-2026-05-27-080b7a",
+          "assignmentId": "OFF-00034833-2026-05-27-6d02cf",
           "startDateTime": "2026-05-27T08:00:00",
           "endDateTime": "2026-05-27T20:00:00"
         },
@@ -5492,7 +5492,7 @@
           "status": "OFF_DAY",
           "shiftCode": "O",
           "patternDay": 6,
-          "assignmentId": "OFF-00034833-2026-05-28-149f62",
+          "assignmentId": "OFF-00034833-2026-05-28-9839ae",
           "startDateTime": "2026-05-28T08:00:00",
           "endDateTime": "2026-05-28T20:00:00"
         },
@@ -5566,7 +5566,7 @@
   "unmetDemand": [],
   "meta": {
     "inputHash": "sha256:e6a029a10c1d059ff21da47ba148d66e0d901c46d4c9c2692d9ae203ed98b443",
-    "generatedAt": "2026-01-13T13:19:43.883215",
+    "generatedAt": "2026-01-13T13:34:44.615430",
     "employeeHours": {
       "00032093": {
         "weekly_normal": {
