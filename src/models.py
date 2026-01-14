@@ -98,6 +98,139 @@ class Assignment(BaseModel):
     )
     startDateTime: str
     endDateTime: str
+
+
+# ===== Validation API Models =====
+
+class EmployeeInfo(BaseModel):
+    """Employee information for validation (matches solver output format)."""
+    employeeId: str = Field(..., description="Unique employee ID")
+    rankId: str = Field(..., description="Employee rank ID (e.g., ASO, SO, SSO)")
+    productTypeId: str = Field(..., description="Product type ID (e.g., AVSO, Guarding)")
+    gender: str = Field(..., description="Gender (M/F)")
+    ouId: Optional[str] = Field(None, description="OU ID (e.g., PB T1 A1)")
+    scheme: str = Field(..., description="Scheme (e.g., 'Scheme A', 'Scheme B', 'Scheme P')")
+    rotationOffset: Optional[int] = Field(None, description="Rotation offset (0-6)")
+    workPattern: Optional[List[str]] = Field(None, description="Work pattern array (e.g., ['D','D','D','O','O','D','D'])")
+    normalHours: Optional[float] = Field(None, description="Current month accumulated normal hours")
+    otHours: Optional[float] = Field(None, description="Current month accumulated OT hours")
+    licenseExpiry: Optional[str] = Field(None, description="License expiry date (ISO format)")
+    
+    model_config = ConfigDict(extra='allow')
+
+
+class HoursBreakdown(BaseModel):
+    """Hour breakdown for an assignment (matches solver output format)."""
+    gross: float = Field(..., description="Gross hours (end - start)")
+    lunch: float = Field(..., description="Lunch deduction (typically 1.0)")
+    normal: float = Field(..., description="Normal working hours (capped at 8h)")
+    ot: float = Field(..., description="Overtime hours (beyond 8h)")
+    restDayPay: float = Field(default=0.0, description="Rest day payment hours")
+    paid: float = Field(..., description="Total paid hours (normal + ot + restDayPay)")
+    
+    model_config = ConfigDict(extra='allow')
+
+
+class ExistingAssignment(BaseModel):
+    """Existing assignment for the employee (matches solver output format)."""
+    assignmentId: str = Field(..., description="Assignment ID")
+    demandId: Optional[str] = Field(None, description="Demand ID")
+    requirementId: Optional[str] = Field(None, description="Requirement ID")
+    date: str = Field(..., description="Date (YYYY-MM-DD)")
+    slotId: str = Field(..., description="Slot ID")
+    shiftCode: str = Field(..., description="Shift code (D/N/O/etc)")
+    patternDay: Optional[int] = Field(None, description="Pattern day index")
+    startDateTime: str = Field(..., description="Start datetime (ISO format, may include timezone)")
+    endDateTime: str = Field(..., description="End datetime (ISO format, may include timezone)")
+    employeeId: Optional[str] = Field(None, description="Employee ID")
+    newRotationOffset: Optional[int] = Field(None, description="New rotation offset")
+    status: Optional[str] = Field(None, description="Assignment status (e.g., ASSIGNED)")
+    hours: HoursBreakdown = Field(..., description="Hour breakdown (gross, lunch, normal, ot, paid)")
+    
+    model_config = ConfigDict(extra='allow')
+
+
+class CandidateSlot(BaseModel):
+    """Candidate slot to validate for assignment (UI pre-filters by productType/rank/scheme)."""
+    slotId: str = Field(..., description="Unique slot ID")
+    demandItemId: Optional[str] = Field(None, description="Demand Item ID")
+    requirementId: Optional[str] = Field(None, description="Requirement ID")
+    startDateTime: str = Field(..., description="Start datetime (ISO format, may include timezone)")
+    endDateTime: str = Field(..., description="End datetime (ISO format, may include timezone)")
+    shiftCode: str = Field(..., description="Shift code (D/N/O/etc)")
+    
+    model_config = ConfigDict(extra='allow')
+
+
+class ConstraintConfig(BaseModel):
+    """Constraint configuration."""
+    constraintId: str = Field(..., description="Constraint ID (e.g., C1, C2)")
+    enabled: bool = Field(True, description="Whether constraint is enabled")
+    params: Optional[Dict[str, Any]] = Field(None, description="Constraint parameters")
+    
+    model_config = ConfigDict(extra='allow')
+
+
+class ValidateAssignmentRequest(BaseModel):
+    """Request to validate employee assignment to candidate slots."""
+    employee: EmployeeInfo = Field(..., description="Employee information")
+    existingAssignments: List[ExistingAssignment] = Field(
+        default_factory=list, 
+        description="All existing assignments for the employee"
+    )
+    candidateSlots: List[CandidateSlot] = Field(
+        ..., 
+        description="Candidate slots to validate (can be multiple)"
+    )
+    planningReference: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Planning reference (startDate, endDate, ouName)"
+    )
+    constraintList: Optional[List[ConstraintConfig]] = Field(
+        None,
+        description="List of constraints to check (defaults to all employee-specific hard constraints)"
+    )
+    
+    model_config = ConfigDict(extra='allow')
+
+
+class ViolationDetail(BaseModel):
+    """Detailed constraint violation."""
+    constraintId: str = Field(..., description="Constraint ID (e.g., C1, C2)")
+    constraintName: str = Field(..., description="Human-readable constraint name")
+    violationType: str = Field(..., description="hard or soft")
+    description: str = Field(..., description="Detailed violation message")
+    context: Optional[Dict[str, Any]] = Field(None, description="Additional context (e.g., current hours, limits)")
+
+
+class SlotValidationResult(BaseModel):
+    """Validation result for a single candidate slot."""
+    slotId: str = Field(..., description="Slot ID")
+    isFeasible: bool = Field(..., description="True if no hard constraint violations")
+    violations: List[ViolationDetail] = Field(
+        default_factory=list, 
+        description="List of violations (hard only in Phase 1)"
+    )
+    recommendation: str = Field(
+        ..., 
+        description="feasible, not_feasible, or warning"
+    )
+    hours: Optional[HoursBreakdown] = Field(
+        None,
+        description="Hour breakdown for this candidate slot (gross, lunch, normal, ot, paid)"
+    )
+
+
+class ValidateAssignmentResponse(BaseModel):
+    """Response from validation endpoint."""
+    status: str = Field(..., description="success or error")
+    validationResults: List[SlotValidationResult] = Field(
+        ...,
+        description="Validation results for each candidate slot"
+    )
+    employeeId: str = Field(..., description="Employee ID")
+    timestamp: str = Field(..., description="ISO 8601 timestamp")
+    processingTimeMs: Optional[float] = Field(None, description="Processing time in milliseconds")
     hours: Optional[Dict[str, float]] = Field(
         None,
         description="Hour breakdown: gross, lunch, normal, ot, paid"

@@ -1,0 +1,39 @@
+{
+  "employee": {
+    "employeeId": "00034531",
+    "rankId": "SO",
+    "productTypeId": "AVSO",
+    "gender": "F",
+    "ouId": "PB T1 A1",
+    "scheme": "Scheme P",
+    "rotationOffset": 0,
+    "workPattern": [
+      "D",
+      "D",
+      "O",
+      "D",
+      "D",
+      "O",
+      "O"
+    ],
+    "normalHours": 120.0,
+    "otHours": 12.5
+  },
+  "existingAssignments": [],
+  "candidateSlots": [
+    {
+      "slotId": "slot_long_shift",
+      "demandItemId": "DI-2601031507-71323393",
+      "requirementId": "230_1",
+      "startDateTime": "2026-01-15T07:00:00+08:00",
+      "endDateTime": "2026-01-15T19:00:00+08:00",
+      "shiftCode": "D"
+    }
+  ],
+  "constraintList": [
+    {
+      "constraintId": "C1",
+      "enabled": true
+    }
+  ]
+}

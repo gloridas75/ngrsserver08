@@ -37,7 +37,8 @@ from src.models import (
     SolveRequest, SolveResponse, HealthResponse, 
     Score, SolverRunMetadata, Meta, Violation,
     AsyncJobRequest, AsyncJobResponse, JobStatusResponse, AsyncStatsResponse,
-    IncrementalSolveRequest, FillSlotsWithAvailabilityRequest, EmptySlotsRequest
+    IncrementalSolveRequest, FillSlotsWithAvailabilityRequest, EmptySlotsRequest,
+    ValidateAssignmentRequest, ValidateAssignmentResponse
 )
 from src.output_builder import build_output
 from src.redis_job_manager import RedisJobManager
@@ -342,6 +343,135 @@ async def get_version():
         "icpmpVersion": "2.0",
         "timestamp": datetime.now().isoformat()
     }
+
+
+@app.post("/validate/assignment", response_model=ValidateAssignmentResponse)
+async def validate_assignment(
+    request: Request,
+    payload: ValidateAssignmentRequest
+):
+    """
+    Validate Employee Assignment - Phase 1 (Employee-Specific Hard Constraints)
+    
+    Validates whether an employee can be assigned to candidate slot(s) without
+    violating hard constraints. Returns detailed violation information.
+    
+    **Supported Constraints (Employee-Specific Only):**
+    - C1: Daily Hours Cap (14h/13h/9h by scheme)
+    - C2: Weekly Hours Cap (44-52h normal hours)
+    - C3: Consecutive Working Days (max days without break)
+    - C4: Rest Period Between Shifts (minimum 12h rest)
+    - C17: Monthly OT Cap (72h maximum overtime)
+    
+    **NOT Supported (require team/global context):**
+    - C9: Team Assignment
+    - C14: Scheme Quotas
+    - S7: Team Cohesion
+    
+    **Request Body:**
+    ```json
+    {
+      "employee": {
+        "employeeId": "EMP001",
+        "name": "John Doe",
+        "rank": "SO",
+        "gender": "M",
+        "scheme": "A",
+        "productTypes": ["Guarding"],
+        "workPattern": "DDNNOOO",
+        "rotationOffset": 2
+      },
+      "existingAssignments": [
+        {
+          "startDateTime": "2026-01-13T07:00:00+08:00",
+          "endDateTime": "2026-01-13T15:00:00+08:00",
+          "shiftType": "DAY",
+          "hours": 8.0,
+          "date": "2026-01-13"
+        }
+      ],
+      "candidateSlots": [
+        {
+          "slotId": "slot_unassigned_456",
+          "startDateTime": "2026-01-15T07:00:00+08:00",
+          "endDateTime": "2026-01-15T15:00:00+08:00",
+          "shiftType": "DAY",
+          "productType": "Guarding",
+          "rank": "SO",
+          "scheme": "A"
+        }
+      ],
+      "constraintList": [
+        {"constraintId": "C1", "enabled": true},
+        {"constraintId": "C2", "enabled": true}
+      ]
+    }
+    ```
+    
+    **Response:**
+    ```json
+    {
+      "status": "success",
+      "validationResults": [
+        {
+          "slotId": "slot_456",
+          "isFeasible": true,
+          "violations": [],
+          "recommendation": "feasible"
+        }
+      ],
+      "employeeId": "EMP001",
+      "timestamp": "2026-01-14T10:30:00+08:00",
+      "processingTimeMs": 12.5
+    }
+    ```
+    
+    **Returns:**
+    - 200: Validation complete (check isFeasible for each slot)
+    - 400: Invalid request (missing data, validation errors)
+    - 422: Schema validation error
+    - 500: Internal error
+    
+    **Performance:** Target <100ms for single slot, ~50-200ms for multiple slots
+    """
+    request_id = getattr(request.state, "request_id", str(uuid.uuid4()))
+    
+    logger.info(f"[{request_id}] Assignment validation request received")
+    logger.info(f"[{request_id}] Employee: {payload.employee.employeeId}, "
+                f"Existing assignments: {len(payload.existingAssignments)}, "
+                f"Candidate slots: {len(payload.candidateSlots)}")
+    
+    try:
+        # Import validator
+        from src.assignment_validator import AssignmentValidator
+        
+        # Create validator instance
+        validator = AssignmentValidator()
+        
+        # Run validation
+        response = validator.validate(payload)
+        
+        # Log results
+        feasible_count = sum(1 for r in response.validationResults if r.isFeasible)
+        logger.info(f"[{request_id}] Validation complete: "
+                    f"{feasible_count}/{len(response.validationResults)} slots feasible, "
+                    f"Processing time: {response.processingTimeMs}ms")
+        
+        return response
+        
+    except Exception as e:
+        logger.error(
+            f"[{request_id}] Assignment validation error: {str(e)}",
+            exc_info=True
+        )
+        
+        # Determine error type for appropriate HTTP status
+        if "validation" in str(e).lower() or "missing" in str(e).lower():
+            status_code = 400
+        else:
+            status_code = 500
+        
+        raise HTTPException(status_code=status_code, detail=str(e))
 
 
 @app.get("/metrics")

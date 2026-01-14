@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "validationResults": [
+    {
+      "slotId": "slot_unassigned_456",
+      "isFeasible": true,
+      "violations": [],
+      "recommendation": "feasible"
+    }
+  ],
+  "employeeId": "EMP001",
+  "timestamp": "2026-01-14T10:55:18.501918",
+  "processingTimeMs": 1.78
+}

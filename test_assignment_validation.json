@@ -1,0 +1,105 @@
+{
+  "employee": {
+    "employeeId": "00097227",
+    "rankId": "SO",
+    "productTypeId": "Guarding",
+    "gender": "M",
+    "ouId": "PB T1 A1",
+    "scheme": "Scheme A",
+    "rotationOffset": 2,
+    "workPattern": [
+      "D",
+      "D",
+      "D",
+      "O",
+      "O",
+      "D",
+      "D"
+    ],
+    "normalHours": 184.8,
+    "otHours": 35.2
+  },
+  "existingAssignments": [
+    {
+      "assignmentId": "DI-2601031507-71323393-2026-01-13-D-00097227",
+      "demandId": "DI-2601031507-71323393",
+      "requirementId": "230_1",
+      "date": "2026-01-13",
+      "slotId": "DI-2601031507-71323393-230_1-D-P1-2026-01-13-c0b135",
+      "shiftCode": "D",
+      "patternDay": 0,
+      "startDateTime": "2026-01-13T07:00:00",
+      "endDateTime": "2026-01-13T15:00:00",
+      "employeeId": "00097227",
+      "newRotationOffset": 0,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 8,
+        "lunch": 1,
+        "normal": 7,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 8
+      }
+    },
+    {
+      "assignmentId": "DI-2601031507-71323393-2026-01-14-D-00097227",
+      "demandId": "DI-2601031507-71323393",
+      "requirementId": "230_1",
+      "date": "2026-01-14",
+      "slotId": "DI-2601031507-71323393-230_1-D-P1-2026-01-14-c0b136",
+      "shiftCode": "D",
+      "patternDay": 1,
+      "startDateTime": "2026-01-14T07:00:00",
+      "endDateTime": "2026-01-14T15:00:00",
+      "employeeId": "00097227",
+      "newRotationOffset": 1,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 8,
+        "lunch": 1,
+        "normal": 7,
+        "ot": 0,
+        "restDayPay": 0,
+        "paid": 8
+      }
+    }
+  ],
+  "candidateSlots": [
+    {
+      "slotId": "slot_unassigned_456",
+      "demandItemId": "DI005",
+      "requirementId": "REQ_R1",
+      "startDateTime": "2026-01-16T07:00:00+08:00",
+      "endDateTime": "2026-01-16T15:00:00+08:00",
+      "shiftCode": "D"
+    }
+  ],
+  "planningReference": {
+    "startDate": "2026-01-01",
+    "endDate": "2026-01-31",
+    "ouName": "Security Division"
+  },
+  "constraintList": [
+    {
+      "constraintId": "C1",
+      "enabled": true
+    },
+    {
+      "constraintId": "C2",
+      "enabled": true
+    },
+    {
+      "constraintId": "C3",
+      "enabled": true
+    },
+    {
+      "constraintId": "C4",
+      "enabled": true
+    },
+    {
+      "constraintId": "C17",
+      "enabled": true
+    }
+  ]
+}
