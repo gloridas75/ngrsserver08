@@ -2,13 +2,13 @@
 	"info": {
 		"_postman_id": "ngrs-solver-api-v1",
 		"name": "NGRS Solver API",
-		"description": "Complete API collection for NGRS Shift Scheduling Solver\n\n**Base URL:** https://ngrssolver08.comcentricapps.com\n\n**Features:**\n- Synchronous solving\n- Asynchronous solving with job queue\n- Configuration optimizer (ICPMP v3.0 - Auto-integrated)\n- Job management and monitoring\n- Admin operations\n\n**🆕 NEW FEATURES (Dec 2025 - v0.97):**\n- ✅ **ICPMP v3.0 AUTO-INTEGRATION** 🚀: Now runs automatically before every solve!\n  - **Proven Minimal Employees**: Try-minimal-first algorithm guarantees optimal headcount\n  - **42% Employee Reduction**: Test case: 26 → 15 employees (proven optimal)\n  - **Minimal U-Slots**: First feasible solution = fewest U-slots possible\n  - **Fair Workload Distribution**: Prioritizes employees with fewer working hours\n  - **Balanced Team Composition**: Proportional scheme distribution for Global requirements\n  - **Faster CP-SAT Solving**: Reduced employee pool = 40% faster solve times\n  - **No Configuration Required**: Runs automatically, no setup needed!\n  - **Enriched Output**: All responses include ICPMP preprocessing metadata\n- ✅ **New Optional Field**: `totalWorkingHours` per employee (for fair selection)\n- ✅ **Removed Obsolete Fields**: `fixedRotationOffset`, `optimizationMode` (handled by ICPMP)\n- ✅ **patternDay Field**: Shows position in work pattern cycle (0 to pattern_length-1) for each assignment\n- ✅ **employeeRoster Block**: Complete daily status (ASSIGNED/OFF_DAY/UNASSIGNED/NOT_USED) for all employees\n- ✅ **rosterSummary Block**: Quick statistics showing counts by status type\n- ✅ **Employee Utilization Stats**: Track strict adherence, flexible patterns, unassigned employees\n- ✅ **Webhook Notifications**: Auto-notify on job completion\n- ✅ **Feasibility Pre-Check**: Fast validation before solving (~100ms)\n- ✅ **Job Cancellation**: Stop queued or running jobs\n- ✅ **ISO Timestamps**: Human-readable timestamps in all responses\n- ✅ **Auto-Cleanup**: Jobs expire after 1 hour (TTL)\n- ✅ **CP-SAT Parallelization**: 2-3x faster for large problems\n\n**Variables:**\n- `base_url`: API base URL\n- `admin_api_key`: Admin API key for reset endpoint\n- `job_id`: Last created async job ID (auto-populated)\n\n**Setup:**\n1. Import this collection\n2. Set environment variables\n3. Run requests in order\n\n**Version:** v0.97 (Updated: Dec 10, 2025)",
+		"description": "Complete API collection for NGRS Shift Scheduling Solver\n\n**Base URL:** https://ngrssolver09.comcentricapps.com\n\n**Features:**\n- Synchronous solving\n- Asynchronous solving with job queue\n- Configuration optimizer (ICPMP v3.0 - Auto-integrated)\n- Assignment validation (Web UI manual assignments)\n- Job management and monitoring\n- Admin operations\n\n**🆕 NEW FEATURES (Jan 2026 - v0.98):**\n- ✅ **ASSIGNMENT VALIDATION API** 🎯: Validate manual employee assignments before saving!\n  - **Phase 1**: Employee-specific constraints (C1, C2, C3, C4, C17)\n  - **Format Aligned**: Matches solver output schema (rankId, shiftCode, hours object)\n  - **Automatic Hours**: Calculates breakdown per slot (gross, lunch, normal, OT, paid)\n  - **<5ms Response**: Direct validation without CP-SAT\n  - **Multiple Slots**: Batch validation support\n  - **Web UI Ready**: For manual assignment workflow\n- ✅ **ICPMP v3.0 AUTO-INTEGRATION** 🚀: Now runs automatically before every solve!\n  - **Proven Minimal Employees**: Try-minimal-first algorithm guarantees optimal headcount\n  - **42% Employee Reduction**: Test case: 26 → 15 employees (proven optimal)\n  - **Minimal U-Slots**: First feasible solution = fewest U-slots possible\n  - **Fair Workload Distribution**: Prioritizes employees with fewer working hours\n  - **Balanced Team Composition**: Proportional scheme distribution for Global requirements\n  - **Faster CP-SAT Solving**: Reduced employee pool = 40% faster solve times\n  - **No Configuration Required**: Runs automatically, no setup needed!\n  - **Enriched Output**: All responses include ICPMP preprocessing metadata\n- ✅ **New Optional Field**: `totalWorkingHours` per employee (for fair selection)\n- ✅ **Removed Obsolete Fields**: `fixedRotationOffset`, `optimizationMode` (handled by ICPMP)\n- ✅ **patternDay Field**: Shows position in work pattern cycle (0 to pattern_length-1) for each assignment\n- ✅ **employeeRoster Block**: Complete daily status (ASSIGNED/OFF_DAY/UNASSIGNED/NOT_USED) for all employees\n- ✅ **rosterSummary Block**: Quick statistics showing counts by status type\n- ✅ **Employee Utilization Stats**: Track strict adherence, flexible patterns, unassigned employees\n- ✅ **Webhook Notifications**: Auto-notify on job completion\n- ✅ **Feasibility Pre-Check**: Fast validation before solving (~100ms)\n- ✅ **Job Cancellation**: Stop queued or running jobs\n- ✅ **ISO Timestamps**: Human-readable timestamps in all responses\n- ✅ **Auto-Cleanup**: Jobs expire after 1 hour (TTL)\n- ✅ **CP-SAT Parallelization**: 2-3x faster for large problems\n\n**Variables:**\n- `base_url`: API base URL\n- `admin_api_key`: Admin API key for reset endpoint\n- `job_id`: Last created async job ID (auto-populated)\n\n**Setup:**\n1. Import this collection\n2. Set environment variables\n3. Run requests in order\n\n**Version:** v0.98 (Updated: Jan 14, 2026)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "https://ngrssolver08.comcentricapps.com",
+			"value": "https://ngrssolver09.comcentricapps.com",
 			"type": "string"
 		},
 		{
@@ -318,6 +318,80 @@
 							"path": ["solve", "async", "{{job_id}}"]
 						},
 						"description": "⚠️ DEPRECATED: Use 'Cancel Job (DELETE)' instead\n\nDelete job and free memory.\n\nCancels queued jobs or deletes completed results."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Assignment Validation",
+			"item": [
+				{
+					"name": "Validate Feasible Assignment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"employee\": {\n    \"employeeId\": \"00097227\",\n    \"gender\": \"M\",\n    \"rankId\": \"SO\",\n    \"productTypeId\": \"Guarding\",\n    \"scheme\": \"Scheme A\",\n    \"workPattern\": [\"D\", \"D\", \"D\", \"O\", \"O\", \"D\", \"D\"],\n    \"normalHours\": 184.8,\n    \"otHours\": 35.2\n  },\n  \"existingAssignments\": [\n    {\n      \"assignmentId\": \"assignment_002\",\n      \"date\": \"2026-01-13\",\n      \"slotId\": \"slot_existing_123\",\n      \"demandId\": \"DM-001\",\n      \"requirementId\": \"REQ-001\",\n      \"startDateTime\": \"2026-01-13T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-13T15:00:00+08:00\",\n      \"shiftCode\": \"D\",\n      \"hours\": {\n        \"gross\": 8.0,\n        \"lunch\": 1.0,\n        \"normal\": 7.0,\n        \"ot\": 0.0,\n        \"restDayPay\": 0.0,\n        \"paid\": 8.0\n      },\n      \"patternDay\": 0,\n      \"status\": \"ASSIGNED\"\n    },\n    {\n      \"assignmentId\": \"assignment_003\",\n      \"date\": \"2026-01-14\",\n      \"slotId\": \"slot_existing_124\",\n      \"demandId\": \"DM-002\",\n      \"requirementId\": \"REQ-001\",\n      \"startDateTime\": \"2026-01-14T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-14T15:00:00+08:00\",\n      \"shiftCode\": \"D\",\n      \"hours\": {\n        \"gross\": 8.0,\n        \"lunch\": 1.0,\n        \"normal\": 7.0,\n        \"ot\": 0.0,\n        \"restDayPay\": 0.0,\n        \"paid\": 8.0\n      },\n      \"patternDay\": 1,\n      \"status\": \"ASSIGNED\"\n    }\n  ],\n  \"candidateSlots\": [\n    {\n      \"slotId\": \"slot_unassigned_456\",\n      \"demandItemId\": \"DM-003\",\n      \"requirementId\": \"REQ-001\",\n      \"startDateTime\": \"2026-01-15T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-15T15:00:00+08:00\",\n      \"shiftCode\": \"D\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/validate/assignment",
+							"host": ["{{base_url}}"],
+							"path": ["validate", "assignment"]
+						},
+						"description": "🆕 NEW: Validate manual employee assignments for web UI\n\n**Purpose:**\nValidate if assigning candidate slots to an employee would violate MOM labor constraints.\n\n**Phase 1 Constraints (Employee-Specific):**\n- **C1**: Daily hours cap (Scheme A: 14h, B: 13h, P: 9h)\n- **C2**: Weekly hours cap (52h per week, Sun-Sat boundary)\n- **C3**: Consecutive days cap (12 days maximum)\n- **C4**: Rest period (12h minimum between shifts)\n- **C17**: Monthly OT cap (72h per month)\n\n**Input Format:**\n- Aligned with solver output format\n- `employee`: rankId, productTypeId, scheme, workPattern array\n- `existingAssignments`: Current assignments with hours breakdown object\n- `candidateSlots`: Slots to validate (simplified, no redundant fields)\n\n**Response:**\n- `validationResults`: Array with per-slot feasibility\n- `isFeasible`: true/false for each slot\n- `violations`: Constraint codes with explanatory messages\n- `hours`: Automatic breakdown (gross, lunch, normal, OT, paid)\n- `recommendation`: \"feasible\", \"warning\", or \"not_feasible\"\n\n**Performance:** <5ms response time (no CP-SAT, direct validation)\n\n**Example Use Case:**\nUser manually assigns Friday shift to employee with 4 existing shifts Mon-Thu.\nValidation checks if adding Friday would violate C2 weekly hours (52h cap)."
+					},
+					"response": []
+				},
+				{
+					"name": "Validate with C1 Violation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"employee\": {\n    \"employeeId\": \"00034531\",\n    \"gender\": \"M\",\n    \"rankId\": \"SO\",\n    \"productTypeId\": \"Guarding\",\n    \"scheme\": \"Scheme P\",\n    \"workPattern\": [\"D\", \"D\", \"D\", \"D\", \"D\", \"O\", \"O\"],\n    \"normalHours\": 88.0,\n    \"otHours\": 10.5\n  },\n  \"existingAssignments\": [\n    {\n      \"assignmentId\": \"assignment_100\",\n      \"date\": \"2026-01-13\",\n      \"slotId\": \"slot_existing_200\",\n      \"demandId\": \"DM-100\",\n      \"requirementId\": \"REQ-100\",\n      \"startDateTime\": \"2026-01-13T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-13T15:00:00+08:00\",\n      \"shiftCode\": \"D\",\n      \"hours\": {\n        \"gross\": 8.0,\n        \"lunch\": 1.0,\n        \"normal\": 7.0,\n        \"ot\": 0.0,\n        \"restDayPay\": 0.0,\n        \"paid\": 8.0\n      },\n      \"patternDay\": 0,\n      \"status\": \"ASSIGNED\"\n    }\n  ],\n  \"candidateSlots\": [\n    {\n      \"slotId\": \"slot_violating_201\",\n      \"demandItemId\": \"DM-101\",\n      \"requirementId\": \"REQ-100\",\n      \"startDateTime\": \"2026-01-14T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-14T19:00:00+08:00\",\n      \"shiftCode\": \"D\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/validate/assignment",
+							"host": ["{{base_url}}"],
+							"path": ["validate", "assignment"]
+						},
+						"description": "🆕 Test case with **C1 violation** (daily hours cap)\n\n**Scenario:**\n- Employee: Scheme P (9h daily cap)\n- Existing: 8h shift on 2026-01-13\n- Candidate: 12h shift on 2026-01-14\n\n**Expected Result:**\n- `isFeasible`: false\n- `violations`: [\"C1\"]\n- `message`: \"C1: Daily hours (11.0h) exceeds Scheme P limit (9.0h)\"\n- `recommendation`: \"not_feasible\"\n- `hours`: {gross: 12.0, lunch: 1.0, normal: 8.0, ot: 3.0, paid: 12.0}\n\n**Why it violates:**\nScheme P employees cannot work more than 9h per day (after lunch).\n12h gross - 1h lunch = 11h paid > 9h cap → **C1 violation**\n\n**Use Case:**\nPrevent UI from allowing assignment that would exceed employee's scheme-specific daily limit."
+					},
+					"response": []
+				},
+				{
+					"name": "Validate Multiple Slots",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"employee\": {\n    \"employeeId\": \"00097227\",\n    \"gender\": \"M\",\n    \"rankId\": \"SO\",\n    \"productTypeId\": \"Guarding\",\n    \"scheme\": \"Scheme A\",\n    \"workPattern\": [\"D\", \"D\", \"D\", \"O\", \"O\", \"D\", \"D\"],\n    \"normalHours\": 184.8,\n    \"otHours\": 35.2\n  },\n  \"existingAssignments\": [\n    {\n      \"assignmentId\": \"assignment_002\",\n      \"date\": \"2026-01-13\",\n      \"slotId\": \"slot_existing_123\",\n      \"demandId\": \"DM-001\",\n      \"requirementId\": \"REQ-001\",\n      \"startDateTime\": \"2026-01-13T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-13T15:00:00+08:00\",\n      \"shiftCode\": \"D\",\n      \"hours\": {\n        \"gross\": 8.0,\n        \"lunch\": 1.0,\n        \"normal\": 7.0,\n        \"ot\": 0.0,\n        \"restDayPay\": 0.0,\n        \"paid\": 8.0\n      },\n      \"patternDay\": 0,\n      \"status\": \"ASSIGNED\"\n    }\n  ],\n  \"candidateSlots\": [\n    {\n      \"slotId\": \"slot_candidate_1\",\n      \"demandItemId\": \"DM-003\",\n      \"requirementId\": \"REQ-001\",\n      \"startDateTime\": \"2026-01-14T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-14T15:00:00+08:00\",\n      \"shiftCode\": \"D\"\n    },\n    {\n      \"slotId\": \"slot_candidate_2\",\n      \"demandItemId\": \"DM-004\",\n      \"requirementId\": \"REQ-001\",\n      \"startDateTime\": \"2026-01-15T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-15T15:00:00+08:00\",\n      \"shiftCode\": \"D\"\n    },\n    {\n      \"slotId\": \"slot_candidate_3\",\n      \"demandItemId\": \"DM-005\",\n      \"requirementId\": \"REQ-001\",\n      \"startDateTime\": \"2026-01-16T07:00:00+08:00\",\n      \"endDateTime\": \"2026-01-16T15:00:00+08:00\",\n      \"shiftCode\": \"D\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/validate/assignment",
+							"host": ["{{base_url}}"],
+							"path": ["validate", "assignment"]
+						},
+						"description": "🆕 Test case with **multiple candidate slots**\n\n**Scenario:**\n- Employee: Scheme A (14h daily cap)\n- Existing: 1 shift (Mon)\n- Candidates: 3 slots (Tue, Wed, Thu)\n\n**Expected Result:**\n- `validationResults`: Array with 3 items\n- Each slot validated independently\n- All should be feasible (no violations)\n- Each result includes automatic hours breakdown\n\n**Response Structure:**\n```json\n{\n  \"status\": \"success\",\n  \"validationResults\": [\n    {\n      \"slotId\": \"slot_candidate_1\",\n      \"isFeasible\": true,\n      \"violations\": [],\n      \"hours\": {...}\n    },\n    {\n      \"slotId\": \"slot_candidate_2\",\n      \"isFeasible\": true,\n      \"violations\": [],\n      \"hours\": {...}\n    },\n    {\n      \"slotId\": \"slot_candidate_3\",\n      \"isFeasible\": true,\n      \"violations\": [],\n      \"hours\": {...}\n    }\n  ]\n}\n```\n\n**Use Case:**\nBatch validation when user selects multiple shifts to assign to employee."
 					},
 					"response": []
 				}
