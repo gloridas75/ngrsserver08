@@ -361,8 +361,9 @@ class AssignmentValidator:
         """
         C3: Consecutive Working Days - Check if assignment causes too many consecutive work days.
         
-        Limit: Typically 6-12 consecutive days depending on scheme
-        Default: 12 days
+        Limit: Based on work pattern (max consecutive 'D'/'N' before 'O')
+        - Scheme A/B: Inferred from workPattern
+        - Fallback: 12 days (MOM absolute maximum)
         """
         violations = []
         
@@ -373,8 +374,22 @@ class AssignmentValidator:
         if not dated_assignments:
             return violations
         
-        # Find consecutive work days including temp assignment
-        max_consecutive = 12  # Default limit (configurable)
+        # Calculate max consecutive days from work pattern
+        max_consecutive = 12  # MOM absolute maximum fallback
+        
+        if employee.workPattern:
+            # Count longest consecutive work days in pattern
+            pattern_max = 0
+            current_count = 0
+            for day in employee.workPattern:
+                if day in ['D', 'N', 'E']:  # Work shifts
+                    current_count += 1
+                    pattern_max = max(pattern_max, current_count)
+                else:  # Off day
+                    current_count = 0
+            
+            if pattern_max > 0:
+                max_consecutive = pattern_max
         
         # Build set of all work dates
         work_dates = set()
@@ -402,10 +417,11 @@ class AssignmentValidator:
                 constraintId='C3',
                 constraintName='Consecutive Working Days',
                 violationType='hard',
-                description=f'Assignment creates {max_streak} consecutive work days, exceeding limit of {max_consecutive} days',
+                description=f'Assignment creates {max_streak} consecutive work days, exceeding pattern limit of {max_consecutive} days (work pattern: {employee.workPattern})',
                 context={
                     'consecutiveDays': max_streak,
                     'maxAllowed': max_consecutive,
+                    'workPattern': employee.workPattern,
                     'streakEndDate': str(streak_end_date)
                 }
             ))
