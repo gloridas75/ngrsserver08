@@ -297,11 +297,10 @@ class AssignmentValidator:
         """
         C2: Weekly Hours Cap - Check if assignment causes weekly hours to exceed limit.
         
-        Limits (normal hours, excluding lunch and OT):
-        - Scheme A/B: 44-52 hours per week
-        - Scheme P: Not typically capped (but we'll check anyway)
-        
+        Limit: 44 hours normal hours per week (same for all schemes)
         Week definition: Sunday to Saturday
+        
+        Note: Normal hours exclude lunch break and OT hours
         """
         violations = []
         
@@ -361,9 +360,14 @@ class AssignmentValidator:
         """
         C3: Consecutive Working Days - Check if assignment causes too many consecutive work days.
         
-        Limit: Based on work pattern (max consecutive 'D'/'N' before 'O')
-        - Scheme A/B: Inferred from workPattern
-        - Fallback: 12 days (MOM absolute maximum)
+        Limit determination priority:
+        1. Scheme + ProductType specific (e.g., Scheme A + APO = 8 days per APGD-D10)
+        2. Work pattern-derived limit (count consecutive work days in pattern)
+        3. MOM absolute maximum: 12 days fallback
+        
+        Common limits:
+        - Scheme A + APO (APGD-D10): 8 days
+        - Other schemes: 12 days (MOM maximum)
         """
         violations = []
         
@@ -374,10 +378,21 @@ class AssignmentValidator:
         if not dated_assignments:
             return violations
         
-        # Calculate max consecutive days from work pattern
-        max_consecutive = 12  # MOM absolute maximum fallback
+        # Extract scheme letter for comparison
+        scheme = self._extract_scheme_letter(employee.scheme)
+        product_type = employee.productTypeId
         
-        if employee.workPattern:
+        # Determine max consecutive days based on scheme + product type
+        # Match main solver's C3 logic: Scheme A + APO = 8 days (APGD-D10)
+        max_consecutive = 12  # MOM absolute maximum (default)
+        limit_source = "MOM default"
+        
+        if scheme == 'A' and product_type == 'APO':
+            # APGD-D10: Scheme A employees with APO product type
+            max_consecutive = 8
+            limit_source = "APGD-D10 (Scheme A + APO)"
+        elif employee.workPattern:
+            # Fall back to work pattern analysis
             # Count longest consecutive work days in pattern
             pattern_max = 0
             current_count = 0
@@ -388,8 +403,9 @@ class AssignmentValidator:
                 else:  # Off day
                     current_count = 0
             
-            if pattern_max > 0:
+            if pattern_max > 0 and pattern_max < max_consecutive:
                 max_consecutive = pattern_max
+                limit_source = f"work pattern ({employee.workPattern})"
         
         # Build set of all work dates
         work_dates = set()
@@ -417,10 +433,13 @@ class AssignmentValidator:
                 constraintId='C3',
                 constraintName='Consecutive Working Days',
                 violationType='hard',
-                description=f'Assignment creates {max_streak} consecutive work days, exceeding pattern limit of {max_consecutive} days (work pattern: {employee.workPattern})',
+                description=f'Assignment creates {max_streak} consecutive work days, exceeding limit of {max_consecutive} days ({limit_source})',
                 context={
                     'consecutiveDays': max_streak,
                     'maxAllowed': max_consecutive,
+                    'limitSource': limit_source,
+                    'scheme': scheme,
+                    'productType': product_type,
                     'workPattern': employee.workPattern,
                     'streakEndDate': str(streak_end_date)
                 }
@@ -437,7 +456,9 @@ class AssignmentValidator:
         """
         C4: Rest Period Between Shifts - Check minimum rest hours between consecutive shifts.
         
-        Limit: Typically 12 hours rest between shifts
+        Limits (from apgdMinRestBetweenShifts):
+        - Default: 8 hours (standard rest period)
+        - Scheme P: 1 hour (allows split-shift patterns)
         """
         violations = []
         
@@ -452,7 +473,9 @@ class AssignmentValidator:
         timed_assignments.sort(key=lambda x: x[0])
         
         # Check rest period between consecutive shifts
-        min_rest_hours = 12.0  # Default (configurable)
+        # Scheme-specific: P = 1 hour (split-shift), others = 8 hours
+        scheme = self._extract_scheme_letter(employee.scheme)
+        min_rest_hours = 1.0 if scheme == 'P' else 8.0
         
         for i in range(1, len(timed_assignments)):
             prev_end = timed_assignments[i-1][1]
@@ -486,9 +509,13 @@ class AssignmentValidator:
         temp_assignment: ExistingAssignment
     ) -> List[ViolationDetail]:
         """
-        C17: Monthly OT Cap - Check if assignment causes monthly OT to exceed 72 hours.
+        C17: Monthly OT Cap - Check if assignment causes monthly OT to exceed limit.
         
-        Limit: 72 hours overtime per month (MOM regulation)
+        Limits (from momMonthlyOTcap72h and APGD-D10 rules):
+        - Standard: 72 hours per month
+        - APGD-D10 (Scheme A + APO): 112-124 hours (varies by month length)
+        
+        Note: APGD-D10 limit is ~3.8h/day × days_in_month
         """
         violations = []
         
@@ -513,8 +540,20 @@ class AssignmentValidator:
                 ot_hours = self._calculate_ot_hours(assignment)
                 monthly_ot += ot_hours
         
-        # Check against 72h cap
-        monthly_ot_cap = 72.0
+        # Determine monthly OT cap based on scheme + product type
+        # APGD-D10 (Scheme A + APO): ~3.8h/day × days_in_month
+        # Standard: 72 hours per month
+        scheme = self._extract_scheme_letter(employee.scheme)
+        product_type = employee.productTypeId
+        
+        if scheme == 'A' and product_type == 'APO':
+            # APGD-D10: Higher monthly OT cap based on month length
+            # Feb: 28-29 days → 106-110h, Others: 30-31 days → 114-118h
+            from calendar import monthrange
+            days_in_month = monthrange(temp_month.year, temp_month.month)[1]
+            monthly_ot_cap = round(3.8 * days_in_month, 1)  # ~3.8h OT per day
+        else:
+            monthly_ot_cap = 72.0
         
         if monthly_ot > monthly_ot_cap:
             violations.append(ViolationDetail(

@@ -1,0 +1,90 @@
+
+{
+  "employee": {
+    "employeeId": "00011873",
+    "rankId": "SSER",
+    "productTypeId": "APO",
+    "gender": "MALE",
+    "ouId": "ATSU T1 LSU A3",
+    "scheme": "Scheme A",
+    "rotationOffset": 0,
+    "workPattern": [
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "O",
+      "O"
+    ],
+    "normalHours": 8,
+    "otHours": 3
+  },
+  "existingAssignments": [
+    {
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-02",
+      "slotId": "SS-676346",
+      "shiftCode": "D",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    }
+  ],
+  "candidateSlots": [
+    {
+      "slotId": "SS-676355",
+      "demandItemId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "startDateTime": "2026-02-03T08:00:00",
+      "endDateTime": "2026-02-03T20:00:00",
+      "shiftCode": "D"
+    }
+  ],
+  "planningReference": {
+    "startDate": "2026-02-01",
+    "endDate": "2026-02-28",
+    "ouName": "ATSU T1 LSU A3"
+  },
+  "constraintList": [
+    {
+      "constraintId": "momMaxConsecutiveWorkDays",
+      "enabled": true
+    },
+    {
+      "constraintId": "momWeeklyHoursCap44h",
+      "enabled": true
+    },
+    {
+      "constraintId": "momOneoffperweek",
+      "enabled": true
+    },
+    {
+      "constraintId": "momMonthlyOTcap72h",
+      "enabled": true
+    },
+    {
+      "constraintId": "momLunchBreak",
+      "enabled": true
+    },
+    {
+      "constraintId": "teamContinuity",
+      "enabled": true
+    },
+    {
+      "constraintId": "oneShiftPerDay",
+      "enabled": true
+    },
+    {
+      "constraintId": "momDailyHoursCap",
+      "enabled": true
+    }
+  ]
+}

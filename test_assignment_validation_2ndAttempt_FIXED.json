@@ -1,0 +1,53 @@
+{
+  "employee": {
+    "employeeId": "00011873",
+    "gender": "MALE",
+    "rankId": "SSER",
+    "productTypeId": "APO",
+    "scheme": "Scheme A",
+    "workPattern": [
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "O",
+      "O"
+    ],
+    "normalHours": 8.0,
+    "otHours": 3.0
+  },
+  "existingAssignments": [
+    {
+      "assignmentId": "assignment_001",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-02",
+      "slotId": "SS-676346",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-02T08:00:00",
+      "endDateTime": "2026-02-02T20:00:00",
+      "employeeId": "00011873",
+      "patternDay": 0,
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    }
+  ],
+  "candidateSlots": [
+    {
+      "slotId": "SS-676355",
+      "demandItemId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "startDateTime": "2026-02-03T08:00:00",
+      "endDateTime": "2026-02-03T20:00:00",
+      "shiftCode": "D"
+    }
+  ]
+}

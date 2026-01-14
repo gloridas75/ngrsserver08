@@ -1,0 +1,212 @@
+{
+  "employee": {
+    "employeeId": "00099999",
+    "gender": "M",
+    "rankId": "SO",
+    "productTypeId": "Guarding",
+    "scheme": "Scheme A",
+    "workPattern": [
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "O"
+    ],
+    "normalHours": 96.0,
+    "otHours": 40.0
+  },
+  "existingAssignments": [
+    {
+      "assignmentId": "SA-001",
+      "date": "2026-02-02",
+      "slotId": "SS-001",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-02T08:00:00",
+      "endDateTime": "2026-02-02T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-002",
+      "date": "2026-02-03",
+      "slotId": "SS-002",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-03T08:00:00",
+      "endDateTime": "2026-02-03T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-003",
+      "date": "2026-02-04",
+      "slotId": "SS-003",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-04T08:00:00",
+      "endDateTime": "2026-02-04T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-004",
+      "date": "2026-02-05",
+      "slotId": "SS-004",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-05T08:00:00",
+      "endDateTime": "2026-02-05T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-005",
+      "date": "2026-02-06",
+      "slotId": "SS-005",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-06T08:00:00",
+      "endDateTime": "2026-02-06T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-006",
+      "date": "2026-02-07",
+      "slotId": "SS-006",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-07T08:00:00",
+      "endDateTime": "2026-02-07T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-007",
+      "date": "2026-02-08",
+      "slotId": "SS-007",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-08T08:00:00",
+      "endDateTime": "2026-02-08T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-008",
+      "date": "2026-02-09",
+      "slotId": "SS-008",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-09T08:00:00",
+      "endDateTime": "2026-02-09T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-009",
+      "date": "2026-02-10",
+      "slotId": "SS-009",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-10T08:00:00",
+      "endDateTime": "2026-02-10T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-010",
+      "date": "2026-02-11",
+      "slotId": "SS-010",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-11T08:00:00",
+      "endDateTime": "2026-02-11T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "SA-011",
+      "date": "2026-02-12",
+      "slotId": "SS-011",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-12T08:00:00",
+      "endDateTime": "2026-02-12T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    }
+  ],
+  "candidateSlots": [
+    {
+      "slotId": "SS-012",
+      "startDateTime": "2026-02-13T08:00:00",
+      "endDateTime": "2026-02-13T20:00:00",
+      "shiftCode": "D"
+    }
+  ]
+}
