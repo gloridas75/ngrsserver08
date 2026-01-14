@@ -295,12 +295,20 @@ class AssignmentValidator:
         temp_assignment: ExistingAssignment
     ) -> List[ViolationDetail]:
         """
-        C2: Weekly Hours Cap - Check if assignment causes weekly hours to exceed limit.
+        C2: Weekly Hours Cap - Pattern-aware normal hours calculation with rest day pay support.
         
         Limit: 44 hours normal hours per week (same for all schemes)
         Week definition: Sunday to Saturday
         
-        Note: Normal hours exclude lunch break and OT hours
+        Pattern-aware rules (matching main solver):
+        - 4-day pattern: 11.0h normal/day
+        - 5-day pattern: 8.8h normal/day
+        - 6+ day pattern: 
+          * Days 1-5: 8.8h normal/day
+          * Day 6+: 0h normal (rest day pay = 8.0h, doesn't count toward 44h cap)
+        
+        Scheme P (part-time) has different thresholds:
+        - ≤4 days: 8.745h/day, 5 days: 5.996h/day, 6 days: 4.996h/day, 7 days: 4.283h/day
         """
         violations = []
         
@@ -308,31 +316,50 @@ class AssignmentValidator:
         temp_date = datetime.strptime(temp_assignment.date, '%Y-%m-%d').date()
         
         # Calculate week boundaries (Sunday to Saturday)
-        # Get Sunday of the week containing temp_date
-        days_since_sunday = (temp_date.weekday() + 1) % 7  # Monday=0, Sunday=6 -> Sunday=0
+        days_since_sunday = (temp_date.weekday() + 1) % 7
         week_start = temp_date - timedelta(days=days_since_sunday)
         week_end = week_start + timedelta(days=6)
         
-        # Group assignments by week
-        weekly_hours = 0.0
-        assignments_in_week = []
-        
+        # Build map of date -> assignment for the week
+        assignments_by_date = {}
         for assignment in all_assignments:
             if not assignment.date:
                 continue
-            
             assign_date = datetime.strptime(assignment.date, '%Y-%m-%d').date()
-            
             if week_start <= assign_date <= week_end:
-                assignments_in_week.append(assignment)
-                # Calculate normal hours (excluding lunch and OT)
-                normal_hours = self._calculate_normal_hours(assignment)
-                weekly_hours += normal_hours
+                assignments_by_date[assign_date] = assignment
         
-        # Get weekly cap based on scheme
-        scheme = employee.scheme.upper()
-        weekly_cap = 52.0  # Default maximum
-        weekly_min = 44.0  # MOM standard
+        # Calculate pattern-aware normal hours for each day in the week
+        weekly_hours = 0.0
+        work_pattern = employee.workPattern if employee.workPattern else []
+        rotation_offset = getattr(employee, 'rotationOffset', 0) or 0
+        scheme_letter = employee.scheme.split()[-1] if employee.scheme else 'A'  # Extract 'A', 'B', 'P'
+        
+        for day_offset in range(7):
+            current_date = week_start + timedelta(days=day_offset)
+            
+            if current_date not in assignments_by_date:
+                continue
+            
+            assignment = assignments_by_date[current_date]
+            
+            # Get pattern day for this date
+            pattern_day = self._get_pattern_day_for_date(current_date, work_pattern, rotation_offset)
+            
+            # Calculate pattern-aware normal hours
+            normal_hours = self._calculate_pattern_aware_normal_hours(
+                assignment=assignment,
+                work_pattern=work_pattern,
+                pattern_day=pattern_day,
+                scheme=scheme_letter,
+                week_assignments=assignments_by_date,
+                week_start=week_start
+            )
+            
+            weekly_hours += normal_hours
+        
+        # Check against 44h cap
+        weekly_cap = 44.0
         
         if weekly_hours > weekly_cap:
             violations.append(ViolationDetail(
@@ -345,7 +372,7 @@ class AssignmentValidator:
                     'weeklyCap': weekly_cap,
                     'weekStart': str(week_start),
                     'weekEnd': str(week_end),
-                    'assignmentsInWeek': len(assignments_in_week)
+                    'assignmentsInWeek': len(assignments_by_date)
                 }
             ))
         
@@ -572,6 +599,125 @@ class AssignmentValidator:
         return violations
     
     # ===== Helper Functions =====
+    
+    def _get_pattern_day_for_date(self, date, work_pattern: list, rotation_offset: int) -> int:
+        """Get pattern day index (0-based) for a given date."""
+        if not work_pattern:
+            return 0
+        
+        # Calculate days since epoch (2024-01-01 is reference)
+        from datetime import date as date_class
+        if isinstance(date, str):
+            date = datetime.strptime(date, '%Y-%m-%d').date()
+        
+        epoch = date_class(2024, 1, 1)
+        days_since_epoch = (date - epoch).days
+        
+        # Apply rotation offset
+        pattern_day = (days_since_epoch + rotation_offset) % len(work_pattern)
+        return pattern_day
+    
+    def _count_work_days_in_pattern(self, pattern: list) -> int:
+        """Count total work days in pattern."""
+        if not pattern:
+            return 5  # Default assumption
+        return sum(1 for day in pattern if day != 'O')
+    
+    def _analyze_consecutive_positions(self, pattern: list) -> dict:
+        """Analyze work pattern to identify consecutive work day positions.
+        
+        Returns dict mapping pattern_index -> consecutive_position.
+        Example: ['D','D','D','D','D','D','O'] -> {0:1, 1:2, 2:3, 3:4, 4:5, 5:6, 6:0}
+        """
+        if not pattern:
+            return {}
+        
+        position_map = {}
+        consecutive_count = 0
+        
+        for idx, day in enumerate(pattern):
+            if day != 'O':
+                consecutive_count += 1
+                position_map[idx] = consecutive_count
+            else:
+                position_map[idx] = 0
+                consecutive_count = 0
+        
+        return position_map
+    
+    def _calculate_pattern_aware_normal_hours(
+        self,
+        assignment: ExistingAssignment,
+        work_pattern: list,
+        pattern_day: int,
+        scheme: str,
+        week_assignments: dict,
+        week_start
+    ) -> float:
+        """Calculate normal hours using pattern-aware logic (matches main solver).
+        
+        Args:
+            assignment: Assignment to calculate hours for
+            work_pattern: Employee work pattern
+            pattern_day: Pattern day index (0-based)
+            scheme: 'A', 'B', or 'P'
+            week_assignments: Dict of date -> assignment for the week
+            week_start: Start date of the week
+        
+        Returns:
+            Normal hours for this assignment
+        """
+        # Get gross and lunch hours
+        if hasattr(assignment.hours, 'gross'):
+            gross_hours = assignment.hours.gross
+            lunch_hours = assignment.hours.lunch if hasattr(assignment.hours, 'lunch') else 0.0
+        elif isinstance(assignment.hours, dict):
+            gross_hours = assignment.hours.get('gross', 0.0)
+            lunch_hours = assignment.hours.get('lunch', 0.0)
+        else:
+            gross_hours = assignment.hours or 0.0
+            lunch_hours = 1.0 if gross_hours > 6 else 0.0
+        
+        working_hours = gross_hours - lunch_hours
+        
+        if not work_pattern:
+            # Fallback: 8.8h threshold
+            return min(8.8, working_hours)
+        
+        work_days_count = self._count_work_days_in_pattern(work_pattern)
+        consecutive_positions = self._analyze_consecutive_positions(work_pattern)
+        consecutive_pos = consecutive_positions.get(pattern_day, 0)
+        
+        # SCHEME P (PART-TIME)
+        if scheme == 'P':
+            if work_days_count <= 4:
+                return min(8.745, working_hours)
+            elif work_days_count == 5:
+                if consecutive_pos >= 5:
+                    return 0.0  # 5th day entire shift is OT
+                return min(5.996, working_hours)
+            elif work_days_count == 6:
+                return min(4.996, working_hours)
+            elif work_days_count >= 7:
+                return min(4.283, working_hours)
+            else:
+                return min(8.745, working_hours)
+        
+        # SCHEME A/B (FULL-TIME)
+        if work_days_count == 4:
+            return min(11.0, working_hours)
+        elif work_days_count == 5:
+            return min(8.8, working_hours)
+        elif work_days_count >= 6:
+            if consecutive_pos >= 6:
+                # 6th+ consecutive day: 0h normal (rest day pay = 8.0h)
+                return 0.0
+            else:
+                # Days 1-5: 8.8h normal
+                return min(8.8, working_hours)
+        else:
+            # Fallback
+            return min(8.8, working_hours)
     
     def _calculate_normal_hours(self, assignment: ExistingAssignment) -> float:
         """

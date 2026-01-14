@@ -1,0 +1,105 @@
+{
+  "employee": {
+    "employeeId": "00011111",
+    "gender": "M",
+    "rankId": "SO",
+    "productTypeId": "APO",
+    "scheme": "Scheme A",
+    "workPattern": ["D", "D", "D", "D", "D", "D", "O"],
+    "rotationOffset": 0,
+    "normalHours": 44.0,
+    "otHours": 18.0
+  },
+  "existingAssignments": [
+    {
+      "assignmentId": "A1",
+      "date": "2026-02-02",
+      "slotId": "S1",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-02T08:00:00",
+      "endDateTime": "2026-02-02T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "A2",
+      "date": "2026-02-03",
+      "slotId": "S2",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-03T08:00:00",
+      "endDateTime": "2026-02-03T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "A3",
+      "date": "2026-02-04",
+      "slotId": "S3",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-04T08:00:00",
+      "endDateTime": "2026-02-04T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "A4",
+      "date": "2026-02-05",
+      "slotId": "S4",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-05T08:00:00",
+      "endDateTime": "2026-02-05T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "A5",
+      "date": "2026-02-06",
+      "slotId": "S5",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-06T08:00:00",
+      "endDateTime": "2026-02-06T20:00:00",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.8,
+        "ot": 2.2,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    }
+  ],
+  "candidateSlots": [
+    {
+      "slotId": "S6",
+      "startDateTime": "2026-02-07T08:00:00",
+      "endDateTime": "2026-02-07T20:00:00",
+      "shiftCode": "D",
+      "demandItemId": "DEM123",
+      "requirementId": "REQ456"
+    }
+  ]
+}
