@@ -474,14 +474,21 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             print(f"{log_prefix} ======================================================================")
             print(f"{log_prefix} OU: {unique_ous.pop() if unique_ous else 'N/A'}")
             print(f"{log_prefix} Employees: {len(eligible_employees)} with individual offsets")
-            print(f"{log_prefix} Strategy: Using full CP-SAT solver (like demandBased mode)")
-            print(f"{log_prefix} Reason: Template replication cannot handle individual constraints")
-            print(f"{log_prefix}         (public holidays, availability, leave, etc.)")
+            print(f"{log_prefix} Strategy: Employee-based slots (one slot per employee per work day)")
+            print(f"{log_prefix} Reason: Each employee follows their own rotated pattern")
+            print(f"{log_prefix}         (respects public holidays, availability, leave, etc.)")
             print()
             
             # Override to demandBased mode for this scenario
             rostering_basis = 'demandBased'
-            print(f"{log_prefix} Switching to demandBased CP-SAT solver...")
+            
+            # CRITICAL: Set flag for slot_builder to create employee-based slots
+            # instead of position-based demand slots
+            ctx['_useEmployeeBasedSlots'] = True
+            ctx['_eligibleEmployees'] = eligible_employees
+            ctx['_rosteringBasis'] = 'demandBased'  # Override the original outcomeBased
+            
+            print(f"{log_prefix} Switching to employee-based slot generation...")
             print()
     
     # Continue with outcomeBased logic only if not switched to demandBased

@@ -225,6 +225,11 @@ def build_model(ctx):
         for emp in employees:
             emp_id = emp.get('employeeId')
             
+            # EMPLOYEE-BASED SLOTS: If slot has targetEmployeeId, only allow that employee
+            if hasattr(slot, 'targetEmployeeId') and slot.targetEmployeeId is not None:
+                if emp_id != slot.targetEmployeeId:
+                    continue  # Skip - this slot is reserved for a specific employee
+            
             # v0.98: outcomeBased OU-based selection filter
             if selected_employee_ids and emp_id not in selected_employee_ids:
                 ou_selection_filtered += 1

@@ -45,6 +45,7 @@ class Slot:
         preferredTeams: List of preferred team IDs
         whitelist: Whitelist constraints {teamIds, employeeIds}
         blacklist: Blacklist with date ranges {employeeIds: [{employeeId, blacklistStartDate, blacklistEndDate}]}
+        targetEmployeeId: For employee-based slots, the specific employee this slot is for (None for position-based)
     """
     slot_id: str
     demandId: str
@@ -67,6 +68,7 @@ class Slot:
     preferredTeams: List[str]
     whitelist: Dict[str, List[str]]
     blacklist: Dict[str, List[Dict[str, str]]]
+    targetEmployeeId: Optional[str] = None  # For employee-based slots
 
 
 def combine(d: date, time_str: str) -> datetime:
@@ -131,7 +133,7 @@ def normalize_scheme(scheme_value: str, scheme_map: Optional[Dict[str, str]] = N
     Handles both formats (case-insensitive):
     - Full name: "Scheme A", "scheme A", "SCHEME A" → "A"
     - Short code: "A", "a" → "A"
-    - Global: "Global", "global" → "Global"
+    - Global: "Global", "global", "Any", "any" → "Global"
     
     Args:
         scheme_value: The scheme value from input (can be "Scheme P" or "P" or "scheme p")
@@ -143,8 +145,8 @@ def normalize_scheme(scheme_value: str, scheme_map: Optional[Dict[str, str]] = N
     if not scheme_value:
         return "Global"
     
-    # Handle "Global" case-insensitively
-    if scheme_value.lower() == "global":
+    # Handle "Global" and "Any" case-insensitively - both mean no scheme restriction
+    if scheme_value.lower() in ("global", "any", "all"):
         return "Global"
     
     # If scheme_map is provided, try reverse lookup (case-insensitive)
@@ -184,6 +186,207 @@ def daterange(start: date, end: date) -> List[date]:
         dates.append(current)
         current += timedelta(days=1)
     return dates
+
+
+def _build_employee_based_slots(inputs: Dict[str, Any], start_date: date, end_date: date, 
+                                 public_holidays: set) -> List[Slot]:
+    """Build employee-based slots for outcomeBased mode with individual offsets.
+    
+    Creates ONE slot per employee per work day based on each employee's rotated pattern.
+    This is used when:
+    - rosteringBasis = outcomeBased
+    - Single OU with individual employee rotation offsets
+    - Each employee follows their own pattern (respecting their offset)
+    
+    Key features:
+    - Respects includePublicHolidays and includeEveOfPublicHolidays flags
+    - Creates exactly as many slots as employees can work (no infeasible demand)
+    - Each slot is tied to a specific employee
+    
+    Args:
+        inputs: Input context with demandItems, employees, etc.
+        start_date: Start of planning horizon
+        end_date: End of planning horizon
+        public_holidays: Set of public holiday dates
+        
+    Returns:
+        List of employee-based Slot objects
+    """
+    slots: List[Slot] = []
+    employees = inputs.get('_eligibleEmployees', inputs.get('employees', []))
+    
+    print(f"[slot_builder] EMPLOYEE-BASED SLOT GENERATION MODE")
+    print(f"  Creating slots based on {len(employees)} employees' individual patterns")
+    
+    for dmd in inputs.get("demandItems", []):
+        demand_id = dmd.get("demandId")
+        location_id = dmd.get("locationId")
+        ou_id = dmd.get("ouId")
+        
+        # Anchor date for rotation cycle (shiftStartDate)
+        base_str = dmd.get("shiftStartDate", "")
+        base = datetime.fromisoformat(base_str + "T00:00:00").date() if base_str else start_date
+        
+        print(f"  Demand {demand_id}: base={base}, location={location_id}")
+        
+        for shift_idx, sh in enumerate(dmd.get("shifts", [])):
+            # Build map: shiftCode → shift details
+            details = {}
+            for sd in sh.get("shiftDetails", []):
+                shift_code = sd.get("shiftCode")
+                details[shift_code] = sd
+            
+            # Get public holiday flags
+            include_public_holidays = sh.get("includePublicHolidays", True)
+            include_eve_of_public_holidays = sh.get("includeEveOfPublicHolidays", True)
+            
+            # Get coverage days
+            coverage_days_input = sh.get("coverageDays", ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
+            if isinstance(coverage_days_input, int):
+                coverage_days_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][:coverage_days_input]
+            else:
+                coverage_days_names = coverage_days_input
+            
+            # Map day names to weekday indices
+            day_name_to_idx = {"Mon": 0, "Tue": 1, "Wed": 2, "Thu": 3, "Fri": 4, "Sat": 5, "Sun": 6}
+            coverage_weekdays = set(day_name_to_idx.get(d, -1) for d in coverage_days_names)
+            
+            # Parse coverage anchor
+            coverage_anchor_str = sh.get("coverageAnchor", base_str)
+            try:
+                coverage_anchor_date = datetime.fromisoformat(coverage_anchor_str + "T00:00:00").date()
+            except:
+                coverage_anchor_date = base
+            
+            whitelist = sh.get("whitelist", {"teamIds": [], "employeeIds": []})
+            blacklist = sh.get("blacklist", {"employeeIds": []})
+            preferred_teams = sh.get("preferredTeams", [])
+            
+            print(f"    Shift #{shift_idx}: includePH={include_public_holidays}, includeEvePH={include_eve_of_public_holidays}")
+            
+            # Process each requirement
+            for req in dmd.get("requirements", []):
+                requirement_id = req.get("requirementId", "REQ0")
+                product_type = req.get("productTypeId")
+                rank_ids = req.get("rankIds", [])
+                gender_req = req.get("gender", "Any")
+                work_pattern = req.get("workPattern", [])
+                required_quals = normalize_qualifications(req.get("requiredQualifications", []))
+                
+                # Normalize scheme requirement
+                scheme_req_raw = req.get("schemes", ["Any"])[0] if req.get("schemes") else "Global"
+                scheme_req = normalize_scheme(scheme_req_raw)
+                
+                if not work_pattern:
+                    print(f"    ⚠️  Requirement {requirement_id} has no work pattern, skipping")
+                    continue
+                
+                pattern_length = len(work_pattern)
+                
+                print(f"    Requirement {requirement_id}: pattern={work_pattern}, length={pattern_length}")
+                
+                # Create slots for each employee based on their rotated pattern
+                employee_slots_created = 0
+                ph_skipped = 0
+                eve_ph_skipped = 0
+                off_days = 0
+                
+                for emp in employees:
+                    emp_id = emp.get('employeeId')
+                    emp_offset = emp.get('rotationOffset', 0)
+                    
+                    for cur_day in daterange(start_date, end_date):
+                        # Check if this day's weekday is in the coverage days
+                        cur_weekday = cur_day.weekday()
+                        if cur_weekday not in coverage_weekdays:
+                            continue
+                        
+                        # Check public holiday exclusion
+                        if cur_day in public_holidays and not include_public_holidays:
+                            ph_skipped += 1
+                            continue
+                        
+                        # Check eve of public holiday exclusion
+                        next_day = cur_day + timedelta(days=1)
+                        if next_day in public_holidays and not include_eve_of_public_holidays:
+                            eve_ph_skipped += 1
+                            continue
+                        
+                        # Calculate pattern index for this employee on this day
+                        # Account for employee's rotation offset
+                        days_since_base = (cur_day - base).days
+                        pattern_idx = (days_since_base + emp_offset) % pattern_length
+                        shift_code = work_pattern[pattern_idx]
+                        
+                        # Skip off days (O in pattern)
+                        if shift_code == 'O':
+                            off_days += 1
+                            continue
+                        
+                        # Get shift details
+                        shift_detail = details.get(shift_code)
+                        if not shift_detail:
+                            # Use first available shift detail as fallback
+                            shift_detail = list(details.values())[0] if details else None
+                            if not shift_detail:
+                                continue
+                        
+                        # Parse shift times
+                        start_time_str = shift_detail.get("start", "00:00")
+                        end_time_str = shift_detail.get("end", "00:00")
+                        next_day_flag = shift_detail.get("nextDay", False)
+                        
+                        # Create shift start/end times
+                        slot_start = combine(cur_day, start_time_str)
+                        slot_end = combine(cur_day, end_time_str)
+                        
+                        # Handle overnight shifts
+                        if slot_end <= slot_start or next_day_flag:
+                            slot_end = slot_end + timedelta(days=1)
+                        
+                        # Create employee-specific slot
+                        # Use employee ID in slot_id to make it unique per employee
+                        slot_id = f"{demand_id}-{requirement_id}-{shift_code}-{emp_id}-{cur_day.isoformat()}-{uuid.uuid4().hex[:6]}"
+                        
+                        slot = Slot(
+                            slot_id=slot_id,
+                            demandId=demand_id,
+                            requirementId=requirement_id,
+                            date=cur_day,
+                            shiftCode=shift_code,
+                            start=slot_start,
+                            end=slot_end,
+                            locationId=location_id,
+                            ouId=ou_id,
+                            productTypeId=product_type,
+                            rankIds=rank_ids,
+                            genderRequirement=gender_req,
+                            schemeRequirement=scheme_req,
+                            requiredQualifications=required_quals,
+                            rotationSequence=work_pattern,
+                            patternStartDate=base,
+                            coverageAnchor=coverage_anchor_date,
+                            coverageDays=coverage_days_names,
+                            preferredTeams=preferred_teams,
+                            whitelist=whitelist,
+                            blacklist=blacklist,
+                            targetEmployeeId=emp_id  # Employee-based slot: only this employee can fill it
+                        )
+                        slots.append(slot)
+                        employee_slots_created += 1
+                
+                print(f"      Created {employee_slots_created} slots for {len(employees)} employees")
+                if ph_skipped > 0:
+                    print(f"      Skipped {ph_skipped} slots on public holidays (includePH=False)")
+                if eve_ph_skipped > 0:
+                    print(f"      Skipped {eve_ph_skipped} slots on eve of public holidays (includeEvePH=False)")
+                print(f"      Off days in pattern: {off_days}")
+    
+    print(f"[slot_builder] ✓ Created {len(slots)} employee-based slots")
+    print(f"  Each employee has their own slot per work day (no position-based demand)")
+    print()
+    
+    return slots
 
 
 def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
@@ -233,6 +436,13 @@ def build_slots(inputs: Dict[str, Any]) -> List[Slot]:
     print(f"\n[slot_builder] Expanding demands into slots...")
     print(f"  Planning horizon: {start_date} to {end_date}")
     print(f"  Public holidays: {sorted(public_holidays)}")
+    
+    # ========== EMPLOYEE-BASED SLOT GENERATION (Option B) ==========
+    # For outcomeBased mode with single OU + individual employee offsets,
+    # create ONE slot per employee per work day based on their rotated pattern.
+    # This avoids creating position-based "demand" slots that are infeasible.
+    if inputs.get('_useEmployeeBasedSlots', False):
+        return _build_employee_based_slots(inputs, start_date, end_date, public_holidays)
     
     for dmd in inputs.get("demandItems", []):
         demand_id = dmd.get("demandId")
