@@ -254,18 +254,18 @@ def calculate_apgd_d10_hours(
     employee_dict: dict
 ) -> dict:
     """
-    Calculate APGD-D10 compliant work hours with rest day pay.
+    Calculate APGD-D10 compliant work hours.
     
-    APGD-D10 Rules:
-    - Weekly normal cap: 44h (same as Scheme A)
-    - Work patterns: 4-7 days/week allowed
-    - Rest day pay: 1 RDP (8h) for 6th day, 2 RDP (16h) for 7th day in same week
+    UPDATED RULE (per customer confirmation):
+    Normal hours = 44h / work_days_in_week per day, rest is OT.
+    NO special "rest day pay" treatment for 6th/7th day.
+    restDayPay is reserved for incremental solving only.
     
-    Hour Breakdown by Pattern:
-    - 4 days: 11.0h normal each = 44h total, 0h OT, 0 RDP
-    - 5 days: 8.8h normal + 2.2h OT each = 44h + 11h OT, 0 RDP
-    - 6 days: Days 1-5 (8.8h+2.2h), Day 6 (3h OT + 8h RDP) = 44h + 14h OT + 1 RDP
-    - 7 days: Days 1-5 (8.8h+2.2h), Days 6-7 (3h OT + 8h RDP each) = 44h + 17h OT + 2 RDP
+    Hour Breakdown by Pattern (12h gross shift, 1h lunch = 11h net):
+    - 4 days: 44/4 = 11.0h normal, 0h OT
+    - 5 days: 44/5 = 8.8h normal, 2.2h OT  
+    - 6 days: 44/6 = 7.33h normal, 3.67h OT
+    - 7 days: 44/7 = 6.29h normal, 4.71h OT
     
     Args:
         start_dt: Shift start datetime
@@ -273,7 +273,7 @@ def calculate_apgd_d10_hours(
         employee_id: Employee ID
         assignment_date_obj: Assignment date (date object)
         all_assignments: All assignments for context analysis
-        employee_dict: Employee dictionary
+        employee_dict: Employee dictionary (unused but kept for API compatibility)
     
     Returns:
         Dictionary with keys:
@@ -281,77 +281,45 @@ def calculate_apgd_d10_hours(
         - 'lunch': Meal break (1.0h for 12h shifts)
         - 'normal': Normal hours (MOM compliant, max 44h/week)
         - 'ot': Overtime hours
-        - 'restDayPay': Rest day pay count (0, 1, or 2 = 0h, 8h, or 16h)
+        - 'restDayPay': Rest day pay (0 for initial solve, set during incremental)
         - 'paid': Total paid hours
     
-    Examples:
-        4 days/week, 12h shift → {normal: 11.0, ot: 0.0, restDayPay: 0}
-        5 days/week, 12h shift → {normal: 8.8, ot: 2.2, restDayPay: 0}
-        6 days/week, position 6, 12h shift → {normal: 0.0, ot: 3.0, restDayPay: 1}
-        7 days/week, position 7, 12h shift → {normal: 0.0, ot: 3.0, restDayPay: 1}
+    Examples (12h shift = 11h net):
+        4 days/week → {normal: 11.0, ot: 0.0, restDayPay: 0}
+        5 days/week → {normal: 8.8, ot: 2.2, restDayPay: 0}
+        6 days/week → {normal: 7.33, ot: 3.67, restDayPay: 0}
+        7 days/week → {normal: 6.29, ot: 4.71, restDayPay: 0}
     """
     # Calculate basic components
     gross = span_hours(start_dt, end_dt)
     ln = lunch_hours(gross)
     
-    # Get work days in calendar week and position within that week
+    # Get work days in calendar week
     work_days_in_week = count_work_days_in_calendar_week(
         employee_id, assignment_date_obj, all_assignments
     )
-    work_day_position_in_week = count_work_day_position_in_week(
-        employee_id, assignment_date_obj, all_assignments
-    )
-    consecutive_position = find_consecutive_position(
-        employee_id, assignment_date_obj, all_assignments
-    )
     
-    # Initialize rest day pay count (0, 1, or 2)
+    # Ensure minimum of 1 work day to avoid division by zero
+    if work_days_in_week <= 0:
+        work_days_in_week = 5  # Default to 5-day week
+    
+    # Calculate normal hours threshold: 44h weekly cap / work days in week
+    normal_threshold = 44.0 / work_days_in_week
+    
+    # Apply threshold: normal = min(threshold, net hours), OT = rest
+    normal = min(normal_threshold, gross - ln)
+    ot = max(0.0, gross - ln - normal_threshold)
+    
+    # restDayPay is 0 for initial solve
+    # It will only be set during incremental solving when employee works on their OFF_DAY
     rest_day_pay_count = 0
-    
-    # CRITICAL FIX: RDP based on CALENDAR WEEK position, NOT consecutive position
-    # Employee working Thu-Sun (Week 1), Mon-Tue (Week 2): Tuesday is 6th consecutive
-    # but only 2nd day in Week 2 → NO RDP until 6th day IN THE CURRENT WEEK
-    if work_day_position_in_week >= 6:
-        # 6th or 7th WORK DAY in current calendar week: 0h normal, 8h rest day pay (1 RDP), rest is OT
-        normal = 0.0
-        rest_day_pay_count = 1  # 1 RDP = 8 hours paid
-        ot = max(0.0, gross - ln - 8.0)  # e.g., 12h gross - 1h lunch - 8h RDP = 3h OT
-    
-    # Calculate normal/OT for positions 1-5 based on consecutive work pattern
-    # CRITICAL: For 6+ day patterns (including partial weeks), use 8.8h normal cap
-    # Only 4-day standalone patterns get 11.0h (44h/4 = 11h)
-    else:
-        # Get employee's work pattern to determine if this is a 4-day standalone pattern
-        # or part of a longer pattern (5+ days)
-        is_standalone_4day = False
-        
-        if employee_dict:
-            work_pattern_def = employee_dict.get('workPatternDefinition', {})
-            work_pattern = work_pattern_def.get('workPattern', [])
-            # Count work days ('D') in pattern
-            pattern_work_days = sum(1 for day in work_pattern if day == 'D')
-            is_standalone_4day = (pattern_work_days == 4)
-        
-        if is_standalone_4day and work_days_in_week == 4:
-            # Standalone 4-day pattern: 11.0h normal each (44h / 4 = 11h)
-            normal = min(11.0, gross - ln)
-            ot = max(0.0, gross - ln - 11.0)
-        else:
-            # All other patterns (5+ days, or partial weeks): 8.8h normal + OT
-            # This includes:
-            # - 5-day patterns
-            # - 6-day patterns (days 1-5)
-            # - 7-day patterns (days 1-5)
-            # - Partial weeks at period start/end
-            normal = min(8.8, gross - ln)
-            ot = max(0.0, gross - ln - 8.8)
     
     return {
         'gross': round(gross, 2),
         'lunch': round(ln, 2),
         'normal': round(normal, 2),
         'ot': round(ot, 2),
-        'restDayPay': rest_day_pay_count,  # Count, not hours (0, 1, or 2)
+        'restDayPay': rest_day_pay_count,  # 0 for initial solve
         'paid': round(gross, 2)
     }
 
@@ -957,42 +925,32 @@ def calculate_mom_compliant_hours(
             ot = max(0.0, gross - ln - normal_threshold)
     
     else:
-        # SCHEME A/B (FULL-TIME) - Original logic
+        # SCHEME A/B (FULL-TIME) - Updated logic per customer confirmation
+        # 
+        # RULE: Normal hours = 44h / work_days_in_week per day, rest is OT
+        # NO special "rest day pay" treatment for 6th/7th day.
+        # The restDayPay field is reserved for incremental solving only
+        # (when employee's original slot is OFF_DAY but they prefer to work).
+        #
+        # Normal hours per day by work days in week:
+        # - 4 days: 44/4 = 11.0h normal
+        # - 5 days: 44/5 = 8.8h normal
+        # - 6 days: 44/6 = 7.33h normal
+        # - 7 days: 44/7 = 6.29h normal
         
-        if work_days_in_week == 4:
-            # 4 days/week: 11.0h normal + rest OT
-            normal = min(11.0, gross - ln)
-            ot = max(0.0, gross - ln - 11.0)
+        if work_days_in_week <= 0:
+            # Edge case: no work days (shouldn't happen)
+            work_days_in_week = 5  # Default to 5-day week
         
-        elif work_days_in_week == 5:
-            # 5 days/week: 8.8h normal + rest OT
-            normal = min(8.8, gross - ln)
-            ot = max(0.0, gross - ln - 8.8)
+        # Calculate normal hours threshold: 44h weekly cap / work days in week
+        normal_threshold = 44.0 / work_days_in_week
         
-        elif work_days_in_week >= 6:
-            # 6+ days/week: RDP applies on 6th+ day IN THE CURRENT CALENDAR WEEK
-            # CRITICAL: Must check work_day_position_in_week, NOT consecutive_position
-            # Example: Employee works Thu-Sun (Week 1), then Mon-Tue (Week 2)
-            #   - Tuesday is 6th consecutive, but only 2nd day in Week 2 → NO RDP
-            #   - RDP only applies if THIS DAY is the 6th+ work day IN THIS CALENDAR WEEK
-            
-            # RDP only on 6th/7th WORK DAY of THE CURRENT CALENDAR WEEK
-            # (not based on consecutive days spanning multiple weeks)
-            if work_day_position_in_week >= 6:
-                # 6th/7th work day IN THIS WEEK: 0h normal, 8.0h rest day pay, rest OT
-                normal = 0.0
-                rest_day_pay = 8.0
-                ot = max(0.0, gross - ln - rest_day_pay)
-            else:
-                # Position 1-5 in this week: 8.8h normal + rest OT
-                normal = min(8.8, gross - ln)
-                ot = max(0.0, gross - ln - 8.8)
+        # Apply threshold: normal = min(threshold, net hours), OT = rest
+        normal = min(normal_threshold, gross - ln)
+        ot = max(0.0, gross - ln - normal_threshold)
         
-        else:
-            # Fallback for < 4 days (shouldn't happen with MOM compliance, but handle gracefully)
-            # Use 8.8h formula as conservative default
-            normal = min(8.8, gross - ln)
-            ot = max(0.0, gross - ln - 8.8)
+        # restDayPay remains 0 for initial solve
+        # It will only be set during incremental solving when employee works on their OFF_DAY
     
     return {
         'gross': round(gross, 2),
