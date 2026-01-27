@@ -76,12 +76,16 @@ def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None
     end_date = parse_date_string(dates[-1])
     
     # Build assignment lookup: emp_id -> date -> assignment
+    # CRITICAL: Normalize date keys to YYYY-MM-DD format for consistent lookup
     assignment_by_emp_date = defaultdict(dict)
     for assignment in all_assignments_for_roster:
         emp_id = assignment.get('employeeId')
         assign_date = assignment.get('date')
         if emp_id and assign_date:
-            assignment_by_emp_date[emp_id][assign_date] = assignment
+            # Normalize date to YYYY-MM-DD (strip time component if present)
+            date_key = assign_date[:10] if assign_date else None
+            if date_key:
+                assignment_by_emp_date[emp_id][date_key] = assignment
     
     # Get base rotation pattern from first demand (assuming single pattern for now)
     base_pattern = None

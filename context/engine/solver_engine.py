@@ -667,9 +667,15 @@ def build_model(ctx):
                     # They can be assigned to any shift
                     continue
                 
-                # CRITICAL FIX: If employee has custom workPattern (from ICPMP), it's already rotated!
-                # Use offset=0 to avoid double-rotation. Otherwise use employee's offset normally.
-                effective_offset = 0 if emp.get('workPattern') else emp_offset
+                # CRITICAL FIX: Only use offset=0 if employee has a DIFFERENT workPattern than slot's base pattern
+                # This indicates ICPMP pre-rotated the pattern, so we use offset=0 to avoid double-rotation.
+                # If employee's workPattern matches slot's base pattern, it was just copied (not pre-rotated),
+                # so we MUST use the employee's rotationOffset for proper staggering!
+                emp_has_custom_rotated_pattern = (
+                    emp.get('workPattern') is not None and 
+                    emp.get('workPattern') != slot_base_pattern
+                )
+                effective_offset = 0 if emp_has_custom_rotated_pattern else emp_offset
                 
                 # FORWARD ROTATION: Add offset to shift pattern into the cycle
                 # Example: offset=1 means employee starts 1 day later in the pattern cycle
