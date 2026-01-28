@@ -849,19 +849,10 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         from context.engine.time_utils import normalize_scheme
         emp_scheme = normalize_scheme(employee.get('scheme', 'A'))
         
-        # Check if APGD-D10 (Scheme A + APO)
-        is_apgd = False
-        product = employee.get('productTypeId', '')
-        for demand in input_data.get('demandItems', []):
-            for req in demand.get('requirements', []):
-                if req.get('productTypeId', '') == product:
-                    if is_apgd_d10_employee(employee, req):
-                        is_apgd = True
-                        break
-            if is_apgd:
-                break
-        
-        if is_apgd:
+        # SCHEME A: All Scheme A employees use monthly contractual threshold
+        # (28 Jan 2026): All hours are NORMAL until monthly threshold is reached
+        # OT hours only apply after exceeding the monthly contractual hours
+        if emp_scheme == 'A':
             scheme_a_employees.add(emp_id)
             if emp_id not in scheme_a_thresholds:
                 # Get contractual threshold for this employee

@@ -2,12 +2,12 @@
 
 PATTERN-AWARE VERSION with MOM-compliant hour calculation:
 
-Based on MOM Employment Act rules:
-- 4 work days/week: 11.0h normal + rest OT per shift
-- 5 work days/week: 8.8h normal + rest OT per shift  
-- 6 work days/week: 
-  - First 5 consecutive days: 8.8h normal + rest OT per shift
-  - 6th consecutive day: 0h normal + rest day pay (8.0h) + rest OT per shift
+UPDATED (28 Jan 2026): Normal hours are proportional to work days per week.
+The 44h weekly cap is distributed evenly across all work days:
+- 4 days/week: 44/4 = 11.0h normal per shift
+- 5 days/week: 44/5 = 8.8h normal per shift
+- 6 days/week: 44/6 = 7.33h normal per shift (ALL 6 days get normal hours)
+- 7 days/week: 44/7 = 6.29h normal per shift
   
 Weekly cap: sum(normal_hours) <= 44h per employee per ISO week
 Monthly cap: sum(ot_hours) <= 72h per employee per calendar month
@@ -75,10 +75,14 @@ def calculate_pattern_aware_normal_hours(gross, lunch, work_pattern, pattern_day
     """
     Calculate normal hours using MOM-compliant pattern-aware rules.
     
-    Based on official MOM table:
-    - 4 days/week: 11.0h normal per shift
-    - 5 days/week: 8.8h normal per shift
-    - 6 days/week: 8.8h normal for first 5 consecutive days, 0h normal for 6th+ day
+    UPDATED (28 Jan 2026): Normal hours are proportional to work days per week.
+    The 44h weekly cap is distributed evenly across all work days.
+    
+    Normal hours threshold per day:
+    - 4 days/week: 44/4 = 11.0h normal per shift
+    - 5 days/week: 44/5 = 8.8h normal per shift
+    - 6 days/week: 44/6 = 7.33h normal per shift (ALL 6 days get normal hours)
+    - 7 days/week: 44/7 = 6.29h normal per shift
     
     Args:
         gross: Gross shift hours
@@ -91,24 +95,16 @@ def calculate_pattern_aware_normal_hours(gross, lunch, work_pattern, pattern_day
     """
     work_days_per_week = get_work_days_per_week(work_pattern)
     
-    if work_days_per_week <= 4.5:
-        # 4 working days per week: 11.0 normal hours per shift
-        return min(11.0, gross - lunch)
-        
-    elif work_days_per_week <= 5.5:
-        # 5 working days per week: 8.8 normal hours per shift
-        return min(8.8, gross - lunch)
-        
-    else:
-        # 6+ working days per week: Check consecutive position
-        consecutive_position = get_consecutive_work_position(work_pattern, pattern_day)
-        
-        if consecutive_position >= 6:
-            # 6th+ consecutive day: 0 normal hours (rest day pay applies)
-            return 0.0
-        else:
-            # First 5 consecutive days: 8.8 normal hours
-            return min(8.8, gross - lunch)
+    # Protect against edge cases
+    if work_days_per_week <= 0:
+        work_days_per_week = 5  # Default to 5-day week
+    
+    # Calculate normal hours threshold: 44h weekly cap / work days in week
+    # This evenly distributes the 44h cap across all work days
+    normal_threshold = 44.0 / work_days_per_week
+    
+    # Apply threshold: normal = min(threshold, net hours)
+    return min(normal_threshold, gross - lunch)
 
 
 def add_constraints(model, ctx):
@@ -455,9 +451,9 @@ def add_constraints(model, ctx):
     
     print(f"[C2] Pattern-Aware Weekly & Monthly Hours Constraints (HARD)")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")
-    print(f"     4-day employees: {four_day_employees} (11.0h normal/shift)")
-    print(f"     5-day employees: {five_day_employees} (8.8h normal/shift)")
-    print(f"     6-day employees: {six_day_employees} (8.8h normal for first 5 days, 0h for 6th)")
+    print(f"     4-day employees: {four_day_employees} (44h/4 = 11.0h normal/shift)")
+    print(f"     5-day employees: {five_day_employees} (44h/5 = 8.8h normal/shift)")
+    print(f"     6-day employees: {six_day_employees} (44h/6 = 7.33h normal/shift)")
     if apgd_skipped > 0:
         print(f"     APGD-D10: {apgd_skipped} employees EXEMPT from weekly 44h cap (use monthly caps)")
     
