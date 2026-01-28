@@ -142,8 +142,11 @@ def add_constraints(model, ctx):
                         if not isinstance(var, int):
                             day_vars_in_window.append(var)
                 
-                if len(day_vars_in_window) >= 7:
-                    # Only add constraint if all 7 days have potential assignments
+                # FIX (28 Jan 2026): Add constraint even when fewer than 7 day_vars
+                # In employee-based mode, some days are pattern OFF days (no slots)
+                # Those OFF days count toward the minimum off-day requirement
+                # So we only need to ensure work assignments <= 6
+                if day_vars_in_window:  # At least 1 work day variable exists
                     model.Add(sum(day_vars_in_window) <= 6)
                     constraints_added += 1
     

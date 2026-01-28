@@ -288,6 +288,16 @@ def add_constraints(model, ctx):
         for week_key, week_slots in weeks.items():
             weighted_assignments = []
             
+            # FIX (28 Jan 2026): Calculate normal hours based on ACTUAL work days
+            # in THIS SPECIFIC WEEK, not the pattern average.
+            # This ensures 6-day weeks get 44h/6 = 7.33h per shift, not 44h/5.73 = 7.68h
+            actual_work_days_this_week = len(week_slots)
+            if actual_work_days_this_week <= 0:
+                actual_work_days_this_week = 5  # Fallback
+            
+            # Calculate normal hours threshold for this specific week
+            normal_threshold_this_week = 44.0 / actual_work_days_this_week
+            
             for slot in week_slots:
                 if (slot.slot_id, emp_id) not in x:
                     continue
@@ -305,12 +315,11 @@ def add_constraints(model, ctx):
                 if hours_data:
                     gross = hours_data.get('gross', 0)
                     lunch = hours_data.get('lunch', 0)
-                    pattern_day = getattr(slot, 'patternDay', 0)
+                    net_hours = gross - lunch
                     
-                    # PATTERN-AWARE NORMAL HOURS (MOM compliant)
-                    normal_hours = calculate_pattern_aware_normal_hours(
-                        gross, lunch, work_pattern, pattern_day
-                    )
+                    # WEEK-SPECIFIC NORMAL HOURS (MOM compliant)
+                    # Use the actual work days in THIS week, not pattern average
+                    normal_hours = min(normal_threshold_this_week, net_hours)
                     
                     var = x[(slot.slot_id, emp_id)]
                     
@@ -365,18 +374,11 @@ def add_constraints(model, ctx):
     # - 29 days: 116h OT
     # - 30 days: 120h OT
     # - 31 days: 124h OT
-    # - Standard employees: 72h OT (all months)
+    # - Standard employees: Month-dependent OT from monthlyHourLimits
     monthly_constraints = 0
     
-    # Extract APGD max OT hours from monthlyHourLimits
-    apgd_ot_by_days = {}
-    monthly_hour_limits = ctx.get('monthlyHourLimits', [])
-    for limit_config in monthly_hour_limits:
-        if limit_config.get('id') == 'apgdMaximumOvertimeHours':
-            values_by_length = limit_config.get('valuesByMonthLength', {})
-            for days_str, values in values_by_length.items():
-                apgd_ot_by_days[int(days_str)] = values.get('maxOvertimeHours', 72)
-            break
+    # Import the function that reads from monthlyHourLimits
+    from context.engine.constraint_config import get_monthly_hour_limits
     
     # Track applied caps for debug output
     applied_ot_caps = {}  # emp_id -> (is_apgd, month_length, cap_hours)
@@ -395,21 +397,20 @@ def add_constraints(model, ctx):
             if month_slots:
                 # Get first and last date of the month from slots
                 month_dates = set(slot.date for slot in month_slots)
-                month_length = len(month_dates)
+                # Parse month from month_key (format: "YYYY-MM")
+                year, month_num = map(int, month_key.split('-'))
                 
-                # Get appropriate OT cap based on employee type and month length
-                if is_apgd:
-                    # APGD-D10: Use month-dependent cap (112-124h)
-                    monthly_ot_cap_hours = apgd_ot_by_days.get(month_length, 72.0)
-                else:
-                    # Standard employee: 72h for all months
-                    monthly_ot_cap_hours = 72.0
+                # FIX (28 Jan 2026): Use get_monthly_hour_limits() for ALL employees
+                # This reads from monthlyHourLimits in the input JSON, which may define
+                # higher OT caps (e.g., 124h for 31-day months) than the 72h fallback
+                monthly_limits = get_monthly_hour_limits(ctx, employee_dict, year, month_num)
+                monthly_ot_cap_hours = monthly_limits.get('maxOvertimeHours', 72.0)
                 
                 monthly_ot_cap_int = int(round(monthly_ot_cap_hours * 10))  # Convert to tenths
                 
                 # Track for debug output
                 if emp_id not in applied_ot_caps:
-                    applied_ot_caps[emp_id] = (is_apgd, month_length, monthly_ot_cap_hours)
+                    applied_ot_caps[emp_id] = (is_apgd, len(month_dates), monthly_ot_cap_hours)
             else:
                 continue
             
@@ -442,18 +443,11 @@ def add_constraints(model, ctx):
                 monthly_constraints += 1
 
     # Summary
-    four_day_employees = sum(1 for emp_id, pattern in emp_patterns.items() 
-                            if get_work_days_per_week(pattern) <= 4.5)
-    five_day_employees = sum(1 for emp_id, pattern in emp_patterns.items() 
-                            if 4.5 < get_work_days_per_week(pattern) <= 5.5)
-    six_day_employees = sum(1 for emp_id, pattern in emp_patterns.items() 
-                           if get_work_days_per_week(pattern) > 5.5)
     
-    print(f"[C2] Pattern-Aware Weekly & Monthly Hours Constraints (HARD)")
+    print(f"[C2] Week-Specific Weekly & Monthly Hours Constraints (HARD)")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")
-    print(f"     4-day employees: {four_day_employees} (44h/4 = 11.0h normal/shift)")
-    print(f"     5-day employees: {five_day_employees} (44h/5 = 8.8h normal/shift)")
-    print(f"     6-day employees: {six_day_employees} (44h/6 = 7.33h normal/shift)")
+    print(f"     NOTE: Normal hours calculated per ISO week based on ACTUAL work days")
+    print(f"     (e.g., 6-day week = 44h/6 = 7.33h/shift, 5-day week = 44h/5 = 8.8h/shift)")
     if apgd_skipped > 0:
         print(f"     APGD-D10: {apgd_skipped} employees EXEMPT from weekly 44h cap (use monthly caps)")
     

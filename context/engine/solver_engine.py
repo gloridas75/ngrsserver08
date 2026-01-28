@@ -438,6 +438,9 @@ def build_model(ctx):
             headcount_constraints += 1
         else:
             # No valid employees for this slot - must be marked unassigned
+            # DEBUG: Log which slots have no valid employees
+            if slot.date.day <= 2:  # Only log Mar 1-2
+                print(f"  ⚠️ FORCED UNASSIGNED: {slot.slot_id[:60]}... (no valid employees)")
             model.Add(unassigned[slot.slot_id] == 1)
             headcount_constraints += 1
     
@@ -1072,6 +1075,21 @@ def extract_assignments(ctx, solver) -> list:
     
     print(f"[extract_assignments] Extracting assignments from solution...")
     
+    # DEBUG: Check Mar 1-2 slot values
+    from datetime import date as date_type
+    mar1 = date_type(2026, 3, 1)
+    mar2 = date_type(2026, 3, 2)
+    print(f"  DEBUG: Checking Mar 1-2 slot values...")
+    for slot in slots:
+        if slot.date in [mar1, mar2]:
+            for emp_id in employees_map.keys():
+                var_key = (slot.slot_id, emp_id)
+                if var_key in x:
+                    val = solver.Value(x[var_key])
+                    unassigned_val = solver.Value(unassigned[slot.slot_id]) if slot.slot_id in unassigned else -1
+                    target = getattr(slot, 'targetEmployeeId', 'N/A')
+                    print(f"    {slot.date}: slot for {target}, x[{emp_id}]={val}, unassigned={unassigned_val}")
+    
     assigned_count = 0
     unassigned_count = 0
     
@@ -1437,13 +1455,24 @@ def calculate_scores(ctx, assignments) -> tuple:
         # Skip APGD-D10 employees (exempt from weekly cap)
         if emp_id in apgd_employees:
             continue
-            
+        
+        # FIX (28 Jan 2026): Calculate normal hours using WEEK-SPECIFIC thresholds
+        # This matches the CP-SAT constraint logic where normal = 44h / work_days_this_week
+        work_days_this_week = len(week_assignments)
+        if work_days_this_week > 0:
+            normal_per_shift = 44.0 / work_days_this_week
+        else:
+            normal_per_shift = 8.8  # Default
+        
         weekly_normal = 0
         for a in week_assignments:
             start = datetime.fromisoformat(a.get('startDateTime'))
             end = datetime.fromisoformat(a.get('endDateTime'))
-            hours_dict = split_shift_hours(start, end)
-            weekly_normal += hours_dict['normal']
+            gross = (end - start).total_seconds() / 3600.0
+            # Normal hours = min(threshold, gross - lunch)
+            # For simplicity, assume 1h lunch for 12h shifts
+            lunch = 1.0 if gross >= 6 else 0.0
+            weekly_normal += min(normal_per_shift, gross - lunch)
         
         if weekly_normal > 44.0:
             score_book.hard(
@@ -1451,7 +1480,9 @@ def calculate_scores(ctx, assignments) -> tuple:
                 f"{emp_id} in {week_key}: {weekly_normal:.1f}h exceeds 44h weekly normal cap"
             )
     
-    # ========== C17 CHECK: Monthly OT Hours (72h cap) ==========
+    # ========== C17 CHECK: Monthly OT Hours (month-dependent cap from monthlyHourLimits) ==========
+    from context.engine.constraint_config import get_monthly_hour_limits
+    
     for (emp_id, month_key), month_assignments in emp_assignments_by_month.items():
         monthly_ot = 0
         for a in month_assignments:
@@ -1460,10 +1491,16 @@ def calculate_scores(ctx, assignments) -> tuple:
             hours_dict = split_shift_hours(start, end)
             monthly_ot += hours_dict['ot']
         
-        if monthly_ot > 72.0:
+        # FIX (28 Jan 2026): Get month-specific OT cap from monthlyHourLimits
+        year, month = map(int, month_key.split('-'))
+        employee = employees.get(emp_id, {})
+        monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
+        monthly_ot_cap = monthly_limits.get('maxOvertimeHours', 72.0)
+        
+        if monthly_ot > monthly_ot_cap:
             score_book.hard(
                 "C17",
-                f"{emp_id} in {month_key}: {monthly_ot:.1f}h OT exceeds 72h monthly cap"
+                f"{emp_id} in {month_key}: {monthly_ot:.1f}h OT exceeds {monthly_ot_cap}h monthly cap"
             )
     
     # ========== C3 CHECK: Max Consecutive Working Days (≤12) ==========
