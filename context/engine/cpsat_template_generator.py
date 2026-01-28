@@ -815,28 +815,46 @@ def _replicate_template_to_employee(
 
 
 def _group_employees_by_ou(employees: List[dict]) -> Dict[str, List[dict]]:
-    """Group employees by organizational unit OR rotation offset.
+    """Group employees by organizational unit AND rotation offset.
     
-    If employees have ouId (Organizational Unit ID), group by that.
-    Otherwise, group by rotationOffset to ensure different offsets get different templates.
+    For staggered patterns (different employees have different offsets), 
+    employees are grouped by BOTH ouId AND rotationOffset so each offset
+    gets its own template.
+    
+    For non-staggered patterns (all same offset), employees are grouped
+    by ouId only.
     """
     employees_by_ou = {}
     
     # Check if employees have OU IDs or just rotation offsets
     has_ou_ids = any(emp.get('ouId') or emp.get('organizationalUnitId') for emp in employees)
     
+    # Check if employees have individual/staggered offsets
+    offsets = [emp.get('rotationOffset', 0) for emp in employees]
+    unique_offsets = set(offsets)
+    has_staggered_offsets = len(unique_offsets) > 1
+    
     for emp in employees:
         if has_ou_ids:
-            # Group by OU ID (check both 'ouId' and 'organizationalUnitId' for compatibility)
+            # Get OU ID
             ou_id = emp.get('ouId') or emp.get('organizationalUnitId', 'default')
+            
+            if has_staggered_offsets:
+                # Staggered mode: Group by BOTH OU and offset
+                # This ensures each offset gets its own template
+                rotation_offset = emp.get('rotationOffset', 0)
+                group_key = f"{ou_id}|offset_{rotation_offset}"
+            else:
+                # Non-staggered: Group by OU only
+                group_key = ou_id
         else:
-            # Group by rotation offset (treat each offset as separate OU)
+            # No OU IDs: Group by rotation offset only
             rotation_offset = emp.get('rotationOffset', 0)
-            ou_id = f"offset_{rotation_offset}"
+            group_key = f"offset_{rotation_offset}"
         
-        if ou_id not in employees_by_ou:
-            employees_by_ou[ou_id] = []
-        employees_by_ou[ou_id].append(emp)
+        if group_key not in employees_by_ou:
+            employees_by_ou[group_key] = []
+        employees_by_ou[group_key].append(emp)
     
     return employees_by_ou
 

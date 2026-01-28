@@ -97,6 +97,10 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
     fallback_enabled = input_data.get('fallbackToOutcomeBased', False)  # Default to False
     original_rostering_basis = rostering_basis  # Store original for logging
     
+    # Get rotation offset mode (affects both modes)
+    # Options: 'auto', 'ouOffsets', 'individual'
+    fixed_rotation_offset_mode = input_data.get('fixedRotationOffset', 'auto')
+    
     # Determine if ICPMP preprocessing is needed
     # ICPMP ONLY runs for demandBased mode when:
     # - No employees have pre-assigned workPatterns (employees_with_patterns == 0)
@@ -230,8 +234,6 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
             }
         
         # Apply offset management after ICPMP based on mode
-        fixed_rotation_offset_mode = input_data.get('fixedRotationOffset', 'auto')
-        
         if fixed_rotation_offset_mode == 'auto':
             # AUTO MODE: Use ICPMP-assigned offsets if ICPMP ran, otherwise apply staggering
             print(f"{log_prefix} ======================================================================")
@@ -304,33 +306,47 @@ def solve_problem(input_data: Dict[str, Any], log_prefix: str = "[SOLVER]") -> D
         print(f"{log_prefix} ╠════════════════════════════════════════════════════════════")
         print(f"{log_prefix} ║ Total employees in ctx: {len(employees)}")
         print(f"{log_prefix} ║ OU offset map: {ou_offset_map}")
+        print(f"{log_prefix} ║ fixedRotationOffset mode: {fixed_rotation_offset_mode}")
         print(f"{log_prefix} ║ Sample employees (first 3):")
         for emp in employees[:3]:
             print(f"{log_prefix} ║   {emp['employeeId']}: rotationOffset={emp.get('rotationOffset', 'NOT SET')}, ouId={emp.get('ouId')}")
         print(f"{log_prefix} ╚════════════════════════════════════════════════════════════")
         
-        # Check if employees already have individual offsets (single OU case)
-        has_employee_offsets = any('rotationOffset' in emp and emp['rotationOffset'] is not None 
-                                   for emp in employees)
+        # Check if employees already have individual offsets 
+        has_individual_offsets = any('rotationOffset' in emp and emp['rotationOffset'] is not None 
+                                     and emp['rotationOffset'] != 0 for emp in employees)
         unique_ous = set(emp.get('ouId') for emp in employees if emp.get('ouId'))
         is_single_ou = len(unique_ous) == 1
         
-        if is_single_ou and has_employee_offsets:
-            # Single OU with individual employee offsets - preserve them
+        # DECISION: When to preserve individual offsets vs apply OU offsets
+        # 1. fixedRotationOffset == "individual" → ALWAYS preserve individual offsets
+        # 2. fixedRotationOffset == "ouOffsets" with individual offsets → preserve (new behavior)
+        # 3. Single OU with individual offsets → preserve (backward compat)
+        # 4. No individual offsets → apply OU offsets
+        
+        preserve_individual = (
+            fixed_rotation_offset_mode == 'individual' or
+            (fixed_rotation_offset_mode == 'ouOffsets' and has_individual_offsets) or
+            (is_single_ou and has_individual_offsets)
+        )
+        
+        if preserve_individual:
+            # Preserve individual employee offsets
             print(f"{log_prefix} ╔════════════════════════════════════════════════════════════")
-            print(f"{log_prefix} ║ SINGLE OU WITH INDIVIDUAL OFFSETS DETECTED")
+            print(f"{log_prefix} ║ PRESERVING INDIVIDUAL EMPLOYEE OFFSETS")
             print(f"{log_prefix} ╠════════════════════════════════════════════════════════════")
-            print(f"{log_prefix} ║ Preserving {len([e for e in employees if 'rotationOffset' in e])} individual offsets")
+            print(f"{log_prefix} ║ Mode: {fixed_rotation_offset_mode}, Single OU: {is_single_ou}")
+            print(f"{log_prefix} ║ Employees with offsets: {len([e for e in employees if 'rotationOffset' in e])}")
             print(f"{log_prefix} ║ Sample preserved offsets:")
-            for emp in employees[:3]:
-                print(f"{log_prefix} ║   {emp['employeeId']}: offset={emp.get('rotationOffset', 'NONE')}")
+            for emp in employees[:5]:
+                print(f"{log_prefix} ║   {emp['employeeId']}: offset={emp.get('rotationOffset', 'NONE')}, ouId={emp.get('ouId')}")
             print(f"{log_prefix} ╚════════════════════════════════════════════════════════════")
             # Ensure all employees have an offset (default to 0 if missing)
             for emp in employees:
-                if 'rotationOffset' not in emp:
+                if 'rotationOffset' not in emp or emp['rotationOffset'] is None:
                     emp['rotationOffset'] = 0
         elif ou_offset_map:
-            # Multiple OUs or no individual offsets - use OU-level offsets
+            # Apply OU-level offsets (ouOffsets mode OR no individual offsets)
             print(f"{log_prefix} Applying OU rotation offsets from {len(ou_offset_map)} organizational units")
             assigned_count = 0
             for emp in employees:
