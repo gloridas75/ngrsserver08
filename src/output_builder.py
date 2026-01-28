@@ -14,7 +14,10 @@ from context.engine.time_utils import (
     split_shift_hours, 
     calculate_mom_compliant_hours,
     calculate_apgd_d10_hours,
-    is_apgd_d10_employee
+    is_apgd_d10_employee,
+    get_contractual_hours_threshold,
+    span_hours,
+    lunch_hours
 )
 
 
@@ -796,6 +799,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     })
     
     # ========== ANNOTATE ASSIGNMENTS WITH HOUR BREAKDOWN ==========
+    # Two-pass approach for Scheme A (monthly threshold) vs Scheme B (daily threshold)
+    
     annotated_assignments = []
     employee_weekly_normal = defaultdict(float)  # emp_id:week -> hours
     employee_monthly_ot = defaultdict(float)     # emp_id:month -> hours
@@ -803,6 +808,81 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     # Build employee lookup dictionary for scheme information
     employee_dict = {emp['employeeId']: emp for emp in ctx.get('employees', [])}
     
+    # ========== PASS 1: Identify Scheme A (APGD-D10) employees and calculate thresholds ==========
+    # Scheme A uses monthly contractual hours threshold, Scheme B uses daily threshold
+    
+    # Get planning horizon for month length
+    planning_horizon = input_data.get('planningHorizon', {})
+    start_date_str = planning_horizon.get('startDate', '')
+    end_date_str = planning_horizon.get('endDate', '')
+    
+    # Calculate month length (default to 30 if not available)
+    month_length = 30
+    if start_date_str and end_date_str:
+        try:
+            start_date = datetime.fromisoformat(start_date_str).date()
+            end_date = datetime.fromisoformat(end_date_str).date()
+            month_length = (end_date - start_date).days + 1
+            # Clamp to valid month lengths for lookup
+            if month_length <= 28:
+                month_length = 28
+            elif month_length <= 29:
+                month_length = 29
+            elif month_length <= 30:
+                month_length = 30
+            else:
+                month_length = 31
+        except Exception:
+            pass
+    
+    # Group assignments by employee for Scheme A cumulative calculation
+    scheme_a_employees = set()
+    scheme_a_thresholds = {}  # emp_id -> contractual threshold
+    employee_assignments = defaultdict(list)  # emp_id -> list of (date, assignment)
+    
+    for assignment in assignments:
+        emp_id = assignment.get('employeeId')
+        if not emp_id:
+            continue
+        
+        employee = employee_dict.get(emp_id, {})
+        from context.engine.time_utils import normalize_scheme
+        emp_scheme = normalize_scheme(employee.get('scheme', 'A'))
+        
+        # Check if APGD-D10 (Scheme A + APO)
+        is_apgd = False
+        product = employee.get('productTypeId', '')
+        for demand in input_data.get('demandItems', []):
+            for req in demand.get('requirements', []):
+                if req.get('productTypeId', '') == product:
+                    if is_apgd_d10_employee(employee, req):
+                        is_apgd = True
+                        break
+            if is_apgd:
+                break
+        
+        if is_apgd:
+            scheme_a_employees.add(emp_id)
+            if emp_id not in scheme_a_thresholds:
+                # Get contractual threshold for this employee
+                scheme_a_thresholds[emp_id] = get_contractual_hours_threshold(
+                    month_length, employee, input_data
+                )
+        
+        # Track assignments for Scheme A employees
+        if emp_id in scheme_a_employees:
+            assignment_date = assignment.get('date', '')
+            if assignment_date:
+                employee_assignments[emp_id].append((assignment_date, assignment))
+    
+    # Sort Scheme A assignments by date for cumulative calculation
+    for emp_id in employee_assignments:
+        employee_assignments[emp_id].sort(key=lambda x: x[0])
+    
+    # Track cumulative normal hours for Scheme A employees
+    scheme_a_cumulative = defaultdict(float)  # emp_id -> cumulative normal hours
+    
+    # ========== PASS 2: Calculate hours for all assignments ==========
     for assignment in assignments:
         try:
             # Check for OFF days (no work, no time calculation needed)
@@ -831,43 +911,48 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 hours_dict = assignment['hours']
             else:
                 # Calculate hours using MOM compliance logic
-                # Get employee scheme for scheme-aware hour calculations
                 employee = employee_dict.get(emp_id, {})
-                emp_scheme_raw = employee.get('scheme', 'A')  # Default to Scheme A if not found
-                # Normalize scheme to handle both 'P' and 'Scheme P' formats
+                emp_scheme_raw = employee.get('scheme', 'A')
                 from context.engine.time_utils import normalize_scheme
                 emp_scheme = normalize_scheme(emp_scheme_raw)
                 
-                # Check if employee is APGD-D10 (requires matching requirement)
-                is_apgd = False
-                product = employee.get('productTypeId', '')
-                for demand in input_data.get('demandItems', []):
-                    for req in demand.get('requirements', []):
-                        if req.get('productTypeId', '') == product:
-                            if is_apgd_d10_employee(employee, req):
-                                is_apgd = True
-                                break
-                    if is_apgd:
-                        break
-                
-                # Calculate hour breakdown (APGD-D10 or standard)
-                if is_apgd:
+                # SCHEME A (APGD-D10): Monthly contractual threshold-based calculation
+                if emp_id in scheme_a_employees:
+                    threshold = scheme_a_thresholds.get(emp_id, 238.0)
+                    cumulative = scheme_a_cumulative.get(emp_id, 0.0)
+                    
                     hours_dict = calculate_apgd_d10_hours(
                         start_dt=start_dt,
                         end_dt=end_dt,
                         employee_id=emp_id,
                         assignment_date_obj=date_obj,
                         all_assignments=assignments,
-                        employee_dict=employee
+                        employee_dict=employee,
+                        cumulative_normal_hours=cumulative,
+                        contractual_hours_threshold=threshold
                     )
+                    
+                    # Update cumulative normal hours for this employee
+                    scheme_a_cumulative[emp_id] += hours_dict['normal']
+                
+                # SCHEME B: Daily threshold-based calculation (44h / work_days_in_week)
+                elif emp_scheme == 'B':
+                    hours_dict = calculate_mom_compliant_hours(
+                        start_dt=start_dt,
+                        end_dt=end_dt,
+                        employee_id=emp_id,
+                        assignment_date_obj=date_obj,
+                        all_assignments=assignments,
+                        employee_scheme=emp_scheme,
+                        pattern_work_days=None
+                    )
+                
+                # SCHEME P: Part-time calculation
                 else:
-                    # For Scheme P, need to pass pattern work days count
                     pattern_work_days = None
                     if emp_scheme == 'P':
-                        # Get employee's work pattern and count work days
                         emp_pattern = employee.get('workPattern', [])
                         if emp_pattern:
-                            # Count non-'O' days in pattern
                             pattern_work_days = len([d for d in emp_pattern if d != 'O'])
                     
                     hours_dict = calculate_mom_compliant_hours(
@@ -886,7 +971,7 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 'lunch': hours_dict['lunch'],
                 'normal': hours_dict['normal'],
                 'ot': hours_dict['ot'],
-                'restDayPay': hours_dict['restDayPay'],
+                'restDayPay': hours_dict.get('restDayPay', 0.0),
                 'paid': hours_dict['paid']
             }
             
@@ -1113,13 +1198,46 @@ def build_incremental_output(
             
             # Calculate hour breakdown (APGD-D10 or standard)
             if is_apgd:
+                # For incremental mode, use cumulative tracking
+                # Get planning horizon for month length
+                planning_horizon = input_data.get('planningHorizon', {})
+                start_date_str = planning_horizon.get('startDate', '')
+                end_date_str = planning_horizon.get('endDate', '')
+                
+                month_length = 30
+                if start_date_str and end_date_str:
+                    try:
+                        s_date = datetime.fromisoformat(start_date_str).date()
+                        e_date = datetime.fromisoformat(end_date_str).date()
+                        month_length = (e_date - s_date).days + 1
+                        if month_length <= 28:
+                            month_length = 28
+                        elif month_length <= 29:
+                            month_length = 29
+                        elif month_length <= 30:
+                            month_length = 30
+                        else:
+                            month_length = 31
+                    except Exception:
+                        pass
+                
+                threshold = get_contractual_hours_threshold(month_length, employee, input_data)
+                # For incremental, start with cumulative from locked assignments
+                cumulative = 0.0
+                # Calculate cumulative from locked assignments for this employee
+                for locked in locked_assignments:
+                    if locked.get('employeeId') == emp_id and locked.get('hours'):
+                        cumulative += locked['hours'].get('normal', 0.0)
+                
                 hours_dict = calculate_apgd_d10_hours(
                     start_dt=start_dt,
                     end_dt=end_dt,
                     employee_id=emp_id,
                     assignment_date_obj=date_obj,
                     all_assignments=all_assignments_for_context,
-                    employee_dict=employee
+                    employee_dict=employee,
+                    cumulative_normal_hours=cumulative,
+                    contractual_hours_threshold=threshold
                 )
             else:
                 # For Scheme P, need to pass pattern work days count

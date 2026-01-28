@@ -219,30 +219,31 @@ def get_apgd_d10_category(employee: dict) -> str:
     """
     Determine APGD-D10 category for monthly hour cap calculation.
     
+    Based on monthlyHourLimits config in input JSON:
+    - apgdMinimumContractualHours: For Local (SG/PR) employees
+    - apgdMinimumContractualHoursCplSgt: For Foreigner employees
+    
     Categories:
-    - 'foreign_cpl_sgt': Foreign (local=0) Corporals/Sergeants → 268h monthly cap
-    - 'standard': All others (locals or other ranks) → 246h monthly cap
+    - 'foreigner': Foreign (local=0) → higher threshold (e.g., 260h for 30 days)
+    - 'local': Local (local=1) → standard threshold (e.g., 238h for 30 days)
     
     Args:
-        employee: Employee dict with 'local' and 'rankId'
+        employee: Employee dict with 'local' field
     
     Returns:
-        Category string: 'foreign_cpl_sgt' or 'standard'
+        Category string: 'foreigner' or 'local'
     
     Examples:
-        {'local': 0, 'rankId': 'CPL'} → 'foreign_cpl_sgt'
-        {'local': 0, 'rankId': 'SGT'} → 'foreign_cpl_sgt'
-        {'local': 0, 'rankId': 'SER'} → 'standard'
-        {'local': 1, 'rankId': 'CPL'} → 'standard' (locals use standard cap)
+        {'local': 0} → 'foreigner' (uses apgdMinimumContractualHoursCplSgt)
+        {'local': 1} → 'local' (uses apgdMinimumContractualHours)
     """
-    rank = normalize_rank(employee.get('rankId', ''))
     is_local = employee.get('local', 1)  # Default to local if not specified
     
-    # Foreign CPL/SGT get higher cap
-    if is_local == 0 and rank in ['CPL', 'SGT']:
-        return 'foreign_cpl_sgt'
+    # Foreigner employees use higher threshold
+    if is_local == 0:
+        return 'foreigner'
     
-    return 'standard'
+    return 'local'
 
 
 def calculate_apgd_d10_hours(
@@ -251,21 +252,26 @@ def calculate_apgd_d10_hours(
     employee_id: str,
     assignment_date_obj,
     all_assignments: list,
-    employee_dict: dict
+    employee_dict: dict,
+    cumulative_normal_hours: float = 0.0,
+    contractual_hours_threshold: float = 238.0
 ) -> dict:
     """
-    Calculate APGD-D10 compliant work hours.
+    Calculate APGD-D10 (Scheme A + APO) compliant work hours.
     
-    UPDATED RULE (per customer confirmation):
-    Normal hours = 44h / work_days_in_week per day, rest is OT.
-    NO special "rest day pay" treatment for 6th/7th day.
-    restDayPay is reserved for incremental solving only.
+    SCHEME A RULE (per customer confirmation - 28 Jan 2026):
+    - Hours are NORMAL until monthly total reaches contractual threshold
+    - Hours ABOVE contractual threshold are OT
+    - Contractual threshold from apgdMinimumContractualHours in input JSON
     
-    Hour Breakdown by Pattern (12h gross shift, 1h lunch = 11h net):
-    - 4 days: 44/4 = 11.0h normal, 0h OT
-    - 5 days: 44/5 = 8.8h normal, 2.2h OT  
-    - 6 days: 44/6 = 7.33h normal, 3.67h OT
-    - 7 days: 44/7 = 6.29h normal, 4.71h OT
+    This function is called per-assignment with cumulative tracking:
+    - cumulative_normal_hours: Total normal hours already allocated this month
+    - contractual_hours_threshold: Monthly contractual minimum (e.g., 238h for 30-day month)
+    
+    Example (30-day month with 238h contractual, 22 work days × 11h net):
+    - Day 1-21: All 11h per day = normal (cumulative: 231h)
+    - Day 22: First 7h = normal (reaches 238h), remaining 4h = OT
+    - Total: 238h normal + 4h OT
     
     Args:
         start_dt: Shift start datetime
@@ -273,45 +279,37 @@ def calculate_apgd_d10_hours(
         employee_id: Employee ID
         assignment_date_obj: Assignment date (date object)
         all_assignments: All assignments for context analysis
-        employee_dict: Employee dictionary (unused but kept for API compatibility)
+        employee_dict: Employee dictionary (for local/rank info)
+        cumulative_normal_hours: Normal hours already allocated this month (default: 0)
+        contractual_hours_threshold: Monthly contractual minimum (default: 238h for 30-day)
     
     Returns:
         Dictionary with keys:
         - 'gross': Total duration
         - 'lunch': Meal break (1.0h for 12h shifts)
-        - 'normal': Normal hours (MOM compliant, max 44h/week)
-        - 'ot': Overtime hours
-        - 'restDayPay': Rest day pay (0 for initial solve, set during incremental)
+        - 'normal': Normal hours (until threshold reached)
+        - 'ot': Overtime hours (after threshold exceeded)
+        - 'restDayPay': Rest day pay (0 for initial solve)
         - 'paid': Total paid hours
     
-    Examples (12h shift = 11h net):
-        4 days/week → {normal: 11.0, ot: 0.0, restDayPay: 0}
-        5 days/week → {normal: 8.8, ot: 2.2, restDayPay: 0}
-        6 days/week → {normal: 7.33, ot: 3.67, restDayPay: 0}
-        7 days/week → {normal: 6.29, ot: 4.71, restDayPay: 0}
+    Examples (12h shift = 11h net, 238h threshold):
+        cumulative=0h   → {normal: 11.0, ot: 0.0}  (cumulative: 11h < 238h)
+        cumulative=231h → {normal: 7.0, ot: 4.0}   (231+7=238h, rest is OT)
+        cumulative=240h → {normal: 0.0, ot: 11.0}  (threshold already exceeded)
     """
     # Calculate basic components
     gross = span_hours(start_dt, end_dt)
     ln = lunch_hours(gross)
+    net_hours = gross - ln
     
-    # Get work days in calendar week
-    work_days_in_week = count_work_days_in_calendar_week(
-        employee_id, assignment_date_obj, all_assignments
-    )
+    # Calculate how much room left before hitting threshold
+    remaining_normal_capacity = max(0.0, contractual_hours_threshold - cumulative_normal_hours)
     
-    # Ensure minimum of 1 work day to avoid division by zero
-    if work_days_in_week <= 0:
-        work_days_in_week = 5  # Default to 5-day week
-    
-    # Calculate normal hours threshold: 44h weekly cap / work days in week
-    normal_threshold = 44.0 / work_days_in_week
-    
-    # Apply threshold: normal = min(threshold, net hours), OT = rest
-    normal = min(normal_threshold, gross - ln)
-    ot = max(0.0, gross - ln - normal_threshold)
+    # Allocate to normal until threshold, rest is OT
+    normal = min(net_hours, remaining_normal_capacity)
+    ot = max(0.0, net_hours - normal)
     
     # restDayPay is 0 for initial solve
-    # It will only be set during incremental solving when employee works on their OFF_DAY
     rest_day_pay_count = 0
     
     return {
@@ -319,9 +317,66 @@ def calculate_apgd_d10_hours(
         'lunch': round(ln, 2),
         'normal': round(normal, 2),
         'ot': round(ot, 2),
-        'restDayPay': rest_day_pay_count,  # 0 for initial solve
+        'restDayPay': rest_day_pay_count,
         'paid': round(gross, 2)
     }
+
+
+def get_contractual_hours_threshold(month_length: int, employee_dict: dict, input_data: dict = None) -> float:
+    """
+    Get the monthly contractual hours threshold for Scheme A (APGD-D10) employees.
+    
+    Reads from monthlyHourLimits in input JSON:
+    - apgdMinimumContractualHours: For standard employees
+    - apgdMinimumContractualHoursCplSgt: For foreign CPL/SGT ranks
+    
+    Args:
+        month_length: Number of days in the month (28, 29, 30, 31)
+        employee_dict: Employee dictionary with local/rank info
+        input_data: Input JSON with monthlyHourLimits
+    
+    Returns:
+        Contractual hours threshold (e.g., 238 for 30-day month, local employee)
+    
+    Default values by month length (if not in input):
+        28 days: 224h (local) / 244h (foreigner)
+        29 days: 231h / 252h
+        30 days: 238h / 260h
+        31 days: 246h / 268h
+    """
+    # Default thresholds by month length
+    defaults_local = {28: 224, 29: 231, 30: 238, 31: 246}
+    defaults_foreigner = {28: 244, 29: 252, 30: 260, 31: 268}
+    
+    # Determine employee category
+    category = get_apgd_d10_category(employee_dict)
+    
+    # Use defaults if no input_data
+    if input_data is None:
+        if category == 'foreigner':
+            return defaults_foreigner.get(month_length, 260)
+        return defaults_local.get(month_length, 238)
+    
+    # Look up from monthlyHourLimits in input
+    monthly_limits = input_data.get('monthlyHourLimits', [])
+    
+    if category == 'foreigner':
+        limit_id = 'apgdMinimumContractualHoursCplSgt'
+        default_fallback = defaults_foreigner
+    else:
+        limit_id = 'apgdMinimumContractualHours'
+        default_fallback = defaults_local
+    
+    # Find the matching limit config
+    for limit in monthly_limits:
+        if limit.get('id') == limit_id:
+            values_by_month = limit.get('valuesByMonthLength', {})
+            month_key = str(month_length)
+            if month_key in values_by_month:
+                return values_by_month[month_key].get('minimumContractualHours', default_fallback.get(month_length, 238))
+    
+    # Fallback to defaults
+    return default_fallback.get(month_length, 238)
 
 
 def span_hours(start_dt: datetime, end_dt: datetime) -> float:
