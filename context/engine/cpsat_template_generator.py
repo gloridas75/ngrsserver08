@@ -297,7 +297,8 @@ def _build_and_solve_template(
             date,
             demand,
             requirement,
-            shift_details_map
+            shift_details_map,
+            public_holidays
         )
         assignments.append(off_assignment)
     
@@ -698,12 +699,31 @@ def _create_off_day_assignment(
     date: datetime,
     demand: dict,
     requirement: dict,
-    shift_details_map: dict
+    shift_details_map: dict,
+    public_holidays: set = None
 ) -> dict:
-    """Create assignment dictionary for an OFF day (non-work day)."""
+    """Create assignment dictionary for an OFF day (non-work day).
+    
+    For public holidays, uses shiftCode='PH' and status='PUBLIC_HOLIDAY'.
+    For regular off days, uses shiftCode='O' and status='OFF_DAY'.
+    """
     
     emp_id = employee['employeeId']
     date_str = date.strftime('%Y-%m-%d')
+    date_as_date = date.date() if hasattr(date, 'date') else date
+    
+    # Check if this is a public holiday
+    is_public_holiday = False
+    if public_holidays:
+        is_public_holiday = date_as_date in public_holidays or date_str in public_holidays
+    
+    # Use appropriate shift code and status
+    if is_public_holiday:
+        shift_code = 'PH'
+        status = 'PUBLIC_HOLIDAY'
+    else:
+        shift_code = 'O'
+        status = 'OFF_DAY'
     
     demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
     requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
@@ -725,16 +745,16 @@ def _create_off_day_assignment(
     
     # OFF day assignment with zero hours
     return {
-        'assignmentId': f"{demand_id}-{date_str}-O-{emp_id}",
-        'slotId': f"{demand_id}-{requirement_id}-O-{date_str}",
+        'assignmentId': f"{demand_id}-{date_str}-{shift_code}-{emp_id}",
+        'slotId': f"{demand_id}-{requirement_id}-{shift_code}-{date_str}",
         'employeeId': emp_id,
         'demandId': demand_id,
         'requirementId': requirement_id,
         'date': date_str,
-        'shiftCode': 'O',  # O = OFF day
+        'shiftCode': shift_code,
         'startDateTime': start_datetime,  # Include shift time for UI display
         'endDateTime': end_datetime,
-        'status': 'OFF_DAY',  # Standard status used throughout the system
+        'status': status,
         'hours': {
             'gross': 0.0,
             'lunch': 0.0,

@@ -199,6 +199,17 @@ def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None
                     "startDateTime": assignment.get('startDateTime'),
                     "endDateTime": assignment.get('endDateTime')
                 })
+            elif assignment and assignment.get('status') == 'PUBLIC_HOLIDAY':
+                # Public holiday - employee is off due to PH
+                daily_status.append({
+                    "date": date_str,
+                    "status": "PUBLIC_HOLIDAY",
+                    "shiftCode": "PH",
+                    "patternDay": assignment.get('patternDay', pattern_day),
+                    "assignmentId": assignment.get('assignmentId'),
+                    "startDateTime": assignment.get('startDateTime'),
+                    "endDateTime": assignment.get('endDateTime')
+                })
             else:
                 # No assignment - determine why
                 if not has_assignments:
@@ -516,6 +527,9 @@ def insert_off_day_assignments(assignments, input_data, ctx):
     This function adds assignment records with shiftCode="O" for days when
     employees are on their scheduled rest days.
     
+    For public holidays (when includePublicHolidays=false), assignments are
+    marked with shiftCode="PH" and status="PUBLIC_HOLIDAY".
+    
     Args:
         assignments: List of actual shift assignments (D, N shifts)
         input_data: Original input JSON
@@ -525,6 +539,17 @@ def insert_off_day_assignments(assignments, input_data, ctx):
         Expanded assignments list including both work shifts and OFF days
     """
     from datetime import datetime, timedelta
+    
+    # Extract public holidays for special handling
+    public_holidays_raw = input_data.get('publicHolidays', [])
+    public_holidays = set()
+    for ph in public_holidays_raw:
+        try:
+            if isinstance(ph, str):
+                ph_date = ph.split('T')[0]  # Handle both date and datetime strings
+                public_holidays.add(ph_date)
+        except Exception:
+            pass
     
     # Get date range from existing assignments (filter out None values explicitly)
     date_values = set(a.get('date') for a in assignments if a.get('date') is not None)
@@ -614,11 +639,25 @@ def insert_off_day_assignments(assignments, input_data, ctx):
             
             expected_shift = emp_pattern[pattern_day]
             
-            # Only add OFF day assignment if pattern says "O"
-            if expected_shift == 'O':
+            # Check if this is a public holiday (missing assignment = PH was excluded)
+            is_public_holiday = date_str in public_holidays
+            
+            # Add assignment if:
+            # 1. Pattern says OFF day (shiftCode="O")
+            # 2. OR it's a public holiday that was excluded (shiftCode="PH")
+            if expected_shift == 'O' or is_public_holiday:
                 # Get demand/requirement info from one of employee's actual assignments (if any)
                 emp_assignments_dict = assignments_by_emp_date.get(emp_id, {})
                 sample_assignment = next(iter(emp_assignments_dict.values()), None) if emp_assignments_dict else None
+                
+                # Use appropriate shift code and status
+                # Public holidays get PH/PUBLIC_HOLIDAY, regular off days get O/OFF_DAY
+                if is_public_holiday:
+                    off_shift_code = "PH"
+                    off_status = "PUBLIC_HOLIDAY"
+                else:
+                    off_shift_code = "O"
+                    off_status = "OFF_DAY"
                 
                 # Determine shift times for OFF day
                 if sample_assignment:
@@ -665,18 +704,18 @@ def insert_off_day_assignments(assignments, input_data, ctx):
                 
                 # Create OFF_DAY assignment (with sample assignment data if available)
                 off_assignment = {
-                    "assignmentId": f"OFF-{emp_id}-{date_str}-{uuid.uuid4().hex[:6]}",
+                    "assignmentId": f"{off_shift_code}-{emp_id}-{date_str}-{uuid.uuid4().hex[:6]}",
                     "demandId": sample_assignment.get('demandId', 'N/A') if sample_assignment else 'N/A',
                     "requirementId": sample_assignment.get('requirementId', 'N/A') if sample_assignment else 'N/A',
-                    "slotId": f"OFF-{emp_id}-{date_str}",
+                    "slotId": f"{off_shift_code}-{emp_id}-{date_str}",
                     "employeeId": emp_id,
                     "date": date_str,
                     "startDateTime": off_start,
                     "endDateTime": off_end,
-                    "shiftCode": "O",
+                    "shiftCode": off_shift_code,
                     "patternDay": pattern_day,
                     "newRotationOffset": emp_offset,
-                    "status": "OFF_DAY",
+                    "status": off_status,
                     "hours": {
                         "gross": 0,
                         "lunch": 0,
