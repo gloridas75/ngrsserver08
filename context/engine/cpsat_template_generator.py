@@ -73,6 +73,19 @@ def generate_template_with_cpsat(
     # Get coverage days from demand (default to all 7 days like incremental mode)
     coverage_days = _extract_coverage_days(demand)
     
+    # Extract public holiday settings
+    public_holidays_list = ctx.get('publicHolidays', [])
+    public_holidays = set()
+    for ph in public_holidays_list:
+        try:
+            ph_date = datetime.fromisoformat(ph + "T00:00:00").date() if isinstance(ph, str) else ph
+            public_holidays.add(ph_date)
+        except Exception:
+            pass
+    
+    include_public_holidays, include_eve_ph = _extract_public_holiday_settings(demand)
+    logger.info(f"Public holidays: {public_holidays}, includePH: {include_public_holidays}, includeEvePH: {include_eve_ph}")
+    
     all_assignments = []
     
     # Generate template for each OU
@@ -94,7 +107,10 @@ def generate_template_with_cpsat(
             end_date=end_date,
             demand=demand,
             requirement=requirement,
-            coverage_days=coverage_days
+            coverage_days=coverage_days,
+            public_holidays=public_holidays,
+            include_public_holidays=include_public_holidays,
+            include_eve_ph=include_eve_ph
         )
         
         if not template_assignments:
@@ -138,17 +154,26 @@ def _build_and_solve_template(
     end_date: datetime,
     demand: dict,
     requirement: dict,
-    coverage_days: List[str]
+    coverage_days: List[str],
+    public_holidays: set = None,
+    include_public_holidays: bool = True,
+    include_eve_ph: bool = True
 ) -> List[dict]:
     """
     Build CP-SAT model for single template employee and solve.
     
     Args:
         shift_details_map: Dict mapping shift codes to their timing details
+        public_holidays: Set of public holiday dates
+        include_public_holidays: If False, skip creating work slots on PH dates
+        include_eve_ph: If False, skip creating work slots on eve of PH dates
     
     Returns list of assignment dicts for the template employee.
     """
     model = cp_model.CpModel()
+    
+    if public_holidays is None:
+        public_holidays = set()
     
     # Generate list of dates
     dates = []
@@ -162,6 +187,8 @@ def _build_and_solve_template(
     # Decision variables: x[date_idx] = 1 if employee works on this date
     x = {}
     pattern_violations = {}  # Track when pattern says work but constraints prevent it
+    ph_skipped = 0  # Track dates skipped due to public holidays
+    eve_ph_skipped = 0  # Track dates skipped due to eve of public holidays
     pattern_length = len(work_pattern)
     emp_offset = template_emp.get('rotationOffset', 0)
     
@@ -169,6 +196,22 @@ def _build_and_solve_template(
         day_name = date.strftime('%a')
         pattern_idx = (emp_offset + i) % pattern_length
         pattern_day = work_pattern[pattern_idx]
+        date_as_date = date.date() if hasattr(date, 'date') else date
+        
+        # Check public holiday exclusion
+        if date_as_date in public_holidays and not include_public_holidays:
+            # Skip work on public holidays - treat as off day
+            x[i] = model.NewIntVar(0, 0, f'ph_off_{date.strftime("%Y%m%d")}')
+            ph_skipped += 1
+            continue
+        
+        # Check eve of public holiday exclusion
+        next_day = date_as_date + timedelta(days=1)
+        if next_day in public_holidays and not include_eve_ph:
+            # Skip work on eve of public holidays - treat as off day
+            x[i] = model.NewIntVar(0, 0, f'eve_ph_off_{date.strftime("%Y%m%d")}')
+            eve_ph_skipped += 1
+            continue
         
         if day_name in coverage_days and pattern_day != 'O':
             # Pattern says work AND day is in coverage window
@@ -182,6 +225,11 @@ def _build_and_solve_template(
         else:
             # Outside coverage window - must be off
             x[i] = model.NewIntVar(0, 0, f'off_{date.strftime("%Y%m%d")}')
+    
+    if ph_skipped > 0:
+        logger.info(f"  Skipped {ph_skipped} public holiday dates (includePH=False)")
+    if eve_ph_skipped > 0:
+        logger.info(f"  Skipped {eve_ph_skipped} eve of public holiday dates (includeEvePH=False)")
     
     # NOTE: We do NOT enforce pattern days as hard constraints
     # Instead, we let MOM constraints (C1-C17) determine feasibility
@@ -896,4 +944,20 @@ def _extract_coverage_days(demand: dict) -> List[str]:
         return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']  # Default: all days
     
     return coverage_days
-    return []
+
+
+def _extract_public_holiday_settings(demand: dict) -> Tuple[bool, bool]:
+    """Extract public holiday settings from demand shifts.
+    
+    Returns:
+        Tuple of (include_public_holidays, include_eve_of_public_holidays)
+    """
+    shifts = demand.get('shifts', [])
+    if not shifts:
+        return True, True  # Default: include PH days
+    
+    # Use first shift's settings
+    include_ph = shifts[0].get('includePublicHolidays', True)
+    include_eve_ph = shifts[0].get('includeEveOfPublicHolidays', True)
+    
+    return include_ph, include_eve_ph

@@ -873,6 +873,17 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     # Track cumulative normal hours for Scheme A employees
     scheme_a_cumulative = defaultdict(float)  # emp_id -> cumulative normal hours
     
+    # ========== EXTRACT PUBLIC HOLIDAYS FOR PH HOURS DETECTION ==========
+    public_holidays_raw = input_data.get('publicHolidays', [])
+    public_holidays = set()
+    for ph in public_holidays_raw:
+        try:
+            if isinstance(ph, str):
+                ph_date = datetime.fromisoformat(ph + "T00:00:00").date() if 'T' not in ph else datetime.fromisoformat(ph).date()
+                public_holidays.add(ph_date)
+        except Exception:
+            pass
+    
     # ========== PASS 2: Calculate hours for all assignments ==========
     for assignment in assignments:
         try:
@@ -882,7 +893,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 if 'hours' not in assignment:
                     assignment['hours'] = {
                         'gross': 0.0, 'lunch': 0.0, 'normal': 0.0, 
-                        'ot': 0.0, 'restDayPay': 0.0, 'paid': 0.0
+                        'ot': 0.0, 'publicHolidayHours': 0.0,
+                        'restDayPay': 0.0, 'paid': 0.0
                     }
                 annotated_assignments.append(assignment)
                 continue
@@ -957,11 +969,22 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                     )
             
             # Add hour breakdown to assignment (including restDayPay)
+            # Detect if this is a public holiday assignment
+            is_public_holiday = date_obj in public_holidays
+            
+            # For PH assignments, mark all worked hours as publicHolidayHours
+            public_holiday_hours = 0.0
+            if is_public_holiday:
+                # All net worked hours on PH are public holiday hours
+                net_hours = hours_dict.get('gross', 0.0) - hours_dict.get('lunch', 0.0)
+                public_holiday_hours = max(0.0, net_hours)
+            
             assignment['hours'] = {
                 'gross': hours_dict['gross'],
                 'lunch': hours_dict['lunch'],
                 'normal': hours_dict['normal'],
                 'ot': hours_dict['ot'],
+                'publicHolidayHours': public_holiday_hours,
                 'restDayPay': hours_dict.get('restDayPay', 0.0),
                 'paid': hours_dict['paid']
             }
@@ -983,7 +1006,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         except Exception as e:
             # If hour calculation fails, annotate with error but continue
             assignment['hours'] = {
-                'gross': 0, 'lunch': 0, 'normal': 0, 'ot': 0, 'paid': 0,
+                'gross': 0, 'lunch': 0, 'normal': 0, 'ot': 0, 
+                'publicHolidayHours': 0, 'paid': 0,
                 'error': str(e)
             }
         
