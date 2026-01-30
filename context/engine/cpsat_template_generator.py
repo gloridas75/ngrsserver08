@@ -391,59 +391,53 @@ def _apply_mom_constraints(
     estimated_normal_hours_per_day = 8.8
     estimated_normal_minutes = int(estimated_normal_hours_per_day * 60)
     
-    # C2: Maximum 44 normal hours per work week (Monday-Sunday) - Full-time only
-    # C6: Maximum 34.98 normal hours per week for Scheme P (part-time)
-    if emp_scheme == 'P':
-        max_weekly_normal_hours = 34.98
-        logger.info(f"  Applying C6: Scheme P weekly limit = {max_weekly_normal_hours}h")
+    # C2: Maximum 44 normal hours per work week (Monday-Sunday) - Full-time only (Scheme A/B)
+    # Note: Scheme P (part-time) is EXEMPT from C2 - handled by C6 in post-solution validation
+    # C6 enforces 34.98h or 29.98h weekly limits for part-timers based on actual shift hours
     
     max_weekly_normal_minutes = int(max_weekly_normal_hours * 60)
     
     # Group dates into Monday-Sunday weeks
     weeks = _group_dates_by_week(dates)
     
-    # C2 with scheme-aware weekly cap logic:
-    # Scheme A/B (full-time): Days 1-5 count as normal hours (8.8h), Days 6-7 get rest day pay (0h normal)
-    # Scheme P (part-time): ALL work days count toward weekly cap (no rest day pay logic)
-    print(f"[C2 DEBUG] Applying scheme-aware weekly hours constraint (pattern length = {pattern_length})")
-    print(f"[C2 DEBUG] Scheme: {emp_scheme}, Weekly cap: {max_weekly_normal_hours}h")
-    
+    # C2: Only apply to full-time employees (Scheme A/B)
+    # Scheme P employees are exempt - C6 handles them with proper hour calculations
     if emp_scheme == 'P':
-        print(f"[C2 DEBUG] Scheme P: ALL work days count toward {max_weekly_normal_hours}h cap (no rest day pay)")
+        print(f"[C2 DEBUG] Scheme P employee - SKIPPING C2 (handled by C6 post-solution)")
+        logger.info(f"  C2: Skipping for Scheme P - C6 will enforce part-timer limits")
     else:
+        # C2 with scheme-aware weekly cap logic for full-time:
+        # Scheme A/B (full-time): Days 1-5 count as normal hours (8.8h), Days 6-7 get rest day pay (0h normal)
+        print(f"[C2 DEBUG] Applying scheme-aware weekly hours constraint (pattern length = {pattern_length})")
+        print(f"[C2 DEBUG] Scheme: {emp_scheme}, Weekly cap: {max_weekly_normal_hours}h")
         print(f"[C2 DEBUG] Scheme A/B: Only first 5 work days per week count toward {max_weekly_normal_hours}h cap")
         print(f"[C2 DEBUG] Days 6-7 in calendar week get rest day pay (0h normal)")
     
-    for week_dates in weeks:
-        week_indices = [i for i, d in enumerate(dates) if d in week_dates and i in x]
-        if not week_indices:
-            continue
+        for week_dates in weeks:
+            week_indices = [i for i, d in enumerate(dates) if d in week_dates and i in x]
+            if not week_indices:
+                continue
         
-        # Count how many work days we might have in this week
-        num_potential_work_days = len(week_indices)
+            # Count how many work days we might have in this week
+            num_potential_work_days = len(week_indices)
         
-        # Scheme-aware logic for which days count toward weekly cap
-        if emp_scheme == 'P':
-            # Scheme P: ALL work days count toward weekly cap (part-timers don't get rest day pay)
-            days_that_count = num_potential_work_days
-        else:
             # Scheme A/B: Only first 5 work days contribute to normal hours cap
             # Days 6+ get rest day pay (0h normal), so they don't count toward 44h
             days_that_count = min(5, num_potential_work_days)
         
-        # Build constraint: sum of work days × 8.8h <= weekly cap
-        normal_hour_terms = []
-        for position in range(days_that_count):
-            idx = week_indices[position]
-            normal_hour_terms.append(x[idx] * estimated_normal_minutes)
+            # Build constraint: sum of work days × 8.8h <= weekly cap
+            normal_hour_terms = []
+            for position in range(days_that_count):
+                idx = week_indices[position]
+                normal_hour_terms.append(x[idx] * estimated_normal_minutes)
         
-        if normal_hour_terms:
-            model.Add(sum(normal_hour_terms) <= max_weekly_normal_minutes)
+            if normal_hour_terms:
+                model.Add(sum(normal_hour_terms) <= max_weekly_normal_minutes)
             
-            expected_max_normal = days_that_count * 8.8
-            print(f"[C2 DEBUG] Week {week_dates[0].strftime('%Y-%m-%d')}: "
-                  f"Up to {num_potential_work_days} work days, "
-                  f"{days_that_count} count toward cap (max {expected_max_normal:.1f}h normal)")
+                expected_max_normal = days_that_count * 8.8
+                print(f"[C2 DEBUG] Week {week_dates[0].strftime('%Y-%m-%d')}: "
+                      f"Up to {num_potential_work_days} work days, "
+                      f"{days_that_count} count toward cap (max {expected_max_normal:.1f}h normal)")
     
     # C3: Maximum consecutive work days (12 for standard, 8 for APGD-D10/APO)
     for i in range(len(dates) - max_consecutive_days):
