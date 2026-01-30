@@ -187,6 +187,7 @@ def _build_and_solve_template(
     # Decision variables: x[date_idx] = 1 if employee works on this date
     x = {}
     pattern_violations = {}  # Track when pattern says work but constraints prevent it
+    ph_work_days = {}  # Track PH dates where pattern would have been work (need PUBLIC_HOLIDAY status)
     ph_skipped = 0  # Track dates skipped due to public holidays
     eve_ph_skipped = 0  # Track dates skipped due to eve of public holidays
     pattern_length = len(work_pattern)
@@ -203,6 +204,9 @@ def _build_and_solve_template(
             # Skip work on public holidays - treat as off day
             x[i] = model.NewIntVar(0, 0, f'ph_off_{date.strftime("%Y%m%d")}')
             ph_skipped += 1
+            # Track if pattern would have been a work day - needs PUBLIC_HOLIDAY status
+            if day_name in coverage_days and pattern_day != 'O':
+                ph_work_days[i] = pattern_idx
             continue
         
         # Check eve of public holiday exclusion
@@ -267,11 +271,12 @@ def _build_and_solve_template(
     
     # Identify UNASSIGNED days: pattern expected work but constraints prevented it
     unassigned_days = [i for i in pattern_violations.keys() if i in off_days]
-    actual_off_days = [i for i in off_days if i not in pattern_violations]
+    # Actual off days: off days that are NOT unassigned AND NOT PH work days
+    actual_off_days = [i for i in off_days if i not in pattern_violations and i not in ph_work_days]
     
-    logger.info(f"  CP-SAT solved: {len(work_days)} work days, {len(actual_off_days)} off days, {len(unassigned_days)} unassigned (constraint violations)")
+    logger.info(f"  CP-SAT solved: {len(work_days)} work days, {len(actual_off_days)} off days, {len(unassigned_days)} unassigned, {len(ph_work_days)} PH work days")
     
-    # Convert to assignment dicts - include ASSIGNED, OFF_DAY, and UNASSIGNED
+    # Convert to assignment dicts - include ASSIGNED, OFF_DAY, PUBLIC_HOLIDAY, and UNASSIGNED
     assignments = []
     
     # Create ASSIGNED work day assignments
@@ -289,7 +294,7 @@ def _build_and_solve_template(
         )
         assignments.append(assignment)
     
-    # Create OFF_DAY assignments (pattern said off OR outside coverage)
+    # Create OFF_DAY assignments (pattern said off OR outside coverage - excludes PH work days)
     for day_idx in actual_off_days:
         date = dates[day_idx]
         off_assignment = _create_off_day_assignment(
@@ -301,6 +306,20 @@ def _build_and_solve_template(
             public_holidays
         )
         assignments.append(off_assignment)
+    
+    # Create PUBLIC_HOLIDAY assignments (pattern said work but skipped due to PH exclusion)
+    for day_idx, pattern_idx in ph_work_days.items():
+        date = dates[day_idx]
+        ph_assignment = _create_public_holiday_assignment(
+            template_emp,
+            date,
+            demand,
+            requirement,
+            shift_details_map,
+            work_pattern=work_pattern,
+            pattern_idx=pattern_idx
+        )
+        assignments.append(ph_assignment)
     
     # Create UNASSIGNED assignments (pattern said work but constraints prevented)
     for day_idx in unassigned_days:
@@ -768,6 +787,86 @@ def _create_off_day_assignment(
     }
 
 
+def _create_public_holiday_assignment(
+    employee: dict,
+    date: datetime,
+    demand: dict,
+    requirement: dict,
+    shift_details_map: dict,
+    work_pattern: List[str] = None,
+    pattern_idx: int = None
+) -> dict:
+    """Create assignment dictionary for a PUBLIC_HOLIDAY day.
+    
+    This is for days where the employee's work pattern indicates a work day (D/N)
+    but the date is a public holiday and includePublicHolidays=false.
+    Uses shiftCode='PH' and status='PUBLIC_HOLIDAY'.
+    Records the expected shift that would have been worked.
+    """
+    
+    emp_id = employee['employeeId']
+    date_str = date.strftime('%Y-%m-%d')
+    
+    demand_id = demand.get('id', demand.get('demandId', 'UNKNOWN'))
+    requirement_id = requirement.get('id', requirement.get('requirementId', 'unknown'))
+    
+    # Determine what shift would have been worked from work pattern
+    expected_shift = None
+    if work_pattern and pattern_idx is not None:
+        expected_shift = work_pattern[pattern_idx]
+    
+    # Get shift details for display purposes
+    shift_details = {}
+    if expected_shift and expected_shift in shift_details_map:
+        shift_details = shift_details_map.get(expected_shift, {})
+    if not shift_details:
+        # Fallback: use first available shift
+        shift_details = list(shift_details_map.values())[0] if shift_details_map else {}
+    
+    shift_start = shift_details.get('start', '08:00:00')
+    shift_end = shift_details.get('end', '20:00:00')
+    next_day = shift_details.get('nextDay', False)
+    
+    # Create datetime strings
+    start_datetime = f"{date_str}T{shift_start}"
+    if next_day:
+        from datetime import timedelta
+        end_date = date + timedelta(days=1)
+        end_datetime = f"{end_date.strftime('%Y-%m-%d')}T{shift_end}"
+    else:
+        end_datetime = f"{date_str}T{shift_end}"
+    
+    # PUBLIC_HOLIDAY assignment with zero hours
+    assignment = {
+        'assignmentId': f"{demand_id}-{date_str}-PH-{emp_id}",
+        'slotId': f"{demand_id}-{requirement_id}-PH-{date_str}",
+        'employeeId': emp_id,
+        'demandId': demand_id,
+        'requirementId': requirement_id,
+        'date': date_str,
+        'shiftCode': 'PH',
+        'startDateTime': start_datetime,
+        'endDateTime': end_datetime,
+        'status': 'PUBLIC_HOLIDAY',
+        'hours': {
+            'gross': 0.0,
+            'lunch': 0.0,
+            'net': 0.0,
+            'normal': 0.0,
+            'ot': 0.0,
+            'ph': 0.0,
+            'restDayPay': 0.0,
+            'paid': 0.0
+        }
+    }
+    
+    # Include the expected shift that would have been worked
+    if expected_shift:
+        assignment['expectedShift'] = expected_shift
+    
+    return assignment
+
+
 def _create_unassigned_assignment(
     employee: dict,
     date: datetime,
@@ -862,10 +961,10 @@ def _replicate_template_to_employee(
         # Deep copy to avoid shared references
         assignment = copy.deepcopy(template_assign)
         
-        # Update employee-specific fields ONLY for ASSIGNED/OFF_DAY statuses
+        # Update employee-specific fields ONLY for ASSIGNED/OFF_DAY/PUBLIC_HOLIDAY statuses
         # UNASSIGNED slots must keep employeeId=null
         status = assignment.get('status', 'ASSIGNED')
-        if status in ['ASSIGNED', 'OFF_DAY']:
+        if status in ['ASSIGNED', 'OFF_DAY', 'PUBLIC_HOLIDAY']:
             assignment['employeeId'] = emp_id
             # Regenerate IDs with this employee's ID
             date_str = assignment['date']
