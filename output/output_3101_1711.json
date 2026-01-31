@@ -1,0 +1,1425 @@
+{
+  "schemaVersion": "0.95",
+  "planningReference": "RST-20260130-5B7971B2",
+  "publicHolidays": [
+    "2026-03-21"
+  ],
+  "solverRun": {
+    "runId": "SRN-local-0.4",
+    "solverVersion": "optSolve-py-0.95.0",
+    "startedAt": "2026-01-31T17:11:49.060900",
+    "ended": "2026-01-31T17:11:49.074381",
+    "durationSeconds": 0.013480901718139648,
+    "status": "OPTIMAL"
+  },
+  "score": {
+    "overall": 0,
+    "hard": 0,
+    "soft": 0
+  },
+  "scoreBreakdown": {
+    "hard": {
+      "violations": []
+    },
+    "soft": {}
+  },
+  "assignments": [
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00050317",
+      "slotId": "DI-2601290208-83576973-337_1-N-2026-03-03",
+      "employeeId": "00050317",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "N",
+      "startDateTime": "2026-03-03T19:30:00",
+      "endDateTime": "2026-03-04T07:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00050346",
+      "slotId": "DI-2601290208-83576973-337_1-N-2026-03-03",
+      "employeeId": "00050346",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "N",
+      "startDateTime": "2026-03-03T19:30:00",
+      "endDateTime": "2026-03-04T07:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00050668",
+      "slotId": "DI-2601290208-83576973-337_1-D-2026-03-03",
+      "employeeId": "00050668",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00060190",
+      "slotId": "DI-2601290208-83576973-337_1-N-2026-03-03",
+      "employeeId": "00060190",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "N",
+      "startDateTime": "2026-03-03T19:30:00",
+      "endDateTime": "2026-03-04T07:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00101601",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00101601",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00104131",
+      "slotId": "DI-2601290208-83576973-337_1-D-2026-03-03",
+      "employeeId": "00104131",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00111308",
+      "slotId": "DI-2601290208-83576973-337_1-D-2026-03-03",
+      "employeeId": "00111308",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00111623",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00111623",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00123299",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00123299",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00124071",
+      "slotId": "DI-2601290208-83576973-337_1-D-2026-03-03",
+      "employeeId": "00124071",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00147525",
+      "slotId": "DI-2601290208-83576973-337_1-D-2026-03-03",
+      "employeeId": "00147525",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00154182",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00154182",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00157546",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00157546",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00157848",
+      "slotId": "DI-2601290208-83576973-337_1-D-2026-03-03",
+      "employeeId": "00157848",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00159232",
+      "slotId": "DI-2601290208-83576973-337_1-N-2026-03-03",
+      "employeeId": "00159232",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "N",
+      "startDateTime": "2026-03-03T19:30:00",
+      "endDateTime": "2026-03-04T07:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00161076",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00161076",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00161990",
+      "slotId": "DI-2601290208-83576973-337_1-D-2026-03-03",
+      "employeeId": "00161990",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "D",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00162599",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00162599",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00162864",
+      "slotId": "DI-2601290208-83576973-337_1-N-2026-03-03",
+      "employeeId": "00162864",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "N",
+      "startDateTime": "2026-03-03T19:30:00",
+      "endDateTime": "2026-03-04T07:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00166524",
+      "slotId": "DI-2601290208-83576973-337_1-N-2026-03-03",
+      "employeeId": "00166524",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "N",
+      "startDateTime": "2026-03-03T19:30:00",
+      "endDateTime": "2026-03-04T07:30:00",
+      "status": "ASSIGNED",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 11.0,
+        "ot": 0.0,
+        "publicHolidayHours": 0.0,
+        "restDayPay": 0.0,
+        "paid": 12.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00168187",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00168187",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    },
+    {
+      "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00168519",
+      "slotId": "DI-2601290208-83576973-337_1-O-2026-03-03",
+      "employeeId": "00168519",
+      "demandId": "DI-2601290208-83576973",
+      "requirementId": "337_1",
+      "date": "2026-03-03",
+      "shiftCode": "O",
+      "startDateTime": "2026-03-03T07:30:00",
+      "endDateTime": "2026-03-03T19:30:00",
+      "status": "OFF_DAY",
+      "hours": {
+        "gross": 0.0,
+        "lunch": 0.0,
+        "net": 0.0,
+        "normal": 0.0,
+        "ot": 0.0,
+        "ph": 0.0,
+        "restDayPay": 0.0,
+        "paid": 0.0
+      }
+    }
+  ],
+  "employeeRoster": [
+    {
+      "employeeId": "00050317",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "workPattern": [
+        "N",
+        "N",
+        "O",
+        "O",
+        "D",
+        "D"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "N",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00050317",
+          "startDateTime": "2026-03-03T19:30:00",
+          "endDateTime": "2026-03-04T07:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00050346",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "workPattern": [
+        "N",
+        "N",
+        "O",
+        "O",
+        "D",
+        "D"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "N",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00050346",
+          "startDateTime": "2026-03-03T19:30:00",
+          "endDateTime": "2026-03-04T07:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00050668",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "CENTRALISED",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "N",
+        "N",
+        "O",
+        "O"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00050668",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00060190",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "workPattern": [
+        "N",
+        "N",
+        "O",
+        "O",
+        "D",
+        "D"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "N",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00060190",
+          "startDateTime": "2026-03-03T19:30:00",
+          "endDateTime": "2026-03-04T07:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00101601",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00101601",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00104131",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "CENTRALISED",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "N",
+        "N",
+        "O",
+        "O"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00104131",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00111308",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "N",
+        "N",
+        "O",
+        "O"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00111308",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00111623",
+      "rankId": "OPSSUP",
+      "productTypeId": "CIV",
+      "ouId": "VAULT",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00111623",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00123299",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00123299",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00124071",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "CENTRALISED",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "N",
+        "N",
+        "O",
+        "O"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00124071",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00147525",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "CENTRALISED",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "N",
+        "N",
+        "O",
+        "O"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00147525",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00154182",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00154182",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00157546",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00157546",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00157848",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "CENTRALISED",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "N",
+        "N",
+        "O",
+        "O"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00157848",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00159232",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "workPattern": [
+        "N",
+        "N",
+        "O",
+        "O",
+        "D",
+        "D"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "N",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00159232",
+          "startDateTime": "2026-03-03T19:30:00",
+          "endDateTime": "2026-03-04T07:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00161076",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00161076",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00161990",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "CENTRALISED",
+      "scheme": "Scheme B",
+      "rotationOffset": 0,
+      "workPattern": [
+        "D",
+        "D",
+        "N",
+        "N",
+        "O",
+        "O"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "D",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-D-00161990",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00162599",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00162599",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00162864",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "workPattern": [
+        "N",
+        "N",
+        "O",
+        "O",
+        "D",
+        "D"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "N",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00162864",
+          "startDateTime": "2026-03-03T19:30:00",
+          "endDateTime": "2026-03-04T07:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00166524",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT",
+      "scheme": "Scheme B",
+      "rotationOffset": 2,
+      "workPattern": [
+        "N",
+        "N",
+        "O",
+        "O",
+        "D",
+        "D"
+      ],
+      "totalDays": 1,
+      "workDays": 1,
+      "offDays": 0,
+      "normalHours": 11.0,
+      "otHours": 0.0,
+      "totalHours": 12.0,
+      "assignedDays": 1,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "ASSIGNED",
+          "shiftCode": "N",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-N-00166524",
+          "startDateTime": "2026-03-03T19:30:00",
+          "endDateTime": "2026-03-04T07:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00168187",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00168187",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    },
+    {
+      "employeeId": "00168519",
+      "rankId": "CMO",
+      "productTypeId": "CIV",
+      "ouId": "VAULT & CENTRALISED SERVICES",
+      "scheme": "Scheme B",
+      "rotationOffset": 4,
+      "workPattern": [
+        "O",
+        "O",
+        "D",
+        "D",
+        "N",
+        "N"
+      ],
+      "totalDays": 1,
+      "workDays": 0,
+      "offDays": 1,
+      "normalHours": 0.0,
+      "otHours": 0.0,
+      "totalHours": 0.0,
+      "assignedDays": 0,
+      "unassignedDays": 0,
+      "dailyStatus": [
+        {
+          "date": "2026-03-03",
+          "status": "OFF_DAY",
+          "shiftCode": "O",
+          "patternDay": 2,
+          "assignmentId": "DI-2601290208-83576973-2026-03-03-O-00168519",
+          "startDateTime": "2026-03-03T07:30:00",
+          "endDateTime": "2026-03-03T19:30:00"
+        }
+      ]
+    }
+  ],
+  "rosterSummary": {
+    "totalDailyStatuses": 22,
+    "byStatus": {
+      "ASSIGNED": 13,
+      "OFF_DAY": 9,
+      "UNASSIGNED": 0,
+      "NOT_USED": 0
+    }
+  },
+  "solutionQuality": {
+    "qualityGrade": "OPTIMAL",
+    "solverStatus": "OPTIMAL",
+    "solverStatusExplanation": "CP-SAT proved this is the best possible solution. The solver exhaustively searched the solution space and mathematically verified no better solution exists.",
+    "qualityExplanation": "CP-SAT solver proved this is the best possible solution within the constraint model.",
+    "coverageMetrics": {
+      "totalSlots": 0,
+      "assignedSlots": 22,
+      "unassignedSlots": -22,
+      "coverageRate": 0,
+      "coverageQuality": "PARTIAL"
+    },
+    "employeeUtilization": {
+      "totalEmployeesAvailable": 22,
+      "employeesUsed": 22,
+      "employeesUnused": 0,
+      "utilizationRate": 100.0,
+      "underUtilizationIssues": []
+    },
+    "workloadBalance": {
+      "minShiftsPerEmployee": 1,
+      "maxShiftsPerEmployee": 1,
+      "avgShiftsPerEmployee": 1.0,
+      "shiftVariance": 0,
+      "balanceQuality": 100.0,
+      "balanceGrade": "PERFECT"
+    },
+    "optimizationContext": {
+      "optimizationMode": "minimizeEmployeeCount",
+      "fixedRotationOffset": "ouOffsets",
+      "patternBased": true,
+      "continuousAdherence": false
+    }
+  },
+  "unmetDemand": [],
+  "meta": {
+    "inputHash": "sha256:db710fc0501f3b0000e2d551665e52c6ab115f9ce563620d053a285922203b67",
+    "generatedAt": "2026-01-31T17:11:49.075109",
+    "employeeHours": {
+      "00050317": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00050346": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00050668": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00060190": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00104131": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00111308": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00124071": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00147525": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00157848": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00159232": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00161990": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00162864": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      },
+      "00166524": {
+        "weekly_normal": {
+          "2026-W10": 11.0
+        },
+        "monthly_ot": {
+          "2026-03": 0.0
+        }
+      }
+    }
+  }
+}

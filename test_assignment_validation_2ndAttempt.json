@@ -1,4 +1,3 @@
-
 {
   "employee": {
     "employeeId": "00011873",
@@ -17,16 +16,190 @@
       "O",
       "O"
     ],
-    "normalHours": 8,
-    "otHours": 3
+    "normalHours": 80,
+    "otHours": 30
   },
   "existingAssignments": [
     {
+      "assignmentId": "SA-443847",
       "demandId": "DI-2512170306-76117372",
       "requirementId": "148_1",
       "date": "2026-02-02",
       "slotId": "SS-676346",
       "shiftCode": "D",
+      "startDateTime": "2026-02-02T08:00:00",
+      "endDateTime": "2026-02-02T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443848",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-03",
+      "slotId": "SS-676355",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-03T08:00:00",
+      "endDateTime": "2026-02-03T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443849",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-04",
+      "slotId": "SS-676364",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-04T08:00:00",
+      "endDateTime": "2026-02-04T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443850",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-05",
+      "slotId": "SS-676373",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-05T08:00:00",
+      "endDateTime": "2026-02-05T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443851",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-06",
+      "slotId": "SS-676382",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-06T08:00:00",
+      "endDateTime": "2026-02-06T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443852",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-07",
+      "slotId": "SS-676392",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-07T08:00:00",
+      "endDateTime": "2026-02-07T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443853",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-08",
+      "slotId": "SS-676402",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-08T08:00:00",
+      "endDateTime": "2026-02-08T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443854",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-09",
+      "slotId": "SS-676411",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-09T08:00:00",
+      "endDateTime": "2026-02-09T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443855",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-10",
+      "slotId": "SS-676420",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-10T08:00:00",
+      "endDateTime": "2026-02-10T20:00:00",
+      "employeeId": "00011873",
+      "hours": {
+        "gross": 12,
+        "lunch": 1,
+        "normal": 8,
+        "ot": 3,
+        "restDayPay": 0,
+        "paid": 12
+      }
+    },
+    {
+      "assignmentId": "SA-443856",
+      "demandId": "DI-2512170306-76117372",
+      "requirementId": "148_1",
+      "date": "2026-02-11",
+      "slotId": "SS-676429",
+      "shiftCode": "D",
+      "startDateTime": "2026-02-11T08:00:00",
+      "endDateTime": "2026-02-11T20:00:00",
       "employeeId": "00011873",
       "hours": {
         "gross": 12,
@@ -40,11 +213,11 @@
   ],
   "candidateSlots": [
     {
-      "slotId": "SS-676355",
+      "slotId": "SS-676429",
       "demandItemId": "DI-2512170306-76117372",
       "requirementId": "148_1",
-      "startDateTime": "2026-02-03T08:00:00",
-      "endDateTime": "2026-02-03T20:00:00",
+      "startDateTime": "2026-02-11T08:00:00",
+      "endDateTime": "2026-02-11T20:00:00",
       "shiftCode": "D"
     }
   ],
@@ -68,14 +241,6 @@
     },
     {
       "constraintId": "momMonthlyOTcap72h",
-      "enabled": true
-    },
-    {
-      "constraintId": "momLunchBreak",
-      "enabled": true
-    },
-    {
-      "constraintId": "teamContinuity",
       "enabled": true
     },
     {

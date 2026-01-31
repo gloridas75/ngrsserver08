@@ -161,10 +161,10 @@ def _validate_planning_horizon(data: dict, result: ValidationResult):
                         f"Invalid date format: '{end_date_str}'. Expected YYYY-MM-DD")
         return
     
-    # Check date range validity
-    if start_date >= end_date:
+    # Check date range validity (allow same-day planning: startDate == endDate)
+    if start_date > end_date:
         result.add_error('planningHorizon', 'INVALID_RANGE', 
-                        f"startDate ({start_date_str}) must be before endDate ({end_date_str})")
+                        f"startDate ({start_date_str}) must be on or before endDate ({end_date_str})")
     
     # Warning for very long planning periods
     days = (end_date - start_date).days + 1
