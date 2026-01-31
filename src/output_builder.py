@@ -995,7 +995,14 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                     if emp_scheme == 'P':
                         emp_pattern = employee.get('workPattern', [])
                         if emp_pattern:
-                            pattern_work_days = len([d for d in emp_pattern if d != 'O'])
+                            # Calculate work days per 7-day week (not total pattern work days)
+                            # For a 12-day pattern with 9 work days: 9 * 7 / 12 = 5.25 → round to 5
+                            total_work_days = len([d for d in emp_pattern if d != 'O'])
+                            pattern_length = len(emp_pattern)
+                            # Scale to 7-day week equivalent
+                            work_days_per_week = round(total_work_days * 7 / pattern_length)
+                            # Clamp to valid range [1, 7]
+                            pattern_work_days = max(1, min(7, work_days_per_week))
                     
                     hours_dict = calculate_mom_compliant_hours(
                         start_dt=start_dt,
@@ -1294,14 +1301,20 @@ def build_incremental_output(
                     contractual_hours_threshold=threshold
                 )
             else:
-                # For Scheme P, need to pass pattern work days count
+                # For Scheme P, need to pass pattern work days count (per 7-day week)
                 pattern_work_days = None
                 if emp_scheme == 'P':
-                    # Get employee's work pattern and count work days
+                    # Get employee's work pattern and calculate work days per 7-day week
                     emp_pattern = employee.get('workPattern', [])
                     if emp_pattern:
-                        # Count non-'O' days in pattern
-                        pattern_work_days = len([d for d in emp_pattern if d != 'O'])
+                        # Calculate work days per 7-day week (not total pattern work days)
+                        # For a 12-day pattern with 9 work days: 9 * 7 / 12 = 5.25 → round to 5
+                        total_work_days = len([d for d in emp_pattern if d != 'O'])
+                        pattern_length = len(emp_pattern)
+                        # Scale to 7-day week equivalent
+                        work_days_per_week = round(total_work_days * 7 / pattern_length)
+                        # Clamp to valid range [1, 7]
+                        pattern_work_days = max(1, min(7, work_days_per_week))
                 
                 hours_dict = calculate_mom_compliant_hours(
                     start_dt=start_dt,
