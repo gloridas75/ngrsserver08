@@ -13,6 +13,7 @@ from collections import defaultdict
 from .data_loader import load_input
 from .score_helpers import ScoreBook
 from .slot_builder import build_slots, normalize_scheme
+from .slot_builder_v2 import build_slots_v2
 from .time_utils import is_apgd_d10_employee
 
 # Optimization mode constants
@@ -150,7 +151,16 @@ def build_model(ctx):
         print(f"  ✓ Filtered from {original_count} to {len(slots)} solvable slots")
     else:
         # REGULAR MODE: Build slots from demand items
-        slots = build_slots(ctx)
+        # Check if v2 API with dailyHeadcount should be used
+        use_v2 = ctx.get('_apiVersion') == 'v2' or ctx.get('_hasDailyHeadcount', False)
+        
+        if use_v2:
+            print(f"[build_model] Using v2 slot builder (dailyHeadcount support)")
+            slots = build_slots_v2(ctx)
+            ctx['_usedV2SlotBuilder'] = True
+        else:
+            slots = build_slots(ctx)
+            ctx['_usedV2SlotBuilder'] = False
     
     ctx['slots'] = slots  # Store in context for constraint use
     

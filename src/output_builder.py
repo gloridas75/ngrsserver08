@@ -1162,6 +1162,85 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     if icpmp_preprocessing:
         output["icpmpPreprocessing"] = icpmp_preprocessing
     
+    # ========== V2 OUTPUT ENRICHMENT (dailyHeadcount support) ==========
+    # Add dayType to assignments and dailyCoverage summary when v2 slot builder was used
+    api_version = ctx.get('_apiVersion', 'v1')
+    has_daily_headcount = ctx.get('_hasDailyHeadcount', False)
+    used_v2_slot_builder = ctx.get('_usedV2SlotBuilder', False)
+    
+    if used_v2_slot_builder or has_daily_headcount:
+        slots = ctx.get('slots', [])
+        
+        # Build slot lookup for dayType enrichment
+        slot_lookup = {}
+        for slot in slots:
+            slot_lookup[slot.slot_id] = slot
+        
+        # Add dayType to each assignment
+        for asgn in output.get('assignments', []):
+            slot_id = asgn.get('slotId')
+            if slot_id and slot_id in slot_lookup:
+                slot = slot_lookup[slot_id]
+                asgn['dayType'] = getattr(slot, '_dayType', 'Normal')
+            else:
+                # Infer dayType from date and public holidays
+                asgn_date = asgn.get('date', '')
+                if asgn_date:
+                    try:
+                        asgn_date_obj = datetime.fromisoformat(asgn_date + "T00:00:00").date() if 'T' not in asgn_date else datetime.fromisoformat(asgn_date).date()
+                        if asgn_date_obj in public_holidays:
+                            asgn['dayType'] = 'PublicHoliday'
+                        else:
+                            next_day = asgn_date_obj + timedelta(days=1)
+                            if next_day in public_holidays:
+                                asgn['dayType'] = 'EveOfPH'
+                            else:
+                                asgn['dayType'] = 'Normal'
+                    except:
+                        asgn['dayType'] = 'Normal'
+                else:
+                    asgn['dayType'] = 'Normal'
+        
+        # Build dailyCoverage summary
+        target_by_key = {}  # (date, shiftCode) -> {headcount, dayType}
+        for slot in slots:
+            key = (slot.date.isoformat() if hasattr(slot.date, 'isoformat') else str(slot.date), slot.shiftCode)
+            if key not in target_by_key:
+                day_type = getattr(slot, '_dayType', 'Normal')
+                target_by_key[key] = {'headcount': 0, 'dayType': day_type}
+            target_by_key[key]['headcount'] += 1
+        
+        # Count assigned slots per (date, shiftCode)
+        assigned_by_key = {}
+        for asgn in output.get('assignments', []):
+            if asgn.get('status') == 'ASSIGNED':
+                key = (asgn.get('date'), asgn.get('shiftCode'))
+                assigned_by_key[key] = assigned_by_key.get(key, 0) + 1
+        
+        # Build coverage array
+        daily_coverage = []
+        for key in sorted(target_by_key.keys()):
+            date_str, shift_code = key
+            target = target_by_key[key]['headcount']
+            day_type = target_by_key[key]['dayType']
+            assigned = assigned_by_key.get(key, 0)
+            
+            daily_coverage.append({
+                'date': date_str,
+                'shiftCode': shift_code,
+                'dayType': day_type,
+                'targetHeadcount': target,
+                'assignedCount': assigned,
+                'coverageRate': round((assigned / target * 100), 1) if target > 0 else 0.0
+            })
+        
+        output['dailyCoverage'] = daily_coverage
+        
+        # Add v2 metadata
+        output['meta']['apiVersion'] = api_version
+        output['meta']['usedDailyHeadcount'] = has_daily_headcount
+        output['meta']['usedV2SlotBuilder'] = used_v2_slot_builder
+    
     return output
 
 

@@ -4,6 +4,11 @@ NGRS Solver FastAPI Application.
 Main entry point for the REST API.
 Exposes endpoints for solving scheduling problems.
 
+API Versioning:
+- /v1/* - Original API (backward compatible, static headcount)
+- /v2/* - Enhanced API (supports dailyHeadcount for demand-based rostering)
+- Root endpoints (/solve, /solve/async) - Alias to v1 for backward compatibility
+
 Run with:
     uvicorn src.api_server:app --reload --port 8080
 
@@ -95,8 +100,34 @@ ADMIN_API_KEY = os.getenv("ADMIN_API_KEY", "change-me-in-production")
 
 app = FastAPI(
     title="NGRS Solver API",
-    description="REST API for NGRS Shift Scheduling Solver with ICPMP v2.0 Configuration Optimizer",
-    version="0.96.0",
+    description="""REST API for NGRS Shift Scheduling Solver with ICPMP v2.0 Configuration Optimizer.
+
+## API Versioning
+
+- **v1 API** (`/v1/*`): Original API with static headcount - backward compatible
+- **v2 API** (`/v2/*`): Enhanced API with `dailyHeadcount` support for variable staffing
+- **Root endpoints** (`/solve`, `/solve/async`): Aliases to v1 for backward compatibility
+
+## v2 Features (dailyHeadcount)
+
+The v2 API supports variable headcount per day for demand-based rostering:
+
+```json
+{
+  "requirements": [{
+    "requirementId": "346_1",
+    "headcount": 5,
+    "dailyHeadcount": [
+      {"date": "2026-02-01", "shiftCode": "D", "headcount": 5, "dayType": "Normal"},
+      {"date": "2026-02-17", "shiftCode": "D", "headcount": 3, "dayType": "PublicHoliday"}
+    ]
+  }]
+}
+```
+
+v2 output includes `dayType` on assignments and `dailyCoverage` summary.
+    """,
+    version="0.98.0",
     docs_url="/docs",
     openapi_url="/openapi.json"
 )
@@ -117,6 +148,18 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# ============================================================================
+# VERSIONED ROUTERS
+# ============================================================================
+
+# Import versioned routers
+from src.routers.v1 import router as v1_router
+from src.routers.v2 import router as v2_router
+
+# Include versioned routers
+app.include_router(v1_router, prefix="/v1", tags=["v1 - Original API"])
+app.include_router(v2_router, prefix="/v2", tags=["v2 - Enhanced API (dailyHeadcount)"])
 
 # ============================================================================
 # ASYNC MODE: REDIS JOB MANAGER & WORKERS
@@ -337,10 +380,20 @@ async def validate_input_endpoint(request: Request):
 async def get_version():
     """Get API and solver version information."""
     return {
-        "apiVersion": "0.96.0",
-        "solverVersion": "optSolve-py-0.96.0-icpmp-v2",
-        "schemaVersion": "0.96",
+        "apiVersion": "0.98.0",
+        "solverVersion": "optSolve-py-0.98.0-icpmp-v2",
+        "schemaVersion": "0.98",
         "icpmpVersion": "2.0",
+        "supportedApiVersions": ["v1", "v2"],
+        "v1": {
+            "description": "Original API with static headcount",
+            "endpoints": ["/v1/solve", "/v1/solve/async"]
+        },
+        "v2": {
+            "description": "Enhanced API with dailyHeadcount support",
+            "endpoints": ["/v2/solve", "/v2/solve/async"],
+            "features": ["dailyHeadcount", "dayType", "dailyCoverage"]
+        },
         "timestamp": datetime.now().isoformat()
     }
 
@@ -1069,22 +1122,43 @@ async def icpmp_v3_calculate(request: Request):
 
 
 # ============================================================================
-# ASYNC ENDPOINTS
+# ASYNC ENDPOINTS (Root - Aliases to v1 for backward compatibility)
 # ============================================================================
 
-@app.post("/solve/async", response_model=AsyncJobResponse)
+@app.post("/solve/async", response_model=AsyncJobResponse, tags=["Root (Auto-Detecting)"])
 async def solve_async(
     request: Request,
     payload: Optional[AsyncJobRequest] = None
 ):
     """
-    Submit solver job for asynchronous processing.
+    Submit solver job for asynchronous processing with auto version detection.
+    
+    **Auto-Detection:** This endpoint automatically detects if `dailyHeadcount` is present
+    in the input and routes to v2 processing. Frontend doesn't need to change anything!
+    
+    - If `dailyHeadcount` array is present → Uses v2 (variable headcount per day)
+    - If no `dailyHeadcount` → Uses v1 (static headcount, backward compatible)
+    - Explicit `apiVersion` field in input overrides auto-detection
     
     Returns immediately with job UUID for tracking.
     
     Accepts input via:
     - Wrapped format: {"input_json": {...NGRS input...}, "priority": 5, "webhook_url": "https://your-api.com/webhook"}
     - Raw format: {...NGRS input directly...} (without input_json wrapper)
+    
+    v2 Input Schema (dailyHeadcount):
+    ```json
+    {
+      "requirements": [{
+        "requirementId": "346_1",
+        "headcount": 5,  // Fallback if dailyHeadcount missing
+        "dailyHeadcount": [
+          {"date": "2026-02-01", "shiftCode": "D", "headcount": 5, "dayType": "Normal"},
+          {"date": "2026-02-17", "shiftCode": "D", "headcount": 3, "dayType": "PublicHoliday"}
+        ]
+      }]
+    }
+    ```
     
     Query parameters (optional):
     - priority: Job priority 0-10 (default 0)
@@ -1182,6 +1256,35 @@ async def solve_async(
         # NOTE: Rotation offset handling is now done inside solve_problem() in src/solver.py
         # This ensures consistent behavior between API and CLI paths
         
+        # ====== AUTO-DETECT API VERSION ======
+        # Check if dailyHeadcount is present → auto-route to v2 processing
+        from src.version_detector import should_use_v2, validate_daily_headcount
+        
+        use_v2, detection_reason, dhc_validation = should_use_v2(input_json, validate=True)
+        
+        if use_v2:
+            logger.info(f"async_job_auto_v2 requestId={request_id} reason='{detection_reason}'")
+            
+            # Mark input for v2 processing
+            input_json['_apiVersion'] = 'v2'
+            input_json['_hasDailyHeadcount'] = True
+            input_json['_autoDetected'] = True
+            
+            # Log validation warnings if any
+            if dhc_validation and dhc_validation.warnings:
+                logger.info(f"async_job_dhc_warnings requestId={request_id} warnings={len(dhc_validation.warnings)}")
+            
+            # Don't block on validation errors - solver may still work
+            if dhc_validation and not dhc_validation.is_valid:
+                logger.warning(
+                    f"async_job_dhc_errors requestId={request_id} errors={len(dhc_validation.errors)} "
+                    f"first_error={dhc_validation.errors[0]['code'] if dhc_validation.errors else 'none'}"
+                )
+        else:
+            # v1 processing (static headcount)
+            input_json['_apiVersion'] = 'v1'
+            input_json['_hasDailyHeadcount'] = False
+        
         # Perform quick feasibility check (< 100ms)
         feasibility_result = None
         try:
@@ -1205,16 +1308,28 @@ async def solve_async(
         job_id = job_manager.create_job(input_json, webhook_url=webhook_url)
         
         queue_length = job_manager.get_queue_length()
+        
+        # Build message based on detected API version
+        api_version = input_json.get('_apiVersion', 'v1')
+        auto_detected = input_json.get('_autoDetected', False)
+        
+        if use_v2 and auto_detected:
+            job_message = f"Job submitted successfully (auto-detected v2: dailyHeadcount present)"
+        elif use_v2:
+            job_message = f"Job submitted successfully (v2 API: dailyHeadcount support)"
+        else:
+            job_message = "Job submitted successfully (v1 API: static headcount)"
+        
         logger.info(
-            "async_job_created requestId=%s jobId=%s queueLength=%s",
-            request_id, job_id, queue_length
+            "async_job_created requestId=%s jobId=%s queueLength=%s apiVersion=%s",
+            request_id, job_id, queue_length, api_version
         )
         
         return AsyncJobResponse(
             job_id=job_id,
             status="queued",
             created_at=datetime.now().isoformat(),
-            message="Job submitted successfully",
+            message=job_message,
             feasibility_check=feasibility_result
         )
         

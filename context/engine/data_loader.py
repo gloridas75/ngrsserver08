@@ -219,4 +219,25 @@ def load_input(path: Union[str, Dict[str, Any]]):
     # For outcomeBased mode: filter employees by rank
     data = filter_employees_by_rank(data)
     
+    # ====== API VERSION FLAGS ======
+    # Pass through API version flags from input to context
+    # These are set by the API router (or auto-detected)
+    if '_apiVersion' in data:
+        pass  # Already set by API
+    else:
+        # Auto-detect if not explicitly set
+        has_daily_headcount = False
+        for dmd in data.get('demandItems', []):
+            for req in dmd.get('requirements', []):
+                if req.get('dailyHeadcount'):
+                    has_daily_headcount = True
+                    break
+        
+        if has_daily_headcount:
+            data['_apiVersion'] = 'v2'
+            data['_hasDailyHeadcount'] = True
+        else:
+            data['_apiVersion'] = 'v1'
+            data['_hasDailyHeadcount'] = False
+    
     return data
