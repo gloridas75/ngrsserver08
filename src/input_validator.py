@@ -581,7 +581,13 @@ def _validate_feasibility(data: dict, result: ValidationResult):
         for req_idx, requirement in enumerate(demand_item['requirements']):
             req_path = f"demandItems[{di_idx}].requirements[{req_idx}]"
             
+            # v2: Support productTypeIds array (OR logic) in addition to single productTypeId
+            req_product_types = requirement.get('productTypeIds', [])
             req_product = requirement.get('productTypeId', '')
+            
+            # If productTypeIds array is present and non-empty, use it (OR logic)
+            # Otherwise fall back to single productTypeId
+            use_product_types_array = bool(req_product_types and len(req_product_types) > 0)
             
             # Support both rankId (singular) and rankIds (plural)
             req_ranks = requirement.get('rankIds', [])
@@ -622,8 +628,12 @@ def _validate_feasibility(data: dict, result: ValidationResult):
                 emp_rank = emp.get('rankId', '')
                 emp_scheme = emp.get('normalized_scheme', '')
                 
-                # Check match (with OR logic for ranks)
-                product_match = (emp_product == req_product)
+                # v2: Check product match with OR logic for productTypeIds array
+                if use_product_types_array:
+                    product_match = (emp_product in req_product_types)
+                else:
+                    product_match = (emp_product == req_product)
+                    
                 rank_match = (emp_rank in req_ranks) if req_ranks else True
                 scheme_match = (req_scheme == 'Global' or emp_scheme == req_scheme)
                 
@@ -634,9 +644,11 @@ def _validate_feasibility(data: dict, result: ValidationResult):
             if matching_count == 0:
                 # Format ranks for error message
                 ranks_str = '/'.join(req_ranks) if req_ranks else ''
+                # v2: Show productTypeIds if using array
+                product_str = '/'.join(req_product_types) if use_product_types_array else req_product
                 result.add_error(f"{req_path}", "NO_MATCHING_EMPLOYEES", 
                                f"No employees match requirement {requirement.get('requirementId', '?')}: "
-                               f"{req_product}/{ranks_str}/{req_scheme_raw}")
+                               f"{product_str}/{ranks_str}/{req_scheme_raw}")
             elif matching_count < req_headcount:
                 result.add_warning(f"{req_path}", "INSUFFICIENT_EMPLOYEES", 
                                  f"Only {matching_count} employees match requirement "
