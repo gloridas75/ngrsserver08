@@ -49,6 +49,26 @@ class DailyHeadcountValidation:
         })
 
 
+def _is_valid_time_format(time_str: str) -> bool:
+    """
+    Validate time string format (HH:MM or HH:MM:SS).
+    
+    Args:
+        time_str: Time string to validate
+        
+    Returns:
+        True if valid format, False otherwise
+    """
+    import re
+    
+    if not time_str or not isinstance(time_str, str):
+        return False
+    
+    # Match HH:MM or HH:MM:SS format
+    pattern = r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$'
+    return bool(re.match(pattern, time_str))
+
+
 def detect_api_version(input_json: Dict[str, Any]) -> Tuple[str, bool, Dict[str, Any]]:
     """
     Detect which API version to use based on input features.
@@ -56,23 +76,30 @@ def detect_api_version(input_json: Dict[str, Any]) -> Tuple[str, bool, Dict[str,
     Auto-detection rules:
     1. If explicit 'apiVersion' field is present, use it
     2. If any requirement has 'dailyHeadcount' array, use v2
-    3. Otherwise, use v1 (backward compatible)
+    3. If any requirement has 'productTypeIds' array, use v2
+    4. If any dailyHeadcount entry has time overrides, use v2
+    5. Otherwise, use v1 (backward compatible)
     
     Args:
         input_json: The solver input JSON
         
     Returns:
-        Tuple of (api_version, has_daily_headcount, detection_info)
+        Tuple of (api_version, has_v2_features, detection_info)
         - api_version: "v1" or "v2"
-        - has_daily_headcount: True if dailyHeadcount is present
+        - has_v2_features: True if any v2 feature is present
         - detection_info: Dict with detection details
     """
     detection_info = {
         "explicit_version": None,
         "has_daily_headcount": False,
+        "has_product_type_ids": False,
+        "has_time_overrides": False,
         "daily_headcount_count": 0,
         "requirements_with_daily_hc": 0,
-        "detection_reason": ""
+        "requirements_with_product_type_ids": 0,
+        "entries_with_time_overrides": 0,
+        "detection_reason": "",
+        "v2_features": []
     }
     
     # Check for explicit apiVersion field
@@ -82,31 +109,64 @@ def detect_api_version(input_json: Dict[str, Any]) -> Tuple[str, bool, Dict[str,
         detection_info["detection_reason"] = f"Explicit apiVersion={explicit_version} in input"
         return explicit_version, False, detection_info
     
-    # Check for dailyHeadcount in any requirement
+    # Check for v2 features in requirements
     has_daily_headcount = False
+    has_product_type_ids = False
+    has_time_overrides = False
     total_daily_hc_entries = 0
     requirements_with_daily_hc = 0
+    requirements_with_product_type_ids = 0
+    entries_with_time_overrides = 0
+    v2_features = []
     
     for dmd in input_json.get("demandItems", []):
         for req in dmd.get("requirements", []):
+            # Check for dailyHeadcount
             daily_hc = req.get("dailyHeadcount", [])
             if daily_hc and isinstance(daily_hc, list) and len(daily_hc) > 0:
                 has_daily_headcount = True
                 requirements_with_daily_hc += 1
                 total_daily_hc_entries += len(daily_hc)
+                
+                # Check for time overrides within dailyHeadcount entries
+                for entry in daily_hc:
+                    if entry.get("startTimeOverride") or entry.get("endTimeOverride"):
+                        has_time_overrides = True
+                        entries_with_time_overrides += 1
+            
+            # Check for productTypeIds array (v2 OR logic)
+            product_type_ids = req.get("productTypeIds", [])
+            if product_type_ids and isinstance(product_type_ids, list) and len(product_type_ids) > 0:
+                has_product_type_ids = True
+                requirements_with_product_type_ids += 1
     
+    # Build detection info
     detection_info["has_daily_headcount"] = has_daily_headcount
+    detection_info["has_product_type_ids"] = has_product_type_ids
+    detection_info["has_time_overrides"] = has_time_overrides
     detection_info["daily_headcount_count"] = total_daily_hc_entries
     detection_info["requirements_with_daily_hc"] = requirements_with_daily_hc
+    detection_info["requirements_with_product_type_ids"] = requirements_with_product_type_ids
+    detection_info["entries_with_time_overrides"] = entries_with_time_overrides
     
+    # Build v2 features list
     if has_daily_headcount:
-        detection_info["detection_reason"] = (
-            f"Auto-detected v2: Found dailyHeadcount in {requirements_with_daily_hc} requirement(s) "
-            f"with {total_daily_hc_entries} total entries"
-        )
+        v2_features.append(f"dailyHeadcount ({total_daily_hc_entries} entries)")
+    if has_product_type_ids:
+        v2_features.append(f"productTypeIds ({requirements_with_product_type_ids} requirements)")
+    if has_time_overrides:
+        v2_features.append(f"timeOverrides ({entries_with_time_overrides} entries)")
+    
+    detection_info["v2_features"] = v2_features
+    
+    # Determine if v2 should be used
+    has_v2_features = has_daily_headcount or has_product_type_ids or has_time_overrides
+    
+    if has_v2_features:
+        detection_info["detection_reason"] = f"Auto-detected v2: {', '.join(v2_features)}"
         return "v2", True, detection_info
     else:
-        detection_info["detection_reason"] = "No dailyHeadcount found, using v1 (static headcount)"
+        detection_info["detection_reason"] = "No v2 features found, using v1"
         return "v1", False, detection_info
 
 
@@ -159,6 +219,8 @@ def validate_daily_headcount(input_json: Dict[str, Any]) -> DailyHeadcountValida
     total_requirements_with_dhc = 0
     total_entries = 0
     dates_covered = set()
+    entries_with_time_overrides = 0
+    requirements_with_product_type_ids = 0
     
     for dmd_idx, dmd in enumerate(input_json.get("demandItems", [])):
         demand_id = dmd.get("demandId", f"demand_{dmd_idx}")
@@ -274,6 +336,60 @@ def validate_daily_headcount(input_json: Dict[str, Any]) -> DailyHeadcountValida
                             f"{field_prefix}.dayType",
                             {"date": date_str}
                         )
+                
+                # === v2 VALIDATION: Validate time overrides ===
+                start_time_override = entry.get("startTimeOverride")
+                end_time_override = entry.get("endTimeOverride")
+                
+                # Track time overrides for summary
+                if start_time_override or end_time_override:
+                    entries_with_time_overrides += 1
+                
+                if start_time_override:
+                    if not _is_valid_time_format(start_time_override):
+                        result.add_error(
+                            "INVALID_TIME_OVERRIDE",
+                            f"Invalid startTimeOverride format: '{start_time_override}'. Expected HH:MM or HH:MM:SS",
+                            f"{field_prefix}.startTimeOverride",
+                            {"value": start_time_override}
+                        )
+                
+                if end_time_override:
+                    if not _is_valid_time_format(end_time_override):
+                        result.add_error(
+                            "INVALID_TIME_OVERRIDE",
+                            f"Invalid endTimeOverride format: '{end_time_override}'. Expected HH:MM or HH:MM:SS",
+                            f"{field_prefix}.endTimeOverride",
+                            {"value": end_time_override}
+                        )
+                
+                # Warn if only one override is present (unusual but allowed)
+                if (start_time_override and not end_time_override) or (end_time_override and not start_time_override):
+                    result.add_warning(
+                        "PARTIAL_TIME_OVERRIDE",
+                        f"Only one time override specified. Missing: {'endTimeOverride' if start_time_override else 'startTimeOverride'}. "
+                        f"The other time will use default from shiftDetails.",
+                        f"{field_prefix}",
+                        {"startTimeOverride": start_time_override, "endTimeOverride": end_time_override}
+                    )
+            
+            # === v2 VALIDATION: Validate productTypeIds ===
+            product_type_ids = req.get("productTypeIds", [])
+            if product_type_ids:
+                if not isinstance(product_type_ids, list):
+                    result.add_error(
+                        "INVALID_PRODUCT_TYPE_IDS",
+                        f"productTypeIds must be an array, got: {type(product_type_ids).__name__}",
+                        f"demandItems[{dmd_idx}].requirements[{req_idx}].productTypeIds"
+                    )
+                else:
+                    for pt_idx, pt_id in enumerate(product_type_ids):
+                        if not isinstance(pt_id, str) or not pt_id.strip():
+                            result.add_error(
+                                "INVALID_PRODUCT_TYPE_ID",
+                                f"productTypeIds[{pt_idx}] must be a non-empty string, got: {pt_id}",
+                                f"demandItems[{dmd_idx}].requirements[{req_idx}].productTypeIds[{pt_idx}]"
+                            )
             
             # Check coverage completeness (warn if dates missing)
             all_horizon_dates = set()
@@ -298,6 +414,10 @@ def validate_daily_headcount(input_json: Dict[str, Any]) -> DailyHeadcountValida
                         "lastMissing": str(max(missing_dates))
                     }
                 )
+            
+            # Track productTypeIds for summary
+            if req.get("productTypeIds"):
+                requirements_with_product_type_ids += 1
     
     # Build summary
     result.summary = {
@@ -305,7 +425,9 @@ def validate_daily_headcount(input_json: Dict[str, Any]) -> DailyHeadcountValida
         "totalEntries": total_entries,
         "datesWithCoverage": len(dates_covered),
         "planningHorizonDays": (end_date - start_date).days + 1,
-        "publicHolidaysCount": len(public_holidays)
+        "publicHolidaysCount": len(public_holidays),
+        "entriesWithTimeOverrides": entries_with_time_overrides,
+        "requirementsWithProductTypeIds": requirements_with_product_type_ids
     }
     
     return result

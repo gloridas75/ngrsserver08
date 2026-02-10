@@ -48,6 +48,9 @@ class DailyHeadcountEntry:
     shift_code: str
     headcount: int
     day_type: str  # "Normal", "PublicHoliday", "EveOfPH"
+    start_time_override: Optional[str] = None  # "HH:MM" or "HH:MM:SS" format
+    end_time_override: Optional[str] = None    # "HH:MM" or "HH:MM:SS" format
+    reason: Optional[str] = None               # Optional reason for override
 
 
 def parse_daily_headcount(daily_headcount_raw: List[Dict[str, Any]]) -> Dict[tuple, DailyHeadcountEntry]:
@@ -55,7 +58,7 @@ def parse_daily_headcount(daily_headcount_raw: List[Dict[str, Any]]) -> Dict[tup
     Parse dailyHeadcount array into a lookup dictionary.
     
     Args:
-        daily_headcount_raw: List of {date, shiftCode, headcount, dayType} dicts
+        daily_headcount_raw: List of {date, shiftCode, headcount, dayType, startTimeOverride?, endTimeOverride?, reason?} dicts
         
     Returns:
         Dict mapping (date, shiftCode) tuple to DailyHeadcountEntry
@@ -67,6 +70,11 @@ def parse_daily_headcount(daily_headcount_raw: List[Dict[str, Any]]) -> Dict[tup
         shift_code = entry.get('shiftCode', '')
         headcount = entry.get('headcount', 0)
         day_type = entry.get('dayType', 'Normal')
+        
+        # v2 enhancement: time overrides
+        start_time_override = entry.get('startTimeOverride')
+        end_time_override = entry.get('endTimeOverride')
+        reason = entry.get('reason')
         
         if not date_str or not shift_code:
             continue
@@ -86,8 +94,15 @@ def parse_daily_headcount(daily_headcount_raw: List[Dict[str, Any]]) -> Dict[tup
             date=entry_date,
             shift_code=shift_code,
             headcount=headcount,
-            day_type=day_type
+            day_type=day_type,
+            start_time_override=start_time_override,
+            end_time_override=end_time_override,
+            reason=reason
         )
+        
+        # Log time overrides when present
+        if start_time_override or end_time_override:
+            logger.info(f"    Time override on {entry_date}: {start_time_override or 'default'} - {end_time_override or 'default'}")
     
     return lookup
 
@@ -195,7 +210,19 @@ def build_slots_v2(inputs: Dict[str, Any]) -> List[Slot]:
             # Process each requirement
             for req_idx, req in enumerate(dmd.get("requirements", [])):
                 requirement_id = req.get("requirementId", f"REQ{req_idx}")
+                
+                # === v2 CHANGE: Support productTypeIds array (OR logic) ===
+                # If productTypeIds array is present, it takes precedence
+                # Otherwise fall back to single productTypeId for backward compatibility
+                product_type_ids = req.get("productTypeIds", [])
                 product_type = req.get("productTypeId")
+                
+                # Log product type configuration
+                if product_type_ids:
+                    logger.info(f"    Requirement {requirement_id}: Multiple product types (OR): {product_type_ids}")
+                elif product_type:
+                    logger.info(f"    Requirement {requirement_id}: Single product type: {product_type}")
+                
                 rank_ids = req.get("rankIds", [])
                 gender_req = req.get("gender", "Any")
                 
@@ -277,10 +304,16 @@ def build_slots_v2(inputs: Dict[str, Any]) -> List[Slot]:
                         
                         # === v2 CHANGE: Get headcount from dailyHeadcount or fallback ===
                         key = (cur_day, shift_code)
+                        day_start_override = None
+                        day_end_override = None
+                        
                         if key in daily_hc_lookup:
                             entry = daily_hc_lookup[key]
                             day_headcount = entry.headcount
                             day_type = entry.day_type
+                            # Get time overrides if present
+                            day_start_override = entry.start_time_override
+                            day_end_override = entry.end_time_override
                         else:
                             # Fallback to static headcount
                             day_headcount = static_headcount
@@ -298,9 +331,14 @@ def build_slots_v2(inputs: Dict[str, Any]) -> List[Slot]:
                         
                         # Create slots for each position
                         for position_idx in range(day_headcount):
-                            # Create shift times
-                            slot_start = combine(cur_day, start_time_str)
-                            slot_end = combine(cur_day, end_time_str)
+                            # === v2 CHANGE: Apply time overrides if present ===
+                            # Use override times if provided, otherwise use default shift times
+                            actual_start_time = day_start_override if day_start_override else start_time_str
+                            actual_end_time = day_end_override if day_end_override else end_time_str
+                            
+                            # Create shift times with potential overrides
+                            slot_start = combine(cur_day, actual_start_time)
+                            slot_end = combine(cur_day, actual_end_time)
                             
                             # Handle overnight shifts
                             if slot_end <= slot_start or next_day_flag:
@@ -334,8 +372,14 @@ def build_slots_v2(inputs: Dict[str, Any]) -> List[Slot]:
                             )
                             
                             # Store dayType as metadata on slot for output enrichment
-                            # We'll use a simple attribute approach
                             slot._dayType = day_type
+                            
+                            # === v2 CHANGE: Store productTypeIds array for OR matching ===
+                            # This allows solver_engine to match employee against multiple product types
+                            slot._productTypeIds = product_type_ids if product_type_ids else None
+                            
+                            # Store time override flag for output enrichment
+                            slot._hasTimeOverride = (day_start_override is not None or day_end_override is not None)
                             
                             slots.append(slot)
                             slots_created_for_shift += 1

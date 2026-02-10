@@ -245,12 +245,24 @@ def build_model(ctx):
                 ou_selection_filtered += 1
                 continue
             
-            # v0.70: Check product type requirement
-            slot_product = slot.productTypeId
+            # v2 CHANGE: Check product type requirement with OR logic for multiple types
+            # If slot has _productTypeIds array, employee must match ANY of them (OR logic)
+            # Otherwise fall back to single productTypeId exact match
             emp_product = emp.get('productTypeId', '')
-            if slot_product and emp_product != slot_product:
-                product_filtered += 1
-                continue
+            
+            # Check for v2 productTypeIds array first
+            slot_product_types = getattr(slot, '_productTypeIds', None)
+            if slot_product_types and isinstance(slot_product_types, list) and len(slot_product_types) > 0:
+                # v2: Employee must match at least ONE of the product types (OR logic)
+                if emp_product not in slot_product_types:
+                    product_filtered += 1
+                    continue
+            else:
+                # v1 fallback: Single productTypeId exact match
+                slot_product = slot.productTypeId
+                if slot_product and emp_product != slot_product:
+                    product_filtered += 1
+                    continue
             
             # v0.95: Check rank requirement (supports multiple ranks - OR logic)
             slot_ranks = slot.rankIds  # Changed from rankId to rankIds
