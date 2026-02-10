@@ -562,7 +562,11 @@ class ICPMPPreprocessor:
         filtered_count = 0
         
         # Extract criteria (v0.95: use rankIds plural for multiple rank support)
+        # v2: Support productTypeIds array (OR logic)
         product_type = requirement.get('productTypeId')
+        product_type_ids = requirement.get('productTypeIds', [])
+        use_product_types_array = bool(product_type_ids and len(product_type_ids) > 0)
+        
         ranks = requirement.get('rankIds', [])  # Changed from rankId to rankIds
         ou_id = demand_item.get('ouId')
         
@@ -661,14 +665,19 @@ class ICPMPPreprocessor:
                     continue
             
             # Check basic criteria
-            if product_type and emp.get('productTypeId') != product_type:
-                logger.info(f"  ✗ {emp_id} filtered: product type {emp.get('productTypeId')} != {product_type}")
+            # v2: Support productTypeIds array (OR logic)
+            emp_product = emp.get('productTypeId', '')
+            if use_product_types_array:
+                if emp_product not in product_type_ids:
+                    logger.info(f"  ✗ {emp_id} filtered: product type {emp_product} not in {product_type_ids}")
+                    continue
+            elif product_type and emp_product != product_type:
+                logger.info(f"  ✗ {emp_id} filtered: product type {emp_product} != {product_type}")
                 continue
             
             # v0.95: Support multiple ranks - employee must match ANY rank in the list
             if ranks and emp.get('rankId') not in ranks:
                 logger.info(f"  ✗ {emp_id} filtered: rank {emp.get('rankId')} not in {ranks}")
-                continue
                 continue
             if ou_id and emp.get('ouId') != ou_id:
                 continue
