@@ -191,7 +191,11 @@ def _analyze_requirement(
     req_id = requirement.get('requirementId', 'unknown')
     headcount = requirement.get('headcount', 1)
     work_pattern = requirement.get('workPattern', [])
+    
+    # v2: Support productTypeIds array (OR logic)
+    product_type_ids = requirement.get('productTypeIds', [])
     product_type = requirement.get('productTypeId', '')
+    
     rank_id = requirement.get('rankId', '')
     gender_req = requirement.get('gender', 'Any')
     # v0.96: Support multiple schemes
@@ -203,7 +207,8 @@ def _analyze_requirement(
     # Filter matching employees
     matching_employees = _filter_matching_employees(
         employees, 
-        product_type, 
+        product_type,
+        product_type_ids,  # Pass array for v2 OR logic
         rank_id, 
         gender_req, 
         scheme_list  # Pass list instead of single value
@@ -211,9 +216,12 @@ def _analyze_requirement(
     
     matching_count = len(matching_employees)
     
+    # Format product display for messages
+    product_display = '/'.join(product_type_ids) if product_type_ids else product_type
+    
     if matching_count == 0:
         issues.append(
-            f"Requirement {req_id}: No matching employees for {product_type}/{rank_id}"
+            f"Requirement {req_id}: No matching employees for {product_display}/{rank_id}"
         )
     
     # Check gender availability if specific gender required
@@ -328,6 +336,7 @@ def _normalize_scheme(scheme_value: str, scheme_map: Dict[str, str] = None) -> s
 def _filter_matching_employees(
     employees: List[Dict],
     product_type: str,
+    product_type_ids: List[str],
     rank_id: str,
     gender_req: str,
     scheme_req: str
@@ -335,10 +344,16 @@ def _filter_matching_employees(
     """Filter employees matching requirement criteria."""
     matching = []
     
+    # Determine if using v2 productTypeIds array
+    use_product_types_array = bool(product_type_ids and len(product_type_ids) > 0)
+    
     for emp in employees:
-        # Check product type
+        # Check product type (v2: supports OR logic for productTypeIds array)
         emp_product = emp.get('productTypeId', '')
-        if product_type and emp_product != product_type:
+        if use_product_types_array:
+            if emp_product not in product_type_ids:
+                continue
+        elif product_type and emp_product != product_type:
             continue
         
         # Check rank
