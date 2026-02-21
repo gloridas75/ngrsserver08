@@ -43,13 +43,69 @@ class AssignmentValidator:
         response = validator.validate(request)
     """
     
-    # Default constraint configuration
+    # Mapping from human-readable constraint IDs to internal constraint codes
+    CONSTRAINT_ID_MAP = {
+        'momDailyHoursCap': 'C1',
+        'momWeeklyHoursCap44h': 'C2',
+        'maxConsecutiveWorkingDays': 'C3',
+        'apgdMinRestBetweenShifts': 'C4',
+        'momMonthlyOTcap72h': 'C17',
+        'minimumOffDaysPerWeek': 'C_OFF_DAYS',
+        'momLunchBreak': 'C_LUNCH',
+        'oneShiftPerDay': 'C_ONE_SHIFT',
+        'partTimerWeeklyHours': 'C_PART_TIMER',
+        # Also support direct constraint IDs
+        'C1': 'C1',
+        'C2': 'C2',
+        'C3': 'C3',
+        'C4': 'C4',
+        'C17': 'C17',
+    }
+    
+    # Default constraint configuration with default values
     DEFAULT_CONSTRAINTS = {
-        'C1': {'enabled': True, 'name': 'Daily Hours Cap', 'params': {}},
-        'C2': {'enabled': True, 'name': 'Weekly Hours Cap', 'params': {}},
-        'C3': {'enabled': True, 'name': 'Consecutive Working Days', 'params': {}},
-        'C4': {'enabled': True, 'name': 'Rest Period Between Shifts', 'params': {}},
-        'C17': {'enabled': True, 'name': 'Monthly OT Cap', 'params': {}},
+        'C1': {
+            'enabled': True, 
+            'name': 'Daily Hours Cap',
+            'defaultValue': 12,
+            'schemeOverrides': {'A': 14, 'B': 13, 'P': 9},
+            'params': {}
+        },
+        'C2': {
+            'enabled': True,
+            'name': 'Weekly Hours Cap',
+            'defaultValue': 44,
+            'schemeOverrides': {},
+            'params': {}
+        },
+        'C3': {
+            'enabled': True,
+            'name': 'Consecutive Working Days',
+            'defaultValue': 12,
+            'schemeOverrides': {},
+            'params': {}
+        },
+        'C4': {
+            'enabled': True,
+            'name': 'Rest Period Between Shifts',
+            'defaultValue': 8,
+            'schemeOverrides': {'P': 1},
+            'params': {}
+        },
+        'C17': {
+            'enabled': True,
+            'name': 'Monthly OT Cap',
+            'defaultValue': 72,
+            'schemeOverrides': {},
+            'params': {}
+        },
+        'C_LUNCH': {
+            'enabled': True,
+            'name': 'Lunch Break',
+            'defaultValue': 60,  # minutes
+            'schemeOverrides': {},
+            'params': {'deductIfShiftAtLeastMinutes': 480}
+        },
     }
     
     def __init__(self):
@@ -122,22 +178,64 @@ class AssignmentValidator:
         )
     
     def _update_constraints(self, constraint_list: List):
-        """Update constraint configuration from request."""
+        """
+        Update constraint configuration from request.
+        
+        Supports two formats:
+        1. Simple format: {"constraintId": "C1", "enabled": true}
+        2. Extended format: {"id": "momDailyHoursCap", "defaultValue": 12, "schemeOverrides": {...}}
+        """
         for constraint_config in constraint_list:
-            # Handle both dict and Pydantic model
-            if hasattr(constraint_config, 'constraintId'):
-                constraint_id = constraint_config.constraintId
-                enabled = constraint_config.enabled
-                params = constraint_config.params if hasattr(constraint_config, 'params') else None
+            # Convert to dict if Pydantic model
+            if hasattr(constraint_config, 'model_dump'):
+                config = constraint_config.model_dump()
+            elif hasattr(constraint_config, 'dict'):
+                config = constraint_config.dict()
+            elif isinstance(constraint_config, dict):
+                config = constraint_config
             else:
-                constraint_id = constraint_config.get('constraintId')
-                enabled = constraint_config.get('enabled', True)
-                params = constraint_config.get('params')
+                continue
             
-            if constraint_id in self.constraints:
-                self.constraints[constraint_id]['enabled'] = enabled
-                if params:
-                    self.constraints[constraint_id]['params'] = params
+            # Get constraint ID - support both 'constraintId' and 'id' fields
+            raw_id = config.get('constraintId') or config.get('id')
+            if not raw_id:
+                continue
+            
+            # Map human-readable ID to internal constraint code
+            constraint_id = self.CONSTRAINT_ID_MAP.get(raw_id, raw_id)
+            
+            # Skip if this constraint is not tracked
+            if constraint_id not in self.constraints:
+                continue
+            
+            # Determine if enabled (default True, or check 'enforcement' != 'disabled')
+            enabled = config.get('enabled', True)
+            enforcement = config.get('enforcement', 'hard')
+            if enforcement == 'disabled':
+                enabled = False
+            
+            self.constraints[constraint_id]['enabled'] = enabled
+            
+            # Update defaultValue if provided
+            if 'defaultValue' in config:
+                self.constraints[constraint_id]['defaultValue'] = config['defaultValue']
+            
+            # Update schemeOverrides if provided
+            if 'schemeOverrides' in config and config['schemeOverrides']:
+                scheme_overrides = config['schemeOverrides']
+                # Handle nested format: {"A": {"productTypes": [...], "value": 8}}
+                # or simple format: {"A": 14, "B": 13}
+                for scheme_key, override_value in scheme_overrides.items():
+                    if isinstance(override_value, dict) and 'value' in override_value:
+                        # Nested format - extract the value
+                        self.constraints[constraint_id]['schemeOverrides'][scheme_key] = override_value['value']
+                    else:
+                        # Simple format - use directly
+                        self.constraints[constraint_id]['schemeOverrides'][scheme_key] = override_value
+            
+            # Update params if provided
+            if 'params' in config and config['params']:
+                self.constraints[constraint_id]['params'].update(config['params'])
     
     def _validate_single_slot(
         self,
@@ -245,21 +343,22 @@ class AssignmentValidator:
         """
         C1: Daily Hours Cap - Check if shift exceeds scheme-specific daily limit.
         
-        Limits (gross hours):
-        - Scheme A: 14 hours
-        - Scheme B: 13 hours
-        - Scheme P: 9 hours
+        Uses values from constraint configuration:
+        - defaultValue: base daily cap
+        - schemeOverrides: scheme-specific caps (e.g., A: 14, B: 13, P: 9)
         """
         violations = []
         
+        # Get constraint config
+        c1_config = self.constraints.get('C1', {})
+        default_cap = c1_config.get('defaultValue', 12)
+        scheme_overrides = c1_config.get('schemeOverrides', {})
+        
         # Extract scheme letter and get daily cap
         scheme_letter = self._extract_scheme_letter(employee.scheme)
-        daily_caps = {
-            'A': 14.0,
-            'B': 13.0,
-            'P': 9.0
-        }
-        daily_cap = daily_caps.get(scheme_letter, 14.0)
+        
+        # Get scheme-specific cap or default
+        daily_cap = float(scheme_overrides.get(scheme_letter, default_cap))
         
         # Get shift hours from breakdown (normal + OT)
         if hasattr(temp_assignment.hours, 'normal'):
@@ -387,16 +486,16 @@ class AssignmentValidator:
         """
         C3: Consecutive Working Days - Check if assignment causes too many consecutive work days.
         
-        Limit determination priority:
-        1. Scheme + ProductType specific (e.g., Scheme A + APO = 8 days per APGD-D10)
-        2. Work pattern-derived limit (count consecutive work days in pattern)
-        3. MOM absolute maximum: 12 days fallback
-        
-        Common limits:
-        - Scheme A + APO (APGD-D10): 8 days
-        - Other schemes: 12 days (MOM maximum)
+        Uses values from constraint configuration:
+        - defaultValue: base maximum consecutive days
+        - schemeOverrides: scheme/product-specific overrides (e.g., A+APO = 8 days)
         """
         violations = []
+        
+        # Get constraint config
+        c3_config = self.constraints.get('C3', {})
+        default_max = c3_config.get('defaultValue', 12)
+        scheme_overrides = c3_config.get('schemeOverrides', {})
         
         # Sort assignments by date
         dated_assignments = [a for a in all_assignments if a.date]
@@ -410,14 +509,21 @@ class AssignmentValidator:
         product_type = employee.productTypeId
         
         # Determine max consecutive days based on scheme + product type
-        # Match main solver's C3 logic: Scheme A + APO = 8 days (APGD-D10)
-        max_consecutive = 12  # MOM absolute maximum (default)
-        limit_source = "MOM default"
+        max_consecutive = default_max
+        limit_source = f"default ({default_max})"
         
-        if scheme == 'A' and product_type == 'APO':
-            # APGD-D10: Scheme A employees with APO product type
-            max_consecutive = 8
-            limit_source = "APGD-D10 (Scheme A + APO)"
+        # Check scheme overrides - supports nested format with productTypes
+        if scheme in scheme_overrides:
+            override = scheme_overrides[scheme]
+            if isinstance(override, dict) and 'productTypes' in override:
+                # Nested format: {"A": {"productTypes": ["APO"], "value": 8}}
+                if product_type in override.get('productTypes', []):
+                    max_consecutive = override.get('value', default_max)
+                    limit_source = f"Scheme {scheme} + {product_type}"
+            else:
+                # Simple format: {"A": 8}
+                max_consecutive = int(override) if override else default_max
+                limit_source = f"Scheme {scheme}"
         elif employee.workPattern:
             # Fall back to work pattern analysis
             # Count longest consecutive work days in pattern
@@ -432,7 +538,7 @@ class AssignmentValidator:
             
             if pattern_max > 0 and pattern_max < max_consecutive:
                 max_consecutive = pattern_max
-                limit_source = f"work pattern ({employee.workPattern})"
+                limit_source = f"work pattern"
         
         # Build set of all work dates
         work_dates = set()
@@ -483,11 +589,16 @@ class AssignmentValidator:
         """
         C4: Rest Period Between Shifts - Check minimum rest hours between consecutive shifts.
         
-        Limits (from apgdMinRestBetweenShifts):
-        - Default: 8 hours (standard rest period)
-        - Scheme P: 1 hour (allows split-shift patterns)
+        Uses values from constraint configuration:
+        - defaultValue: base rest period (hours)
+        - schemeOverrides: scheme-specific rest periods (e.g., P: 1 hour)
         """
         violations = []
+        
+        # Get constraint config
+        c4_config = self.constraints.get('C4', {})
+        default_rest = c4_config.get('defaultValue', 8)
+        scheme_overrides = c4_config.get('schemeOverrides', {})
         
         # Sort assignments by start time (normalize to offset-naive for comparison)
         timed_assignments = []
@@ -499,10 +610,9 @@ class AssignmentValidator:
         
         timed_assignments.sort(key=lambda x: x[0])
         
-        # Check rest period between consecutive shifts
-        # Scheme-specific: P = 1 hour (split-shift), others = 8 hours
+        # Get scheme-specific rest hours or default
         scheme = self._extract_scheme_letter(employee.scheme)
-        min_rest_hours = 1.0 if scheme == 'P' else 8.0
+        min_rest_hours = float(scheme_overrides.get(scheme, default_rest))
         
         for i in range(1, len(timed_assignments)):
             prev_end = timed_assignments[i-1][1]
@@ -538,13 +648,16 @@ class AssignmentValidator:
         """
         C17: Monthly OT Cap - Check if assignment causes monthly OT to exceed limit.
         
-        Limits (from momMonthlyOTcap72h and APGD-D10 rules):
-        - Standard: 72 hours per month
-        - APGD-D10 (Scheme A + APO): 112-124 hours (varies by month length)
-        
-        Note: APGD-D10 limit is ~3.8h/day × days_in_month
+        Uses values from constraint configuration:
+        - defaultValue: base monthly OT cap (hours)
+        - schemeOverrides: scheme-specific caps
         """
         violations = []
+        
+        # Get constraint config
+        c17_config = self.constraints.get('C17', {})
+        default_cap = c17_config.get('defaultValue', 72)
+        scheme_overrides = c17_config.get('schemeOverrides', {})
         
         # Parse temp assignment date
         temp_date = datetime.strptime(temp_assignment.date, '%Y-%m-%d').date()
@@ -568,19 +681,17 @@ class AssignmentValidator:
                 monthly_ot += ot_hours
         
         # Determine monthly OT cap based on scheme + product type
-        # APGD-D10 (Scheme A + APO): ~3.8h/day × days_in_month
-        # Standard: 72 hours per month
         scheme = self._extract_scheme_letter(employee.scheme)
         product_type = employee.productTypeId
         
-        if scheme == 'A' and product_type == 'APO':
-            # APGD-D10: Higher monthly OT cap based on month length
-            # Feb: 28-29 days → 106-110h, Others: 30-31 days → 114-118h
+        # Check scheme overrides first
+        monthly_ot_cap = float(scheme_overrides.get(scheme, default_cap))
+        
+        # Special case: APGD-D10 (Scheme A + APO) - dynamic cap based on month length
+        if scheme == 'A' and product_type == 'APO' and scheme not in scheme_overrides:
             from calendar import monthrange
             days_in_month = monthrange(temp_month.year, temp_month.month)[1]
             monthly_ot_cap = round(3.8 * days_in_month, 1)  # ~3.8h OT per day
-        else:
-            monthly_ot_cap = 72.0
         
         if monthly_ot > monthly_ot_cap:
             violations.append(ViolationDetail(

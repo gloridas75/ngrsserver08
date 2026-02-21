@@ -163,10 +163,23 @@ class CandidateSlot(BaseModel):
 
 
 class ConstraintConfig(BaseModel):
-    """Constraint configuration."""
-    constraintId: str = Field(..., description="Constraint ID (e.g., C1, C2)")
+    """
+    Constraint configuration - supports both simple and extended formats.
+    
+    Simple format:
+        {"constraintId": "C1", "enabled": true}
+    
+    Extended format:
+        {"id": "momDailyHoursCap", "defaultValue": 12, "schemeOverrides": {"A": 14}}
+    """
+    # Support both 'constraintId' and 'id' fields
+    constraintId: Optional[str] = Field(None, description="Constraint ID (e.g., C1, C2)")
+    id: Optional[str] = Field(None, description="Human-readable constraint ID (e.g., momDailyHoursCap)")
     enabled: bool = Field(True, description="Whether constraint is enabled")
-    params: Optional[Dict[str, Any]] = Field(None, description="Constraint parameters")
+    enforcement: Optional[str] = Field(None, description="Enforcement level (hard/soft/disabled)")
+    defaultValue: Optional[Any] = Field(None, description="Default value for the constraint")
+    schemeOverrides: Optional[Dict[str, Any]] = Field(None, description="Scheme-specific overrides")
+    params: Optional[Dict[str, Any]] = Field(None, description="Additional constraint parameters")
     
     model_config = ConfigDict(extra='allow')
 
