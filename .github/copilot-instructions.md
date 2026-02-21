@@ -62,17 +62,23 @@ pytest context/tests/test_constraints_smoke.py
 
 ### Deployment (EC2 Production)
 ```bash
-# From local machine
-scp -r . ubuntu@<ec2-ip>:~/ngrs-solver
-ssh ubuntu@<ec2-ip>
+# Standard deployment (push to GitHub, then SSH to EC2)
+git push origin main
 
-# On EC2
-cd ~/ngrs-solver
-./deploy/ec2-setup.sh          # First-time setup (Docker, Redis)
-sudo systemctl restart ngrs    # Deploy code changes
+ssh -i "anthony_macpro.pem" ubuntu@ec2-47-130-131-6.ap-southeast-1.compute.amazonaws.com << 'ENDSSH'
+cd /opt/ngrs-solver
+git pull origin main
+./scripts/deploy_update.sh
+ENDSSH
+
+# Quick restart only (no code changes)
+ssh -i ~/.ssh/anthony_macpro.pem ubuntu@ec2-47-130-131-6.ap-southeast-1.compute.amazonaws.com "sudo systemctl restart ngrs"
 ```
+- **EC2 Host**: `ec2-47-130-131-6.ap-southeast-1.compute.amazonaws.com`
+- **SSH Key**: `anthony_macpro.pem` (in ~/.ssh/)
+- **App Path**: `/opt/ngrs-solver`
 - Uses systemd service (`/etc/systemd/system/ngrs.service`)
-- Redis runs in Docker container
+- Redis runs natively (no Docker container)
 - API runs via uvicorn with 2 workers
 - See [deploy/README.md](deploy/README.md) for full guide
 
