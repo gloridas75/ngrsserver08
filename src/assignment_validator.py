@@ -106,11 +106,45 @@ class AssignmentValidator:
             'schemeOverrides': {},
             'params': {'deductIfShiftAtLeastMinutes': 480}
         },
+        'C_OFF_DAYS': {
+            'enabled': True,
+            'name': 'Minimum Off Days Per Week',
+            'defaultValue': 1,
+            'schemeOverrides': {},
+            'params': {}
+        },
+        'C_PART_TIMER': {
+            'enabled': True,
+            'name': 'Part-Timer Weekly Hours',
+            'defaultValue': None,  # Uses params instead
+            'schemeOverrides': {},
+            'params': {
+                'maxHours4Days': 34.98,
+                'maxHoursMoreDays': 29.98
+            },
+            'applicableToSchemes': ['P']
+        },
+        'C_MONTHLY_TOTAL': {
+            'enabled': True,
+            'name': 'Monthly Total Hours',
+            'defaultValue': None,  # Loaded from monthlyHourLimits
+            'schemeOverrides': {},
+            'params': {}
+        },
+    }
+    
+    # Default monthly hour limits by month length
+    DEFAULT_MONTHLY_LIMITS = {
+        28: {'normalHours': 176, 'maxOvertimeHours': 112, 'totalMaxHours': 288},
+        29: {'normalHours': 182, 'maxOvertimeHours': 116, 'totalMaxHours': 298},
+        30: {'normalHours': 189, 'maxOvertimeHours': 120, 'totalMaxHours': 309},
+        31: {'normalHours': 195, 'maxOvertimeHours': 124, 'totalMaxHours': 319},
     }
     
     def __init__(self):
         """Initialize validator with default configuration."""
-        self.constraints = self.DEFAULT_CONSTRAINTS.copy()
+        self.constraints = {k: v.copy() for k, v in self.DEFAULT_CONSTRAINTS.items()}
+        self.monthly_limits = {k: v.copy() for k, v in self.DEFAULT_MONTHLY_LIMITS.items()}
     
     def _extract_scheme_letter(self, scheme: str) -> str:
         """
@@ -155,6 +189,10 @@ class AssignmentValidator:
         # Update constraint configuration if provided
         if request.constraintList:
             self._update_constraints(request.constraintList)
+        
+        # Update monthly hour limits if provided
+        if hasattr(request, 'monthlyHourLimits') and request.monthlyHourLimits:
+            self._update_monthly_limits(request.monthlyHourLimits)
         
         # Validate each candidate slot
         results = []
@@ -237,6 +275,36 @@ class AssignmentValidator:
             if 'params' in config and config['params']:
                 self.constraints[constraint_id]['params'].update(config['params'])
     
+    def _update_monthly_limits(self, monthly_hour_limits: List[Dict[str, Any]]):
+        """
+        Update monthly hour limits from request.
+        
+        Parses monthlyHourLimits entries like:
+        - standardMonthlyHours
+        - apgdTotalMaxHours
+        - apgdMaximumOvertimeHours
+        """
+        for limit_config in monthly_hour_limits:
+            limit_id = limit_config.get('id', '')
+            values_by_month = limit_config.get('valuesByMonthLength', {})
+            
+            # Update monthly limits based on the configuration
+            for month_days_str, values in values_by_month.items():
+                try:
+                    month_days = int(month_days_str)
+                    if month_days not in self.monthly_limits:
+                        self.monthly_limits[month_days] = {}
+                    
+                    # Update with the values from this config
+                    if 'totalMaxHours' in values:
+                        self.monthly_limits[month_days]['totalMaxHours'] = values['totalMaxHours']
+                    if 'normalHours' in values:
+                        self.monthly_limits[month_days]['normalHours'] = values['normalHours']
+                    if 'maxOvertimeHours' in values:
+                        self.monthly_limits[month_days]['maxOvertimeHours'] = values['maxOvertimeHours']
+                except (ValueError, TypeError):
+                    continue
+    
     def _validate_single_slot(
         self,
         employee: EmployeeInfo,
@@ -273,6 +341,16 @@ class AssignmentValidator:
         if self.constraints['C17']['enabled']:
             violations.extend(self._check_c17_monthly_ot(employee, all_assignments, temp_assignment))
         
+        # New constraints
+        if self.constraints.get('C_OFF_DAYS', {}).get('enabled', True):
+            violations.extend(self._check_off_days_per_week(employee, all_assignments, temp_assignment))
+        
+        if self.constraints.get('C_PART_TIMER', {}).get('enabled', True):
+            violations.extend(self._check_part_timer_weekly_hours(employee, all_assignments, temp_assignment))
+        
+        if self.constraints.get('C_MONTHLY_TOTAL', {}).get('enabled', True):
+            violations.extend(self._check_monthly_total_hours(employee, all_assignments, temp_assignment))
+        
         # Determine feasibility and recommendation
         hard_violations = [v for v in violations if v.violationType == 'hard']
         is_feasible = len(hard_violations) == 0
@@ -303,9 +381,15 @@ class AssignmentValidator:
         # Extract date
         date_str = start_dt.strftime('%Y-%m-%d')
         
-        # Calculate hour breakdown (gross - 1h lunch, capped at 8h normal)
+        # Get lunch break configuration
+        lunch_config = self.constraints.get('C_LUNCH', {})
+        lunch_minutes = lunch_config.get('defaultValue', 60)  # default 60 minutes
+        min_shift_minutes = lunch_config.get('params', {}).get('deductIfShiftAtLeastMinutes', 480)  # default 8 hours
+        
+        # Calculate hour breakdown (gross - lunch, capped at 8h normal)
         gross_hours = hours
-        lunch_hours = 1.0 if gross_hours > 6 else 0.0
+        gross_minutes = gross_hours * 60
+        lunch_hours = (lunch_minutes / 60.0) if gross_minutes >= min_shift_minutes else 0.0
         net_hours = gross_hours - lunch_hours
         normal_hours = min(net_hours, 8.0)
         ot_hours = max(0.0, net_hours - 8.0)
@@ -702,6 +786,209 @@ class AssignmentValidator:
                 context={
                     'monthlyOT': round(monthly_ot, 1),
                     'monthlyCap': monthly_ot_cap,
+                    'month': temp_month.strftime('%Y-%m'),
+                    'assignmentsInMonth': len(assignments_in_month)
+                }
+            ))
+        
+        return violations
+    
+    def _check_off_days_per_week(
+        self,
+        employee: EmployeeInfo,
+        all_assignments: List[ExistingAssignment],
+        temp_assignment: ExistingAssignment
+    ) -> List[ViolationDetail]:
+        """
+        Check minimum off-days per week constraint.
+        
+        Uses values from constraint configuration:
+        - defaultValue: minimum off days required per week (default: 1)
+        """
+        violations = []
+        
+        # Get constraint config
+        config = self.constraints.get('C_OFF_DAYS', {})
+        min_off_days = config.get('defaultValue', 1)
+        
+        # Parse temp assignment date
+        temp_date = datetime.strptime(temp_assignment.date, '%Y-%m-%d').date()
+        
+        # Calculate week boundaries (Sunday to Saturday)
+        days_since_sunday = (temp_date.weekday() + 1) % 7
+        week_start = temp_date - timedelta(days=days_since_sunday)
+        week_end = week_start + timedelta(days=6)
+        
+        # Count work days in the week
+        work_days_in_week = set()
+        for assignment in all_assignments:
+            if not assignment.date:
+                continue
+            assign_date = datetime.strptime(assignment.date, '%Y-%m-%d').date()
+            if week_start <= assign_date <= week_end:
+                # Only count actual work shifts (not off days)
+                if assignment.shiftCode and assignment.shiftCode.upper() not in ['O', 'OFF']:
+                    work_days_in_week.add(assign_date)
+        
+        # Calculate off days
+        days_in_week = 7
+        off_days = days_in_week - len(work_days_in_week)
+        
+        if off_days < min_off_days:
+            violations.append(ViolationDetail(
+                constraintId='C_OFF_DAYS',
+                constraintName='Minimum Off Days Per Week',
+                violationType='hard',
+                description=f'Only {off_days} off day(s) in week, minimum required is {min_off_days}',
+                context={
+                    'offDays': off_days,
+                    'minRequired': min_off_days,
+                    'workDays': len(work_days_in_week),
+                    'weekStart': str(week_start),
+                    'weekEnd': str(week_end)
+                }
+            ))
+        
+        return violations
+    
+    def _check_part_timer_weekly_hours(
+        self,
+        employee: EmployeeInfo,
+        all_assignments: List[ExistingAssignment],
+        temp_assignment: ExistingAssignment
+    ) -> List[ViolationDetail]:
+        """
+        Check part-timer weekly hour limits (Scheme P only).
+        
+        Rules:
+        - ≤4 working days per week: max 34.98h
+        - >4 working days per week: max 29.98h
+        """
+        violations = []
+        
+        # Only applies to Scheme P
+        scheme = self._extract_scheme_letter(employee.scheme)
+        if scheme != 'P':
+            return violations
+        
+        # Get constraint config
+        config = self.constraints.get('C_PART_TIMER', {})
+        params = config.get('params', {})
+        max_hours_4_days = params.get('maxHours4Days', 34.98)
+        max_hours_more_days = params.get('maxHoursMoreDays', 29.98)
+        
+        # Parse temp assignment date
+        temp_date = datetime.strptime(temp_assignment.date, '%Y-%m-%d').date()
+        
+        # Calculate week boundaries (Sunday to Saturday)
+        days_since_sunday = (temp_date.weekday() + 1) % 7
+        week_start = temp_date - timedelta(days=days_since_sunday)
+        week_end = week_start + timedelta(days=6)
+        
+        # Calculate work days and total hours in the week
+        work_days_in_week = set()
+        weekly_hours = 0.0
+        
+        for assignment in all_assignments:
+            if not assignment.date:
+                continue
+            assign_date = datetime.strptime(assignment.date, '%Y-%m-%d').date()
+            if week_start <= assign_date <= week_end:
+                if assignment.shiftCode and assignment.shiftCode.upper() not in ['O', 'OFF']:
+                    work_days_in_week.add(assign_date)
+                    # Get hours from assignment
+                    if hasattr(assignment.hours, 'gross'):
+                        weekly_hours += assignment.hours.gross
+                    elif isinstance(assignment.hours, dict):
+                        weekly_hours += assignment.hours.get('gross', 0)
+        
+        num_work_days = len(work_days_in_week)
+        
+        # Determine applicable limit
+        if num_work_days <= 4:
+            weekly_cap = max_hours_4_days
+            limit_type = "≤4 days"
+        else:
+            weekly_cap = max_hours_more_days
+            limit_type = ">4 days"
+        
+        if weekly_hours > weekly_cap:
+            violations.append(ViolationDetail(
+                constraintId='C_PART_TIMER',
+                constraintName='Part-Timer Weekly Hours',
+                violationType='hard',
+                description=f'Part-timer weekly hours {weekly_hours:.2f}h exceeds {weekly_cap:.2f}h limit ({limit_type})',
+                context={
+                    'weeklyHours': round(weekly_hours, 2),
+                    'weeklyCap': weekly_cap,
+                    'workDays': num_work_days,
+                    'limitType': limit_type,
+                    'weekStart': str(week_start),
+                    'weekEnd': str(week_end)
+                }
+            ))
+        
+        return violations
+    
+    def _check_monthly_total_hours(
+        self,
+        employee: EmployeeInfo,
+        all_assignments: List[ExistingAssignment],
+        temp_assignment: ExistingAssignment
+    ) -> List[ViolationDetail]:
+        """
+        Check monthly total hours limit.
+        
+        Uses monthlyHourLimits configuration to determine:
+        - totalMaxHours: maximum total working hours per month
+        """
+        violations = []
+        
+        # Parse temp assignment date
+        temp_date = datetime.strptime(temp_assignment.date, '%Y-%m-%d').date()
+        temp_month = temp_date.replace(day=1)
+        
+        # Get days in month
+        from calendar import monthrange
+        days_in_month = monthrange(temp_month.year, temp_month.month)[1]
+        
+        # Get monthly limits for this month length
+        limits = self.monthly_limits.get(days_in_month, {})
+        total_max_hours = limits.get('totalMaxHours')
+        
+        if not total_max_hours:
+            # Use default calculation if not specified
+            return violations
+        
+        # Calculate total hours in the month
+        monthly_hours = 0.0
+        assignments_in_month = []
+        
+        for assignment in all_assignments:
+            if not assignment.date:
+                continue
+            
+            assign_date = datetime.strptime(assignment.date, '%Y-%m-%d').date()
+            assign_month = assign_date.replace(day=1)
+            
+            if assign_month == temp_month:
+                assignments_in_month.append(assignment)
+                # Get gross hours from assignment
+                if hasattr(assignment.hours, 'gross'):
+                    monthly_hours += assignment.hours.gross
+                elif isinstance(assignment.hours, dict):
+                    monthly_hours += assignment.hours.get('gross', 0)
+        
+        if monthly_hours > total_max_hours:
+            violations.append(ViolationDetail(
+                constraintId='C_MONTHLY_TOTAL',
+                constraintName='Monthly Total Hours',
+                violationType='hard',
+                description=f'Monthly total hours {monthly_hours:.1f}h exceeds limit of {total_max_hours}h for {temp_month.strftime("%B %Y")}',
+                context={
+                    'monthlyHours': round(monthly_hours, 1),
+                    'monthlyLimit': total_max_hours,
+                    'daysInMonth': days_in_month,
                     'month': temp_month.strftime('%Y-%m'),
                     'assignmentsInMonth': len(assignments_in_month)
                 }

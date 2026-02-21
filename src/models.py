@@ -203,6 +203,10 @@ class ValidateAssignmentRequest(BaseModel):
         None,
         description="List of constraints to check (defaults to all employee-specific hard constraints)"
     )
+    monthlyHourLimits: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description="Monthly hour limit configurations (e.g., apgdTotalMaxHours, standardMonthlyHours)"
+    )
     
     model_config = ConfigDict(extra='allow')
 
