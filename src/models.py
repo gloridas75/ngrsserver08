@@ -164,18 +164,11 @@ class CandidateSlot(BaseModel):
 
 class ConstraintConfig(BaseModel):
     """Constraint configuration."""
-    constraintId: Optional[str] = Field(None, description="Constraint ID (e.g., C1, C2)")
-    id: Optional[str] = Field(None, description="Alternative field for constraint ID")
+    constraintId: str = Field(..., description="Constraint ID (e.g., C1, C2)")
     enabled: bool = Field(True, description="Whether constraint is enabled")
-    enforcement: Optional[str] = Field(None, description="Enforcement level (hard/soft)")
     params: Optional[Dict[str, Any]] = Field(None, description="Constraint parameters")
     
     model_config = ConfigDict(extra='allow')
-    
-    @property
-    def effective_constraint_id(self) -> str:
-        """Return constraintId or id, whichever is set."""
-        return self.constraintId or self.id or ""
 
 
 class ValidateAssignmentRequest(BaseModel):
