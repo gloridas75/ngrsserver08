@@ -52,6 +52,19 @@ class AssignmentValidator:
         'C17': {'enabled': True, 'name': 'Monthly OT Cap', 'params': {}},
     }
     
+    # Mapping from human-readable IDs to constraint codes
+    CONSTRAINT_ID_MAP = {
+        'momDailyHoursCap': 'C1',
+        'momWeeklyHoursCap44h': 'C2',
+        'maxConsecutiveWorkingDays': 'C3',
+        'apgdMinRestBetweenShifts': 'C4',
+        'momMonthlyOTcap72h': 'C17',
+        'minimumOffDaysPerWeek': 'C3',  # Related to consecutive days
+        'momLunchBreak': None,  # Not a hard constraint check
+        'oneShiftPerDay': None,  # Not implemented yet
+        'partTimerWeeklyHours': 'C2',  # Related to weekly hours
+    }
+    
     def __init__(self):
         """Initialize validator with default configuration."""
         self.constraints = self.DEFAULT_CONSTRAINTS.copy()
@@ -126,18 +139,28 @@ class AssignmentValidator:
         for constraint_config in constraint_list:
             # Handle both dict and Pydantic model
             if hasattr(constraint_config, 'constraintId'):
-                constraint_id = constraint_config.constraintId
-                enabled = constraint_config.enabled
+                raw_id = constraint_config.constraintId or getattr(constraint_config, 'id', None)
+                enabled = constraint_config.enabled if hasattr(constraint_config, 'enabled') else True
+                enforcement = getattr(constraint_config, 'enforcement', 'hard')
                 params = constraint_config.params if hasattr(constraint_config, 'params') else None
             else:
-                constraint_id = constraint_config.get('constraintId')
+                raw_id = constraint_config.get('constraintId') or constraint_config.get('id')
                 enabled = constraint_config.get('enabled', True)
+                enforcement = constraint_config.get('enforcement', 'hard')
                 params = constraint_config.get('params')
             
-            if constraint_id in self.constraints:
-                self.constraints[constraint_id]['enabled'] = enabled
-                if params:
-                    self.constraints[constraint_id]['params'] = params
+            # Map human-readable ID to constraint code if needed
+            constraint_id = self.CONSTRAINT_ID_MAP.get(raw_id, raw_id)
+            
+            # Skip if constraint not mapped or not in our supported constraints
+            if not constraint_id or constraint_id not in self.constraints:
+                continue
+            
+            # Only enable if enforcement is 'hard' (or not specified)
+            is_enabled = enabled and (enforcement != 'soft')
+            self.constraints[constraint_id]['enabled'] = is_enabled
+            if params:
+                self.constraints[constraint_id]['params'] = params
     
     def _validate_single_slot(
         self,
