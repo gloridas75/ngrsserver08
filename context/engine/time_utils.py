@@ -862,7 +862,7 @@ def count_work_day_position_in_week(employee_id: str, current_date_obj, all_assi
         assign_date_str = assignment.get('date')
         shift_code = assignment.get('shiftCode', '')
         
-        if assign_date_str and shift_code and shift_code != 'O':
+        if assign_date_str and shift_code and shift_code not in ('O', 'PH'):
             try:
                 from datetime import datetime as dt
                 assign_date = dt.fromisoformat(assign_date_str).date()
@@ -894,13 +894,19 @@ def count_work_days_in_calendar_week(
         all_assignments: All assignments list (must have 'employeeId', 'date', 'shiftCode')
     
     Returns:
-        Number of work days (D/N shifts, excluding O) in that calendar week
+        Number of work days (D/N shifts, excluding O and PH) in that calendar week
     
     Examples:
         Week with [D,D,O,D,D,D,O] → 5 work days
         Week with [D,D,D,D,O,O,O] → 4 work days
+        Week with [D,D,D,D,O,PH,D] → 5 work days (PH excluded)
     """
     monday, sunday = get_calendar_week_bounds(date_obj)
+    
+    # Non-work shift codes: O (off day) and PH (public holiday)
+    # PH days are not counted as work days for normal-hours-per-day calculation
+    # because the employee is not working on that day (no gross hours).
+    non_work_codes = {'O', 'PH'}
     
     # Filter assignments for this employee in this week
     work_days = set()
@@ -919,8 +925,8 @@ def count_work_days_in_calendar_week(
             # Check if in this calendar week
             if monday <= assign_date <= sunday:
                 shift_code = assignment.get('shiftCode', '')
-                # Count D/N shifts only (work days), exclude O
-                if shift_code and shift_code != 'O':
+                # Count D/N shifts only (work days), exclude O and PH
+                if shift_code and shift_code not in non_work_codes:
                     work_days.add(assign_date_str)
         except Exception:
             continue
@@ -961,7 +967,7 @@ def find_consecutive_position(
         assign_date_str = assignment.get('date')
         shift_code = assignment.get('shiftCode', '')
         
-        if assign_date_str and shift_code and shift_code != 'O':
+        if assign_date_str and shift_code and shift_code not in ('O', 'PH'):
             try:
                 from datetime import datetime as dt
                 assign_date = dt.fromisoformat(assign_date_str).date()

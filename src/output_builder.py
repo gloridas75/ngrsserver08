@@ -527,8 +527,10 @@ def insert_off_day_assignments(assignments, input_data, ctx):
     This function adds assignment records with shiftCode="O" for days when
     employees are on their scheduled rest days.
     
-    For public holidays (when includePublicHolidays=false), assignments are
-    marked with shiftCode="PH" and status="PUBLIC_HOLIDAY".
+    For public holidays (when includePublicHolidays=false), assignments on work days
+    are marked with shiftCode="PH" and status="PUBLIC_HOLIDAY".
+    When includePublicHolidays=true, PH days that fall on pattern off days ('O')
+    are treated as regular off days (shiftCode="O", status="OFF_DAY").
     
     Args:
         assignments: List of actual shift assignments (D, N shifts)
@@ -550,6 +552,16 @@ def insert_off_day_assignments(assignments, input_data, ctx):
                 public_holidays.add(ph_date)
         except Exception:
             pass
+    
+    # Get includePublicHolidays setting from first shift definition
+    # When true: PH days are treated as regular days (demand exists on PH)
+    # When false: PH days are excluded from demand (employees are off on PH)
+    include_public_holidays = True  # Default
+    demands = input_data.get('demandItems', [])
+    if demands:
+        shifts = demands[0].get('shifts', [])
+        if shifts:
+            include_public_holidays = shifts[0].get('includePublicHolidays', True)
     
     # Get date range from existing assignments (filter out None values explicitly)
     date_values = set(a.get('date') for a in assignments if a.get('date') is not None)
@@ -650,14 +662,31 @@ def insert_off_day_assignments(assignments, input_data, ctx):
                 emp_assignments_dict = assignments_by_emp_date.get(emp_id, {})
                 sample_assignment = next(iter(emp_assignments_dict.values()), None) if emp_assignments_dict else None
                 
-                # Use appropriate shift code and status
-                # Public holidays get PH/PUBLIC_HOLIDAY, regular off days get O/OFF_DAY
-                if is_public_holiday:
-                    off_shift_code = "PH"
-                    off_status = "PUBLIC_HOLIDAY"
-                else:
+                # Determine shift code and status based on PH and includePublicHolidays settings
+                # 
+                # Logic:
+                # - If NOT a public holiday → always Off Day (pattern says O)
+                # - If PH AND includePublicHolidays=true AND pattern says O:
+                #     → Off Day (employee is off due to pattern, not due to PH)
+                #     The PH just happens to fall on their scheduled off day.
+                # - If PH AND includePublicHolidays=false AND pattern says work (D/N):
+                #     → PH (employee is off because PH excluded the work slot)
+                # - If PH AND includePublicHolidays=true AND pattern says work (D/N):
+                #     → PH (edge case: solver should have assigned but didn't)
+                if not is_public_holiday:
+                    # Regular off day
                     off_shift_code = "O"
                     off_status = "OFF_DAY"
+                elif include_public_holidays and expected_shift == 'O':
+                    # PH on a pattern off day with includePublicHolidays=true
+                    # Employee is off due to their pattern, not the PH
+                    off_shift_code = "O"
+                    off_status = "OFF_DAY"
+                else:
+                    # PH where employee would have worked (includePublicHolidays=false)
+                    # OR PH on a work day that wasn't assigned (edge case)
+                    off_shift_code = "PH"
+                    off_status = "PUBLIC_HOLIDAY"
                 
                 # Determine shift times for OFF day
                 if sample_assignment:
