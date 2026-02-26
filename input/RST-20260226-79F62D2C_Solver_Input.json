@@ -1,0 +1,603 @@
+{
+  "schemaVersion": "0.98",
+  "planningReference": "RST-20260226-79F62D2C",
+  "timezone": "Asia/Singapore",
+  "planningHorizon": {
+    "startDate": "2026-02-01",
+    "endDate": "2026-02-28"
+  },
+  "publicHolidays": [
+    "2026-02-17",
+    "2026-02-18"
+  ],
+  "solverConfig": {
+    "optimizationMode": "minimizeEmployeeCount",
+    "maxEmployeesToUse": 1
+  },
+  "solverRunTime": {
+    "maxSeconds": 300
+  },
+  "schemeMap": {
+    "A": "Scheme A",
+    "B": "Scheme B",
+    "P": "Scheme P"
+  },
+  "fixedRotationOffset": "auto",
+  "ouOffsets": [],
+  "demandItems": [
+    {
+      "demandId": "DI-2602190755-99159390",
+      "locationId": "LOC-BJGRCR-3322",
+      "shiftStartDate": "2026-02-01",
+      "rosteringBasis": "demandBased",
+      "templateGenerationMode": "off",
+      "minStaffThresholdPercentage": 100,
+      "shifts": [
+        {
+          "shiftDetails": [
+            {
+              "shiftCode": "D",
+              "start": "07:00:00",
+              "end": "19:00:00",
+              "nextDay": false
+            }
+          ],
+          "includePublicHolidays": true,
+          "includeEveOfPublicHolidays": true,
+          "shiftSetId": "Set_DI_2602190755_99159390",
+          "coverageDays": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "coverageAnchor": "2026-02-01",
+          "whitelist": {
+            "teamIds": [],
+            "employeeIds": [
+              "90000078"
+            ]
+          },
+          "blacklist": {
+            "employeeIds": []
+          }
+        }
+      ],
+      "requirements": [
+        {
+          "requirementId": "430_1",
+          "icpmpBufferPercentage": 50,
+          "productTypeId": "APO",
+          "productTypeIds": [
+            "APO"
+          ],
+          "rankIds": [
+            "AES1",
+            "AES2",
+            "ASP",
+            "PC",
+            "COR",
+            "DEP",
+            "SI",
+            "LCP",
+            "REC",
+            "SSGT",
+            "SGT",
+            "SSER",
+            "SI",
+            "CC"
+          ],
+          "headcount": 1,
+          "dailyHeadcount": [
+            {
+              "date": "2026-02-01",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-02",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-03",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-04",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-05",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-06",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-07",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-08",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-09",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-10",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-11",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-12",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-13",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-14",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-15",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-16",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "EveOfPH"
+            },
+            {
+              "date": "2026-02-17",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "PublicHoliday"
+            },
+            {
+              "date": "2026-02-18",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "PublicHoliday"
+            },
+            {
+              "date": "2026-02-19",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-20",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-21",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-22",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-23",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-24",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-25",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-26",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-27",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            },
+            {
+              "date": "2026-02-28",
+              "shiftCode": "D",
+              "headcount": 1,
+              "dayType": "Normal"
+            }
+          ],
+          "workPattern": [
+            "D",
+            "D",
+            "D",
+            "D",
+            "D",
+            "O",
+            "O"
+          ],
+          "requiredQualifications": [],
+          "gender": "Any",
+          "schemes": [
+            "Any"
+          ],
+          "enableOtAwareIcpmp": true
+        }
+      ]
+    }
+  ],
+  "employees": [
+    {
+      "employeeId": "90000078",
+      "ouId": "OUJURONGPORT",
+      "productTypeId": "APO",
+      "rankId": "COR",
+      "scheme": "Scheme A",
+      "rotationOffset": 0,
+      "local": 0,
+      "gender": "Male",
+      "qualifications": [],
+      "preferences": {},
+      "unavailability": [
+        "2026-02-26"
+      ]
+    }
+  ],
+  "constraintList": [
+    {
+      "id": "maxConsecutiveWorkingDays",
+      "enforcement": "hard",
+      "description": "Maximum consecutive working days",
+      "frequency": "Continuous",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 12,
+      "schemeOverrides": {
+        "A": {
+          "productTypes": [
+            "APO"
+          ],
+          "value": 8,
+          "description": "APGD-D10 (Scheme A + APO product type) can work 8 consecutive days including off-day"
+        }
+      }
+    },
+    {
+      "id": "momDailyHoursCap",
+      "enforcement": "hard",
+      "description": "MOM Regulatory:Daily hours cap for different Schemes",
+      "frequency": "Daily",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 12,
+      "schemeOverrides": {
+        "A": 14,
+        "B": 13,
+        "P": 12
+      }
+    },
+    {
+      "id": "momWeeklyHoursCap44h",
+      "enforcement": "hard",
+      "description": "MOM Regulatory:Maximum 44 hours per week",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 44
+    },
+    {
+      "id": "minimumOffDaysPerWeek",
+      "enforcement": "hard",
+      "description": "Minimum off-days per week",
+      "frequency": "Weekly",
+      "uom": "Days",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "All schemes require 1 off-day per week. Scheme A with APO can work on off-day for up to 8 consecutive days."
+    },
+    {
+      "id": "momMonthlyOTcap72h",
+      "enforcement": "hard",
+      "description": "MOM Employment Act:Maximum 72 hours overtime per month",
+      "frequency": "Monthly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 72,
+      "exemptions": [
+        {
+          "id": "exemption_1767083037037",
+          "startDate": "2026-02-01",
+          "endDate": "2026-02-28",
+          "reason": "CNY"
+        }
+      ]
+    },
+    {
+      "id": "momLunchBreak",
+      "enforcement": "hard",
+      "description": "Meal break deduction",
+      "frequency": "Per Shift",
+      "uom": "Minutes",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 60,
+      "params": {
+        "deductIfShiftAtLeastMinutes": 480
+      }
+    },
+    {
+      "id": "apgdMinRestBetweenShifts",
+      "enforcement": "hard",
+      "description": "Minimum rest hours required between consecutive shifts",
+      "frequency": "Between Shifts",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 8,
+      "notes": "Scheme P requires only 1 hour rest, enabling split-shift patterns. All other schemes require 8 hours."
+    },
+    {
+      "id": "oneShiftPerDay",
+      "enforcement": "hard",
+      "description": "Maximum shifts per day",
+      "frequency": "Per Day",
+      "uom": "Number",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "defaultValue": 1,
+      "notes": "Currently all schemes limited to 1 shift per day. Scheme P = 2 shifts deferred for future implementation."
+    },
+    {
+      "id": "partTimerWeeklyHours",
+      "enforcement": "hard",
+      "description": "Part-timer weekly hour limits (Scheme P only)",
+      "frequency": "Weekly",
+      "uom": "Hours",
+      "applicableTo": {
+        "employeeType": "Local & Foreigner",
+        "productTypes": "All",
+        "ranks": "All"
+      },
+      "params": {
+        "maxHours4Days": 34.98,
+        "maxHoursMoreDays": 29.98
+      },
+      "notes": "<=4 working days per week:max 34.98h, >4 days per week:max 29.98h",
+      "applicableToSchemes": [
+        "P"
+      ]
+    }
+  ],
+  "monthlyHourLimits": [
+    {
+      "id": "apo_a_all_monthly",
+      "description": "APO Scheme A - All monthly hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "All",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ]
+      },
+      "calculationMethod": "monthly",
+      "valuesByMonthLength": {
+        "28": {
+          "appreciationMinHours": 245,
+          "maximumAllowableWorkingHours": 288,
+          "maxOvertimeHours": 112,
+          "totalMaxHours": 288
+        },
+        "29": {
+          "appreciationMinHours": 253,
+          "maximumAllowableWorkingHours": 298,
+          "maxOvertimeHours": 116,
+          "totalMaxHours": 298
+        },
+        "30": {
+          "appreciationMinHours": 261,
+          "maximumAllowableWorkingHours": 309,
+          "maxOvertimeHours": 120,
+          "totalMaxHours": 309
+        },
+        "31": {
+          "appreciationMinHours": 269,
+          "maximumAllowableWorkingHours": 319,
+          "maxOvertimeHours": 124,
+          "totalMaxHours": 319
+        }
+      }
+    },
+    {
+      "id": "apo_a_foreigner_monthly",
+      "description": "APO Scheme A - Foreigner monthly hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "Foreigner",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ]
+      },
+      "calculationMethod": "monthly",
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 244
+        },
+        "29": {
+          "minimumContractualHours": 252
+        },
+        "30": {
+          "minimumContractualHours": 260
+        },
+        "31": {
+          "minimumContractualHours": 268
+        }
+      }
+    },
+    {
+      "id": "apo_a_local_monthly",
+      "description": "APO Scheme A - Local monthly hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "Local",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ]
+      },
+      "calculationMethod": "monthly",
+      "valuesByMonthLength": {
+        "28": {
+          "minimumContractualHours": 224
+        },
+        "29": {
+          "minimumContractualHours": 231
+        },
+        "30": {
+          "minimumContractualHours": 238
+        },
+        "31": {
+          "minimumContractualHours": 246
+        }
+      }
+    },
+    {
+      "id": "so_a_local_daily",
+      "description": "SO Scheme A - Local daily hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "Local",
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "SO"
+        ]
+      },
+      "calculationMethod": "daily",
+      "valuesByMonthLength": {
+        "28": {
+          "normalHours": 222
+        },
+        "29": {
+          "normalHours": 230
+        },
+        "30": {
+          "normalHours": 237
+        },
+        "31": {
+          "normalHours": 245
+        }
+      }
+    }
+  ],
+  "softConstraintWeights": {
+    "rotationPatternCompliance": 10,
+    "employeePreferences": 5,
+    "consistentShiftStart": 3,
+    "minimizeShortRestGaps": 8,
+    "officerContinuity": 4,
+    "minimizeTeamChanges": 2,
+    "zonePreference": 3,
+    "teamSizeFeasibility": 2,
+    "travelSlackBuffer": 1,
+    "fairOvertimeDistribution": 6,
+    "publicHolidayCoverage": 4,
+    "allowanceOptimization": 2,
+    "substituteLogic": 1,
+    "midMonthInsert": 1,
+    "demandCoverageScore": 5,
+    "travelSlackTime": 1
+  },
+  "solverScoreConfig": {}
+}

@@ -563,42 +563,90 @@ def _apply_mom_constraints(
             for i in x:
                 model.Add(x[i] == 0)
     
-    # C17: Monthly overtime cap
+    # C17: Monthly overtime cap (using 44h/week threshold - consistent with output builder)
     # Read monthly OT cap from monthlyHourLimits (scheme/product-specific)
     # Standard: 72h/month, APGD-D10 (APO): 112-124h/month depending on month length
     from context.engine.constraint_config import get_monthly_hour_limits
     
+    # Weekly normal hours threshold (MOM standard)
+    WEEKLY_HOURS_THRESHOLD = 44.0
+    SCALE = 100  # Scale factor for integer arithmetic (2 decimal precision)
+    weekly_threshold_scaled = int(WEEKLY_HOURS_THRESHOLD * SCALE)
+    
+    # Group dates by (calendar month, ISO week) for weekly OT calculation
+    # We need weekly OT = max(0, weekly_gross - 44h), then sum for monthly cap
+    
+    # First, group dates by ISO week
+    week_groups = {}  # (iso_year, iso_week) -> [date_indices]
+    for i, date in enumerate(dates):
+        if i in x:
+            iso_year, iso_week, _ = date.isocalendar()
+            week_key = (iso_year, iso_week)
+            if week_key not in week_groups:
+                week_groups[week_key] = []
+            week_groups[week_key].append(i)
+    
     # Group dates by calendar month
-    months = {}  # month_key -> (year, month, [date_indices])
+    months = {}  # month_key -> (year, month, set of (iso_year, iso_week))
     for i, date in enumerate(dates):
         if i in x:
             month_key = f"{date.year}-{date.month:02d}"
+            iso_year, iso_week, _ = date.isocalendar()
             if month_key not in months:
-                months[month_key] = (date.year, date.month, [])
-            months[month_key][2].append(i)
+                months[month_key] = (date.year, date.month, set())
+            months[month_key][2].add((iso_year, iso_week))
+    
+    # Gross hours per shift
+    gross_hours = shift_duration_hours
+    gross_scaled = int(round(gross_hours * SCALE))
+    
+    # Create weekly OT variables for each week
+    weekly_ot_vars = {}  # (iso_year, iso_week) -> IntVar for weekly OT
+    
+    for week_key, week_indices in week_groups.items():
+        iso_year, iso_week = week_key
+        
+        # Weekly gross = sum of (x[i] * gross_hours) for all days in week
+        weekly_gross_terms = [x[i] * gross_scaled for i in week_indices]
+        
+        if weekly_gross_terms:
+            max_weekly_gross = int(24 * 7 * SCALE)  # Max: 168h/week
+            max_weekly_ot = max_weekly_gross - weekly_threshold_scaled
+            
+            # Create weekly gross variable
+            weekly_gross_var = model.NewIntVar(0, max_weekly_gross, f"wg_{iso_year}_{iso_week}")
+            model.Add(weekly_gross_var == sum(weekly_gross_terms))
+            
+            # Create weekly OT variable: max(0, weekly_gross - 44h)
+            weekly_ot_var = model.NewIntVar(0, max_weekly_ot, f"wot_{iso_year}_{iso_week}")
+            
+            # weekly_ot = max(0, weekly_gross - 44h)
+            diff_var = model.NewIntVar(-max_weekly_gross, max_weekly_gross, f"wd_{iso_year}_{iso_week}")
+            model.Add(diff_var == weekly_gross_var - weekly_threshold_scaled)
+            model.AddMaxEquality(weekly_ot_var, [diff_var, 0])
+            
+            weekly_ot_vars[week_key] = weekly_ot_var
     
     # Apply monthly OT cap for each month
-    # OT hours = max(0, gross_hours - 9.0) per shift
-    gross_hours = shift_duration_hours
-    ot_hours_per_shift = max(0, gross_hours - 9.0)
-    
-    if ot_hours_per_shift > 0:
-        ot_hours_scaled = int(round(ot_hours_per_shift * 10))
+    for month_key, (year, month, weeks_in_month) in months.items():
+        # Collect weekly OT variables for this month
+        monthly_ot_terms = []
+        for week_key in weeks_in_month:
+            if week_key in weekly_ot_vars:
+                monthly_ot_terms.append(weekly_ot_vars[week_key])
         
-        for month_key, (year, month, month_indices) in months.items():
+        if monthly_ot_terms:
             # Get scheme/product-specific monthly OT cap
             monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
             monthly_ot_cap = monthly_limits.get('maxOvertimeHours', max_monthly_ot_hours)
-            monthly_ot_cap_scaled = int(round(monthly_ot_cap * 10))
+            monthly_ot_cap_scaled = int(round(monthly_ot_cap * SCALE))
             
-            # Sum of OT hours for this month <= monthly cap
-            total_ot_terms = [x[i] * ot_hours_scaled for i in month_indices]
-            if total_ot_terms:
-                model.Add(sum(total_ot_terms) <= monthly_ot_cap_scaled)
-                if is_apgd:
-                    logger.info(f"  Applying C17 (APGD-D10): Monthly OT cap for {month_key} <= {monthly_ot_cap}h")
-                else:
-                    logger.info(f"  Applying C17: Monthly OT cap for {month_key} <= {monthly_ot_cap}h")
+            # Sum of weekly OT for this month <= monthly cap
+            model.Add(sum(monthly_ot_terms) <= monthly_ot_cap_scaled)
+            if is_apgd:
+                logger.info(f"  Applying C17 (APGD-D10): Monthly OT cap for {month_key} <= {monthly_ot_cap}h (44h/week threshold)")
+            else:
+                logger.info(f"  Applying C17: Monthly OT cap for {month_key} <= {monthly_ot_cap}h (44h/week threshold)")
 
 
 def _calculate_shift_duration(shift_details: dict) -> float:
