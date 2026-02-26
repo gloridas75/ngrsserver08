@@ -404,15 +404,14 @@ def get_monthly_hour_limits(
     Returns:
         Dictionary with:
         - 'calculationMethod': 'daily' or 'monthly'
-        - 'normalHoursCap': Normal hours cap (for daily method)
-        - 'minimumContractualHours': Contractual threshold (for monthly method)
+        - 'minimumContractualHours': Normal hours threshold (renamed from normalHoursCap)
         - 'maxOvertimeHours': Max OT hours per month (default: 72)
         - 'totalMaxHours': Total max hours per month
     
     Examples:
         Scheme A + APO → {calculationMethod: 'monthly', minimumContractualHours: 238, maxOT: 72}
-        Scheme A + SO → {calculationMethod: 'daily', normalHoursCap: 189, maxOT: 72}
-        Scheme B + SO → {calculationMethod: 'daily', normalHoursCap: 189, maxOT: 72}
+        Scheme A + SO → {calculationMethod: 'daily', minimumContractualHours: 189, maxOT: 72}
+        Scheme B + SO → {calculationMethod: 'daily', minimumContractualHours: 189, maxOT: 72}
     """
     # Defaults by month length (44h/week → normal hours per month)
     defaults_normal_hours = {28: 176, 29: 182, 30: 189, 31: 195}
@@ -426,8 +425,7 @@ def get_monthly_hour_limits(
     # Default result (standard calculation)
     result = {
         'calculationMethod': 'daily',
-        'normalHoursCap': defaults_normal_hours.get(month_length, 189),
-        'minimumContractualHours': None,
+        'minimumContractualHours': defaults_normal_hours.get(month_length, 189),
         'maxOvertimeHours': defaults_max_ot,
         'totalMaxHours': defaults_normal_hours.get(month_length, 189) + defaults_max_ot
     }
@@ -504,13 +502,13 @@ def get_monthly_hour_limits(
             # Infer monthly method if contractual hours defined
             result['calculationMethod'] = 'monthly'
         
-        # Extract values
+        # Extract values - support both new (minimumContractualHours) and legacy (normalHours, normalHoursCap)
         if 'minimumContractualHours' in values:
             result['minimumContractualHours'] = values['minimumContractualHours']
-        if 'normalHoursCap' in values:
-            result['normalHoursCap'] = values['normalHoursCap']
-        if 'normalHours' in values:  # Backward compatible
-            result['normalHoursCap'] = values['normalHours']
+        elif 'normalHoursCap' in values:
+            result['minimumContractualHours'] = values['normalHoursCap']
+        elif 'normalHours' in values:  # Backward compatible
+            result['minimumContractualHours'] = values['normalHours']
         if 'maxOvertimeHours' in values:
             result['maxOvertimeHours'] = values['maxOvertimeHours']
         if 'totalMaxHours' in values:

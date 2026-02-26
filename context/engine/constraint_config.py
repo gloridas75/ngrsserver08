@@ -529,7 +529,7 @@ def get_monthly_hour_limits(ctx: dict, employee: dict, year: int, month: int) ->
     Get monthly hour limits for an employee based on month length.
     
     Returns limits including:
-    - normalHours or minimumContractualHours (for APGD-D10)
+    - minimumContractualHours (normal working hours threshold)
     - maxOvertimeHours
     - totalMaxHours
     
@@ -542,8 +542,7 @@ def get_monthly_hour_limits(ctx: dict, employee: dict, year: int, month: int) ->
     Returns:
         Dict with hour limits:
         {
-            'normalHours': 176,              # Standard monthly hours
-            'minimumContractualHours': None, # APGD-D10 minimum (if applicable)
+            'minimumContractualHours': 176,  # Normal working hours threshold
             'maxOvertimeHours': 112,
             'totalMaxHours': 288,
             'enforcement': 'hard',           # 'hard' or 'soft'
@@ -552,7 +551,7 @@ def get_monthly_hour_limits(ctx: dict, employee: dict, year: int, month: int) ->
     
     Example:
         limits = get_monthly_hour_limits(ctx, employee, 2025, 2)
-        # For standard employee in Feb: normalHours=176, maxOvertimeHours=112
+        # For standard employee in Feb: minimumContractualHours=176, maxOvertimeHours=112
         # For APGD-D10 in Feb: minimumContractualHours=224, maxOvertimeHours=112
     """
     # Calculate month length
@@ -605,9 +604,10 @@ def get_monthly_hour_limits(ctx: dict, employee: dict, year: int, month: int) ->
             continue
         
         # Found a matching rule
+        # Support both 'minimumContractualHours' (new) and 'normalHours' (legacy) field names
+        min_contractual = values.get('minimumContractualHours') or values.get('normalHours')
         return {
-            'normalHours': values.get('normalHours'),
-            'minimumContractualHours': values.get('minimumContractualHours'),
+            'minimumContractualHours': min_contractual,
             'maxOvertimeHours': values.get('maxOvertimeHours'),
             'totalMaxHours': values.get('totalMaxHours'),
             'enforcement': limit_config.get('enforcement', 'hard'),
@@ -617,16 +617,15 @@ def get_monthly_hour_limits(ctx: dict, employee: dict, year: int, month: int) ->
     
     # No matching rule found, return defaults based on month length
     month_defaults = {
-        28: {'normalHours': 176, 'maxOvertimeHours': 112, 'totalMaxHours': 288},
-        29: {'normalHours': 182, 'maxOvertimeHours': 116, 'totalMaxHours': 298},
-        30: {'normalHours': 189, 'maxOvertimeHours': 120, 'totalMaxHours': 309},
-        31: {'normalHours': 195, 'maxOvertimeHours': 124, 'totalMaxHours': 319}
+        28: {'minimumContractualHours': 176, 'maxOvertimeHours': 112, 'totalMaxHours': 288},
+        29: {'minimumContractualHours': 182, 'maxOvertimeHours': 116, 'totalMaxHours': 298},
+        30: {'minimumContractualHours': 189, 'maxOvertimeHours': 120, 'totalMaxHours': 309},
+        31: {'minimumContractualHours': 195, 'maxOvertimeHours': 124, 'totalMaxHours': 319}
     }
     
     defaults = month_defaults.get(month_days, month_defaults[30])
     return {
-        'normalHours': defaults['normalHours'],
-        'minimumContractualHours': None,
+        'minimumContractualHours': defaults['minimumContractualHours'],
         'maxOvertimeHours': defaults['maxOvertimeHours'],
         'totalMaxHours': defaults['totalMaxHours'],
         'enforcement': 'hard',
