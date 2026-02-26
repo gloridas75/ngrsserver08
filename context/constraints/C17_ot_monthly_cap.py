@@ -1,8 +1,9 @@
 """C17: Monthly OT cap per employee (HARD).
 
-Canonical model:
-- ot_hours = max(0, gross_hours - 9.0) per shift
-- Sum of ot_hours per employee per calendar month ≤ monthly OT cap
+Canonical model (44h/week threshold - consistent with MOM and output builder):
+- Weekly OT = max(0, weekly_gross_hours - 44)
+- Monthly OT = sum of all weekly OT within the calendar month
+- Monthly OT ≤ monthly OT cap (72h for standard, 112-124h for APGD-D10)
 
 Monthly OT caps (from monthlyHourLimits):
 - Standard (non-APO): 72h per month
@@ -15,13 +16,21 @@ from calendar import monthrange
 from context.engine.constraint_config import get_monthly_hour_limits
 
 
+# Weekly normal hours threshold (MOM standard)
+WEEKLY_HOURS_THRESHOLD = 44.0
+
+
 def add_constraints(model, ctx):
     """
     Enforce monthly OT hour cap per employee (HARD).
     
-    Strategy: Group slots by (employee, calendar month).
-    For each month, sum OT hours weighted by assignments.
-    Constraint: sum(var * scaled_ot) <= monthly_ot_cap
+    Strategy: 
+    1. Group slots by (employee, ISO week) to calculate weekly gross hours
+    2. Weekly OT = max(0, weekly_gross - 44h)
+    3. Sum weekly OT for each calendar month
+    4. Constraint: monthly OT ≤ monthly_ot_cap
+    
+    This matches the output builder's OT calculation (44h/week threshold).
     
     Monthly OT caps (from monthlyHourLimits):
     - Standard: 72h
@@ -40,76 +49,117 @@ def add_constraints(model, ctx):
         print(f"[C17] Warning: Slots, employees, or decision variables not available")
         return
     
-    # Calculate OT hours for each slot (same logic as C2)
-    slot_ot_hours = {}
+    # Pre-calculate gross hours for each slot
+    slot_gross_hours = {}
     for slot in slots:
         gross = (slot.end - slot.start).total_seconds() / 3600.0
-        # OT = hours beyond 9h daily threshold
-        ot_hours = max(0, gross - 9.0)
-        slot_ot_hours[slot.slot_id] = ot_hours
+        slot_gross_hours[slot.slot_id] = gross
     
-    # Group slots by (employee, calendar month, year)
-    emp_month_slots = defaultdict(list)
+    # Group slots by (employee, ISO week year, ISO week number)
+    # Each slot also knows which calendar month it belongs to
+    emp_week_slots = defaultdict(list)  # (emp_id, iso_year, iso_week) -> [slots]
+    emp_month_weeks = defaultdict(set)  # (emp_id, cal_year, cal_month) -> set of (iso_year, iso_week)
     
     for slot in slots:
         slot_date = slot.date
-        month_key = (slot_date.year, slot_date.month)
+        iso_year, iso_week, _ = slot_date.isocalendar()
+        cal_month = (slot_date.year, slot_date.month)
         
         for emp in employees:
             emp_id = emp.get('employeeId')
             if (slot.slot_id, emp_id) in x:
-                emp_month_slots[(emp_id, month_key)].append(slot)
+                week_key = (emp_id, iso_year, iso_week)
+                emp_week_slots[week_key].append(slot)
+                emp_month_weeks[(emp_id, cal_month[0], cal_month[1])].add((iso_year, iso_week))
+    
+    # Create weekly gross hours variables for each (employee, week)
+    # weekly_gross[emp_id, iso_year, iso_week] = sum of gross hours for that week
+    weekly_gross_vars = {}
+    weekly_ot_vars = {}
+    
+    # Scale factor for integer arithmetic (multiply by 100 for 2 decimal precision)
+    SCALE = 100
+    weekly_threshold_scaled = int(WEEKLY_HOURS_THRESHOLD * SCALE)
+    
+    for week_key, week_slots in emp_week_slots.items():
+        emp_id, iso_year, iso_week = week_key
+        
+        # Build sum of gross hours for this week: sum(var * gross_hours)
+        gross_terms = []
+        for slot in week_slots:
+            if (slot.slot_id, emp_id) in x:
+                var = x[(slot.slot_id, emp_id)]
+                gross = slot_gross_hours.get(slot.slot_id, 0)
+                gross_scaled = int(round(gross * SCALE))
+                if gross_scaled > 0:
+                    gross_terms.append(var * gross_scaled)
+        
+        if gross_terms:
+            # Create variable for weekly gross hours
+            max_weekly_gross = int(24 * 7 * SCALE)  # Max possible: 168h/week
+            weekly_gross_var = model.NewIntVar(0, max_weekly_gross, f"weekly_gross_{emp_id}_{iso_year}_{iso_week}")
+            model.Add(weekly_gross_var == sum(gross_terms))
+            weekly_gross_vars[week_key] = weekly_gross_var
+            
+            # Create variable for weekly OT: max(0, weekly_gross - 44)
+            max_weekly_ot = max_weekly_gross - weekly_threshold_scaled
+            weekly_ot_var = model.NewIntVar(0, max_weekly_ot, f"weekly_ot_{emp_id}_{iso_year}_{iso_week}")
+            
+            # weekly_ot = max(0, weekly_gross - 44)
+            # This is: weekly_ot >= weekly_gross - 44 AND weekly_ot >= 0
+            # We use: weekly_ot = max(0, weekly_gross - threshold)
+            diff_var = model.NewIntVar(-max_weekly_gross, max_weekly_gross, f"weekly_diff_{emp_id}_{iso_year}_{iso_week}")
+            model.Add(diff_var == weekly_gross_var - weekly_threshold_scaled)
+            model.AddMaxEquality(weekly_ot_var, [diff_var, 0])
+            
+            weekly_ot_vars[week_key] = weekly_ot_var
     
     # Add monthly OT cap constraints
     monthly_constraints = 0
-    apgd_employees = 0
+    unique_apgd = set()
     
-    for (emp_id, month_key), month_slots in emp_month_slots.items():
-        year, month = month_key
-        
-        # Find employee dict for this employee
+    # Get unique (employee, calendar month) combinations
+    emp_months = set()
+    for slot in slots:
+        slot_date = slot.date
+        for emp in employees:
+            emp_id = emp.get('employeeId')
+            if (slot.slot_id, emp_id) in x:
+                emp_months.add((emp_id, slot_date.year, slot_date.month))
+    
+    for emp_id, cal_year, cal_month in emp_months:
+        # Find employee dict
         employee = next((e for e in employees if e.get('employeeId') == emp_id), None)
         if not employee:
             continue
         
-        # Build weighted sum: sum(var * ot_hours_scaled)
-        terms = []
-        for slot in month_slots:
-            if (slot.slot_id, emp_id) in x:
-                var = x[(slot.slot_id, emp_id)]
-                ot_hours = slot_ot_hours.get(slot.slot_id, 0)
-                
-                if ot_hours > 0:
-                    # Scale to integer tenths (multiply by 10)
-                    int_hours = int(round(ot_hours * 10))
-                    terms.append(var * int_hours)
+        # Get all ISO weeks that have slots in this calendar month for this employee
+        weeks_in_month = emp_month_weeks.get((emp_id, cal_year, cal_month), set())
         
-        if terms:
+        # Collect weekly OT variables for this month
+        monthly_ot_terms = []
+        for iso_year, iso_week in weeks_in_month:
+            week_key = (emp_id, iso_year, iso_week)
+            if week_key in weekly_ot_vars:
+                monthly_ot_terms.append(weekly_ot_vars[week_key])
+        
+        if monthly_ot_terms:
             # Get scheme/product-specific monthly OT cap from monthlyHourLimits
-            monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
+            monthly_limits = get_monthly_hour_limits(ctx, employee, cal_year, cal_month)
             monthly_ot_cap = monthly_limits.get('maxOvertimeHours', 72.0)
-            monthly_ot_cap_int = int(round(monthly_ot_cap * 10))  # Convert to tenths
+            monthly_ot_cap_scaled = int(round(monthly_ot_cap * SCALE))
             
             # Track APGD-D10 (APO) employees
             if monthly_ot_cap > 72.0:
-                apgd_employees += 1
+                unique_apgd.add(emp_id)
             
-            # Constraint: sum(var * scaled_ot) <= monthly_ot_cap
-            model.Add(sum(terms) <= monthly_ot_cap_int)
+            # Constraint: sum(weekly_ot) <= monthly_ot_cap
+            model.Add(sum(monthly_ot_terms) <= monthly_ot_cap_scaled)
             monthly_constraints += 1
     
-    # Calculate unique APO employees (avoid double counting across months)
-    unique_apgd = set()
-    for (emp_id, month_key), _ in emp_month_slots.items():
-        year, month = month_key
-        employee = next((e for e in employees if e.get('employeeId') == emp_id), None)
-        if employee:
-            monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
-            if monthly_limits.get('maxOvertimeHours', 72.0) > 72.0:
-                unique_apgd.add(emp_id)
-    
-    print(f"[C17] Monthly OT Cap Constraint (HARD)")
+    print(f"[C17] Monthly OT Cap Constraint (HARD) - 44h/week threshold")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")
+    print(f"     Weekly OT = max(0, weekly_gross - 44h)")
     print(f"     Standard OT cap: ≤72h per month")
     if unique_apgd:
         print(f"     APGD-D10 (APO): {len(unique_apgd)} employees with ≤112-124h cap (month-dependent)")
