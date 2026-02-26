@@ -654,6 +654,10 @@ def insert_off_day_assignments(assignments, input_data, ctx):
             # Check if this is a public holiday (missing assignment = PH was excluded)
             is_public_holiday = date_str in public_holidays
             
+            # DEBUG: Log PH day handling
+            if is_public_holiday:
+                print(f"[PH-DEBUG] emp={emp_id} date={date_str} expected_shift={expected_shift} include_ph={include_public_holidays} pattern_day={pattern_day} emp_pattern={emp_pattern} emp_offset={emp_offset}")
+            
             # Add assignment if:
             # 1. Pattern says OFF day (shiftCode="O")
             # 2. OR it's a public holiday that was excluded (shiftCode="PH")
