@@ -874,8 +874,10 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
         except Exception:
             pass
     
-    # Group assignments by employee for Scheme A cumulative calculation
-    scheme_a_employees = set()
+    # Group assignments by employee for Scheme A + APO (APGD-D10) cumulative calculation
+    # NOTE: Only Scheme A + APO (APGD-D10) uses monthly contractual threshold
+    # Scheme A + SO (and other non-APO products) use daily threshold like Scheme B
+    scheme_a_apo_employees = set()  # Renamed to clarify it's only for APO
     scheme_a_thresholds = {}  # emp_id -> contractual threshold
     employee_assignments = defaultdict(list)  # emp_id -> list of (date, assignment)
     
@@ -885,31 +887,31 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             continue
         
         employee = employee_dict.get(emp_id, {})
-        from context.engine.time_utils import normalize_scheme
+        from context.engine.time_utils import normalize_scheme, is_apgd_d10_employee
         emp_scheme = normalize_scheme(employee.get('scheme', 'A'))
         
-        # SCHEME A: All Scheme A employees use monthly contractual threshold
-        # (28 Jan 2026): All hours are NORMAL until monthly threshold is reached
-        # OT hours only apply after exceeding the monthly contractual hours
-        if emp_scheme == 'A':
-            scheme_a_employees.add(emp_id)
+        # SCHEME A + APO (APGD-D10 ONLY): Monthly contractual threshold-based calculation
+        # (26 Feb 2026): Only APO product type uses APGD-D10 monthly threshold
+        # Scheme A + SO (and other products) use daily threshold like Scheme B
+        if emp_scheme == 'A' and is_apgd_d10_employee(employee):
+            scheme_a_apo_employees.add(emp_id)
             if emp_id not in scheme_a_thresholds:
                 # Get contractual threshold for this employee
                 scheme_a_thresholds[emp_id] = get_contractual_hours_threshold(
                     month_length, employee, input_data
                 )
         
-        # Track assignments for Scheme A employees
-        if emp_id in scheme_a_employees:
+        # Track assignments for Scheme A + APO employees only
+        if emp_id in scheme_a_apo_employees:
             assignment_date = assignment.get('date', '')
             if assignment_date:
                 employee_assignments[emp_id].append((assignment_date, assignment))
     
-    # Sort Scheme A assignments by date for cumulative calculation
+    # Sort Scheme A + APO assignments by date for cumulative calculation
     for emp_id in employee_assignments:
         employee_assignments[emp_id].sort(key=lambda x: x[0])
     
-    # Track cumulative normal hours for Scheme A employees
+    # Track cumulative normal hours for Scheme A + APO employees
     scheme_a_cumulative = defaultdict(float)  # emp_id -> cumulative normal hours
     
     # ========== EXTRACT PUBLIC HOLIDAYS FOR PH HOURS DETECTION ==========
@@ -958,8 +960,9 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 from context.engine.time_utils import normalize_scheme
                 emp_scheme = normalize_scheme(emp_scheme_raw)
                 
-                # SCHEME A (APGD-D10): Monthly contractual threshold-based calculation
-                if emp_id in scheme_a_employees:
+                # SCHEME A + APO (APGD-D10 ONLY): Monthly contractual threshold-based calculation
+                # Only employees in scheme_a_apo_employees use this method
+                if emp_id in scheme_a_apo_employees:
                     threshold = scheme_a_thresholds.get(emp_id, 238.0)
                     cumulative = scheme_a_cumulative.get(emp_id, 0.0)
                     
@@ -977,8 +980,9 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                     # Update cumulative normal hours for this employee
                     scheme_a_cumulative[emp_id] += hours_dict['normal']
                 
-                # SCHEME B: Daily threshold-based calculation (44h / work_days_in_week)
-                elif emp_scheme == 'B':
+                # SCHEME A (non-APO, e.g. SO) and SCHEME B: Daily threshold-based calculation (44h / work_days_in_week)
+                # (26 Feb 2026): Scheme A + SO uses same calculation as Scheme B
+                elif emp_scheme in ('A', 'B'):
                     hours_dict = calculate_mom_compliant_hours(
                         start_dt=start_dt,
                         end_dt=end_dt,

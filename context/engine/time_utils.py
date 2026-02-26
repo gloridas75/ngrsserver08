@@ -379,6 +379,146 @@ def get_contractual_hours_threshold(month_length: int, employee_dict: dict, inpu
     return default_fallback.get(month_length, 238)
 
 
+def get_monthly_hour_limits(
+    month_length: int,
+    employee_dict: dict,
+    input_data: dict = None
+) -> dict:
+    """
+    Get monthly hour limits for an employee based on scheme and product type.
+    
+    This is a UNIFIED function that reads from monthlyHourLimits and returns
+    all relevant limits for a specific scheme + product type combination.
+    
+    Matching Logic (in priority order):
+    1. Exact match on both scheme AND productType
+    2. Match on scheme with productTypes = "All"
+    3. Match with schemes = "All" and specific productType  
+    4. Default (standardMonthlyHours)
+    
+    Args:
+        month_length: Number of days in the month (28, 29, 30, 31)
+        employee_dict: Employee dictionary with 'scheme' and 'productTypeId'
+        input_data: Input JSON with monthlyHourLimits
+    
+    Returns:
+        Dictionary with:
+        - 'calculationMethod': 'daily' or 'monthly'
+        - 'normalHoursCap': Normal hours cap (for daily method)
+        - 'minimumContractualHours': Contractual threshold (for monthly method)
+        - 'maxOvertimeHours': Max OT hours per month (default: 72)
+        - 'totalMaxHours': Total max hours per month
+    
+    Examples:
+        Scheme A + APO → {calculationMethod: 'monthly', minimumContractualHours: 238, maxOT: 72}
+        Scheme A + SO → {calculationMethod: 'daily', normalHoursCap: 189, maxOT: 72}
+        Scheme B + SO → {calculationMethod: 'daily', normalHoursCap: 189, maxOT: 72}
+    """
+    # Defaults by month length (44h/week → normal hours per month)
+    defaults_normal_hours = {28: 176, 29: 182, 30: 189, 31: 195}
+    defaults_max_ot = 72  # MOM standard
+    
+    # Get employee scheme and product type
+    emp_scheme = normalize_scheme(employee_dict.get('scheme', 'A'))
+    product_type = employee_dict.get('productTypeId', '').upper()
+    is_local = employee_dict.get('local', 1)
+    
+    # Default result (standard calculation)
+    result = {
+        'calculationMethod': 'daily',
+        'normalHoursCap': defaults_normal_hours.get(month_length, 189),
+        'minimumContractualHours': None,
+        'maxOvertimeHours': defaults_max_ot,
+        'totalMaxHours': defaults_normal_hours.get(month_length, 189) + defaults_max_ot
+    }
+    
+    if input_data is None:
+        return result
+    
+    monthly_limits = input_data.get('monthlyHourLimits', [])
+    if not monthly_limits:
+        return result
+    
+    month_key = str(month_length)
+    
+    # Find best matching limit config
+    # Priority: exact scheme+product > scheme+All products > All schemes+product > default
+    best_match = None
+    best_score = 0
+    
+    for limit in monthly_limits:
+        applicable_to = limit.get('applicableTo', {})
+        limit_schemes = applicable_to.get('schemes', 'All')
+        limit_products = applicable_to.get('productTypes', 'All')
+        limit_emp_type = applicable_to.get('employeeType', 'All')
+        
+        # Check employee type match (Local/Foreigner)
+        if limit_emp_type not in ('All', None):
+            if limit_emp_type == 'Local' and is_local != 1:
+                continue
+            if limit_emp_type == 'Foreigner' and is_local != 0:
+                continue
+        
+        # Calculate match score
+        score = 0
+        
+        # Scheme matching
+        if limit_schemes == 'All' or limit_schemes is None:
+            score += 1  # Matches any scheme
+        elif isinstance(limit_schemes, list):
+            if emp_scheme in limit_schemes:
+                score += 10  # Exact scheme match
+            else:
+                continue  # No match
+        elif limit_schemes == emp_scheme:
+            score += 10  # Exact scheme match
+        else:
+            continue  # No match
+        
+        # Product type matching
+        if limit_products == 'All' or limit_products is None:
+            score += 1  # Matches any product
+        elif isinstance(limit_products, list):
+            if product_type in [p.upper() for p in limit_products]:
+                score += 10  # Exact product match
+            else:
+                continue  # No match
+        elif str(limit_products).upper() == product_type:
+            score += 10  # Exact product match
+        else:
+            continue  # No match
+        
+        if score > best_score:
+            best_score = score
+            best_match = limit
+    
+    # Apply best match if found
+    if best_match:
+        values = best_match.get('valuesByMonthLength', {}).get(month_key, {})
+        
+        # Determine calculation method
+        calc_method = best_match.get('calculationMethod')
+        if calc_method:
+            result['calculationMethod'] = calc_method
+        elif 'minimumContractualHours' in values:
+            # Infer monthly method if contractual hours defined
+            result['calculationMethod'] = 'monthly'
+        
+        # Extract values
+        if 'minimumContractualHours' in values:
+            result['minimumContractualHours'] = values['minimumContractualHours']
+        if 'normalHoursCap' in values:
+            result['normalHoursCap'] = values['normalHoursCap']
+        if 'normalHours' in values:  # Backward compatible
+            result['normalHoursCap'] = values['normalHours']
+        if 'maxOvertimeHours' in values:
+            result['maxOvertimeHours'] = values['maxOvertimeHours']
+        if 'totalMaxHours' in values:
+            result['totalMaxHours'] = values['totalMaxHours']
+    
+    return result
+
+
 def span_hours(start_dt: datetime, end_dt: datetime) -> float:
     """Calculate gross hours between two datetimes.
     
