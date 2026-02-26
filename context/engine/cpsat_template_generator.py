@@ -303,7 +303,8 @@ def _build_and_solve_template(
             demand,
             requirement,
             shift_details_map,
-            public_holidays
+            public_holidays,
+            include_public_holidays=include_public_holidays
         )
         assignments.append(off_assignment)
     
@@ -761,12 +762,16 @@ def _create_off_day_assignment(
     demand: dict,
     requirement: dict,
     shift_details_map: dict,
-    public_holidays: set = None
+    public_holidays: set = None,
+    include_public_holidays: bool = True
 ) -> dict:
     """Create assignment dictionary for an OFF day (non-work day).
     
-    For public holidays, uses shiftCode='PH' and status='PUBLIC_HOLIDAY'.
-    For regular off days, uses shiftCode='O' and status='OFF_DAY'.
+    When includePublicHolidays=True, PH dates where pattern says OFF are treated
+    as regular OFF days (the PH is included in the roster as a normal working period,
+    so an off day on a PH is just an off day).
+    When includePublicHolidays=False, PH dates use shiftCode='PH' and status='PUBLIC_HOLIDAY'.
+    Regular off days always use shiftCode='O' and status='OFF_DAY'.
     """
     
     emp_id = employee['employeeId']
@@ -779,7 +784,8 @@ def _create_off_day_assignment(
         is_public_holiday = date_as_date in public_holidays or date_str in public_holidays
     
     # Use appropriate shift code and status
-    if is_public_holiday:
+    # When includePublicHolidays=True, PH dates on pattern off days are just regular off days
+    if is_public_holiday and not include_public_holidays:
         shift_code = 'PH'
         status = 'PUBLIC_HOLIDAY'
     else:
