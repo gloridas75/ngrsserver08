@@ -1,9 +1,9 @@
-"""Analyze OT calculation discrepancy."""
+"""Analyze OT calculation - after C17 fix."""
 import json
 from collections import defaultdict
 from datetime import datetime
 
-with open('/tmp/result.json') as f:
+with open('/tmp/result3.json') as f:
     data = json.load(f)
 
 # Count assignments per employee
@@ -20,7 +20,6 @@ assigns = emp_assign[eid]
 
 # Calculate total hours
 total_gross = 0
-solver_ot = 0
 output_ot = 0
 output_normal = 0
 
@@ -28,17 +27,13 @@ for a in assigns:
     h = a.get('hours', {})
     gross = h.get('gross', 0)
     total_gross += gross
-    # Solver logic: OT = max(0, gross - 9) per shift
-    daily_ot = max(0, gross - 9)
-    solver_ot += daily_ot
     output_ot += h.get('ot', 0)
     output_normal += h.get('normal', 0)
 
-print(f"=== Employee {eid} ===")
-print(f"Total gross hours: {total_gross:.2f}")
-print(f"Solver OT calc (gross-9 per shift): {solver_ot:.2f}")
-print(f"Output normal hours: {output_normal:.2f}")
-print(f"Output OT hours: {output_ot:.2f}")
+print("=== Employee", eid, "===")
+print("Total gross hours:", round(total_gross, 2))
+print("Output normal hours:", round(output_normal, 2))
+print("Output OT hours:", round(output_ot, 2))
 
 # Group by week
 weeks = defaultdict(lambda: {'gross': 0, 'normal': 0, 'ot': 0, 'days': 0})
@@ -55,14 +50,16 @@ for a in assigns:
     weeks[week_key]['days'] += 1
 
 print("\n=== Weekly breakdown ===")
-print("Week   Days   Gross      Normal     OT")
-print("-" * 45)
+print("Week   Days   Gross      Normal     OT         Weekly_OT_calc")
+print("-" * 65)
 total_weekly_ot = 0
 for wk in sorted(weeks.keys()):
     w = weeks[wk]
-    weekly_ot = max(0, w['gross'] - 44)
-    total_weekly_ot += weekly_ot
-    print(f"{wk:<6} {w['days']:<6} {w['gross']:<10.2f} {w['normal']:<10.2f} {w['ot']:<10.2f}")
+    weekly_ot_calc = max(0, w['gross'] - 44)
+    total_weekly_ot += weekly_ot_calc
+    print("{:<6} {:<6} {:<10.2f} {:<10.2f} {:<10.2f} {:<10.2f}".format(
+        wk, w['days'], w['gross'], w['normal'], w['ot'], weekly_ot_calc))
 
-print("-" * 45)
-print(f"\n44h/week based OT would be: {total_weekly_ot:.2f}h")
+print("-" * 65)
+print("Sum of weekly OT (gross-44 per week):", round(total_weekly_ot, 2))
+print("\nOT is within 72h limit:", "YES" if output_ot <= 72 else "NO")
