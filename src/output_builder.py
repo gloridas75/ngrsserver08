@@ -997,11 +997,19 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 import calendar
                 month_length = calendar.monthrange(date_obj.year, date_obj.month)[1]
                 hour_limits = get_monthly_hour_limits(month_length, employee, input_data)
-                calculation_method = hour_limits['calculationMethod']
+                hour_calc_method = hour_limits.get('hourCalculationMethod', 'weekly44h')
                 
-                # Route based on calculationMethod from monthlyHourLimits
-                if calculation_method == 'daily' and product_type == 'SO':
-                    # SCHEME B + SO: Daily proration of minimumContractualHours
+                # Map new method names to canonical names (backward compatibility)
+                method_aliases = {
+                    'weeklyThreshold': 'weekly44h',
+                    'dailyProrated': 'dailyContractual',
+                    'monthlyCumulative': 'monthlyContractual'
+                }
+                hour_calc_method = method_aliases.get(hour_calc_method, hour_calc_method)
+                
+                # Route based on hourCalculationMethod from monthlyHourLimits
+                if hour_calc_method == 'dailyContractual':
+                    # Daily proration of minimumContractualHours (e.g., Scheme B + SO)
                     # Initialize cumulative tracking for this employee if needed
                     if emp_id not in scheme_a_cumulative:  # Reusing cumulative dict
                         scheme_a_cumulative[emp_id] = 0.0
@@ -1028,9 +1036,11 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                     # Update cumulative normal hours
                     scheme_a_cumulative[emp_id] += hours_dict['normal']
                 
-                elif emp_id in scheme_a_apo_employees:
-                    # SCHEME A + APO (APGD-D10): Monthly contractual threshold-based calculation
-                    threshold = scheme_a_thresholds.get(emp_id, 238.0)
+                elif hour_calc_method == 'monthlyContractual' or emp_id in scheme_a_apo_employees:
+                    # APGD-D10: Monthly contractual threshold-based calculation (Scheme A + APO)
+                    threshold = scheme_a_thresholds.get(emp_id)
+                    if not threshold:
+                        threshold = hour_limits['minimumContractualHours']
                     cumulative = scheme_a_cumulative.get(emp_id, 0.0)
                     
                     hours_dict = calculate_apgd_d10_hours(
@@ -1047,32 +1057,19 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                     # Update cumulative normal hours for this employee
                     scheme_a_cumulative[emp_id] += hours_dict['normal']
                 
-                elif emp_scheme in ('A', 'B'):
-                    # SCHEME A + SO (non-daily-contractual) and SCHEME B (non-SO): Weekly 44h threshold
-                    hours_dict = calculate_mom_compliant_hours(
-                        start_dt=start_dt,
-                        end_dt=end_dt,
-                        employee_id=emp_id,
-                        assignment_date_obj=date_obj,
-                        all_assignments=assignments,
-                        employee_scheme=emp_scheme,
-                        pattern_work_days=None
-                    )
-                
-                # SCHEME P: Part-time calculation
-                else:
+                elif hour_calc_method == 'partTime' or emp_scheme == 'P':
+                    # Scheme P: Part-time calculation with pattern-aware work days
                     pattern_work_days = None
-                    if emp_scheme == 'P':
-                        emp_pattern = employee.get('workPattern', [])
-                        if emp_pattern:
-                            # Calculate work days per 7-day week (not total pattern work days)
-                            # For a 12-day pattern with 9 work days: 9 * 7 / 12 = 5.25 → round to 5
-                            total_work_days = len([d for d in emp_pattern if d != 'O'])
-                            pattern_length = len(emp_pattern)
-                            # Scale to 7-day week equivalent
-                            work_days_per_week = round(total_work_days * 7 / pattern_length)
-                            # Clamp to valid range [1, 7]
-                            pattern_work_days = max(1, min(7, work_days_per_week))
+                    emp_pattern = employee.get('workPattern', [])
+                    if emp_pattern:
+                        # Calculate work days per 7-day week (not total pattern work days)
+                        # For a 12-day pattern with 9 work days: 9 * 7 / 12 = 5.25 → round to 5
+                        total_work_days = len([d for d in emp_pattern if d != 'O'])
+                        pattern_length = len(emp_pattern)
+                        # Scale to 7-day week equivalent
+                        work_days_per_week = round(total_work_days * 7 / pattern_length)
+                        # Clamp to valid range [1, 7]
+                        pattern_work_days = max(1, min(7, work_days_per_week))
                     
                     hours_dict = calculate_mom_compliant_hours(
                         start_dt=start_dt,
@@ -1082,6 +1079,18 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                         all_assignments=assignments,
                         employee_scheme=emp_scheme,
                         pattern_work_days=pattern_work_days
+                    )
+                
+                else:
+                    # Default: weekly44h - MOM standard 44h/week threshold (Scheme A+SO, Scheme B)
+                    hours_dict = calculate_mom_compliant_hours(
+                        start_dt=start_dt,
+                        end_dt=end_dt,
+                        employee_id=emp_id,
+                        assignment_date_obj=date_obj,
+                        all_assignments=assignments,
+                        employee_scheme=emp_scheme,
+                        pattern_work_days=None
                     )
             
             # Add hour breakdown to assignment (including restDayPay)

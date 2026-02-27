@@ -469,15 +469,22 @@ def get_monthly_hour_limits(
     
     Returns:
         Dictionary with:
-        - 'calculationMethod': 'daily' or 'monthly'
-        - 'minimumContractualHours': Normal hours threshold (renamed from normalHoursCap)
+        - 'calculationMethod': 'daily' or 'monthly' (deprecated, kept for backward compatibility)
+        - 'hourCalculationMethod': 'weekly44h' | 'dailyContractual' | 'monthlyContractual' | 'partTime'
+                                   or 'weeklyThreshold' | 'dailyProrated' | 'monthlyCumulative' (new names)
+        - 'minimumContractualHours': Normal hours threshold
         - 'maxOvertimeHours': Max OT hours per month (default: 72)
         - 'totalMaxHours': Total max hours per month
     
     Examples:
-        Scheme A + APO → {calculationMethod: 'monthly', minimumContractualHours: 238, maxOT: 72}
-        Scheme A + SO → {calculationMethod: 'daily', minimumContractualHours: 189, maxOT: 72}
-        Scheme B + SO → {calculationMethod: 'daily', minimumContractualHours: 189, maxOT: 72}
+        Scheme A + APO → {hourCalculationMethod: 'monthlyContractual', minimumContractualHours: 238}
+        Scheme A + SO → {hourCalculationMethod: 'weekly44h', minimumContractualHours: 195}
+        Scheme B + SO → {hourCalculationMethod: 'dailyContractual', minimumContractualHours: 195}
+    
+    Note: New naming convention (v0.98+) uses clearer names:
+        'weeklyThreshold' (alias for 'weekly44h')
+        'dailyProrated' (alias for 'dailyContractual')
+        'monthlyCumulative' (alias for 'monthlyContractual')
     """
     # Defaults by month length (44h/week → normal hours per month)
     defaults_normal_hours = {28: 176, 29: 182, 30: 189, 31: 195}
@@ -488,9 +495,10 @@ def get_monthly_hour_limits(
     product_type = employee_dict.get('productTypeId', '').upper()
     is_local = employee_dict.get('local', 1)
     
-    # Default result (standard calculation)
+    # Default result (standard calculation - weekly 44h method)
     result = {
-        'calculationMethod': 'daily',
+        'calculationMethod': 'daily',  # Deprecated, kept for backward compatibility
+        'hourCalculationMethod': 'weekly44h',
         'minimumContractualHours': defaults_normal_hours.get(month_length, 189),
         'maxOvertimeHours': defaults_max_ot,
         'totalMaxHours': defaults_normal_hours.get(month_length, 189) + defaults_max_ot
@@ -560,13 +568,37 @@ def get_monthly_hour_limits(
     if best_match:
         values = best_match.get('valuesByMonthLength', {}).get(month_key, {})
         
-        # Determine calculation method
-        calc_method = best_match.get('calculationMethod')
-        if calc_method:
-            result['calculationMethod'] = calc_method
-        elif 'minimumContractualHours' in values:
-            # Infer monthly method if contractual hours defined
-            result['calculationMethod'] = 'monthly'
+        # Read hourCalculationMethod (new explicit field)
+        hour_calc_method = best_match.get('hourCalculationMethod')
+        if hour_calc_method:
+            # Map new names to canonical names (backward compatibility)
+            method_aliases = {
+                'weeklyThreshold': 'weekly44h',
+                'dailyProrated': 'dailyContractual',
+                'monthlyCumulative': 'monthlyContractual'
+            }
+            canonical_method = method_aliases.get(hour_calc_method, hour_calc_method)
+            result['hourCalculationMethod'] = canonical_method
+            
+            # Map to old calculationMethod for backward compatibility
+            if canonical_method == 'monthlyContractual':
+                result['calculationMethod'] = 'monthly'
+            elif canonical_method in ('weekly44h', 'dailyContractual', 'partTime'):
+                result['calculationMethod'] = 'daily'
+        else:
+            # Fallback to old calculationMethod field (backward compatibility)
+            calc_method = best_match.get('calculationMethod')
+            if calc_method:
+                result['calculationMethod'] = calc_method
+                # Map old field to new (best guess)
+                if calc_method == 'monthly' and product_type == 'APO':
+                    result['hourCalculationMethod'] = 'monthlyContractual'
+                elif calc_method == 'daily':
+                    result['hourCalculationMethod'] = 'weekly44h'  # Default assumption
+            elif 'minimumContractualHours' in values:
+                # Infer monthly method if contractual hours defined
+                result['calculationMethod'] = 'monthly'
+                result['hourCalculationMethod'] = 'monthlyContractual'
         
         # Extract values - support both new (minimumContractualHours) and legacy (normalHours, normalHoursCap)
         if 'minimumContractualHours' in values:
