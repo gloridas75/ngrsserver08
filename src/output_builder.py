@@ -14,8 +14,11 @@ from context.engine.time_utils import (
     split_shift_hours, 
     calculate_mom_compliant_hours,
     calculate_apgd_d10_hours,
+    calculate_daily_contractual_hours,
+    count_work_days_for_employee_in_month,
     is_apgd_d10_employee,
     get_contractual_hours_threshold,
+    get_monthly_hour_limits,
     span_hours,
     lunch_hours
 )
@@ -988,10 +991,45 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 emp_scheme_raw = employee.get('scheme', 'A')
                 from context.engine.time_utils import normalize_scheme
                 emp_scheme = normalize_scheme(emp_scheme_raw)
+                product_type = employee.get('productTypeId', '').upper()
                 
-                # SCHEME A + APO (APGD-D10 ONLY): Monthly contractual threshold-based calculation
-                # Only employees in scheme_a_apo_employees use this method
-                if emp_id in scheme_a_apo_employees:
+                # Get monthly hour limits to determine calculation method
+                import calendar
+                month_length = calendar.monthrange(date_obj.year, date_obj.month)[1]
+                hour_limits = get_monthly_hour_limits(month_length, employee, input_data)
+                calculation_method = hour_limits['calculationMethod']
+                
+                # Route based on calculationMethod from monthlyHourLimits
+                if calculation_method == 'daily' and product_type == 'SO':
+                    # SCHEME B + SO: Daily proration of minimumContractualHours
+                    # Initialize cumulative tracking for this employee if needed
+                    if emp_id not in scheme_a_cumulative:  # Reusing cumulative dict
+                        scheme_a_cumulative[emp_id] = 0.0
+                    
+                    # Count work days for this employee in the month
+                    work_days_in_month = count_work_days_for_employee_in_month(
+                        emp_id, date_obj.year, date_obj.month, assignments
+                    )
+                    
+                    cumulative = scheme_a_cumulative.get(emp_id, 0.0)
+                    minimum_contractual = hour_limits['minimumContractualHours']
+                    
+                    hours_dict = calculate_daily_contractual_hours(
+                        start_dt=start_dt,
+                        end_dt=end_dt,
+                        employee_id=emp_id,
+                        assignment_date_obj=date_obj,
+                        all_assignments=assignments,
+                        cumulative_normal_hours=cumulative,
+                        minimum_contractual_hours=minimum_contractual,
+                        work_days_in_month=work_days_in_month
+                    )
+                    
+                    # Update cumulative normal hours
+                    scheme_a_cumulative[emp_id] += hours_dict['normal']
+                
+                elif emp_id in scheme_a_apo_employees:
+                    # SCHEME A + APO (APGD-D10): Monthly contractual threshold-based calculation
                     threshold = scheme_a_thresholds.get(emp_id, 238.0)
                     cumulative = scheme_a_cumulative.get(emp_id, 0.0)
                     
@@ -1009,9 +1047,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                     # Update cumulative normal hours for this employee
                     scheme_a_cumulative[emp_id] += hours_dict['normal']
                 
-                # SCHEME A (non-APO, e.g. SO) and SCHEME B: Daily threshold-based calculation (44h / work_days_in_week)
-                # (26 Feb 2026): Scheme A + SO uses same calculation as Scheme B
                 elif emp_scheme in ('A', 'B'):
+                    # SCHEME A + SO (non-daily-contractual) and SCHEME B (non-SO): Weekly 44h threshold
                     hours_dict = calculate_mom_compliant_hours(
                         start_dt=start_dt,
                         end_dt=end_dt,

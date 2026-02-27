@@ -246,6 +246,72 @@ def get_apgd_d10_category(employee: dict) -> str:
     return 'local'
 
 
+def calculate_daily_contractual_hours(
+    start_dt: datetime,
+    end_dt: datetime,
+    employee_id: str,
+    assignment_date_obj,
+    all_assignments: list,
+    cumulative_normal_hours: float,
+    minimum_contractual_hours: float,
+    work_days_in_month: int
+) -> dict:
+    """
+    Calculate hours using daily proration of minimumContractualHours.
+    
+    This is the "daily" calculationMethod for Scheme B + SO:
+    - Normal hours per day = minimumContractualHours / work_days_in_month
+    - Each shift allocates up to this daily normal cap, rest is OT
+    - Tracks cumulative normal hours to ensure monthly cap is enforced
+    
+    Example (31-day month, 27 work days, 195h minimum):
+    - Daily normal cap = 195h / 27 days = 7.22h per day
+    - 12h shift (11h net): 7.22h normal + 3.78h OT
+    - Month total: 195h normal + 102h OT = 297h
+    
+    Args:
+        start_dt: Shift start datetime
+        end_dt: Shift end datetime
+        employee_id: Employee ID
+        assignment_date_obj: Assignment date
+        all_assignments: All assignments for context
+        cumulative_normal_hours: Normal hours allocated so far this month
+        minimum_contractual_hours: Monthly minimumContractualHours (e.g., 195)
+        work_days_in_month: Total work days in the month for this employee
+    
+    Returns:
+        Dictionary with keys: gross, lunch, normal, ot, restDayPay, paid
+    """
+    # Calculate basic components
+    gross = span_hours(start_dt, end_dt)
+    ln = lunch_hours(gross)
+    net_hours = gross - ln
+    
+    # Calculate daily normal cap (prorate minimumContractualHours across work days)
+    daily_normal_cap = minimum_contractual_hours / work_days_in_month if work_days_in_month > 0 else 0.0
+    
+    # Calculate how much room left before hitting monthly minimum
+    remaining_normal_capacity = max(0.0, minimum_contractual_hours - cumulative_normal_hours)
+    
+    # Allocate to normal up to BOTH daily cap AND remaining monthly capacity
+    normal_this_shift = min(net_hours, daily_normal_cap, remaining_normal_capacity)
+    
+    # Everything beyond normal is OT
+    ot = max(0.0, net_hours - normal_this_shift)
+    
+    # Rest day pay is 0 for standard assignments
+    rest_day_pay_count = 0
+    
+    return {
+        'gross': round(gross, 2),
+        'lunch': round(ln, 2),
+        'normal': round(normal_this_shift, 2),
+        'ot': round(ot, 2),
+        'restDayPay': rest_day_pay_count,
+        'paid': round(gross, 2)
+    }
+
+
 def calculate_apgd_d10_hours(
     start_dt: datetime,
     end_dt: datetime,
@@ -879,6 +945,55 @@ def count_work_day_position_in_week(employee_id: str, current_date_obj, all_assi
         return position
     except ValueError:
         return 1  # Fallback if current date not found
+
+
+def count_work_days_for_employee_in_month(
+    employee_id: str,
+    year: int,
+    month: int,
+    all_assignments: list
+) -> int:
+    """Count total work days for an employee in a specific month.
+    
+    Args:
+        employee_id: Employee ID
+        year: Year (e.g., 2026)
+        month: Month (1-12)
+        all_assignments: All assignments list
+    
+    Returns:
+        Number of work days (D/N shifts, excluding O and PH) in that month
+    
+    Example:
+        March 2026 (31 days), DDDDDDOO pattern → 27 work days, 4 off days
+    """
+    non_work_codes = {'O', 'PH'}
+    
+    work_days = set()
+    for assignment in all_assignments:
+        if assignment.get('employeeId') != employee_id:
+            continue
+        
+        assign_date_str = assignment.get('date')
+        if not assign_date_str:
+            continue
+        
+        try:
+            from datetime import datetime as dt
+            assign_date = dt.fromisoformat(assign_date_str).date()
+            
+            # Check if assignment is in the target month
+            if assign_date.year != year or assign_date.month != month:
+                continue
+            
+            # Check shift code
+            shift_code = assignment.get('shiftCode', '')
+            if shift_code and shift_code not in non_work_codes:
+                work_days.add(assign_date_str)
+        except (ValueError, AttributeError):
+            continue
+    
+    return len(work_days)
 
 
 def count_work_days_in_calendar_week(
