@@ -1296,8 +1296,36 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 
                 else:
                     # Default: weekly44h - MOM standard 44h/week threshold (Scheme A+SO, Scheme B)
-                    # For weeklyThreshold method, use pattern-based work days (6) instead of
-                    # counting calendar week days which vary due to rotation alignment
+                    # For weeklyThreshold method, detect pattern from requirement or employee
+                    pattern_work_days = None
+                    emp_pattern = employee.get('workPattern', [])
+                    
+                    # If employee doesn't have pattern, try to get from requirement
+                    if not emp_pattern and ctx.get('demandItems'):
+                        for di in ctx['demandItems']:
+                            for req in di.get('requirements', []):
+                                req_pattern = req.get('workPattern', [])
+                                if req_pattern:
+                                    emp_pattern = req_pattern
+                                    break
+                            if emp_pattern:
+                                break
+                    
+                    # Calculate work days per week from pattern
+                    if emp_pattern:
+                        total_work_days = len([d for d in emp_pattern if d != 'O'])
+                        pattern_length = len(emp_pattern)
+                        # For standard patterns like DDDDD O (5-on-1-off), work_days = 5
+                        # For DDDDDD O (6-on-1-off), work_days = 6
+                        if pattern_length <= 7:
+                            pattern_work_days = total_work_days
+                        else:
+                            # For longer patterns, scale to weekly equivalent
+                            pattern_work_days = max(1, min(7, round(total_work_days * 7 / pattern_length)))
+                    else:
+                        # Fallback: assume 6-on-1-off if no pattern found
+                        pattern_work_days = 6
+                    
                     hours_dict = calculate_mom_compliant_hours(
                         start_dt=start_dt,
                         end_dt=end_dt,
@@ -1305,7 +1333,7 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                         assignment_date_obj=date_obj,
                         all_assignments=assignments,
                         employee_scheme=emp_scheme,
-                        pattern_work_days=6  # 6-on-1-off pattern = 6 work days per week
+                        pattern_work_days=pattern_work_days
                     )
             
             # Add hour breakdown to assignment (including restDayPay)
