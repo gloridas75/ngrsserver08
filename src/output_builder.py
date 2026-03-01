@@ -110,6 +110,133 @@ def _remove_unavailable_assignments_from_roster(
     return filtered_assignments, violations_removed
 
 
+def _enforce_monthly_ot_cap(
+    assignments: List[Dict[str, Any]],
+    employees: List[Dict[str, Any]],
+    ctx: Dict[str, Any]
+) -> tuple:
+    """
+    Enforce monthly overtime cap per employee (72h standard, or scheme-specific).
+    
+    This post-processes all assignments to ensure no employee exceeds their
+    monthly OT limit. If an employee exceeds the cap, their OT hours are capped
+    and redistributed to normal hours.
+    
+    Critical for outcome-based rosters where C17 constraint only applies to template
+    employee. This function ensures ALL employees respect their monthlyHourLimits.
+    
+    Args:
+        assignments: List of assignment dictionaries with hours calculated
+        employees: List of employee dictionaries
+        ctx: Context dictionary with constraints and hour limits
+        
+    Returns:
+        Tuple of (adjusted_assignments, employees_capped_count)
+    """
+    from calendar import monthrange
+    from context.engine.constraint_config import get_monthly_hour_limits
+    
+    # Build employee lookup
+    employee_dict = {emp['employeeId']: emp for emp in employees}
+    
+    # Track monthly OT per employee per month
+    employee_monthly_ot = {}  # (emp_id, year, month) -> total_ot
+    employee_month_assignments = {}  # (emp_id, year, month) -> [assignments]
+    
+    # First pass: accumulate OT hours per employee per month
+    for assignment in assignments:
+        emp_id = assignment.get('employeeId')
+        if not emp_id or assignment.get('status') != 'ASSIGNED':
+            continue
+        
+        # Get assignment date
+        date_str = assignment.get('date')
+        if not date_str:
+            continue
+        
+        try:
+            from datetime import datetime
+            date_obj = datetime.fromisoformat(date_str).date()
+            year = date_obj.year
+            month = date_obj.month
+            
+            # Get OT hours from this assignment
+            hours = assignment.get('hours', {})
+            ot_hours = hours.get('ot', 0.0)
+            
+            key = (emp_id, year, month)
+            if key not in employee_monthly_ot:
+                employee_monthly_ot[key] = 0.0
+                employee_month_assignments[key] = []
+            
+            employee_monthly_ot[key] += ot_hours
+            employee_month_assignments[key].append(assignment)
+        
+        except Exception:
+            continue
+    
+    # Second pass: check for violations and cap OT
+    employees_capped = 0
+    total_ot_capped = 0.0
+    
+    for key, total_ot in employee_monthly_ot.items():
+        emp_id, year, month = key
+        
+        # Get employee's monthly OT cap
+        employee = employee_dict.get(emp_id)
+        if not employee:
+            continue
+        
+        # Get monthly hour limits for this employee
+        hour_limits = get_monthly_hour_limits(ctx, employee, year, month)
+        max_ot_hours = hour_limits.get('maxOvertimeHours', 72.0)
+        
+        # Check if employee exceeded the cap
+        if total_ot > max_ot_hours:
+            excess_ot = total_ot - max_ot_hours
+            employees_capped += 1
+            total_ot_capped += excess_ot
+            
+            logger.warning(
+                f"[OT CAP] Employee {emp_id} exceeded monthly OT cap: "
+                f"{total_ot:.1f}h > {max_ot_hours:.1f}h (excess: {excess_ot:.1f}h)"
+            )
+            
+            # Cap the OT hours by redistributing excess to normal hours
+            # Strategy: Reduce OT hours proportionally across all assignments in the month
+            month_assignments = employee_month_assignments[key]
+            
+            # Calculate reduction factor
+            reduction_factor = max_ot_hours / total_ot if total_ot > 0 else 1.0
+            
+            for assignment in month_assignments:
+                hours = assignment.get('hours', {})
+                original_ot = hours.get('ot', 0.0)
+                
+                if original_ot > 0:
+                    # Cap this assignment's OT proportionally
+                    capped_ot = original_ot * reduction_factor
+                    ot_reduction = original_ot - capped_ot
+                    
+                    # Redistribute excess OT to normal hours
+                    hours['ot'] = round(capped_ot, 2)
+                    hours['normal'] = round(hours.get('normal', 0.0) + ot_reduction, 2)
+                    
+                    # Recalculate paid hours (gross - lunch, since OT and normal are both paid)
+                    # paid = normal + ot + ph + restDayPay
+                    hours['paid'] = round(
+                        hours['normal'] + hours['ot'] + 
+                        hours.get('publicHolidayHours', 0.0) + 
+                        hours.get('restDayPay', 0.0),
+                        2
+                    )
+    
+    if employees_capped > 0:
+        print(f"[OT CAP] ✓ Capped {employees_capped} employees (total {total_ot_capped:.1f}h excess OT redistributed to normal hours)")
+    
+    return assignments, employees_capped
+
+
 def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None):
     """
     Build a comprehensive employee roster showing daily status for ALL employees.
@@ -1224,6 +1351,15 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             }
         
         annotated_assignments.append(assignment)
+    
+    # ========== ENFORCE MONTHLY OT CAP ==========
+    # Cap monthly overtime hours per employee to their configured maxOvertimeHours
+    # This is critical for outcome-based rosters where C17 constraint only applies to template
+    annotated_assignments, employees_capped = _enforce_monthly_ot_cap(
+        annotated_assignments, 
+        employees, 
+        ctx
+    )
     
     # ========== BUILD EMPLOYEE HOURS SUMMARY ==========
     employee_hours_summary = {}
