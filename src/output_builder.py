@@ -1194,12 +1194,10 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             # Get date object for MOM calculations
             date_obj = datetime.fromisoformat(assignment_date).date()
             
-            # Check if assignment already has hours (template-based roster)
-            # Skip recalculation if hours already exist with valid normal hours
-            if 'hours' in assignment and isinstance(assignment['hours'], dict) and assignment['hours'].get('normal') is not None:
-                # Use pre-calculated hours from template roster
-                hours_dict = assignment['hours']
-            else:
+            # ALWAYS recalculate hours - template pre-calculation may be inaccurate
+            # due to incomplete week data during template generation
+            if True:  # Force recalculation
+                print(f"[DEBUG] Recalculating hours for {emp_id} on {assignment_date}")  # DEBUG
                 # Calculate hours using MOM compliance logic
                 employee = employee_dict.get(emp_id, {})
                 emp_scheme_raw = employee.get('scheme', 'A')
@@ -1222,6 +1220,7 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 hour_calc_method = method_aliases.get(hour_calc_method, hour_calc_method)
                 
                 # Route based on hourCalculationMethod from monthlyHourLimits
+                print(f"[DEBUG method] {emp_id} on {assignment_date}: hour_calc_method={hour_calc_method}")  # DEBUG
                 if hour_calc_method == 'dailyContractual':
                     # Daily proration of minimumContractualHours (e.g., Scheme B + SO)
                     # Initialize cumulative tracking for this employee if needed
@@ -1297,6 +1296,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 
                 else:
                     # Default: weekly44h - MOM standard 44h/week threshold (Scheme A+SO, Scheme B)
+                    # For weeklyThreshold method, use pattern-based work days (6) instead of
+                    # counting calendar week days which vary due to rotation alignment
                     hours_dict = calculate_mom_compliant_hours(
                         start_dt=start_dt,
                         end_dt=end_dt,
@@ -1304,7 +1305,7 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                         assignment_date_obj=date_obj,
                         all_assignments=assignments,
                         employee_scheme=emp_scheme,
-                        pattern_work_days=None
+                        pattern_work_days=6  # 6-on-1-off pattern = 6 work days per week
                     )
             
             # Add hour breakdown to assignment (including restDayPay)
@@ -1327,6 +1328,8 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
                 'restDayPay': hours_dict.get('restDayPay', 0.0),
                 'paid': hours_dict['paid']
             }
+            if emp_id == '00100012' and assignment.get('date') == '2026-07-01':
+                print(f"[DEBUG assign] After update: assignment['hours']['normal'] = {assignment['hours']['normal']}")
             
             # Week calculation: ISO week (Mon-Sun)
             try:

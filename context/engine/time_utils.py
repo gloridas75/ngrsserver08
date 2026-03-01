@@ -521,7 +521,8 @@ def get_monthly_hour_limits(
     for limit in monthly_limits:
         applicable_to = limit.get('applicableTo', {})
         limit_schemes = applicable_to.get('schemes', 'All')
-        limit_products = applicable_to.get('productTypes', 'All')
+        # Support both 'productTypes' and 'productTypeIds' field names
+        limit_products = applicable_to.get('productTypeIds') or applicable_to.get('productTypes', 'All')
         limit_emp_type = applicable_to.get('employeeType', 'All')
         
         # Check employee type match (Local/Foreigner)
@@ -1194,16 +1195,18 @@ def calculate_mom_compliant_hours(
     # Calculate lunch based on shift duration (same for ALL schemes)
     ln = lunch_hours(gross)
     
-    # For Scheme P, use pattern work days if provided; otherwise count actual days
-    # For Scheme A/B, always count actual days in calendar week
-    if employee_scheme == 'P' and pattern_work_days is not None:
-        # Use pattern-based count (e.g., 6-day pattern = 6 work days)
+    # Use pattern work days if provided (for all schemes)
+    # Otherwise fall back to counting actual days in calendar week
+    if pattern_work_days is not None:
+        # Use pattern-based count (e.g., 6-on-1-off pattern = 6 work days)
         work_days_in_week = pattern_work_days
+        print(f"[DEBUG time_utils] Using pattern_work_days={pattern_work_days} for work_days_in_week")
     else:
-        # Scheme A/B or Scheme P without pattern: count actual days in calendar week
+        # No pattern provided: count actual days in calendar week
         work_days_in_week = count_work_days_in_calendar_week(
             employee_id, assignment_date_obj, all_assignments
         )
+        print(f"[DEBUG time_utils] Counted work_days_in_week={work_days_in_week} from calendar")
     
     work_day_position_in_week = count_work_day_position_in_week(
         employee_id, assignment_date_obj, all_assignments
@@ -1290,10 +1293,12 @@ def calculate_mom_compliant_hours(
         
         # Calculate normal hours threshold: 44h weekly cap / work days in week
         normal_threshold = 44.0 / work_days_in_week
+        print(f"[DEBUG calc] work_days={work_days_in_week}, threshold={normal_threshold:.2f}, gross={gross}, ln={ln}")
         
         # Apply threshold: normal = min(threshold, net hours), OT = rest
         normal = min(normal_threshold, gross - ln)
         ot = max(0.0, gross - ln - normal_threshold)
+        print(f"[DEBUG calc] → normal={normal:.2f}, ot={ot:.2f}")
         
         # restDayPay remains 0 for initial solve
         # It will only be set during incremental solving when employee works on their OFF_DAY
