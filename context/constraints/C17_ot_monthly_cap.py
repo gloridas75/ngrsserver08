@@ -114,8 +114,9 @@ def add_constraints(model, ctx):
             
             weekly_ot_vars[week_key] = weekly_ot_var
     
-    # Add monthly OT cap constraints
+    # Add monthly OT cap constraints AND total hours cap constraints
     monthly_constraints = 0
+    total_hours_constraints = 0
     unique_apgd = set()
     
     # Get unique (employee, calendar month) combinations
@@ -153,9 +154,29 @@ def add_constraints(model, ctx):
             if monthly_ot_cap > 72.0:
                 unique_apgd.add(emp_id)
             
-            # Constraint: sum(weekly_ot) <= monthly_ot_cap
+            # Constraint 1: sum(weekly_ot) <= monthly_ot_cap
             model.Add(sum(monthly_ot_terms) <= monthly_ot_cap_scaled)
             monthly_constraints += 1
+        
+        # Constraint 2: Total work hours <= totalMaxHours (if specified)
+        # This prevents schedules like 27 days x 12h = 324h when cap is 267h
+        total_max_hours = monthly_limits.get('totalMaxHours')
+        if total_max_hours:
+            # Collect all assigned slots for this employee in this month
+            month_slot_terms = []
+            for slot in slots:
+                if slot.date.year == cal_year and slot.date.month == cal_month:
+                    if (slot.slot_id, emp_id) in x:
+                        var = x[(slot.slot_id, emp_id)]
+                        gross = slot_gross_hours.get(slot.slot_id, 0)
+                        gross_scaled = int(round(gross * SCALE))
+                        if gross_scaled > 0:
+                            month_slot_terms.append(var * gross_scaled)
+            
+            if month_slot_terms:
+                total_max_scaled = int(round(total_max_hours * SCALE))
+                model.Add(sum(month_slot_terms) <= total_max_scaled)
+                total_hours_constraints += 1
     
     print(f"[C17] Monthly OT Cap Constraint (HARD) - 44h/week threshold")
     print(f"     Employees: {len(employees)}, Slots: {len(slots)}")
@@ -163,4 +184,5 @@ def add_constraints(model, ctx):
     print(f"     Standard OT cap: ≤72h per month")
     if unique_apgd:
         print(f"     APGD-D10 (APO): {len(unique_apgd)} employees with ≤112-124h cap (month-dependent)")
-    print(f"     ✓ Added {monthly_constraints} monthly OT constraints\n")
+    print(f"     ✓ Added {monthly_constraints} monthly OT constraints")
+    print(f"     ✓ Added {total_hours_constraints} total hours cap constraints\n")

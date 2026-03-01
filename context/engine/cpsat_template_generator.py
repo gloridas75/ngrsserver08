@@ -630,6 +630,9 @@ def _apply_mom_constraints(
     
     # Apply monthly OT cap for each month
     for month_key, (year, month, weeks_in_month) in months.items():
+        # Get scheme/product-specific monthly limits FIRST (needed for both constraints)
+        monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
+        
         # Collect weekly OT variables for this month
         monthly_ot_terms = []
         for week_key in weeks_in_month:
@@ -637,17 +640,27 @@ def _apply_mom_constraints(
                 monthly_ot_terms.append(weekly_ot_vars[week_key])
         
         if monthly_ot_terms:
-            # Get scheme/product-specific monthly OT cap
-            monthly_limits = get_monthly_hour_limits(ctx, employee, year, month)
             monthly_ot_cap = monthly_limits.get('maxOvertimeHours', max_monthly_ot_hours)
             monthly_ot_cap_scaled = int(round(monthly_ot_cap * SCALE))
             
-            # Sum of weekly OT for this month <= monthly cap
+            # Constraint 1: Sum of weekly OT for this month <= monthly cap
             model.Add(sum(monthly_ot_terms) <= monthly_ot_cap_scaled)
             if is_apgd:
                 logger.info(f"  Applying C17 (APGD-D10): Monthly OT cap for {month_key} <= {monthly_ot_cap}h (44h/week threshold)")
             else:
                 logger.info(f"  Applying C17: Monthly OT cap for {month_key} <= {monthly_ot_cap}h (44h/week threshold)")
+        
+        # Constraint 2: Total work hours <= totalMaxHours (if specified)
+        # This prevents schedules like 27 days x 12h = 324h when cap is 267h
+        total_max_hours = monthly_limits.get('totalMaxHours')
+        if total_max_hours:
+            # Collect all work assignments for this month
+            month_indices = [i for i, date in enumerate(dates) if i in x and date.year == year and date.month == month]
+            if month_indices:
+                month_work_terms = [x[i] * gross_scaled for i in month_indices]
+                total_max_scaled = int(round(total_max_hours * SCALE))
+                model.Add(sum(month_work_terms) <= total_max_scaled)
+                logger.info(f"  Applying C17 totalMaxHours: {month_key} <= {total_max_hours}h cap")
 
 
 def _calculate_shift_duration(shift_details: dict) -> float:

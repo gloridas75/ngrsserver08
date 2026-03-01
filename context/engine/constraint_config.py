@@ -478,7 +478,9 @@ def matches_monthly_limit_filters(limit_config: dict, employee: dict) -> bool:
     # Get employee attributes
     emp_type = get_employee_type(employee)
     emp_scheme = normalize_scheme(employee.get('scheme', 'A'))
-    emp_products = employee.get('productTypes', [])
+    # Support both 'productTypeId' (single) and 'productTypes' (list)
+    emp_product_id = employee.get('productTypeId', '')
+    emp_products = employee.get('productTypes', [emp_product_id] if emp_product_id else [])
     emp_rank = employee.get('rank', '')
     
     # Check employeeType filter
@@ -497,8 +499,8 @@ def matches_monthly_limit_filters(limit_config: dict, employee: dict) -> bool:
         if emp_scheme not in allowed_schemes:
             return False
     
-    # Check productTypes filter
-    allowed_products = applicable_to.get('productTypes', 'All')
+    # Check productTypes filter (support both 'productTypeIds' and 'productTypes' for backward compatibility)
+    allowed_products = applicable_to.get('productTypeIds') or applicable_to.get('productTypes', 'All')
     if allowed_products != 'All':
         if isinstance(allowed_products, str):
             allowed_products = [allowed_products]
@@ -506,13 +508,15 @@ def matches_monthly_limit_filters(limit_config: dict, employee: dict) -> bool:
         if not any(pt in emp_products for pt in allowed_products):
             return False
     
-    # Check ranks filter (with exclusion support)
-    allowed_ranks = applicable_to.get('ranks', 'All')
+    # Check ranks filter (support both 'rankIds' and 'ranks' for backward compatibility)
+    allowed_ranks = applicable_to.get('rankIds') or applicable_to.get('ranks', 'All')
     if allowed_ranks != 'All':
         if isinstance(allowed_ranks, str):
             allowed_ranks = [allowed_ranks]
-        if emp_rank not in allowed_ranks:
-            return False
+        # Check if 'All' is in the allowed list (acts as wildcard)
+        if 'All' not in allowed_ranks:
+            if emp_rank not in allowed_ranks:
+                return False
     
     # Check ranksExcluded filter (complex: per employee type)
     ranks_excluded = applicable_to.get('ranksExcluded', {})
