@@ -27,6 +27,81 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
+def _remove_unavailable_assignments_from_roster(
+    assignments: List[Dict[str, Any]], 
+    employees: List[Dict[str, Any]]
+) -> tuple[List[Dict[str, Any]], int]:
+    """
+    Post-process roster to remove assignments on unavailable days.
+    
+    This function filters out assignments where an employee is scheduled on a day
+    they marked as unavailable. The filtered assignments are converted to UNASSIGNED
+    status so the roster shows gaps in coverage.
+    
+    Args:
+        assignments: List of assignment dictionaries
+        employees: List of employee dictionaries with unavailability data
+        
+    Returns:
+        Tuple of (filtered_assignments, violations_removed_count)
+    """
+    # Build unavailability map for quick lookup
+    unavail_map = {}
+    for emp in employees:
+        emp_id = emp['employeeId']
+        unavail_list = emp.get('unavailability', [])
+        unavailable_dates = set()
+        
+        # Handle both formats: array of strings or array of dicts
+        for u in unavail_list:
+            if isinstance(u, dict):
+                # Format: [{"date": "2026-01-05", ...}] or [{"startDate": "...", "endDate": "..."}]
+                date_val = u.get('date') or u.get('startDate')
+                if date_val:
+                    unavailable_dates.add(date_val)
+            elif isinstance(u, str):
+                # Format: ["2026-01-05", "2026-01-26"]
+                unavailable_dates.add(u)
+        
+        if unavailable_dates:
+            unavail_map[emp_id] = unavailable_dates
+    
+    # Filter assignments
+    filtered_assignments = []
+    violations_removed = 0
+    
+    for assignment in assignments:
+        # Skip unassigned slots - they're already empty
+        if assignment.get('status') == 'UNASSIGNED':
+            filtered_assignments.append(assignment)
+            continue
+        
+        emp_id = assignment.get('employeeId')
+        assignment_date = assignment.get('date')
+        
+        # Check if this is a violation
+        if emp_id and emp_id in unavail_map and assignment_date in unavail_map[emp_id]:
+            # Violation detected - convert to UNASSIGNED
+            violations_removed += 1
+            logger.warning(
+                f"[UNAVAILABILITY FIX] Removing assignment: Employee {emp_id} on {assignment_date} "
+                f"(marked unavailable)"
+            )
+            
+            # Convert to unassigned
+            filtered_assignment = assignment.copy()
+            filtered_assignment['status'] = 'UNASSIGNED'
+            filtered_assignment['employeeId'] = None
+            filtered_assignment['reason'] = 'Employee unavailable'
+            
+            filtered_assignments.append(filtered_assignment)
+        else:
+            # Valid assignment - keep it
+            filtered_assignments.append(assignment)
+    
+    return filtered_assignments, violations_removed
+
+
 def generate_template_validated_roster(
     ctx: Dict[str, Any],
     selected_employees: List[Dict[str, Any]],
@@ -166,12 +241,24 @@ def generate_template_validated_roster(
         # Generate statistics
         stats = _generate_statistics(all_assignments, selected_employees)
         
+        # POST-PROCESSING: Remove assignments on unavailable days (FIX: Unavailability constraint violation)
+        print(f"\n[UNAVAILABILITY FIX] Post-processing {len(all_assignments)} CP-SAT assignments for {len(selected_employees)} employees...")
+        all_assignments, violations_removed = _remove_unavailable_assignments_from_roster(
+            all_assignments, selected_employees
+        )
+        print(f"[UNAVAILABILITY FIX] ✓ Removed {violations_removed} unavailability violations from CP-SAT roster\n")
+        
+        # Regenerate stats after filtering
+        stats = _generate_statistics(all_assignments, selected_employees)
+        
         logger.info("\n" + "=" * 80)
         logger.info("CP-SAT TEMPLATE ROSTER COMPLETE")
         logger.info("=" * 80)
         logger.info(f"Total Assignments: {len(all_assignments)}")
         logger.info(f"  - Assigned: {stats['assigned_count']}")
         logger.info(f"  - Unassigned: {stats['unassigned_count']}")
+        if violations_removed > 0:
+            logger.warning(f"  ⚠️  Removed {violations_removed} assignments on unavailable days")
         logger.info(f"Employees Used: {stats['employees_used']}")
         logger.info(f"Generation Time: {stats['generation_time']:.3f}s")
         logger.info("=" * 80)
@@ -243,12 +330,24 @@ def generate_template_validated_roster(
     # Generate statistics
     stats = _generate_statistics(all_assignments, selected_employees)
     
+    # POST-PROCESSING: Remove assignments on unavailable days (FIX: Unavailability constraint violation)
+    print(f"\n[UNAVAILABILITY FIX] Post-processing {len(all_assignments)} assignments for {len(selected_employees)} employees...")
+    all_assignments, violations_removed = _remove_unavailable_assignments_from_roster(
+        all_assignments, selected_employees
+    )
+    print(f"[UNAVAILABILITY FIX] ✓ Removed {violations_removed} unavailability violations\n")
+    
+    # Regenerate stats after filtering
+    stats = _generate_statistics(all_assignments, selected_employees)
+    
     logger.info("\n" + "=" * 80)
     logger.info("TEMPLATE ROSTER COMPLETE")
     logger.info("=" * 80)
     logger.info(f"Total Assignments: {len(all_assignments)}")
     logger.info(f"  - Assigned: {stats['assigned_count']}")
     logger.info(f"  - Unassigned: {stats['unassigned_count']}")
+    if violations_removed > 0:
+        logger.warning(f"  ⚠️  Removed {violations_removed} assignments on unavailable days")
     logger.info(f"Employees Used: {stats['employees_used']}")
     logger.info(f"Generation Time: {stats['generation_time']:.3f}s")
     logger.info("=" * 80)

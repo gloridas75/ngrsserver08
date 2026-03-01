@@ -89,6 +89,55 @@ def build_ou_offset_mapping(data: Dict[str, Any]) -> Dict[str, int]:
     return {ou['ouId']: ou['rotationOffset'] for ou in ou_offsets if 'ouId' in ou}
 
 
+def normalize_monthly_hour_limits(data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Normalize monthlyHourLimits to ensure all entries have maxOvertimeHours.
+    
+    If maxOvertimeHours is missing in any valuesByMonthLength entry:
+    1. Try to use the value from standardMonthlyHours for that month length
+    2. If not found, default to 72
+    
+    This ensures consistency across all hour limit configurations.
+    
+    Args:
+        data: Input data dict
+        
+    Returns:
+        Data dict with normalized monthlyHourLimits (all have maxOvertimeHours)
+    """
+    monthly_hour_limits = data.get('monthlyHourLimits', [])
+    if not monthly_hour_limits:
+        return data
+    
+    # Build reference map from standardMonthlyHours
+    standard_ot_hours = {}
+    for limit in monthly_hour_limits:
+        if limit.get('id') == 'standardMonthlyHours':
+            values_by_month = limit.get('valuesByMonthLength', {})
+            for month_len, values in values_by_month.items():
+                if 'maxOvertimeHours' in values:
+                    standard_ot_hours[month_len] = values['maxOvertimeHours']
+            break
+    
+    # Normalize all entries
+    for limit in monthly_hour_limits:
+        values_by_month = limit.get('valuesByMonthLength', {})
+        for month_len, values in values_by_month.items():
+            if 'maxOvertimeHours' not in values:
+                # Try to use value from standardMonthlyHours
+                if month_len in standard_ot_hours:
+                    values['maxOvertimeHours'] = standard_ot_hours[month_len]
+                    print(f"[DATA LOADER] Normalized maxOvertimeHours for {limit.get('id')} "
+                          f"(month {month_len}): {standard_ot_hours[month_len]} (from standardMonthlyHours)")
+                else:
+                    # Default to 72
+                    values['maxOvertimeHours'] = 72
+                    print(f"[DATA LOADER] Normalized maxOvertimeHours for {limit.get('id')} "
+                          f"(month {month_len}): 72 (default)")
+    
+    return data
+
+
 def copy_work_pattern_to_employees(data: Dict[str, Any]) -> Dict[str, Any]:
     """
     For outcomeBased mode, copy workPattern from requirements to all employees.
@@ -206,6 +255,9 @@ def load_input(path: Union[str, Dict[str, Any]]):
     
     # Normalize requirements to use rankIds (plural) internally
     data = normalize_requirements_rankIds(data)
+    
+    # Normalize monthlyHourLimits to ensure all have maxOvertimeHours
+    data = normalize_monthly_hour_limits(data)
     
     # Extract and store rosteringBasis in root for easy access
     data['_rosteringBasis'] = extract_rostering_basis(data)

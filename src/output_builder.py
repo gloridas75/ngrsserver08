@@ -8,8 +8,12 @@ import json
 import hashlib
 import math
 import uuid
+import logging
+from typing import List, Dict, Any
 from datetime import datetime, timedelta
 from collections import defaultdict
+
+logger = logging.getLogger(__name__)
 from context.engine.time_utils import (
     split_shift_hours, 
     calculate_mom_compliant_hours,
@@ -29,6 +33,81 @@ def _safe_score(value):
     if math.isinf(value):
         return 999999
     return int(value) if isinstance(value, (int, float)) else 0
+
+
+def _remove_unavailable_assignments_from_roster(
+    assignments: List[Dict[str, Any]], 
+    employees: List[Dict[str, Any]]
+) -> tuple:
+    """
+    Post-process roster to remove assignments on unavailable days.
+    
+    This function filters out assignments where an employee is scheduled on a day
+    they marked as unavailable. The filtered assignments are converted to UNASSIGNED
+    status so the roster shows gaps in coverage.
+    
+    Args:
+        assignments: List of assignment dictionaries
+        employees: List of employee dictionaries with unavailability data
+        
+    Returns:
+        Tuple of (filtered_assignments, violations_removed_count)
+    """
+    # Build unavailability map for quick lookup
+    unavail_map = {}
+    for emp in employees:
+        emp_id = emp['employeeId']
+        unavail_list = emp.get('unavailability', [])
+        unavailable_dates = set()
+        
+        # Handle both formats: array of strings or array of dicts
+        for u in unavail_list:
+            if isinstance(u, dict):
+                # Format: [{"date": "2026-01-05", ...}] or [{"startDate": "...", "endDate": "..."}]
+                date_val = u.get('date') or u.get('startDate')
+                if date_val:
+                    unavailable_dates.add(date_val)
+            elif isinstance(u, str):
+                # Format: ["2026-01-05", "2026-01-26"]
+                unavailable_dates.add(u)
+        
+        if unavailable_dates:
+            unavail_map[emp_id] = unavailable_dates
+    
+    # Filter assignments
+    filtered_assignments = []
+    violations_removed = 0
+    
+    for assignment in assignments:
+        # Skip unassigned slots - they're already empty
+        if assignment.get('status') == 'UNASSIGNED':
+            filtered_assignments.append(assignment)
+            continue
+        
+        emp_id = assignment.get('employeeId')
+        assignment_date = assignment.get('date')
+        
+        # Check if this is a violation
+        if emp_id and emp_id in unavail_map and assignment_date in unavail_map[emp_id]:
+            # Violation detected - convert to UNASSIGNED
+            violations_removed += 1
+            logger.warning(
+                f"[UNAVAILABILITY FIX] Removing assignment: Employee {emp_id} on {assignment_date} "
+                f"(marked unavailable)"
+            )
+            
+            # Convert to unassigned
+            filtered_assignment = assignment.copy()
+            filtered_assignment['status'] = 'UNASSIGNED'
+            filtered_assignment['employeeId'] = None
+            filtered_assignment['reason'] = 'Employee unavailable'
+            
+            filtered_assignments.append(filtered_assignment)
+        else:
+            # Valid assignment - keep it
+            filtered_assignments.append(assignment)
+    
+    return filtered_assignments, violations_removed
 
 
 def build_employee_roster(input_data, ctx, assignments, off_day_assignments=None):
@@ -859,6 +938,14 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
     # Include ALL assignments (work + OFF days) in assignments array
     assignments = all_with_off
     
+    # ========== UNAVAILABILITY FIX ==========
+    # Remove assignments that violate employee unavailability constraints
+    # This catches violations from PUBLIC_HOLIDAY assignments added by insert_off_day_assignments
+    employees = ctx.get('employees', [])
+    assignments, violations_removed = _remove_unavailable_assignments_from_roster(assignments, employees)
+    if violations_removed > 0:
+        print(f"[UNAVAILABILITY FIX] ✓ Removed {violations_removed} unavailability violations from final output")
+    
     # NOTE: UNASSIGNED assignments are added AFTER employee_roster is built
     # (see extract_unassigned_from_roster() call below)
     
@@ -1175,6 +1262,14 @@ def build_output(input_data, ctx, status, solver_result, assignments, violations
             annotated_assignments,
             key=lambda a: (a.get('date') or '', a.get('employeeId') or '')
         )
+    
+    # ========== SECOND UNAVAILABILITY FIX (for UNASSIGNED records) ==========
+    # Remove unavailability violations from UNASSIGNED records created by extract_unassigned_from_roster
+    # These have employeeId set even though they're UNASSIGNED, but shouldn't be for unavailable employees
+    annotated_assignments_fixed, violations_removed_2 = _remove_unavailable_assignments_from_roster(annotated_assignments, employees)
+    if violations_removed_2 > 0:
+        print(f"[UNAVAILABILITY FIX] ✓ Removed {violations_removed_2} unavailability violations from UNASSIGNED records")
+        annotated_assignments = annotated_assignments_fixed
     
     # ========== CALCULATE ROSTER SUMMARY ==========
     roster_summary = {
