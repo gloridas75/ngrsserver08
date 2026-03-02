@@ -1,0 +1,121 @@
+{
+  "employee": {
+    "employeeId": "30024360",
+    "rankId": "SSER",
+    "productTypeId": "APO",
+    "gender": "Male",
+    "ouId": "PB T1 A1",
+    "scheme": "Scheme B",
+    "workPattern": ["D", "D", "D", "D", "D", "O"],
+    "rotationOffset": 0,
+    "normalHours": 0.0,
+    "otHours": 0.0
+  },
+  "existingAssignments": [
+    {
+      "assignmentId": "existing_001",
+      "date": "2026-07-01",
+      "slotId": "slot_001",
+      "shiftCode": "D",
+      "startDateTime": "2026-07-01T08:00:00",
+      "endDateTime": "2026-07-01T20:00:00",
+      "employeeId": "30024360",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 11.0
+      }
+    },
+    {
+      "assignmentId": "existing_002",
+      "date": "2026-07-02",
+      "slotId": "slot_002",
+      "shiftCode": "D",
+      "startDateTime": "2026-07-02T08:00:00",
+      "endDateTime": "2026-07-02T20:00:00",
+      "employeeId": "30024360",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 11.0
+      }
+    },
+    {
+      "assignmentId": "existing_003",
+      "date": "2026-07-03",
+      "slotId": "slot_003",
+      "shiftCode": "D",
+      "startDateTime": "2026-07-03T08:00:00",
+      "endDateTime": "2026-07-03T20:00:00",
+      "employeeId": "30024360",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 11.0
+      }
+    },
+    {
+      "assignmentId": "existing_004",
+      "date": "2026-07-04",
+      "slotId": "slot_004",
+      "shiftCode": "D",
+      "startDateTime": "2026-07-04T08:00:00",
+      "endDateTime": "2026-07-04T20:00:00",
+      "employeeId": "30024360",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 11.0
+      }
+    },
+    {
+      "assignmentId": "existing_005",
+      "date": "2026-07-05",
+      "slotId": "slot_005",
+      "shiftCode": "D",
+      "startDateTime": "2026-07-05T08:00:00",
+      "endDateTime": "2026-07-05T20:00:00",
+      "employeeId": "30024360",
+      "hours": {
+        "gross": 12.0,
+        "lunch": 1.0,
+        "normal": 8.0,
+        "ot": 3.0,
+        "restDayPay": 0.0,
+        "paid": 11.0
+      }
+    }
+  ],
+  "candidateSlots": [
+    {
+      "slotId": "test_slot_2026_07_07",
+      "startDateTime": "2026-07-07T08:00:00",
+      "endDateTime": "2026-07-07T20:00:00",
+      "shiftCode": "D"
+    }
+  ],
+  "planningReference": {
+    "startDate": "2026-07-01",
+    "endDate": "2026-07-31",
+    "ouName": "PB T1 A1"
+  },
+  "constraintList": [
+    {"constraintId": "C1", "enabled": true},
+    {"constraintId": "C2", "enabled": true},
+    {"constraintId": "C3", "enabled": true},
+    {"constraintId": "C4", "enabled": true},
+    {"constraintId": "C17", "enabled": true}
+  ]
+}

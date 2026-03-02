@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.98",
-  "planningReference": "RST-20260226-CF92104C",
+  "planningReference": "RST-20260226-43BF25BE",
   "timezone": "Asia/Singapore",
   "planningHorizon": {
     "startDate": "2026-03-01",
@@ -89,7 +89,7 @@
             "D",
             "D",
             "D",
-            "D",
+            "O",
             "O"
           ],
           "requiredQualifications": [],
@@ -343,90 +343,181 @@
       "enforcement": "hard",
       "applicableTo": {
         "employeeType": "All",
-        "schemes": "All",
-        "productTypes": "All",
-        "ranks": "All"
+        "ranks": [
+          "All"
+        ],
+        "schemes": [
+          "All"
+        ],
+        "productTypes": [
+          "All"
+        ]
       },
       "calculationMethod": "daily",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 176, "maxOvertimeHours": 72, "totalMaxHours": 248 },
-        "29": { "minimumContractualHours": 182, "maxOvertimeHours": 72, "totalMaxHours": 254 },
-        "30": { "minimumContractualHours": 189, "maxOvertimeHours": 72, "totalMaxHours": 261 },
-        "31": { "minimumContractualHours": 195, "maxOvertimeHours": 72, "totalMaxHours": 267 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 176,
+          "totalMaxHours": 248
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 182,
+          "totalMaxHours": 254
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 189,
+          "totalMaxHours": 261
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 195,
+          "totalMaxHours": 267
+        }
       }
     },
     {
-      "id": "apgdMinimumContractualHours",
-      "description": "APGD-D10 contractual hours for Local employees",
-      "enforcement": "soft",
-      "applicableTo": {
-        "employeeType": "Local",
-        "schemes": ["A"],
-        "productTypes": ["APO"],
-        "ranks": ["All"]
-      },
-      "calculationMethod": "monthly",
-      "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 224, "maxOvertimeHours": 72, "totalMaxHours": 296 },
-        "29": { "minimumContractualHours": 231, "maxOvertimeHours": 72, "totalMaxHours": 303 },
-        "30": { "minimumContractualHours": 238, "maxOvertimeHours": 72, "totalMaxHours": 310 },
-        "31": { "minimumContractualHours": 246, "maxOvertimeHours": 72, "totalMaxHours": 318 }
-      }
-    },
-    {
-      "id": "apgdMinimumContractualHoursForeigner",
-      "description": "APGD-D10 contractual hours for Foreigner employees",
-      "enforcement": "soft",
+      "id": "APO_A",
+      "description": "APO A - Foreigner monthly hours",
+      "enforcement": "hard",
       "applicableTo": {
         "employeeType": "Foreigner",
-        "schemes": ["A"],
-        "productTypes": ["APO"],  
-        "ranks": ["All"]
+        "ranks": [
+          "All"
+        ],
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ]
       },
       "calculationMethod": "monthly",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 244, "maxOvertimeHours": 72, "totalMaxHours": 316 },
-        "29": { "minimumContractualHours": 252, "maxOvertimeHours": 72, "totalMaxHours": 324 },
-        "30": { "minimumContractualHours": 260, "maxOvertimeHours": 72, "totalMaxHours": 332 },
-        "31": { "minimumContractualHours": 268, "maxOvertimeHours": 72, "totalMaxHours": 340 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 244
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 252
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 260
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 268
+        }
       }
     },
     {
-      "id": "schemeA_SO_hours",
-      "description": "Scheme A + SO uses daily 44h/week calculation",
+      "id": "APO_A",
+      "description": "APO A - Local monthly hours",
       "enforcement": "hard",
       "applicableTo": {
-        "schemes": ["A"],
-        "productTypes": ["SO"],
-        "ranks": ["All"]
+        "employeeType": "Local",
+        "ranks": [
+          "All"
+        ],
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "APO"
+        ]
       },
-      "calculationMethod": "daily",
+      "calculationMethod": "monthly",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 176, "maxOvertimeHours": 72, "totalMaxHours": 248 },
-        "29": { "minimumContractualHours": 182, "maxOvertimeHours": 72, "totalMaxHours": 254 },
-        "30": { "minimumContractualHours": 189, "maxOvertimeHours": 72, "totalMaxHours": 261 },
-        "31": { "minimumContractualHours": 195, "maxOvertimeHours": 72, "totalMaxHours": 267 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 224
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 231
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 238
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 246
+        }
       }
     },
     {
-      "id": "schemeA_SO_hours",
-      "description": "Scheme A + SO uses daily 44h/week calculation",
+      "id": "SO_A",
+      "description": "SO A - All monthly hours",
       "enforcement": "hard",
       "applicableTo": {
-        "schemes": ["A"],
-        "productTypes": ["SO"],
-        "ranks": ["All"]
+        "employeeType": "All",
+        "ranks": [
+          "All"
+        ],
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "SO"
+        ]
       },
-      "calculationMethod": "daily",
+      "calculationMethod": "monthly",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 176, "maxOvertimeHours": 72, "totalMaxHours": 248 },
-        "29": { "minimumContractualHours": 182, "maxOvertimeHours": 72, "totalMaxHours": 254 },
-        "30": { "minimumContractualHours": 189, "maxOvertimeHours": 72, "totalMaxHours": 261 },
-        "31": { "minimumContractualHours": 195, "maxOvertimeHours": 72, "totalMaxHours": 267 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 176
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 182
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 189
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 195
+        }
+      }
+    },
+    {
+      "id": "SO_A",
+      "description": "SO A - Local monthly hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "Local",
+        "ranks": [
+          "All"
+        ],
+        "schemes": [
+          "A"
+        ],
+        "productTypes": [
+          "SO"
+        ]
+      },
+      "calculationMethod": "monthly",
+      "valuesByMonthLength": {
+        "28": {
+          "totalMaxHours": 248
+        },
+        "29": {
+          "totalMaxHours": 254
+        },
+        "30": {
+          "totalMaxHours": 262
+        },
+        "31": {
+          "totalMaxHours": 268
+        }
       }
     }
   ],
-
   "softConstraintWeights": {
     "rotationPatternCompliance": 10,
     "employeePreferences": 5,

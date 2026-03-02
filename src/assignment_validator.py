@@ -254,8 +254,8 @@ class AssignmentValidator:
             
             self.constraints[constraint_id]['enabled'] = enabled
             
-            # Update defaultValue if provided
-            if 'defaultValue' in config:
+            # Update defaultValue if provided (and not None)
+            if 'defaultValue' in config and config['defaultValue'] is not None:
                 self.constraints[constraint_id]['defaultValue'] = config['defaultValue']
             
             # Update schemeOverrides if provided
@@ -602,11 +602,12 @@ class AssignmentValidator:
             if isinstance(override, dict) and 'productTypes' in override:
                 # Nested format: {"A": {"productTypes": ["APO"], "value": 8}}
                 if product_type in override.get('productTypes', []):
-                    max_consecutive = override.get('value', default_max)
+                    value = override.get('value', default_max)
+                    max_consecutive = value if value is not None else default_max
                     limit_source = f"Scheme {scheme} + {product_type}"
             else:
                 # Simple format: {"A": 8}
-                max_consecutive = int(override) if override else default_max
+                max_consecutive = int(override) if override is not None else default_max
                 limit_source = f"Scheme {scheme}"
         elif employee.workPattern:
             # Fall back to work pattern analysis
@@ -620,9 +621,14 @@ class AssignmentValidator:
                 else:  # Off day
                     current_count = 0
             
-            if pattern_max > 0 and pattern_max < max_consecutive:
+            if pattern_max > 0 and max_consecutive is not None and pattern_max < max_consecutive:
                 max_consecutive = pattern_max
                 limit_source = f"work pattern"
+        
+        # Safety check - ensure max_consecutive is never None
+        if max_consecutive is None:
+            max_consecutive = default_max
+            limit_source = f"fallback default ({default_max})"
         
         # Build set of all work dates
         work_dates = set()

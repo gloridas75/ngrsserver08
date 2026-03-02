@@ -1,17 +1,15 @@
 {
   "schemaVersion": "0.98",
-  "planningReference": "RST-20260226-CF92104C",
+  "planningReference": "RST-20260301-8E678A28",
   "timezone": "Asia/Singapore",
   "planningHorizon": {
-    "startDate": "2026-03-01",
-    "endDate": "2026-03-31"
+    "startDate": "2026-07-01",
+    "endDate": "2026-07-31"
   },
-  "publicHolidays": [
-    "2026-03-21"
-  ],
+  "publicHolidays": [],
   "solverConfig": {
     "optimizationMode": "minimizeEmployeeCount",
-    "maxEmployeesToUse": 4
+    "maxEmployeesToUse": 2
   },
   "solverRunTime": {
     "maxSeconds": 300
@@ -30,9 +28,9 @@
   ],
   "demandItems": [
     {
-      "demandId": "DI-2602050755-75815528",
-      "locationId": "LOC-ATH-4825",
-      "shiftStartDate": "2026-03-01",
+      "demandId": "DI-2602050755-67981459",
+      "locationId": "LOC-CERT-2595",
+      "shiftStartDate": "2026-07-01",
       "rosteringBasis": "outcomeBased",
       "templateGenerationMode": "cpsat",
       "minStaffThresholdPercentage": 100,
@@ -48,7 +46,7 @@
           ],
           "includePublicHolidays": true,
           "includeEveOfPublicHolidays": true,
-          "shiftSetId": "Set_DI_2602050755_75815528",
+          "shiftSetId": "Set_DI_2602050755_67981459",
           "coverageDays": [
             "Mon",
             "Tue",
@@ -58,10 +56,13 @@
             "Sat",
             "Sun"
           ],
-          "coverageAnchor": "2026-03-01",
+          "coverageAnchor": "2026-07-01",
           "whitelist": {
             "teamIds": [],
-            "employeeIds": []
+            "employeeIds": [
+              "30024914",
+              "30024360"
+            ]
           },
           "blacklist": {
             "employeeIds": []
@@ -70,21 +71,30 @@
       ],
       "requirements": [
         {
-          "requirementId": "436_1",
+          "requirementId": "447_1",
           "icpmpBufferPercentage": 50,
-          "productTypeId": "SO",
+          "productTypeId": "APO",
           "productTypeIds": [
-            "SO"
+            "APO"
           ],
           "rankIds": [
-            "SO-PO",
-            "SS-PO",
-            "SSOPO",
-            "SSS"
+            "AES1",
+            "AES2",
+            "ASP",
+            "PC",
+            "COR",
+            "DEP",
+            "SI",
+            "LCP",
+            "REC",
+            "SSGT",
+            "SGT",
+            "SSER",
+            "SI",
+            "CC"
           ],
           "headcount": 0,
           "workPattern": [
-            "D",
             "D",
             "D",
             "D",
@@ -95,8 +105,7 @@
           "requiredQualifications": [],
           "gender": "Any",
           "schemes": [
-            "Scheme A",
-            "Scheme B"
+            "Any"
           ],
           "enableOtAwareIcpmp": false
         }
@@ -105,81 +114,39 @@
   ],
   "employees": [
     {
-      "employeeId": "00100008",
+      "employeeId": "30024360",
       "ouId": "CLS_OU1",
-      "productTypeId": "SO",
-      "rankId": "SO-PO",
+      "productTypeId": "APO",
+      "rankId": "SSER",
       "scheme": "Scheme B",
       "rotationOffset": 0,
-      "local": 0,
-      "gender": "Female",
+      "local": 1,
+      "gender": "Male",
       "qualifications": [],
       "preferences": {},
       "unavailability": []
     },
     {
-      "employeeId": "00100011",
+      "employeeId": "30024914",
       "ouId": "CLS_OU1",
-      "productTypeId": "SO",
-      "rankId": "SSOPO",
-      "scheme": "Scheme B",
+      "productTypeId": "APO",
+      "rankId": "SGT",
+      "scheme": "Scheme A",
       "rotationOffset": 0,
-      "local": 0,
+      "local": 1,
       "gender": "Male",
       "qualifications": [],
       "preferences": {},
       "unavailability": [
-        "2026-03-08",
-        "2026-03-09",
-        "2026-03-10",
-        "2026-03-11",
-        "2026-03-12",
-        "2026-03-13",
-        "2026-03-14",
-        "2026-03-15",
-        "2026-03-16",
-        "2026-03-17",
-        "2026-03-18",
-        "2026-03-19",
-        "2026-03-20",
-        "2026-03-21",
-        "2026-03-22",
-        "2026-03-23",
-        "2026-03-24",
-        "2026-03-25",
-        "2026-03-26",
-        "2026-03-27",
-        "2026-03-28",
-        "2026-03-29",
-        "2026-03-30",
-        "2026-03-31"
+        "2026-07-05",
+        "2026-07-06",
+        "2026-07-12",
+        "2026-07-17",
+        "2026-07-18",
+        "2026-07-24",
+        "2026-07-29",
+        "2026-07-30"
       ]
-    },
-    {
-      "employeeId": "00100012",
-      "ouId": "CLS_OU1",
-      "productTypeId": "SO",
-      "rankId": "SSOPO",
-      "scheme": "Scheme A",
-      "rotationOffset": 0,
-      "local": 0,
-      "gender": "Male",
-      "qualifications": [],
-      "preferences": {},
-      "unavailability": []
-    },
-    {
-      "employeeId": "00100014",
-      "ouId": "CLS_OU1",
-      "productTypeId": "SO",
-      "rankId": "SS-PO",
-      "scheme": "Scheme A",
-      "rotationOffset": 0,
-      "local": 0,
-      "gender": "Male",
-      "qualifications": [],
-      "preferences": {},
-      "unavailability": []
     }
   ],
   "constraintList": [
@@ -222,6 +189,14 @@
         "B": 13,
         "P": 12
       }
+    },
+    {
+      "id": "defaultWorkingDay",
+      "enforcement": "hard",
+      "description": "Defines the time window that constitutes a working day for scheduling",
+      "frequency": "Daily",
+      "uom": "Hours",
+      "dayEndTime": "23:59"
     },
     {
       "id": "momWeeklyHoursCap44h",
@@ -283,9 +258,7 @@
         "ranks": "All"
       },
       "defaultValue": 60,
-      "params": {
-        "deductIfShiftAtLeastMinutes": 480
-      }
+      "params": "{\"deductIfShiftAtLeastMinutes\":480}"
     },
     {
       "id": "apgdMinRestBetweenShifts",
@@ -326,10 +299,7 @@
         "productTypes": "All",
         "ranks": "All"
       },
-      "params": {
-        "maxHours4Days": 34.98,
-        "maxHoursMoreDays": 29.98
-      },
+      "params": "{\"maxHours4Days\":34.98,\"maxHoursMoreDays\":29.98}",
       "notes": "<=4 working days per week:max 34.98h, >4 days per week:max 29.98h",
       "applicableToSchemes": [
         "P"
@@ -343,90 +313,233 @@
       "enforcement": "hard",
       "applicableTo": {
         "employeeType": "All",
-        "schemes": "All",
-        "productTypes": "All",
-        "ranks": "All"
+        "rankIds": [
+          "All"
+        ],
+        "schemes": [
+          "All"
+        ],
+        "productTypeIds": [
+          "All"
+        ]
       },
-      "calculationMethod": "daily",
+      "hourCalculationMethod": "dailyProrated",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 176, "maxOvertimeHours": 72, "totalMaxHours": 248 },
-        "29": { "minimumContractualHours": 182, "maxOvertimeHours": 72, "totalMaxHours": 254 },
-        "30": { "minimumContractualHours": 189, "maxOvertimeHours": 72, "totalMaxHours": 261 },
-        "31": { "minimumContractualHours": 195, "maxOvertimeHours": 72, "totalMaxHours": 267 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 176,
+          "totalMaxHours": 248
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 182,
+          "totalMaxHours": 254
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 189,
+          "totalMaxHours": 261
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 195,
+          "totalMaxHours": 267
+        }
       }
     },
     {
-      "id": "apgdMinimumContractualHours",
-      "description": "APGD-D10 contractual hours for Local employees",
-      "enforcement": "soft",
-      "applicableTo": {
-        "employeeType": "Local",
-        "schemes": ["A"],
-        "productTypes": ["APO"],
-        "ranks": ["All"]
-      },
-      "calculationMethod": "monthly",
-      "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 224, "maxOvertimeHours": 72, "totalMaxHours": 296 },
-        "29": { "minimumContractualHours": 231, "maxOvertimeHours": 72, "totalMaxHours": 303 },
-        "30": { "minimumContractualHours": 238, "maxOvertimeHours": 72, "totalMaxHours": 310 },
-        "31": { "minimumContractualHours": 246, "maxOvertimeHours": 72, "totalMaxHours": 318 }
-      }
-    },
-    {
-      "id": "apgdMinimumContractualHoursForeigner",
-      "description": "APGD-D10 contractual hours for Foreigner employees",
-      "enforcement": "soft",
+      "id": "APO_A",
+      "description": "APO A - Foreigner monthlyCumulative hours",
+      "enforcement": "hard",
       "applicableTo": {
         "employeeType": "Foreigner",
-        "schemes": ["A"],
-        "productTypes": ["APO"],  
-        "ranks": ["All"]
+        "rankIds": [
+          "All"
+        ],
+        "schemes": [
+          "A"
+        ],
+        "productTypeIds": [
+          "APO"
+        ]
       },
-      "calculationMethod": "monthly",
+      "hourCalculationMethod": "monthlyCumulative",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 244, "maxOvertimeHours": 72, "totalMaxHours": 316 },
-        "29": { "minimumContractualHours": 252, "maxOvertimeHours": 72, "totalMaxHours": 324 },
-        "30": { "minimumContractualHours": 260, "maxOvertimeHours": 72, "totalMaxHours": 332 },
-        "31": { "minimumContractualHours": 268, "maxOvertimeHours": 72, "totalMaxHours": 340 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 244
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 252
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 260
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 268
+        }
       }
     },
     {
-      "id": "schemeA_SO_hours",
-      "description": "Scheme A + SO uses daily 44h/week calculation",
+      "id": "APO_A",
+      "description": "APO A - Local monthlyCumulative hours",
       "enforcement": "hard",
       "applicableTo": {
-        "schemes": ["A"],
-        "productTypes": ["SO"],
-        "ranks": ["All"]
+        "employeeType": "Local",
+        "rankIds": [
+          "All"
+        ],
+        "schemes": [
+          "A"
+        ],
+        "productTypeIds": [
+          "APO"
+        ]
       },
-      "calculationMethod": "daily",
+      "hourCalculationMethod": "monthlyCumulative",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 176, "maxOvertimeHours": 72, "totalMaxHours": 248 },
-        "29": { "minimumContractualHours": 182, "maxOvertimeHours": 72, "totalMaxHours": 254 },
-        "30": { "minimumContractualHours": 189, "maxOvertimeHours": 72, "totalMaxHours": 261 },
-        "31": { "minimumContractualHours": 195, "maxOvertimeHours": 72, "totalMaxHours": 267 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 224
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 231
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 238
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 246
+        }
       }
     },
     {
-      "id": "schemeA_SO_hours",
-      "description": "Scheme A + SO uses daily 44h/week calculation",
+      "id": "SO_A",
+      "description": "SO A - Local monthlyCumulative hours",
       "enforcement": "hard",
       "applicableTo": {
-        "schemes": ["A"],
-        "productTypes": ["SO"],
-        "ranks": ["All"]
+        "employeeType": "Local",
+        "rankIds": [
+          "All"
+        ],
+        "schemes": [
+          "A"
+        ],
+        "productTypeIds": [
+          "SO"
+        ]
       },
-      "calculationMethod": "daily",
+      "hourCalculationMethod": "monthlyCumulative",
       "valuesByMonthLength": {
-        "28": { "minimumContractualHours": 176, "maxOvertimeHours": 72, "totalMaxHours": 248 },
-        "29": { "minimumContractualHours": 182, "maxOvertimeHours": 72, "totalMaxHours": 254 },
-        "30": { "minimumContractualHours": 189, "maxOvertimeHours": 72, "totalMaxHours": 261 },
-        "31": { "minimumContractualHours": 195, "maxOvertimeHours": 72, "totalMaxHours": 267 }
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 195,
+          "totalMaxHours": 267
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 202,
+          "totalMaxHours": 274
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 210,
+          "totalMaxHours": 282
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 218,
+          "totalMaxHours": 290
+        }
+      }
+    },
+    {
+      "id": "SO_B",
+      "description": "SO B - Foreigner weeklyThreshold hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "Foreigner",
+        "rankIds": [
+          "All"
+        ],
+        "schemes": [
+          "B"
+        ],
+        "productTypeIds": [
+          "SO"
+        ]
+      },
+      "hourCalculationMethod": "weeklyThreshold",
+      "valuesByMonthLength": {
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 174,
+          "totalMaxHours": 248
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 182,
+          "totalMaxHours": 254
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 189,
+          "totalMaxHours": 261
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 196,
+          "totalMaxHours": 267
+        }
+      }
+    },
+    {
+      "id": "SO_B",
+      "description": "SO B - Local weeklyThreshold hours",
+      "enforcement": "hard",
+      "applicableTo": {
+        "employeeType": "Local",
+        "rankIds": [
+          "All"
+        ],
+        "schemes": [
+          "B"
+        ],
+        "productTypeIds": [
+          "SO"
+        ]
+      },
+      "hourCalculationMethod": "weeklyThreshold",
+      "valuesByMonthLength": {
+        "28": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 176,
+          "totalMaxHours": 248
+        },
+        "29": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 182,
+          "totalMaxHours": 254
+        },
+        "30": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 189,
+          "totalMaxHours": 261
+        },
+        "31": {
+          "maxOvertimeHours": 72,
+          "minimumContractualHours": 196,
+          "totalMaxHours": 267
+        }
       }
     }
   ],
-
   "softConstraintWeights": {
     "rotationPatternCompliance": 10,
     "employeePreferences": 5,

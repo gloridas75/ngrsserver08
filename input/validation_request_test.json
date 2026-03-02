@@ -1,0 +1,67 @@
+{
+  "employee": {
+    "employeeId": "30024360",
+    "name": "Hussin Samsaudin",
+    "rank": "SSER",
+    "gender": "Male",
+    "scheme": "Scheme B",
+    "productTypes": ["APO"],
+    "workPattern": ["D","D","D","D","D","O"],
+    "rotationOffset": 0
+  },
+  "existingAssignments": [
+    {
+      "startDateTime": "2026-07-01T08:00:00",
+      "endDateTime": "2026-07-01T20:00:00",
+      "shiftType": "D",
+      "hours": 11.0,
+      "date": "2026-07-01"
+    },
+    {
+      "startDateTime": "2026-07-02T08:00:00",
+      "endDateTime": "2026-07-02T20:00:00",
+      "shiftType": "D",
+      "hours": 11.0,
+      "date": "2026-07-02"
+    },
+    {
+      "startDateTime": "2026-07-03T08:00:00",
+      "endDateTime": "2026-07-03T20:00:00",
+      "shiftType": "D",
+      "hours": 11.0,
+      "date": "2026-07-03"
+    },
+    {
+      "startDateTime": "2026-07-04T08:00:00",
+      "endDateTime": "2026-07-04T20:00:00",
+      "shiftType": "D",
+      "hours": 11.0,
+      "date": "2026-07-04"
+    },
+    {
+      "startDateTime": "2026-07-05T08:00:00",
+      "endDateTime": "2026-07-05T20:00:00",
+      "shiftType": "D",
+      "hours": 11.0,
+      "date": "2026-07-05"
+    }
+  ],
+  "candidateSlots": [
+    {
+      "slotId": "test_slot_2026_07_07",
+      "startDateTime": "2026-07-07T08:00:00",
+      "endDateTime": "2026-07-07T20:00:00",
+      "shiftType": "D",
+      "productType": "APO",
+      "rank": "SSER",
+      "scheme": "Scheme B"
+    }
+  ],
+  "constraintList": [
+    {"constraintId": "C1", "enabled": true},
+    {"constraintId": "C2", "enabled": true},
+    {"constraintId": "C3", "enabled": true},
+    {"constraintId": "C4", "enabled": true},
+    {"constraintId": "C17", "enabled": true}
+  ]
+}
