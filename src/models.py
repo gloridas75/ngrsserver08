@@ -4,7 +4,7 @@ Pydantic models for NGRS Solver API.
 Defines request/response schemas for validation and documentation.
 """
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, validator
 from typing import Optional, Dict, List, Any
 from datetime import datetime
 
@@ -182,6 +182,19 @@ class ConstraintConfig(BaseModel):
     params: Optional[Dict[str, Any]] = Field(None, description="Additional constraint parameters")
     
     model_config = ConfigDict(extra='allow')
+    
+    @validator('params', pre=True)
+    @classmethod
+    def parse_params_string(cls, v):
+        """Auto-convert JSON string params to dict (handles UI sending stringified JSON)."""
+        if isinstance(v, str):
+            try:
+                import json
+                return json.loads(v)
+            except (json.JSONDecodeError, ValueError):
+                # If parsing fails, return as-is and let Pydantic validation handle it
+                return v
+        return v
 
 
 class ValidateAssignmentRequest(BaseModel):

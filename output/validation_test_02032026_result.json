@@ -1,0 +1,97 @@
+{
+    "status": "success",
+    "validationResults": [
+        {
+            "slotId": "SS-1151821",
+            "isFeasible": false,
+            "violations": [
+                {
+                    "constraintId": "C2",
+                    "constraintName": "Weekly Hours Cap",
+                    "violationType": "hard",
+                    "description": "Weekly normal hours 61.6h exceeds cap of 44.0h (week 2026-08-02 to 2026-08-08)",
+                    "context": {
+                        "weeklyHours": 61.6,
+                        "weeklyCap": 44.0,
+                        "weekStart": "2026-08-02",
+                        "weekEnd": "2026-08-08",
+                        "assignmentsInWeek": 7
+                    }
+                },
+                {
+                    "constraintId": "C3",
+                    "constraintName": "Consecutive Working Days",
+                    "violationType": "hard",
+                    "description": "Assignment creates 17 consecutive work days, exceeding limit of 8 days (Scheme A)",
+                    "context": {
+                        "consecutiveDays": 17,
+                        "maxAllowed": 8,
+                        "limitSource": "Scheme A",
+                        "scheme": "A",
+                        "productType": "APO",
+                        "workPattern": [
+                            "D",
+                            "D",
+                            "D",
+                            "D",
+                            "D",
+                            "O",
+                            "O"
+                        ],
+                        "streakEndDate": "2026-08-31"
+                    }
+                },
+                {
+                    "constraintId": "C4",
+                    "constraintName": "Rest Period Between Shifts",
+                    "violationType": "hard",
+                    "description": "Only 4.0h rest between shifts, minimum required is 8.0h",
+                    "context": {
+                        "restHours": 4.0,
+                        "minRequired": 8.0,
+                        "previousShiftEnd": "2026-08-19T20:00:00",
+                        "currentShiftStart": "2026-08-20T00:00:00"
+                    }
+                },
+                {
+                    "constraintId": "C4",
+                    "constraintName": "Rest Period Between Shifts",
+                    "violationType": "hard",
+                    "description": "Only 4.0h rest between shifts, minimum required is 8.0h",
+                    "context": {
+                        "restHours": 4.0,
+                        "minRequired": 8.0,
+                        "previousShiftEnd": "2026-08-26T20:00:00",
+                        "currentShiftStart": "2026-08-27T00:00:00"
+                    }
+                },
+                {
+                    "constraintId": "C_OFF_DAYS",
+                    "constraintName": "Minimum Off Days Per Week",
+                    "violationType": "hard",
+                    "description": "Only 0 off day(s) in week, minimum required is 1",
+                    "context": {
+                        "offDays": 0,
+                        "minRequired": 1,
+                        "workDays": 7,
+                        "weekStart": "2026-08-02",
+                        "weekEnd": "2026-08-08"
+                    }
+                }
+            ],
+            "recommendation": "not_feasible",
+            "hours": {
+                "gross": 12.0,
+                "lunch": 1.0,
+                "normal": 8.0,
+                "ot": 3.0,
+                "restDayPay": 0.0,
+                "paid": 12.0
+            }
+        }
+    ],
+    "employeeId": "30024914",
+    "timestamp": "2026-03-02T07:59:24.879583",
+    "processingTimeMs": 1.93,
+    "hours": null
+}
